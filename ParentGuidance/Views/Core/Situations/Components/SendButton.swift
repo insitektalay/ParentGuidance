@@ -1,8 +1,20 @@
-//
-//  SendButton.swift
-//  ParentGuidance
-//
-//  Created by alex kerss on 20/06/2025.
-//
+import SwiftUI
 
-import Foundation
+struct SendButton: View {
+    let isEnabled: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: "arrow.right")
+                .font(.system(size: 24, weight: .medium))
+                .foregroundColor(isEnabled ? ColorPalette.white : ColorPalette.white.opacity(0.3))
+                .frame(width: 56, height: 56)
+                .background(isEnabled ? ColorPalette.terracotta : ColorPalette.white.opacity(0.1))
+                .clipShape(Circle())
+        }
+        .disabled(!isEnabled)
+        .accessibilityLabel("Send message")
+        .accessibilityHint(isEnabled ? "Double tap to send your message" : "Enter text to enable sending")
+    }
+}

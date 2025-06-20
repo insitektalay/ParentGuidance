@@ -23,6 +23,20 @@
 		94FA11092E056D30003EC1E9 /* PaymentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA11082E056D30003EC1E9 /* PaymentView.swift */; };
 		94FA110B2E056D40003EC1E9 /* APIKeyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA110A2E056D40003EC1E9 /* APIKeyView.swift */; };
 		94FA110D2E05BA00003EC1E9 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA110C2E05BA00003EC1E9 /* MainTabView.swift */; };
+		94FA11102E05C88A003EC1E9 /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA110F2E05C88A003EC1E9 /* TodayView.swift */; };
+		94FA11122E05C898003EC1E9 /* NewSituationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA11112E05C898003EC1E9 /* NewSituationView.swift */; };
+		94FA11142E05C8A7003EC1E9 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA11132E05C8A7003EC1E9 /* LibraryView.swift */; };
+		94FA11162E05C8B6003EC1E9 /* AlertsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA11152E05C8B6003EC1E9 /* AlertsView.swift */; };
+		94FA11182E05C8C1003EC1E9 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA11172E05C8C1003EC1E9 /* SettingsView.swift */; };
+		94FA111F2E05CBAA003EC1E9 /* SituationInputIdleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA111E2E05CBAA003EC1E9 /* SituationInputIdleView.swift */; };
+		94FA11212E05CBB8003EC1E9 /* SituationTypingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA11202E05CBB8003EC1E9 /* SituationTypingView.swift */; };
+		94FA11232E05CBC3003EC1E9 /* SituationVoiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA11222E05CBC3003EC1E9 /* SituationVoiceView.swift */; };
+		94FA11252E05CBD4003EC1E9 /* SituationFollowUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA11242E05CBD4003EC1E9 /* SituationFollowUpView.swift */; };
+		94FA11272E05CBDF003EC1E9 /* SituationOrganizingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA11262E05CBDF003EC1E9 /* SituationOrganizingView.swift */; };
+		94FA112A2E05CBFD003EC1E9 /* ChildBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA11292E05CBFD003EC1E9 /* ChildBadge.swift */; };
+		94FA112C2E05CC08003EC1E9 /* MicButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA112B2E05CC08003EC1E9 /* MicButton.swift */; };
+		94FA112E2E05CC15003EC1E9 /* SendButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA112D2E05CC15003EC1E9 /* SendButton.swift */; };
+		94FA11302E05CC23003EC1E9 /* InputGuidanceFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA112F2E05CC23003EC1E9 /* InputGuidanceFooter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,6 +76,20 @@
 		94FA11082E056D30003EC1E9 /* PaymentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentView.swift; sourceTree = "<group>"; };
 		94FA110A2E056D40003EC1E9 /* APIKeyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeyView.swift; sourceTree = "<group>"; };
 		94FA110C2E05BA00003EC1E9 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		94FA110F2E05C88A003EC1E9 /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
+		94FA11112E05C898003EC1E9 /* NewSituationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSituationView.swift; sourceTree = "<group>"; };
+		94FA11132E05C8A7003EC1E9 /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
+		94FA11152E05C8B6003EC1E9 /* AlertsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertsView.swift; sourceTree = "<group>"; };
+		94FA11172E05C8C1003EC1E9 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		94FA111E2E05CBAA003EC1E9 /* SituationInputIdleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SituationInputIdleView.swift; sourceTree = "<group>"; };
+		94FA11202E05CBB8003EC1E9 /* SituationTypingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SituationTypingView.swift; sourceTree = "<group>"; };
+		94FA11222E05CBC3003EC1E9 /* SituationVoiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SituationVoiceView.swift; sourceTree = "<group>"; };
+		94FA11242E05CBD4003EC1E9 /* SituationFollowUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SituationFollowUpView.swift; sourceTree = "<group>"; };
+		94FA11262E05CBDF003EC1E9 /* SituationOrganizingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SituationOrganizingView.swift; sourceTree = "<group>"; };
+		94FA11292E05CBFD003EC1E9 /* ChildBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildBadge.swift; sourceTree = "<group>"; };
+		94FA112B2E05CC08003EC1E9 /* MicButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicButton.swift; sourceTree = "<group>"; };
+		94FA112D2E05CC15003EC1E9 /* SendButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendButton.swift; sourceTree = "<group>"; };
+		94FA112F2E05CC23003EC1E9 /* InputGuidanceFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputGuidanceFooter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -211,7 +239,17 @@
 		94FA10F42E056465003EC1E9 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				94FA111D2E05C904003EC1E9 /* Today */,
+				94FA111C2E05C8FC003EC1E9 /* Alerts */,
+				94FA111B2E05C8F2003EC1E9 /* Situations */,
+				94FA111A2E05C8E7003EC1E9 /* Library */,
+				94FA11192E05C8DC003EC1E9 /* Settings */,
 				94FA110C2E05BA00003EC1E9 /* MainTabView.swift */,
+				94FA110F2E05C88A003EC1E9 /* TodayView.swift */,
+				94FA11112E05C898003EC1E9 /* NewSituationView.swift */,
+				94FA11132E05C8A7003EC1E9 /* LibraryView.swift */,
+				94FA11152E05C8B6003EC1E9 /* AlertsView.swift */,
+				94FA11172E05C8C1003EC1E9 /* SettingsView.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -256,6 +294,58 @@
 			children = (
 			);
 			path = Shared;
+			sourceTree = "<group>";
+		};
+		94FA11192E05C8DC003EC1E9 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		94FA111A2E05C8E7003EC1E9 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
+		94FA111B2E05C8F2003EC1E9 /* Situations */ = {
+			isa = PBXGroup;
+			children = (
+				94FA11282E05CBEB003EC1E9 /* Components */,
+				94FA111E2E05CBAA003EC1E9 /* SituationInputIdleView.swift */,
+				94FA11202E05CBB8003EC1E9 /* SituationTypingView.swift */,
+				94FA11222E05CBC3003EC1E9 /* SituationVoiceView.swift */,
+				94FA11242E05CBD4003EC1E9 /* SituationFollowUpView.swift */,
+				94FA11262E05CBDF003EC1E9 /* SituationOrganizingView.swift */,
+			);
+			path = Situations;
+			sourceTree = "<group>";
+		};
+		94FA111C2E05C8FC003EC1E9 /* Alerts */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Alerts;
+			sourceTree = "<group>";
+		};
+		94FA111D2E05C904003EC1E9 /* Today */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Today;
+			sourceTree = "<group>";
+		};
+		94FA11282E05CBEB003EC1E9 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				94FA11292E05CBFD003EC1E9 /* ChildBadge.swift */,
+				94FA112B2E05CC08003EC1E9 /* MicButton.swift */,
+				94FA112D2E05CC15003EC1E9 /* SendButton.swift */,
+				94FA112F2E05CC23003EC1E9 /* InputGuidanceFooter.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -388,17 +478,31 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				94FA11142E05C8A7003EC1E9 /* LibraryView.swift in Sources */,
 				94FA10C62E056247003EC1E9 /* ContentView.swift in Sources */,
 				94FA11092E056D30003EC1E9 /* PaymentView.swift in Sources */,
 				94FA10C42E056247003EC1E9 /* ParentGuidanceApp.swift in Sources */,
+				94FA11272E05CBDF003EC1E9 /* SituationOrganizingView.swift in Sources */,
+				94FA11302E05CC23003EC1E9 /* InputGuidanceFooter.swift in Sources */,
 				94FA10FB2E05666F003EC1E9 /* ColorPalette.swift in Sources */,
 				94FA10FD2E056C6C003EC1E9 /* WelcomeView.swift in Sources */,
 				94FA110D2E05BA00003EC1E9 /* MainTabView.swift in Sources */,
 				94FA11052E056CCA003EC1E9 /* PlanSelectionView.swift in Sources */,
+				94FA112E2E05CC15003EC1E9 /* SendButton.swift in Sources */,
+				94FA112C2E05CC08003EC1E9 /* MicButton.swift in Sources */,
+				94FA11122E05C898003EC1E9 /* NewSituationView.swift in Sources */,
+				94FA11182E05C8C1003EC1E9 /* SettingsView.swift in Sources */,
 				94FA11072E056CFD003EC1E9 /* OnboardingCoordinator.swift in Sources */,
 				94FA11012E056C93003EC1E9 /* ChildBasicsView.swift in Sources */,
+				94FA11162E05C8B6003EC1E9 /* AlertsView.swift in Sources */,
+				94FA112A2E05CBFD003EC1E9 /* ChildBadge.swift in Sources */,
+				94FA11252E05CBD4003EC1E9 /* SituationFollowUpView.swift in Sources */,
 				94FA10FF2E056C7A003EC1E9 /* AuthenticationView.swift in Sources */,
+				94FA11212E05CBB8003EC1E9 /* SituationTypingView.swift in Sources */,
+				94FA11102E05C88A003EC1E9 /* TodayView.swift in Sources */,
 				94FA110B2E056D40003EC1E9 /* APIKeyView.swift in Sources */,
+				94FA11232E05CBC3003EC1E9 /* SituationVoiceView.swift in Sources */,
+				94FA111F2E05CBAA003EC1E9 /* SituationInputIdleView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

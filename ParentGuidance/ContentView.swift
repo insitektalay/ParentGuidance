@@ -1,24 +1,18 @@
-//
-//  ContentView.swift
-//  ParentGuidance
-//
-//  Created by alex kerss on 20/06/2025.
-//
-
 import SwiftUI
 
 struct ContentView: View {
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+            Text("ParentGuidance")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .foregroundColor(ColorPalette.terracotta)
+            
+            Text("Your parenting co-pilot")
+                .font(.headline)
+                .foregroundColor(ColorPalette.navy)
         }
-        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(ColorPalette.cream)
     }
-}
-
-#Preview {
-    ContentView()
 }

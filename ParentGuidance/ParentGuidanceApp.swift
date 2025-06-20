@@ -11,7 +11,8 @@ import SwiftUI
 struct ParentGuidanceApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            OnboardingCoordinator()
         }
     }
 }
+

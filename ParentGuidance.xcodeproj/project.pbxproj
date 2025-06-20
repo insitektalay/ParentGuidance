@@ -14,6 +14,15 @@
 		94FA10D52E056249003EC1E9 /* ParentGuidanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA10D42E056249003EC1E9 /* ParentGuidanceTests.swift */; };
 		94FA10DF2E056249003EC1E9 /* ParentGuidanceUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA10DE2E056249003EC1E9 /* ParentGuidanceUITests.swift */; };
 		94FA10E12E056249003EC1E9 /* ParentGuidanceUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA10E02E056249003EC1E9 /* ParentGuidanceUITestsLaunchTests.swift */; };
+		94FA10FB2E05666F003EC1E9 /* ColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA10FA2E05666F003EC1E9 /* ColorPalette.swift */; };
+		94FA10FD2E056C6C003EC1E9 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA10FC2E056C6C003EC1E9 /* WelcomeView.swift */; };
+		94FA10FF2E056C7A003EC1E9 /* AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA10FE2E056C7A003EC1E9 /* AuthenticationView.swift */; };
+		94FA11012E056C93003EC1E9 /* ChildBasicsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA11002E056C93003EC1E9 /* ChildBasicsView.swift */; };
+		94FA11052E056CCA003EC1E9 /* PlanSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA11042E056CCA003EC1E9 /* PlanSelectionView.swift */; };
+		94FA11072E056CFD003EC1E9 /* OnboardingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA11062E056CFD003EC1E9 /* OnboardingCoordinator.swift */; };
+		94FA11092E056D30003EC1E9 /* PaymentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA11082E056D30003EC1E9 /* PaymentView.swift */; };
+		94FA110B2E056D40003EC1E9 /* APIKeyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA110A2E056D40003EC1E9 /* APIKeyView.swift */; };
+		94FA110D2E05BA00003EC1E9 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA110C2E05BA00003EC1E9 /* MainTabView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +53,15 @@
 		94FA10DA2E056249003EC1E9 /* ParentGuidanceUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ParentGuidanceUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		94FA10DE2E056249003EC1E9 /* ParentGuidanceUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentGuidanceUITests.swift; sourceTree = "<group>"; };
 		94FA10E02E056249003EC1E9 /* ParentGuidanceUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentGuidanceUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		94FA10FA2E05666F003EC1E9 /* ColorPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPalette.swift; sourceTree = "<group>"; };
+		94FA10FC2E056C6C003EC1E9 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		94FA10FE2E056C7A003EC1E9 /* AuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationView.swift; sourceTree = "<group>"; };
+		94FA11002E056C93003EC1E9 /* ChildBasicsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildBasicsView.swift; sourceTree = "<group>"; };
+		94FA11042E056CCA003EC1E9 /* PlanSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanSelectionView.swift; sourceTree = "<group>"; };
+		94FA11062E056CFD003EC1E9 /* OnboardingCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCoordinator.swift; sourceTree = "<group>"; };
+		94FA11082E056D30003EC1E9 /* PaymentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentView.swift; sourceTree = "<group>"; };
+		94FA110A2E056D40003EC1E9 /* APIKeyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeyView.swift; sourceTree = "<group>"; };
+		94FA110C2E05BA00003EC1E9 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,8 +112,15 @@
 		94FA10C22E056247003EC1E9 /* ParentGuidance */ = {
 			isa = PBXGroup;
 			children = (
-				94FA10C32E056247003EC1E9 /* ParentGuidanceApp.swift */,
 				94FA10C52E056247003EC1E9 /* ContentView.swift */,
+				94FA10F32E05632C003EC1E9 /* Constants */,
+				94FA10F22E056321003EC1E9 /* Utilities */,
+				94FA10F12E056313003EC1E9 /* Components */,
+				94FA10F02E05630A003EC1E9 /* Services */,
+				94FA10EF2E056303003EC1E9 /* Models */,
+				94FA10EE2E0562F9003EC1E9 /* ViewModels */,
+				94FA10ED2E0562F0003EC1E9 /* Views */,
+				94FA10C32E056247003EC1E9 /* ParentGuidanceApp.swift */,
 				94FA10C72E056249003EC1E9 /* Assets.xcassets */,
 				94FA10C92E056249003EC1E9 /* Preview Content */,
 			);
@@ -125,6 +150,112 @@
 				94FA10E02E056249003EC1E9 /* ParentGuidanceUITestsLaunchTests.swift */,
 			);
 			path = ParentGuidanceUITests;
+			sourceTree = "<group>";
+		};
+		94FA10ED2E0562F0003EC1E9 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				94FA10F62E0564D1003EC1E9 /* Components */,
+				94FA10F52E056475003EC1E9 /* Onboarding */,
+				94FA10F42E056465003EC1E9 /* Core */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		94FA10EE2E0562F9003EC1E9 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				94FA10F92E0564F4003EC1E9 /* Shared */,
+				94FA10F82E0564EE003EC1E9 /* Core */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		94FA10EF2E056303003EC1E9 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				94FA10F72E0564DE003EC1E9 /* Core */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		94FA10F02E05630A003EC1E9 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		94FA10F12E056313003EC1E9 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		94FA10F22E056321003EC1E9 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		94FA10F32E05632C003EC1E9 /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				94FA10FA2E05666F003EC1E9 /* ColorPalette.swift */,
+			);
+			path = Constants;
+			sourceTree = "<group>";
+		};
+		94FA10F42E056465003EC1E9 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				94FA110C2E05BA00003EC1E9 /* MainTabView.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		94FA10F52E056475003EC1E9 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				94FA10FC2E056C6C003EC1E9 /* WelcomeView.swift */,
+				94FA10FE2E056C7A003EC1E9 /* AuthenticationView.swift */,
+				94FA11002E056C93003EC1E9 /* ChildBasicsView.swift */,
+				94FA11042E056CCA003EC1E9 /* PlanSelectionView.swift */,
+				94FA11062E056CFD003EC1E9 /* OnboardingCoordinator.swift */,
+				94FA11082E056D30003EC1E9 /* PaymentView.swift */,
+				94FA110A2E056D40003EC1E9 /* APIKeyView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		94FA10F62E0564D1003EC1E9 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		94FA10F72E0564DE003EC1E9 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		94FA10F82E0564EE003EC1E9 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		94FA10F92E0564F4003EC1E9 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Shared;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -258,7 +389,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				94FA10C62E056247003EC1E9 /* ContentView.swift in Sources */,
+				94FA11092E056D30003EC1E9 /* PaymentView.swift in Sources */,
 				94FA10C42E056247003EC1E9 /* ParentGuidanceApp.swift in Sources */,
+				94FA10FB2E05666F003EC1E9 /* ColorPalette.swift in Sources */,
+				94FA10FD2E056C6C003EC1E9 /* WelcomeView.swift in Sources */,
+				94FA110D2E05BA00003EC1E9 /* MainTabView.swift in Sources */,
+				94FA11052E056CCA003EC1E9 /* PlanSelectionView.swift in Sources */,
+				94FA11072E056CFD003EC1E9 /* OnboardingCoordinator.swift in Sources */,
+				94FA11012E056C93003EC1E9 /* ChildBasicsView.swift in Sources */,
+				94FA10FF2E056C7A003EC1E9 /* AuthenticationView.swift in Sources */,
+				94FA110B2E056D40003EC1E9 /* APIKeyView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

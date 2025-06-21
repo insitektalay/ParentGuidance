@@ -114,16 +114,16 @@ struct SettingsScreen: View {
 
 struct MainTabView: View {
     @State private var activeTab: Tab = .new
-    
+
     var body: some View {
-        VStack(spacing: 0) {
+        ZStack(alignment: .bottom) {
             // Main content area
             Group {
                 switch activeTab {
                 case .today:
                     TodayScreen()
                 case .new:
-                    NewScreen()
+                    NewSituationView()
                 case .library:
                     LibraryScreen()
                 case .alerts:
@@ -132,7 +132,7 @@ struct MainTabView: View {
                     SettingsScreen()
                 }
             }
-            
+
             // Tab bar
             HStack {
                 ForEach(Tab.allCases, id: \.self) { tab in
@@ -143,7 +143,7 @@ struct MainTabView: View {
                             activeTab = tab
                         }
                     )
-                    
+
                     if tab != Tab.allCases.last {
                         Spacer()
                     }
@@ -151,15 +151,8 @@ struct MainTabView: View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
+            .padding(.bottom, 20)
             .background(Color(hex: "1F2133"))
-            .clipShape(
-                .rect(
-                    topLeadingRadius: 0,
-                    bottomLeadingRadius: 24,
-                    bottomTrailingRadius: 24,
-                    topTrailingRadius: 0
-                )
-            )
         }
         .ignoresSafeArea(.container, edges: .bottom)
     }

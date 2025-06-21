@@ -1,8 +1,21 @@
-//
-//  NewSituationView.swift
-//  ParentGuidance
-//
-//  Created by alex kerss on 20/06/2025.
-//
+import SwiftUI
 
-import Foundation
+struct NewSituationView: View {
+    var body: some View {
+        VStack(spacing: 0) {
+            // Main situation input screen state
+            SituationInputIdleView(
+                childName: "Alex",
+                onStartRecording: {
+                    // handle start recording
+                },
+                onSendMessage: {
+                    // handle send
+                }
+            )
+        }
+        .background(ColorPalette.navy)
+        
+    }
+}
+

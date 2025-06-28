@@ -6,7 +6,7 @@ struct SendButton: View {
     
     var body: some View {
         Button(action: action) {
-            Image(systemName: "arrow.right")
+            Image(systemName: "paperplane.fill")
                 .font(.system(size: 24, weight: .medium))
                 .foregroundColor(isEnabled ? ColorPalette.white : ColorPalette.white.opacity(0.3))
                 .frame(width: 56, height: 56)

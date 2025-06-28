@@ -116,43 +116,52 @@ struct MainTabView: View {
     @State private var activeTab: Tab = .new
 
     var body: some View {
-        ZStack(alignment: .bottom) {
+        VStack(spacing: 0) {
+            // Global child header
+            ChildHeader(childName: "Alex")
+                .background(ColorPalette.navy)
+            
             // Main content area
-            Group {
-                switch activeTab {
-                case .today:
-                    TodayScreen()
-                case .new:
-                    NewSituationView()
-                case .library:
-                    LibraryScreen()
-                case .alerts:
-                    AlertsScreen()
-                case .settings:
-                    SettingsScreen()
-                }
-            }
-
-            // Tab bar
-            HStack {
-                ForEach(Tab.allCases, id: \.self) { tab in
-                    TabButton(
-                        tab: tab,
-                        isActive: activeTab == tab,
-                        action: {
-                            activeTab = tab
-                        }
-                    )
-
-                    if tab != Tab.allCases.last {
-                        Spacer()
+            ZStack {
+                Group {
+                    switch activeTab {
+                    case .today:
+                        TodayScreen()
+                    case .new:
+                        NewSituationView()
+                    case .library:
+                        LibraryScreen()
+                    case .alerts:
+                        AlertsScreen()
+                    case .settings:
+                        SettingsScreen()
                     }
                 }
+                
+                // Tab bar
+                VStack {
+                    Spacer()
+                    HStack {
+                        ForEach(Tab.allCases, id: \.self) { tab in
+                            TabButton(
+                                tab: tab,
+                                isActive: activeTab == tab,
+                                action: {
+                                    activeTab = tab
+                                }
+                            )
+
+                            if tab != Tab.allCases.last {
+                                Spacer()
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .padding(.bottom, 20)
+                    .background(Color(hex: "1F2133"))
+                }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .padding(.bottom, 20)
-            .background(Color(hex: "1F2133"))
         }
         .ignoresSafeArea(.container, edges: .bottom)
     }

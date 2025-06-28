@@ -3,6 +3,7 @@ import SwiftUI
 struct SituationInputIdleView: View {
     @State private var inputText: String = ""
     @State private var isRecording: Bool = false
+    @FocusState private var isTextEditorFocused: Bool
     
     let childName: String
     let onStartRecording: () -> Void
@@ -10,15 +11,6 @@ struct SituationInputIdleView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Header with child badge
-            HStack {
-                ChildBadge(childName: childName)
-                Spacer()
-            }
-            .padding(.horizontal, 16)
-            .padding(.top, 10)
-            .padding(.bottom, 12)
-            
             // Main input area
             VStack(spacing: 8) {
                 TextEditor(text: $inputText)
@@ -27,10 +19,17 @@ struct SituationInputIdleView: View {
                     .scrollContentBackground(.hidden)
                     .background(ColorPalette.white.opacity(0.05))
                     .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .frame(height: 380)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(
+                                isTextEditorFocused ? ColorPalette.terracotta : Color.clear,
+                                lineWidth: 2
+                            )
+                    )
+                    .frame(height: 180)
                     .overlay(
                         Group {
-                            if inputText.isEmpty {
+                            if inputText.isEmpty && !isTextEditorFocused {
                                 VStack {
                                     HStack {
                                         Text("Describe what's happening with \(childName)...")
@@ -45,6 +44,7 @@ struct SituationInputIdleView: View {
                             }
                         }
                     )
+                    .focused($isTextEditorFocused)
                     .padding(.horizontal, 16)
                 
                 InputGuidanceFooter()

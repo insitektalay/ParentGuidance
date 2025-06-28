@@ -4,13 +4,15 @@ struct NewSituationView: View {
     var body: some View {
         VStack(spacing: 0) {
             // Main situation input screen state
-            SituationInputIdleView(
-                childName: "Alex",
+            SituationFollowUpView(
+                onAddDetails: {
+                    // handle add details
+                },
+                onContinueAnyway: {
+                    // handle continue anyway
+                },
                 onStartRecording: {
                     // handle start recording
-                },
-                onSendMessage: {
-                    // handle send
                 }
             )
         }

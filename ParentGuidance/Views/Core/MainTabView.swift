@@ -129,7 +129,7 @@ struct MainTabView: View {
                         Group {
                             switch activeTab {
                             case .today:
-                                TodayScreen()
+                                TodayTimelineView()
                             case .new:
                                 SituationInputIdleView(
                                     childName: "Alex",

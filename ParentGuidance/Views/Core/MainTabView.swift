@@ -129,7 +129,9 @@ struct MainTabView: View {
                         Group {
                             switch activeTab {
                             case .today:
-                                TodayTimelineView()
+                                NavigationStack {
+                                    TodayTimelineView()
+                                }
                             case .new:
                                 SituationInputIdleView(
                                     childName: "Alex",
@@ -137,9 +139,9 @@ struct MainTabView: View {
                                     onSendMessage: {}
                                 )
                             case .library:
-                                LibraryScreen()
+                                LibraryView()
                             case .alerts:
-                                AlertsScreen()
+                                AlertView()
                             case .settings:
                                 SettingsScreen()
                             }

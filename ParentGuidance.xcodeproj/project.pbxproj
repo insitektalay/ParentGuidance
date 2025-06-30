@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		948605C82E111824008D92DE /* TodayEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605C72E111824008D92DE /* TodayEmptyView.swift */; };
 		948605CB2E111D1D008D92DE /* TodayTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605CA2E111D1D008D92DE /* TodayTimelineView.swift */; };
+		948605CE2E115CB2008D92DE /* AlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605CD2E115CB2008D92DE /* AlertView.swift */; };
+		948605D12E133149008D92DE /* SupabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605D02E133149008D92DE /* SupabaseManager.swift */; };
+		948605D42E133217008D92DE /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 948605D32E133217008D92DE /* Supabase */; };
 		94FA10C42E056247003EC1E9 /* ParentGuidanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA10C32E056247003EC1E9 /* ParentGuidanceApp.swift */; };
 		94FA10C62E056247003EC1E9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA10C52E056247003EC1E9 /* ContentView.swift */; };
 		94FA10C82E056249003EC1E9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 94FA10C72E056249003EC1E9 /* Assets.xcassets */; };
@@ -41,6 +44,12 @@
 		94FA11302E05CC23003EC1E9 /* InputGuidanceFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA112F2E05CC23003EC1E9 /* InputGuidanceFooter.swift */; };
 		94FA11322E05CC30003EC1E9 /* ChildHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA11312E05CC30003EC1E9 /* ChildHeader.swift */; };
 		94FA11332E05CC40003EC1E9 /* RoutineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA11332E05CC41003EC1E9 /* RoutineCard.swift */; };
+		94FA11342E05CC50003EC1E9 /* GuidanceCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA11352E05CC51003EC1E9 /* GuidanceCard.swift */; };
+		94FA11362E05CC60003EC1E9 /* SituationGuidanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA11372E05CC61003EC1E9 /* SituationGuidanceView.swift */; };
+		94FA113A2E05CC80003EC1E9 /* NotificationCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA113B2E05CC81003EC1E9 /* NotificationCard.swift */; };
+		94FA113C2E05CC90003EC1E9 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA113D2E05CC91003EC1E9 /* SearchBar.swift */; };
+		94FA113E2E05CCA0003EC1E9 /* FoundationToolCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA113F2E05CCA1003EC1E9 /* FoundationToolCard.swift */; };
+		94FA11402E05CCB0003EC1E9 /* SituationCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA11412E05CCB1003EC1E9 /* SituationCard.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +72,8 @@
 /* Begin PBXFileReference section */
 		948605C72E111824008D92DE /* TodayEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayEmptyView.swift; sourceTree = "<group>"; };
 		948605CA2E111D1D008D92DE /* TodayTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayTimelineView.swift; sourceTree = "<group>"; };
+		948605CD2E115CB2008D92DE /* AlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertView.swift; sourceTree = "<group>"; };
+		948605D02E133149008D92DE /* SupabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseManager.swift; sourceTree = "<group>"; };
 		94FA10C02E056247003EC1E9 /* ParentGuidance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ParentGuidance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		94FA10C32E056247003EC1E9 /* ParentGuidanceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentGuidanceApp.swift; sourceTree = "<group>"; };
 		94FA10C52E056247003EC1E9 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -98,6 +109,12 @@
 		94FA112F2E05CC23003EC1E9 /* InputGuidanceFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputGuidanceFooter.swift; sourceTree = "<group>"; };
 		94FA11312E05CC30003EC1E9 /* ChildHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildHeader.swift; sourceTree = "<group>"; };
 		94FA11332E05CC41003EC1E9 /* RoutineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineCard.swift; sourceTree = "<group>"; };
+		94FA11352E05CC51003EC1E9 /* GuidanceCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidanceCard.swift; sourceTree = "<group>"; };
+		94FA11372E05CC61003EC1E9 /* SituationGuidanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SituationGuidanceView.swift; sourceTree = "<group>"; };
+		94FA113B2E05CC81003EC1E9 /* NotificationCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCard.swift; sourceTree = "<group>"; };
+		94FA113D2E05CC91003EC1E9 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
+		94FA113F2E05CCA1003EC1E9 /* FoundationToolCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundationToolCard.swift; sourceTree = "<group>"; };
+		94FA11412E05CCB1003EC1E9 /* SituationCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SituationCard.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +122,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				948605D42E133217008D92DE /* Supabase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -133,6 +151,21 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
+		948605CC2E115C87008D92DE /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				94FA113B2E05CC81003EC1E9 /* NotificationCard.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		948605D22E133217008D92DE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		94FA10B72E056247003EC1E9 = {
 			isa = PBXGroup;
 			children = (
@@ -140,6 +173,7 @@
 				94FA10D32E056249003EC1E9 /* ParentGuidanceTests */,
 				94FA10DD2E056249003EC1E9 /* ParentGuidanceUITests */,
 				94FA10C12E056247003EC1E9 /* Products */,
+				948605D22E133217008D92DE /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -226,6 +260,7 @@
 		94FA10F02E05630A003EC1E9 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				948605D02E133149008D92DE /* SupabaseManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -258,6 +293,7 @@
 				94FA111D2E05C904003EC1E9 /* Today */,
 				94FA111C2E05C8FC003EC1E9 /* Alerts */,
 				94FA111B2E05C8F2003EC1E9 /* Situations */,
+				94FA11382E05CC70003EC1E9 /* Guidance */,
 				94FA111A2E05C8E7003EC1E9 /* Library */,
 				94FA11192E05C8DC003EC1E9 /* Settings */,
 				94FA110C2E05BA00003EC1E9 /* MainTabView.swift */,
@@ -324,6 +360,7 @@
 		94FA111A2E05C8E7003EC1E9 /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				94FA11422E05CCC0003EC1E9 /* Components */,
 			);
 			path = Library;
 			sourceTree = "<group>";
@@ -344,6 +381,8 @@
 		94FA111C2E05C8FC003EC1E9 /* Alerts */ = {
 			isa = PBXGroup;
 			children = (
+				948605CC2E115C87008D92DE /* Components */,
+				948605CD2E115CB2008D92DE /* AlertView.swift */,
 			);
 			path = Alerts;
 			sourceTree = "<group>";
@@ -368,6 +407,33 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
+		94FA11382E05CC70003EC1E9 /* Guidance */ = {
+			isa = PBXGroup;
+			children = (
+				94FA11392E05CC71003EC1E9 /* Components */,
+				94FA11372E05CC61003EC1E9 /* SituationGuidanceView.swift */,
+			);
+			path = Guidance;
+			sourceTree = "<group>";
+		};
+		94FA11392E05CC71003EC1E9 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				94FA11352E05CC51003EC1E9 /* GuidanceCard.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		94FA11422E05CCC0003EC1E9 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				94FA113D2E05CC91003EC1E9 /* SearchBar.swift */,
+				94FA113F2E05CCA1003EC1E9 /* FoundationToolCard.swift */,
+				94FA11412E05CCB1003EC1E9 /* SituationCard.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -384,6 +450,9 @@
 			dependencies = (
 			);
 			name = ParentGuidance;
+			packageProductDependencies = (
+				948605D32E133217008D92DE /* Supabase */,
+			);
 			productName = ParentGuidance;
 			productReference = 94FA10C02E056247003EC1E9 /* ParentGuidance.app */;
 			productType = "com.apple.product-type.application";
@@ -456,6 +525,9 @@
 				Base,
 			);
 			mainGroup = 94FA10B72E056247003EC1E9;
+			packageReferences = (
+				948605CF2E12D882008D92DE /* XCRemoteSwiftPackageReference "supabase-swift" */,
+			);
 			productRefGroup = 94FA10C12E056247003EC1E9 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -519,6 +591,7 @@
 				94FA112A2E05CBFD003EC1E9 /* ChildBadge.swift in Sources */,
 				94FA11252E05CBD4003EC1E9 /* SituationFollowUpView.swift in Sources */,
 				948605C82E111824008D92DE /* TodayEmptyView.swift in Sources */,
+				948605D12E133149008D92DE /* SupabaseManager.swift in Sources */,
 				94FA10FF2E056C7A003EC1E9 /* AuthenticationView.swift in Sources */,
 				94FA11212E05CBB8003EC1E9 /* SituationTypingView.swift in Sources */,
 				94FA11102E05C88A003EC1E9 /* TodayView.swift in Sources */,
@@ -527,6 +600,13 @@
 				94FA111F2E05CBAA003EC1E9 /* SituationInputIdleView.swift in Sources */,
 				94FA11322E05CC30003EC1E9 /* ChildHeader.swift in Sources */,
 				94FA11332E05CC40003EC1E9 /* RoutineCard.swift in Sources */,
+				948605CE2E115CB2008D92DE /* AlertView.swift in Sources */,
+				94FA11342E05CC50003EC1E9 /* GuidanceCard.swift in Sources */,
+				94FA11362E05CC60003EC1E9 /* SituationGuidanceView.swift in Sources */,
+				94FA113A2E05CC80003EC1E9 /* NotificationCard.swift in Sources */,
+				94FA113C2E05CC90003EC1E9 /* SearchBar.swift in Sources */,
+				94FA113E2E05CCA0003EC1E9 /* FoundationToolCard.swift in Sources */,
+				94FA11402E05CCB0003EC1E9 /* SituationCard.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -852,6 +932,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		948605CF2E12D882008D92DE /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase-community/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		948605D32E133217008D92DE /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 948605CF2E12D882008D92DE /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 94FA10B82E056247003EC1E9 /* Project object */;
 }

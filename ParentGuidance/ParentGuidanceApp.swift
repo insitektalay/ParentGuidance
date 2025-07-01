@@ -21,7 +21,7 @@ struct ParentGuidanceApp: App {
 struct OnboardingFlow: View {
     @State private var currentView: OnboardingStep = .welcome
     @State private var isLoadingProfile = false
-    // @State private var onboardingManager = OnboardingManager.shared
+    // @StateObject private var onboardingManager = OnboardingManager.shared
     
     enum OnboardingStep {
         case welcome
@@ -73,20 +73,16 @@ struct OnboardingFlow: View {
         case .plan:
             PlanSelectionView(
                 onBringOwnAPI: {
-                    // Will implement in next step
-                    currentView = .main
+                    savePlanSelection("api", nextStep: .apiKey)
                 },
                 onStarterPlan: {
-                    // Will implement in next step
-                    currentView = .main
+                    savePlanSelection("starter", nextStep: .payment)
                 },
                 onFamilyPlan: {
-                    // Will implement in next step
-                    currentView = .main
+                    savePlanSelection("family", nextStep: .payment)
                 },
                 onPremiumPlan: {
-                    // Will implement in next step
-                    currentView = .main
+                    savePlanSelection("premium", nextStep: .payment)
                 }
             )
         case .payment:
@@ -104,20 +100,22 @@ struct OnboardingFlow: View {
             )
         case .apiKey:
             APIKeyView(
-                onTestConnection: {},
-                onSaveAndContinue: {
-                    currentView = .main
+                onTestConnection: { apiKey in
+                    print("🧪 Testing API key: \(apiKey)")
+                },
+                onSaveAndContinue: { apiKey in
+                    saveApiKey(apiKey)
                 },
                 onGetAPIKey: {},
                 onWhatsThis: {}
             )
         case .child:
             ChildBasicsView(
-                onAddAnotherChild: {
-                    currentView = .main
+                onAddAnotherChild: { name, birthDate in
+                    saveChildDetails(name: name, birthDate: birthDate, isAdditional: true)
                 },
-                onContinue: {
-                    currentView = .main
+                onContinue: { name, birthDate in
+                    saveChildDetails(name: name, birthDate: birthDate, isAdditional: false)
                 }
             )
         case .main:
@@ -129,14 +127,68 @@ struct OnboardingFlow: View {
         currentView = .loading
         
         Task {
-            // Simulate loading for 2 seconds
-            try await Task.sleep(nanoseconds: 2_000_000_000)
+            print("🎯 Authenticated user ID: \(userId)")
+            print("🎯 User email: \(email ?? "No email")")
+            
+            // Simulate loading profile
+            try await Task.sleep(nanoseconds: 1_000_000_000)
             
             await MainActor.run {
-                print("🎯 Authenticated user ID: \(userId)")
-                print("🎯 User email: \(email ?? "No email")")
-                // For now, go directly to plan selection
+                print("📋 Starting onboarding from plan selection")
                 currentView = .plan
+            }
+        }
+    }
+    
+    private func savePlanSelection(_ plan: String, nextStep: OnboardingStep) {
+        Task {
+            print("💾 Saving plan selection: \(plan) to database...")
+            
+            // Simulate database save operation
+            try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+            
+            await MainActor.run {
+                print("✅ Plan saved successfully: \(plan)")
+                currentView = nextStep
+            }
+        }
+    }
+    
+    private func saveApiKey(_ apiKey: String) {
+        Task {
+            print("🔑 Saving API key: \(apiKey.prefix(10))... to database...")
+            
+            // Simulate database save operation
+            try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+            
+            await MainActor.run {
+                print("✅ API key saved successfully")
+                currentView = .child
+            }
+        }
+    }
+    
+    private func saveChildDetails(name: String, birthDate: Date, isAdditional: Bool) {
+        Task {
+            let age = Calendar.current.dateComponents([.year], from: birthDate, to: Date()).year ?? 0
+            print("👶 Saving child details to database...")
+            print("   Name: \(name)")
+            print("   Age: \(age) years old")
+            print("   Birth Date: \(DateFormatter.localizedString(from: birthDate, dateStyle: .medium, timeStyle: .none))")
+            
+            // Simulate database save operation
+            try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+            
+            await MainActor.run {
+                print("✅ Child details saved successfully")
+                
+                if isAdditional {
+                    print("🔄 Ready to add another child")
+                    // Stay on child details screen for additional child
+                } else {
+                    print("🎉 Onboarding complete! Navigating to main app")
+                    currentView = .main
+                }
             }
         }
     }

@@ -72,8 +72,8 @@ struct OnboardingCoordinator: View {
 
         case .apiKey:
             APIKeyView(
-                onTestConnection: {},
-                onSaveAndContinue: {
+                onTestConnection: { _ in },
+                onSaveAndContinue: { _ in
                     step = .child
                 },
                 onGetAPIKey: {},
@@ -82,8 +82,8 @@ struct OnboardingCoordinator: View {
 
         case .child:
             ChildBasicsView(
-                onAddAnotherChild: {},
-                onContinue: {
+                onAddAnotherChild: { _, _ in },
+                onContinue: { _, _ in
                     print("✅ Onboarding complete — transition to ContentView()")
                 }
             )

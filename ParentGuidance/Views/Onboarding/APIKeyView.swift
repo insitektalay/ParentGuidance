@@ -3,8 +3,8 @@ import SwiftUI
 struct APIKeyView: View {
     @State private var apiKey: String = ""
     
-    let onTestConnection: () -> Void
-    let onSaveAndContinue: () -> Void
+    let onTestConnection: (String) -> Void
+    let onSaveAndContinue: (String) -> Void
     let onGetAPIKey: () -> Void
     let onWhatsThis: () -> Void
     
@@ -36,7 +36,7 @@ struct APIKeyView: View {
                             .background(ColorPalette.white)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                         
-                        Button(action: onTestConnection) {
+                        Button(action: { onTestConnection(apiKey) }) {
                             Text("Test Connection")
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(ColorPalette.white)
@@ -46,7 +46,7 @@ struct APIKeyView: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
                         }
                         
-                        Button(action: onSaveAndContinue) {
+                        Button(action: { onSaveAndContinue(apiKey) }) {
                             Text("Save and Continue")
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(ColorPalette.white)
@@ -93,8 +93,8 @@ struct APIKeyView: View {
 
 #Preview {
     APIKeyView(
-        onTestConnection: {},
-        onSaveAndContinue: {},
+        onTestConnection: { _ in },
+        onSaveAndContinue: { _ in },
         onGetAPIKey: {},
         onWhatsThis: {}
     )

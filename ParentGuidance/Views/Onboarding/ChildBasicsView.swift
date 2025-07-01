@@ -55,8 +55,8 @@ struct ChildBasicsView: View {
     @State private var childName: String = ""
     @State private var birthDate: Date = Date()
     
-    let onAddAnotherChild: () -> Void
-    let onContinue: () -> Void
+    let onAddAnotherChild: (String, Date) -> Void
+    let onContinue: (String, Date) -> Void
     
     var body: some View {
         VStack(spacing: 0) {
@@ -89,7 +89,7 @@ struct ChildBasicsView: View {
                             date: $birthDate
                         )
                         
-                        Button(action: onAddAnotherChild) {
+                        Button(action: { onAddAnotherChild(childName, birthDate) }) {
                             Text("+ Add Another Child")
                                 .font(.system(size: 16))
                                 .foregroundColor(ColorPalette.terracotta)
@@ -110,7 +110,7 @@ struct ChildBasicsView: View {
                     .foregroundColor(ColorPalette.white.opacity(0.6))
                     .multilineTextAlignment(.center)
                 
-                Button(action: onContinue) {
+                Button(action: { onContinue(childName, birthDate) }) {
                     Text("Continue")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(ColorPalette.white)
@@ -131,7 +131,7 @@ struct ChildBasicsView: View {
 
 #Preview {
     ChildBasicsView(
-        onAddAnotherChild: {},
-        onContinue: {}
+        onAddAnotherChild: { _, _ in },
+        onContinue: { _, _ in }
     )
 }

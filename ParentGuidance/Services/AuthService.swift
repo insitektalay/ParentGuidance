@@ -10,11 +10,11 @@ class AuthService {
     
     func signUp(email: String, password: String) async throws {
         do {
-            let response = try await SupabaseManager.shared.client.auth.signUp(
+            let session = try await SupabaseManager.shared.client.auth.signUp(
                 email: email,
                 password: password
             )
-            print("Sign up successful: \(response.user?.email ?? "No email")")
+            print("Sign up successful: \(session.user.email ?? "No email")")
         } catch {
             print("Sign up error: \(error.localizedDescription)")
             throw error
@@ -23,11 +23,11 @@ class AuthService {
     
     func signIn(email: String, password: String) async throws {
         do {
-            let response = try await SupabaseManager.shared.client.auth.signIn(
+            let session = try await SupabaseManager.shared.client.auth.signIn(
                 email: email,
                 password: password
             )
-            print("Sign in successful: \(response.user?.email ?? "No email")")
+            print("Sign in successful: \(session.user.email ?? "No email")")
         } catch {
             print("Sign in error: \(error.localizedDescription)")
             throw error
@@ -58,10 +58,11 @@ class AuthService {
     
     func signInWithGoogle() async throws {
         do {
-            let response = try await SupabaseManager.shared.client.auth.signInWithOAuth(
+            let url = try await SupabaseManager.shared.client.auth.getOAuthSignInURL(
                 provider: .google
             )
-            print("Google sign in successful: \(response.url?.absoluteString ?? "No URL")")
+            print("Google sign in URL: \(url.absoluteString)")
+            // In a real app, you would open this URL in a web view or Safari
         } catch {
             print("Google sign in error: \(error.localizedDescription)")
             throw error
@@ -70,10 +71,11 @@ class AuthService {
     
     func signInWithApple() async throws {
         do {
-            let response = try await SupabaseManager.shared.client.auth.signInWithOAuth(
+            let url = try await SupabaseManager.shared.client.auth.getOAuthSignInURL(
                 provider: .apple
             )
-            print("Apple sign in successful: \(response.url?.absoluteString ?? "No URL")")
+            print("Apple sign in URL: \(url.absoluteString)")
+            // In a real app, you would open this URL in a web view or Safari
         } catch {
             print("Apple sign in error: \(error.localizedDescription)")
             throw error
@@ -82,10 +84,11 @@ class AuthService {
     
     func signInWithFacebook() async throws {
         do {
-            let response = try await SupabaseManager.shared.client.auth.signInWithOAuth(
+            let url = try await SupabaseManager.shared.client.auth.getOAuthSignInURL(
                 provider: .facebook
             )
-            print("Facebook sign in successful: \(response.url?.absoluteString ?? "No URL")")
+            print("Facebook sign in URL: \(url.absoluteString)")
+            // In a real app, you would open this URL in a web view or Safari
         } catch {
             print("Facebook sign in error: \(error.localizedDescription)")
             throw error

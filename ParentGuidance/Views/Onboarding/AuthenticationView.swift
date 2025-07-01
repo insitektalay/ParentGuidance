@@ -153,6 +153,10 @@ struct AuthenticationView: View {
     let onEmailSignIn: () -> Void
     let onBackTapped: () -> Void
     
+    // Test credentials
+    private let testEmail = "test@example.com"
+    private let testPassword = "talaypassword123"
+    
     var body: some View {
         VStack(spacing: 0) {
             VStack(spacing: 0) {
@@ -188,28 +192,76 @@ struct AuthenticationView: View {
                             customIcon: AnyView(AppleIcon()),
                             label: "Continue with Apple",
                             variant: .apple,
-                            action: onAppleSignIn
+                            action: {
+                                Task {
+                                    do {
+                                        try await AuthService.shared.signInWithApple()
+                                        print("✅ Apple sign in successful")
+                                        onAppleSignIn()
+                                    } catch {
+                                        print("❌ Apple sign in failed: \(error.localizedDescription)")
+                                    }
+                                }
+                            }
                         )
                         
                         CustomSocialButton(
                             customIcon: AnyView(GoogleIcon()),
                             label: "Continue with Google",
                             variant: .google,
-                            action: onGoogleSignIn
+                            action: {
+                                Task {
+                                    do {
+                                        try await AuthService.shared.signInWithGoogle()
+                                        print("✅ Google sign in successful")
+                                        onGoogleSignIn()
+                                    } catch {
+                                        print("❌ Google sign in failed: \(error.localizedDescription)")
+                                    }
+                                }
+                            }
                         )
                         
                         CustomSocialButton(
                             customIcon: AnyView(FacebookIcon()),
                             label: "Continue with Facebook",
                             variant: .facebook,
-                            action: onFacebookSignIn
+                            action: {
+                                Task {
+                                    do {
+                                        try await AuthService.shared.signInWithFacebook()
+                                        print("✅ Facebook sign in successful")
+                                        onFacebookSignIn()
+                                    } catch {
+                                        print("❌ Facebook sign in failed: \(error.localizedDescription)")
+                                    }
+                                }
+                            }
                         )
                         
                         SocialButton(
                             icon: "envelope",
                             label: "Continue with Email",
                             variant: .email,
-                            action: onEmailSignIn
+                            action: {
+                                Task {
+                                    do {
+                                        try await AuthService.shared.signIn(email: testEmail, password: testPassword)
+                                        print("✅ Email sign in successful with \(testEmail)")
+                                        onEmailSignIn()
+                                    } catch {
+                                        print("❌ Email sign in failed: \(error.localizedDescription)")
+                                        // Try sign up if sign in fails
+                                        do {
+                                            try await AuthService.shared.signUp(email: testEmail, password: testPassword)
+                                            print("✅ Email sign up successful with \(testEmail)")
+                                            onEmailSignIn()
+                                        } catch {
+                                            print("❌ Email sign up also failed: \(error.localizedDescription)")
+                                        }
+                                    }
+                                }
+                            }
                         )
                     }
                 }

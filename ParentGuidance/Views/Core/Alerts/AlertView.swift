@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct  : View {
+struct AlertView: View {
     @State private var selectedCategory: AlertCategory = .recent
     
     enum AlertCategory: String, CaseIterable {

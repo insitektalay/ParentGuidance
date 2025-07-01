@@ -11,6 +11,7 @@
 		948605CB2E111D1D008D92DE /* TodayTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605CA2E111D1D008D92DE /* TodayTimelineView.swift */; };
 		948605CE2E115CB2008D92DE /* AlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605CD2E115CB2008D92DE /* AlertView.swift */; };
 		948605D12E133149008D92DE /* SupabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605D02E133149008D92DE /* SupabaseManager.swift */; };
+		948605D52E133250008D92DE /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605D62E133251008D92DE /* AuthService.swift */; };
 		948605D42E133217008D92DE /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 948605D32E133217008D92DE /* Supabase */; };
 		94FA10C42E056247003EC1E9 /* ParentGuidanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA10C32E056247003EC1E9 /* ParentGuidanceApp.swift */; };
 		94FA10C62E056247003EC1E9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA10C52E056247003EC1E9 /* ContentView.swift */; };
@@ -74,6 +75,7 @@
 		948605CA2E111D1D008D92DE /* TodayTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayTimelineView.swift; sourceTree = "<group>"; };
 		948605CD2E115CB2008D92DE /* AlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertView.swift; sourceTree = "<group>"; };
 		948605D02E133149008D92DE /* SupabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseManager.swift; sourceTree = "<group>"; };
+		948605D62E133251008D92DE /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		94FA10C02E056247003EC1E9 /* ParentGuidance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ParentGuidance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		94FA10C32E056247003EC1E9 /* ParentGuidanceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentGuidanceApp.swift; sourceTree = "<group>"; };
 		94FA10C52E056247003EC1E9 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -261,6 +263,7 @@
 			isa = PBXGroup;
 			children = (
 				948605D02E133149008D92DE /* SupabaseManager.swift */,
+				948605D62E133251008D92DE /* AuthService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -592,6 +595,7 @@
 				94FA11252E05CBD4003EC1E9 /* SituationFollowUpView.swift in Sources */,
 				948605C82E111824008D92DE /* TodayEmptyView.swift in Sources */,
 				948605D12E133149008D92DE /* SupabaseManager.swift in Sources */,
+				948605D52E133250008D92DE /* AuthService.swift in Sources */,
 				94FA10FF2E056C7A003EC1E9 /* AuthenticationView.swift in Sources */,
 				94FA11212E05CBB8003EC1E9 /* SituationTypingView.swift in Sources */,
 				94FA11102E05C88A003EC1E9 /* TodayView.swift in Sources */,
@@ -939,7 +943,7 @@
 			repositoryURL = "https://github.com/supabase-community/supabase-swift";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.5.1;
+				minimumVersion = 2.29.3;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

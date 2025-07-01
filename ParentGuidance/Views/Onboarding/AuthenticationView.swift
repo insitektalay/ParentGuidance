@@ -155,7 +155,7 @@ struct AuthenticationView: View {
     
     // Test credentials
     private let testEmail = "test@example.com"
-    private let testPassword = "talaypassword123"
+    private let testPassword = "password123"
     
     var body: some View {
         VStack(spacing: 0) {

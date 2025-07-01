@@ -150,7 +150,7 @@ struct AuthenticationView: View {
     let onAppleSignIn: () -> Void
     let onGoogleSignIn: () -> Void
     let onFacebookSignIn: () -> Void
-    let onEmailSignIn: () -> Void
+    let onEmailSignIn: (String, String?) -> Void
     let onBackTapped: () -> Void
     
     // Test credentials
@@ -246,16 +246,18 @@ struct AuthenticationView: View {
                             action: {
                                 Task {
                                     do {
-                                        try await AuthService.shared.signIn(email: testEmail, password: testPassword)
+                                        let userInfo = try await AuthService.shared.signIn(email: testEmail, password: testPassword)
                                         print("✅ Email sign in successful with \(testEmail)")
-                                        onEmailSignIn()
+                                        print("🎯 User ID: \(userInfo.userId)")
+                                        onEmailSignIn(userInfo.userId, userInfo.email)
                                     } catch {
                                         print("❌ Email sign in failed: \(error.localizedDescription)")
                                         // Try sign up if sign in fails
                                         do {
-                                            try await AuthService.shared.signUp(email: testEmail, password: testPassword)
+                                            let userInfo = try await AuthService.shared.signUp(email: testEmail, password: testPassword)
                                             print("✅ Email sign up successful with \(testEmail)")
-                                            onEmailSignIn()
+                                            print("🎯 User ID: \(userInfo.userId)")
+                                            onEmailSignIn(userInfo.userId, userInfo.email)
                                         } catch {
                                             print("❌ Email sign up also failed: \(error.localizedDescription)")
                                         }
@@ -288,7 +290,7 @@ struct AuthenticationView: View {
         onAppleSignIn: {},
         onGoogleSignIn: {},
         onFacebookSignIn: {},
-        onEmailSignIn: {},
+        onEmailSignIn: { _, _ in },
         onBackTapped: {}
     )
 }

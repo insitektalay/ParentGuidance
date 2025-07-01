@@ -1,6 +1,5 @@
 import Foundation
 import Supabase
-import Auth
 
 // MARK: - Update Structs for Supabase
 struct PlanUpdate: Encodable {

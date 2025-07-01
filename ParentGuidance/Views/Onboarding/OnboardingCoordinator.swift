@@ -32,7 +32,7 @@ struct OnboardingCoordinator: View {
                 onAppleSignIn: { step = .plan },
                 onGoogleSignIn: { step = .plan },
                 onFacebookSignIn: { step = .plan },
-                onEmailSignIn: { step = .plan },
+                onEmailSignIn: { _, _ in step = .plan },
                 onBackTapped: { step = .welcome }
             )
 

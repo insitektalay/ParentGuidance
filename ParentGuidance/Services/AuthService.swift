@@ -8,26 +8,28 @@ class AuthService {
     
     // MARK: - Email/Password Authentication
     
-    func signUp(email: String, password: String) async throws {
+    func signUp(email: String, password: String) async throws -> (userId: String, email: String?) {
         do {
             let session = try await SupabaseManager.shared.client.auth.signUp(
                 email: email,
                 password: password
             )
             print("Sign up successful: \(session.user.email ?? "No email")")
+            return (userId: session.user.id.uuidString, email: session.user.email)
         } catch {
             print("Sign up error: \(error.localizedDescription)")
             throw error
         }
     }
     
-    func signIn(email: String, password: String) async throws {
+    func signIn(email: String, password: String) async throws -> (userId: String, email: String?) {
         do {
             let session = try await SupabaseManager.shared.client.auth.signIn(
                 email: email,
                 password: password
             )
             print("Sign in successful: \(session.user.email ?? "No email")")
+            return (userId: session.user.id.uuidString, email: session.user.email)
         } catch {
             print("Sign in error: \(error.localizedDescription)")
             throw error

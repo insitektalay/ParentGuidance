@@ -1,5 +1,195 @@
 import SwiftUI
 import Foundation
+import Supabase
+
+// MARK: - Database Models (temporary - should be in separate files)
+struct Situation: Codable {
+    let id: String
+    let familyId: String?
+    let childId: String?
+    let title: String
+    let description: String
+    let situationType: String
+    let createdAt: String
+    let updatedAt: String
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case familyId = "family_id"
+        case childId = "child_id"
+        case title
+        case description
+        case situationType = "situation_type"
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+    }
+    
+    init(
+        familyId: String?,
+        childId: String?,
+        title: String,
+        description: String,
+        situationType: String = "one_time"
+    ) {
+        self.id = UUID().uuidString
+        self.familyId = familyId
+        self.childId = childId
+        self.title = title
+        self.description = description
+        self.situationType = situationType
+        self.createdAt = ISO8601DateFormatter().string(from: Date())
+        self.updatedAt = ISO8601DateFormatter().string(from: Date())
+    }
+}
+
+struct Guidance: Codable {
+    let id: String
+    let situationId: String
+    let situationCategory: String?
+    let content: String
+    let foundationToolEnhanced: Bool
+    let createdAt: String
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case situationId = "situation_id"
+        case situationCategory = "situation_category"
+        case content
+        case foundationToolEnhanced = "foundation_tool_enhanced"
+        case createdAt = "created_at"
+    }
+    
+    init(
+        situationId: String,
+        content: String,
+        situationCategory: String? = nil,
+        foundationToolEnhanced: Bool = false
+    ) {
+        self.id = UUID().uuidString
+        self.situationId = situationId
+        self.situationCategory = situationCategory
+        self.content = content
+        self.foundationToolEnhanced = foundationToolEnhanced
+        self.createdAt = ISO8601DateFormatter().string(from: Date())
+    }
+}
+
+// MARK: - ConversationService (temporary - should be in separate file)
+class ConversationService: ObservableObject {
+    static let shared = ConversationService()
+    private init() {}
+    
+    func saveSituation(
+        familyId: String?,
+        childId: String?,
+        title: String,
+        description: String
+    ) async throws -> String {
+        // Check if user is authenticated
+        let currentUser = try await SupabaseManager.shared.client.auth.user()
+        print("🔐 Current authenticated user: \(currentUser.id)")
+        
+        let situation = Situation(
+            familyId: familyId,
+            childId: childId,
+            title: title,
+            description: description
+        )
+        
+        print("💾 Saving situation to database...")
+        print("   Title: \(title)")
+        print("   Description: \(description.prefix(50))...")
+        print("   User ID: \(currentUser.id)")
+        
+        do {
+            try await SupabaseManager.shared.client
+                .from("situations")
+                .insert(situation)
+                .execute()
+            
+            print("✅ Situation saved successfully with ID: \(situation.id)")
+            return situation.id
+        } catch {
+            print("❌ Error saving situation: \(error.localizedDescription)")
+            print("❌ Full error: \(error)")
+            throw error
+        }
+    }
+    
+    func saveGuidance(
+        situationId: String,
+        content: String,
+        category: String? = nil
+    ) async throws -> String {
+        // Check if user is authenticated
+        let currentUser = try await SupabaseManager.shared.client.auth.user()
+        print("🔐 Current authenticated user for guidance: \(currentUser.id)")
+        
+        let guidance = Guidance(
+            situationId: situationId,
+            content: content,
+            situationCategory: category,
+            foundationToolEnhanced: true
+        )
+        
+        print("💾 Saving guidance to database...")
+        print("   Situation ID: \(situationId)")
+        print("   Content length: \(content.count) characters")
+        print("   User ID: \(currentUser.id)")
+        
+        do {
+            try await SupabaseManager.shared.client
+                .from("guidance")
+                .insert(guidance)
+                .execute()
+            
+            print("✅ Guidance saved successfully with ID: \(guidance.id)")
+            return guidance.id
+        } catch {
+            print("❌ Error saving guidance: \(error.localizedDescription)")
+            print("❌ Full error: \(error)")
+            throw error
+        }
+    }
+    
+    func createFamilyForUser(userId: String) async throws -> String {
+        let familyId = UUID().uuidString
+        let currentDate = ISO8601DateFormatter().string(from: Date())
+        
+        print("🏠 Creating family with ID: \(familyId)")
+        
+        // Create family record with minimal required fields
+        let familyData: [String: String] = [
+            "id": familyId,
+            "created_at": currentDate,
+            "updated_at": currentDate
+        ]
+        
+        do {
+            // Insert family
+            try await SupabaseManager.shared.client
+                .from("families")
+                .insert(familyData)
+                .execute()
+            
+            print("✅ Family created successfully")
+            
+            // Update user's profile with family_id
+            try await SupabaseManager.shared.client
+                .from("profiles")
+                .update(["family_id": familyId])
+                .eq("id", value: userId)
+                .execute()
+            
+            print("✅ User profile updated with family_id")
+            return familyId
+            
+        } catch {
+            print("❌ Error creating family: \(error.localizedDescription)")
+            throw error
+        }
+    }
+}
 
 // OpenAI Service Types
 struct GuidanceResponse {
@@ -79,14 +269,37 @@ struct NewSituationView: View {
         isLoading = true
         
         do {
-            // Get user's API key from database
-            let userId = "15359b56-cabf-4b6a-9d2a-a3b11001b8e2" // Current test user
-            print("🔑 Getting API key for user: \(userId)")
+            // Step 1: Get user's family_id first
+            print("💾 Step 1: Getting user's family context...")
+            let userId = "15359b56-cabf-4b6a-9d2a-a3b11001b8e2"
+            let userProfile = try await SimpleOnboardingManager.shared.loadUserProfile(userId: userId)
+            print("👥 User family_id: \(userProfile.familyId ?? "nil")")
+            
+            // If no family_id, create a family for this user
+            var familyId = userProfile.familyId
+            if familyId == nil {
+                print("🏠 No family found, creating family for user...")
+                familyId = try await ConversationService.shared.createFamilyForUser(userId: userId)
+                print("✅ Created family with ID: \(familyId!)")
+            }
+            
+            // Step 2: Save the situation to database
+            print("💾 Step 2: Saving situation to database...")
+            let situationId = try await ConversationService.shared.saveSituation(
+                familyId: familyId,
+                childId: nil, // TODO: Get from current child context if needed
+                title: generateSituationTitle(from: inputText),
+                description: inputText
+            )
+            print("✅ Situation saved with ID: \(situationId)")
+            
+            // Step 3: Get user's API key
+            print("🔑 Step 3: Getting API key for user: \(userId)")
             let apiKey = try await getUserApiKey(userId: userId)
             print("✅ Retrieved API key: \(apiKey.prefix(10))...")
             
-            // Call OpenAI API
-            print("📡 Calling OpenAI API...")
+            // Step 4: Call OpenAI API
+            print("📡 Step 4: Calling OpenAI API...")
             let guidance = try await generateGuidance(
                 situation: inputText,
                 familyContext: "none",
@@ -94,6 +307,18 @@ struct NewSituationView: View {
             )
             print("✅ OpenAI response received successfully")
             
+            // Step 5: Save the guidance response linked to the situation
+            print("💾 Step 5: Saving guidance response to database...")
+            let guidanceContent = formatGuidanceForDatabase(guidance)
+            let guidanceId = try await ConversationService.shared.saveGuidance(
+                situationId: situationId,
+                content: guidanceContent,
+                category: "parenting_guidance"
+            )
+            print("✅ Guidance saved with ID: \(guidanceId)")
+            print("🔗 Successfully linked situation \(situationId) → guidance \(guidanceId)")
+            
+            // Step 6: Update UI
             await MainActor.run {
                 guidanceResponse = guidance
                 isLoading = false
@@ -107,7 +332,7 @@ struct NewSituationView: View {
             print("📱 Guidance response set, UI should update")
             
         } catch {
-            print("❌ Error generating guidance: \(error)")
+            print("❌ Error in message handling: \(error)")
             print("❌ Error details: \(error.localizedDescription)")
             await MainActor.run {
                 isLoading = false
@@ -115,6 +340,35 @@ struct NewSituationView: View {
         }
         
         print("🏁 Message handling completed")
+    }
+    
+    private func generateSituationTitle(from description: String) -> String {
+        // Create a short title from the description
+        let words = description.split(separator: " ").prefix(6)
+        return words.joined(separator: " ")
+    }
+    
+    private func formatGuidanceForDatabase(_ guidance: GuidanceResponse) -> String {
+        // Convert the structured guidance back to a formatted string for database storage
+        return """
+        **Situation**
+        \(guidance.situation)
+        
+        **Analysis**
+        \(guidance.analysis)
+        
+        **Action Steps**
+        \(guidance.actionSteps)
+        
+        **Phrases to Try**
+        \(guidance.phrasesToTry)
+        
+        **Quick Comebacks**
+        \(guidance.quickComebacks)
+        
+        **Support**
+        \(guidance.support)
+        """
     }
     
     private func getUserApiKey(userId: String) async throws -> String {

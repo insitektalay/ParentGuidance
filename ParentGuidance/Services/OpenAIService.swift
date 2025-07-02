@@ -52,6 +52,7 @@ class OpenAIService {
     private func parseGuidanceResponse(_ content: String) -> GuidanceResponse {
         // For now, create a basic structure - this can be enhanced later
         return GuidanceResponse(
+            title: extractSection(from: content, title: "Title") ?? "Parenting Situation",
             situation: extractSection(from: content, title: "Situation") ?? "Situation analysis",
             analysis: extractSection(from: content, title: "Analysis") ?? "Analysis of the situation",
             actionSteps: extractSection(from: content, title: "Action Steps") ?? "Recommended action steps",
@@ -62,7 +63,7 @@ class OpenAIService {
     }
     
     private func extractSection(from content: String, title: String) -> String? {
-        let pattern = "\(title):\\s*([\\s\\S]*?)(?=\\n\\n[A-Z]|$)"
+        let pattern = "\(title):\\s*\\n([\\s\\S]*?)(?=\\n[A-Z][a-z\\s]+:|$)"
         let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive)
         let range = NSRange(content.startIndex..., in: content)
         
@@ -77,6 +78,7 @@ class OpenAIService {
 }
 
 struct GuidanceResponse {
+    let title: String
     let situation: String
     let analysis: String
     let actionSteps: String

@@ -193,6 +193,7 @@ class ConversationService: ObservableObject {
 
 // OpenAI Service Types
 struct GuidanceResponse {
+    let title: String
     let situation: String
     let analysis: String
     let actionSteps: String
@@ -200,6 +201,7 @@ struct GuidanceResponse {
     let quickComebacks: String
     let support: String
 }
+
 
 enum OpenAIError: Error {
     case invalidResponse
@@ -283,29 +285,30 @@ struct NewSituationView: View {
                 print("✅ Created family with ID: \(familyId!)")
             }
             
-            // Step 2: Save the situation to database
-            print("💾 Step 2: Saving situation to database...")
-            let situationId = try await ConversationService.shared.saveSituation(
-                familyId: familyId,
-                childId: nil, // TODO: Get from current child context if needed
-                title: generateSituationTitle(from: inputText),
-                description: inputText
-            )
-            print("✅ Situation saved with ID: \(situationId)")
-            
-            // Step 3: Get user's API key
-            print("🔑 Step 3: Getting API key for user: \(userId)")
+            // Step 2: Get user's API key
+            print("🔑 Step 2: Getting API key for user: \(userId)")
             let apiKey = try await getUserApiKey(userId: userId)
             print("✅ Retrieved API key: \(apiKey.prefix(10))...")
             
-            // Step 4: Call OpenAI API
-            print("📡 Step 4: Calling OpenAI API...")
+            // Step 3: Call OpenAI API to get guidance and title
+            print("📡 Step 3: Calling OpenAI API...")
             let guidance = try await generateGuidance(
                 situation: inputText,
                 familyContext: "none",
                 apiKey: apiKey
             )
             print("✅ OpenAI response received successfully")
+            print("🏷️ AI-generated title: \(guidance.title)")
+            
+            // Step 4: Save the situation to database with AI-generated title
+            print("💾 Step 4: Saving situation to database with AI title...")
+            let situationId = try await ConversationService.shared.saveSituation(
+                familyId: familyId,
+                childId: nil, // TODO: Get from current child context if needed
+                title: guidance.title,
+                description: inputText
+            )
+            print("✅ Situation saved with ID: \(situationId)")
             
             // Step 5: Save the guidance response linked to the situation
             print("💾 Step 5: Saving guidance response to database...")
@@ -342,15 +345,12 @@ struct NewSituationView: View {
         print("🏁 Message handling completed")
     }
     
-    private func generateSituationTitle(from description: String) -> String {
-        // Create a short title from the description
-        let words = description.split(separator: " ").prefix(6)
-        return words.joined(separator: " ")
-    }
-    
     private func formatGuidanceForDatabase(_ guidance: GuidanceResponse) -> String {
         // Convert the structured guidance back to a formatted string for database storage
         return """
+        **Title**
+        \(guidance.title)
+        
         **Situation**
         \(guidance.situation)
         
@@ -407,7 +407,7 @@ struct NewSituationView: View {
         let requestBody: [String: Any] = [
             "prompt": [
                 "id": promptId,
-                "version": "6",
+                "version": "11",
                 "variables": [
                     "current_situation": situation,
                     "family_context": familyContext
@@ -471,6 +471,7 @@ struct NewSituationView: View {
         print("🔍 Parsing content: \(content)")
         
         // Extract each section based on the structured format from the prompt
+        let title = extractSection(from: content, title: "Title") ?? "Parenting Situation"
         let situation = extractSection(from: content, title: "Situation") ?? "Understanding the Situation"
         let analysis = extractSection(from: content, title: "Analysis") ?? "Analysis of the situation"
         let actionSteps = extractSection(from: content, title: "Action Steps") ?? "Recommended action steps"
@@ -479,6 +480,7 @@ struct NewSituationView: View {
         let support = extractSection(from: content, title: "Support") ?? "Additional support information"
         
         print("📝 Parsed sections:")
+        print("   Title: \(title)")
         print("   Situation: \(situation.prefix(50))...")
         print("   Analysis: \(analysis.prefix(50))...")
         print("   Action Steps: \(actionSteps.prefix(50))...")
@@ -487,6 +489,7 @@ struct NewSituationView: View {
         print("   Support: \(support.prefix(50))...")
         
         return GuidanceResponse(
+            title: title,
             situation: situation,
             analysis: analysis,
             actionSteps: actionSteps,
@@ -505,8 +508,9 @@ struct NewSituationView: View {
     }
     
     private func extractSection(from content: String, title: String) -> String? {
-        // Look for "Section Name  " (with spaces) followed by content until the next section or end
-        let pattern = "\(title)\\s+\\n([\\s\\S]*?)(?=\\n[A-Z][a-z\\s]+\\n|$)"
+        // Look for "Section Name:" followed by content until the next section or end
+        // More flexible pattern to handle various spacing
+        let pattern = "\(title):\\s*\\n\\s*([\\s\\S]*?)(?=\\n\\s*[A-Z][a-z\\s]*:|$)"
         let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive)
         let range = NSRange(content.startIndex..., in: content)
         
@@ -519,6 +523,8 @@ struct NewSituationView: View {
         }
         
         print("❌ Failed to extract \(title)")
+        print("🔍 Looking for pattern: \(pattern)")
+        print("🔍 In content: \(content.prefix(200))...")
         return nil
     }
 }
@@ -559,7 +565,7 @@ struct SituationGuidanceViewWithData: View {
             
             // Title
             HStack {
-                Text("Parenting Guidance")
+                Text(guidance.title)
                     .font(.system(size: 24, weight: .semibold))
                     .foregroundColor(ColorPalette.white.opacity(0.9))
                     .padding(.horizontal, 16)

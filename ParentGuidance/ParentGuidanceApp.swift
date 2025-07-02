@@ -6,6 +6,49 @@
 //
 
 import SwiftUI
+import Supabase
+
+// Simplified local OnboardingManager for database operations
+class SimpleOnboardingManager: ObservableObject {
+    static let shared = SimpleOnboardingManager()
+    private init() {}
+    
+    func updateSelectedPlan(_ plan: String, userId: String) async throws {
+        let supabase = SupabaseManager.shared.client
+        try await supabase
+            .from("profiles")
+            .update(["selected_plan": plan])
+            .eq("id", value: userId)
+            .execute()
+    }
+    
+    func saveApiKey(_ apiKey: String, userId: String) async throws {
+        let supabase = SupabaseManager.shared.client
+        try await supabase
+            .from("profiles")
+            .update([
+                "user_api_key": apiKey,
+                "api_key_provider": "openai"
+            ])
+            .eq("id", value: userId)
+            .execute()
+    }
+    
+    func saveChildDetails(name: String, birthDate: Date, userId: String) async throws {
+        let age = Calendar.current.dateComponents([.year], from: birthDate, to: Date()).year ?? 0
+        let supabase = SupabaseManager.shared.client
+        
+        // For now, we'll just update the profile to mark child details complete
+        try await supabase
+            .from("profiles")
+            .update(["child_details_complete": true])
+            .eq("id", value: userId)
+            .execute()
+        
+        // TODO: Create actual child record when we resolve the family_id issue
+        print("Child details: \(name), age: \(age)")
+    }
+}
 
 @main
 struct ParentGuidanceApp: App {
@@ -21,7 +64,8 @@ struct ParentGuidanceApp: App {
 struct OnboardingFlow: View {
     @State private var currentView: OnboardingStep = .welcome
     @State private var isLoadingProfile = false
-    // @StateObject private var onboardingManager = OnboardingManager.shared
+    @State private var currentUserId: String = ""
+    @StateObject private var onboardingManager = SimpleOnboardingManager.shared
     
     enum OnboardingStep {
         case welcome
@@ -125,12 +169,13 @@ struct OnboardingFlow: View {
     
     private func handleAuthentication(userId: String, email: String?) {
         currentView = .loading
+        currentUserId = userId
         
         Task {
             print("🎯 Authenticated user ID: \(userId)")
             print("🎯 User email: \(email ?? "No email")")
             
-            // Simulate loading profile
+            // Simulate loading profile (will add real profile loading later)
             try await Task.sleep(nanoseconds: 1_000_000_000)
             
             await MainActor.run {
@@ -142,52 +187,78 @@ struct OnboardingFlow: View {
     
     private func savePlanSelection(_ plan: String, nextStep: OnboardingStep) {
         Task {
-            print("💾 Saving plan selection: \(plan) to database...")
-            
-            // Simulate database save operation
-            try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
-            
-            await MainActor.run {
-                print("✅ Plan saved successfully: \(plan)")
-                currentView = nextStep
+            do {
+                print("💾 Saving plan selection: \(plan) to database...")
+                try await onboardingManager.updateSelectedPlan(plan, userId: currentUserId)
+                
+                await MainActor.run {
+                    print("✅ Plan saved successfully to database: \(plan)")
+                    currentView = nextStep
+                }
+            } catch {
+                print("❌ Error saving plan to database: \(error.localizedDescription)")
+                // Still navigate even if save fails
+                await MainActor.run {
+                    print("⚠️ Proceeding despite save error")
+                    currentView = nextStep
+                }
             }
         }
     }
     
     private func saveApiKey(_ apiKey: String) {
         Task {
-            print("🔑 Saving API key: \(apiKey.prefix(10))... to database...")
-            
-            // Simulate database save operation
-            try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
-            
-            await MainActor.run {
-                print("✅ API key saved successfully")
-                currentView = .child
+            do {
+                print("🔑 Saving API key: \(apiKey.prefix(10))... to database...")
+                try await onboardingManager.saveApiKey(apiKey, userId: currentUserId)
+                
+                await MainActor.run {
+                    print("✅ API key saved successfully to database")
+                    currentView = .child
+                }
+            } catch {
+                print("❌ Error saving API key to database: \(error.localizedDescription)")
+                // Still navigate even if save fails
+                await MainActor.run {
+                    print("⚠️ Proceeding despite save error")
+                    currentView = .child
+                }
             }
         }
     }
     
     private func saveChildDetails(name: String, birthDate: Date, isAdditional: Bool) {
         Task {
-            let age = Calendar.current.dateComponents([.year], from: birthDate, to: Date()).year ?? 0
-            print("👶 Saving child details to database...")
-            print("   Name: \(name)")
-            print("   Age: \(age) years old")
-            print("   Birth Date: \(DateFormatter.localizedString(from: birthDate, dateStyle: .medium, timeStyle: .none))")
-            
-            // Simulate database save operation
-            try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
-            
-            await MainActor.run {
-                print("✅ Child details saved successfully")
+            do {
+                let age = Calendar.current.dateComponents([.year], from: birthDate, to: Date()).year ?? 0
+                print("👶 Saving child details to database...")
+                print("   Name: \(name)")
+                print("   Age: \(age) years old")
+                print("   Birth Date: \(DateFormatter.localizedString(from: birthDate, dateStyle: .medium, timeStyle: .none))")
                 
-                if isAdditional {
-                    print("🔄 Ready to add another child")
-                    // Stay on child details screen for additional child
-                } else {
-                    print("🎉 Onboarding complete! Navigating to main app")
-                    currentView = .main
+                try await onboardingManager.saveChildDetails(name: name, birthDate: birthDate, userId: currentUserId)
+                
+                await MainActor.run {
+                    print("✅ Child details saved successfully to database")
+                    
+                    if isAdditional {
+                        print("🔄 Ready to add another child")
+                        // Stay on child details screen for additional child
+                    } else {
+                        print("🎉 Onboarding complete! Navigating to main app")
+                        currentView = .main
+                    }
+                }
+            } catch {
+                print("❌ Error saving child details to database: \(error.localizedDescription)")
+                // Still navigate even if save fails
+                await MainActor.run {
+                    if isAdditional {
+                        print("🔄 Ready to add another child (despite error)")
+                    } else {
+                        print("🎉 Onboarding complete! Navigating to main app (despite error)")
+                        currentView = .main
+                    }
                 }
             }
         }

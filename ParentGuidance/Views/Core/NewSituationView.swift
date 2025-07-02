@@ -30,9 +30,16 @@ struct OpenAIResponse: Codable {
 }
 
 struct PromptResponse: Codable {
-    let content: String?
-    let id: String?
-    let created: Int?
+    let id: String
+    let output: [Output]
+    
+    struct Output: Codable {
+        let content: [Content]
+        
+        struct Content: Codable {
+            let text: String
+        }
+    }
 }
 
 struct NewSituationView: View {
@@ -43,11 +50,15 @@ struct NewSituationView: View {
     var body: some View {
         NavigationStack {
             if isLoading {
-                SituationOrganizingView()
+                print("🔄 Rendering: Loading view")
+                return AnyView(SituationOrganizingView())
             } else if let guidance = guidanceResponse {
-                SituationGuidanceViewWithData(guidance: guidance)
+                print("✅ Rendering: Guidance view with content")
+                print("   Situation: \(guidance.situation.prefix(30))...")
+                return AnyView(SituationGuidanceViewWithData(guidance: guidance))
             } else {
-                SituationInputIdleView(
+                print("📝 Rendering: Input view (no guidance yet)")
+                return AnyView(SituationInputIdleView(
                     childName: "Alex",
                     onStartRecording: {
                         // handle voice recording
@@ -57,7 +68,7 @@ struct NewSituationView: View {
                             await handleSendMessage(inputText)
                         }
                     }
-                )
+                ))
             }
         }
         .background(ColorPalette.navy)
@@ -86,6 +97,12 @@ struct NewSituationView: View {
             await MainActor.run {
                 guidanceResponse = guidance
                 isLoading = false
+                print("📱 State updated on main thread:")
+                print("   isLoading: \(isLoading)")
+                print("   guidanceResponse is nil: \(guidanceResponse == nil)")
+                if let gr = guidanceResponse {
+                    print("   Situation content: \(gr.situation.prefix(30))...")
+                }
             }
             print("📱 Guidance response set, UI should update")
             
@@ -136,11 +153,11 @@ struct NewSituationView: View {
         let requestBody: [String: Any] = [
             "prompt": [
                 "id": promptId,
-                "version": "6"
-            ],
-            "variables": [
-                "current_situation": situation,
-                "family_context": familyContext
+                "version": "6",
+                "variables": [
+                    "current_situation": situation,
+                    "family_context": familyContext
+                ]
             ]
         ]
         
@@ -169,14 +186,24 @@ struct NewSituationView: View {
         
         print("✅ HTTP 200 response received")
         
+        // Let's see what the actual response looks like
+        if let responseString = String(data: data, encoding: .utf8) {
+            print("🔍 Raw response: \(responseString)")
+        }
+        
         // The prompts API has a different response structure
         let promptResponse = try JSONDecoder().decode(PromptResponse.self, from: data)
         print("✅ JSON decoded successfully")
+        print("🔍 Prompt response id: \(promptResponse.id)")
+        print("🔍 Output count: \(promptResponse.output.count)")
         
-        guard let content = promptResponse.content else {
+        guard let firstOutput = promptResponse.output.first,
+              let firstContent = firstOutput.content.first else {
             print("❌ No content in response")
             throw OpenAIError.noContent
         }
+        
+        let content = firstContent.text
         
         print("📝 Content received: \(content.prefix(100))...")
         
@@ -189,25 +216,21 @@ struct NewSituationView: View {
     private func parseGuidanceResponse(_ content: String) -> GuidanceResponse {
         print("🔍 Parsing content: \(content)")
         
-        // For now, let's use the full content and break it into logical sections
-        // Later we can improve this to parse structured responses
-        
-        let sections = content.components(separatedBy: "\n\n")
-        
-        let situation = "Understanding the Situation"
-        let analysis = sections.first ?? "Analysis of the situation"
-        let actionSteps = extractNumberedSteps(from: content)
-        let phrasesToTry = "Try saying: 'Let's make tooth brushing fun together!'"
-        let quickComebacks = "Remember: Stay patient and positive"
-        let support = sections.last ?? "Additional support information"
+        // Extract each section based on the structured format from the prompt
+        let situation = extractSection(from: content, title: "Situation") ?? "Understanding the Situation"
+        let analysis = extractSection(from: content, title: "Analysis") ?? "Analysis of the situation"
+        let actionSteps = extractSection(from: content, title: "Action Steps") ?? "Recommended action steps"
+        let phrasesToTry = extractSection(from: content, title: "Phrases to Try") ?? "Suggested phrases"
+        let quickComebacks = extractSection(from: content, title: "Quick Comebacks") ?? "Quick response ideas"
+        let support = extractSection(from: content, title: "Support") ?? "Additional support information"
         
         print("📝 Parsed sections:")
-        print("   Situation: \(situation)")
-        print("   Analysis: \(analysis)")
-        print("   Action Steps: \(actionSteps)")
-        print("   Phrases to Try: \(phrasesToTry)")
-        print("   Quick Comebacks: \(quickComebacks)")
-        print("   Support: \(support)")
+        print("   Situation: \(situation.prefix(50))...")
+        print("   Analysis: \(analysis.prefix(50))...")
+        print("   Action Steps: \(actionSteps.prefix(50))...")
+        print("   Phrases to Try: \(phrasesToTry.prefix(50))...")
+        print("   Quick Comebacks: \(quickComebacks.prefix(50))...")
+        print("   Support: \(support.prefix(50))...")
         
         return GuidanceResponse(
             situation: situation,
@@ -228,16 +251,20 @@ struct NewSituationView: View {
     }
     
     private func extractSection(from content: String, title: String) -> String? {
-        let pattern = "\(title):\\s*([\\s\\S]*?)(?=\\n\\n[A-Z]|$)"
+        // Look for "Section Name  " (with spaces) followed by content until the next section or end
+        let pattern = "\(title)\\s+\\n([\\s\\S]*?)(?=\\n[A-Z][a-z\\s]+\\n|$)"
         let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive)
         let range = NSRange(content.startIndex..., in: content)
         
         if let match = regex?.firstMatch(in: content, options: [], range: range) {
             if let swiftRange = Range(match.range(at: 1), in: content) {
-                return String(content[swiftRange]).trimmingCharacters(in: .whitespacesAndNewlines)
+                let extracted = String(content[swiftRange]).trimmingCharacters(in: .whitespacesAndNewlines)
+                print("✅ Extracted \(title): \(extracted.prefix(50))...")
+                return extracted
             }
         }
         
+        print("❌ Failed to extract \(title)")
         return nil
     }
 }

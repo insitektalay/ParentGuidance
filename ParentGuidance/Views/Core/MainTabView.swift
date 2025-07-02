@@ -133,11 +133,7 @@ struct MainTabView: View {
                                     TodayTimelineView()
                                 }
                             case .new:
-                                SituationInputIdleView(
-                                    childName: "Alex",
-                                    onStartRecording: {},
-                                    onSendMessage: {}
-                                )
+                                NewSituationView()
                             case .library:
                                 LibraryView()
                             case .alerts:

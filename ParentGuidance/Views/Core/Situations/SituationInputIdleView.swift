@@ -7,7 +7,7 @@ struct SituationInputIdleView: View {
     
     let childName: String
     let onStartRecording: () -> Void
-    let onSendMessage: () -> Void
+    let onSendMessage: (String) -> Void
     
     var body: some View {
         VStack(spacing: 0) {
@@ -62,7 +62,9 @@ struct SituationInputIdleView: View {
                 
                 SendButton(
                     isEnabled: !inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-                    action: onSendMessage
+                    action: {
+                        onSendMessage(inputText)
+                    }
                 )
             }
             .padding(.horizontal, 16)
@@ -77,6 +79,6 @@ struct SituationInputIdleView: View {
     SituationInputIdleView(
         childName: "Alex",
         onStartRecording: {},
-        onSendMessage: {}
+        onSendMessage: { _ in }
     )
 }

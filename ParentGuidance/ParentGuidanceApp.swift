@@ -7,11 +7,116 @@
 
 import SwiftUI
 import Supabase
+import Foundation
+
+// UserProfile model
+struct UserProfile: Codable {
+    let id: String
+    let familyId: String?
+    let email: String?
+    let fullName: String?
+    let role: String?
+    let selectedPlan: String?
+    let planSetupComplete: Bool
+    let childDetailsComplete: Bool
+    let onboardingCompletedAt: String?
+    let subscriptionStatus: String?
+    let subscriptionId: String?
+    let userApiKey: String?
+    let apiKeyProvider: String?
+    let createdAt: String
+    let updatedAt: String
+    
+    // Custom initializer to handle string/bool conversion
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        id = try container.decode(String.self, forKey: .id)
+        familyId = try container.decodeIfPresent(String.self, forKey: .familyId)
+        email = try container.decodeIfPresent(String.self, forKey: .email)
+        fullName = try container.decodeIfPresent(String.self, forKey: .fullName)
+        role = try container.decodeIfPresent(String.self, forKey: .role)
+        selectedPlan = try container.decodeIfPresent(String.self, forKey: .selectedPlan)
+        onboardingCompletedAt = try container.decodeIfPresent(String.self, forKey: .onboardingCompletedAt)
+        subscriptionStatus = try container.decodeIfPresent(String.self, forKey: .subscriptionStatus)
+        subscriptionId = try container.decodeIfPresent(String.self, forKey: .subscriptionId)
+        userApiKey = try container.decodeIfPresent(String.self, forKey: .userApiKey)
+        apiKeyProvider = try container.decodeIfPresent(String.self, forKey: .apiKeyProvider)
+        createdAt = try container.decode(String.self, forKey: .createdAt)
+        updatedAt = try container.decode(String.self, forKey: .updatedAt)
+        
+        // Handle boolean fields that might come as strings or booleans
+        if let planSetupBool = try? container.decode(Bool.self, forKey: .planSetupComplete) {
+            planSetupComplete = planSetupBool
+        } else if let planSetupString = try? container.decode(String.self, forKey: .planSetupComplete) {
+            planSetupComplete = planSetupString.lowercased() == "true"
+        } else {
+            planSetupComplete = false
+        }
+        
+        if let childDetailsBool = try? container.decode(Bool.self, forKey: .childDetailsComplete) {
+            childDetailsComplete = childDetailsBool
+        } else if let childDetailsString = try? container.decode(String.self, forKey: .childDetailsComplete) {
+            childDetailsComplete = childDetailsString.lowercased() == "true"
+        } else {
+            childDetailsComplete = false
+        }
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case familyId = "family_id"
+        case email
+        case fullName = "full_name"
+        case role
+        case selectedPlan = "selected_plan"
+        case planSetupComplete = "plan_setup_complete"
+        case childDetailsComplete = "child_details_complete"
+        case onboardingCompletedAt = "onboarding_completed_at"
+        case subscriptionStatus = "subscription_status"
+        case subscriptionId = "subscription_id"
+        case userApiKey = "user_api_key"
+        case apiKeyProvider = "api_key_provider"
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+    }
+    
+    var isOnboardingComplete: Bool {
+        return selectedPlan != nil && planSetupComplete && childDetailsComplete
+    }
+    
+    var needsPayment: Bool {
+        return selectedPlan != nil && selectedPlan != "api" && !planSetupComplete
+    }
+    
+    var needsApiKey: Bool {
+        return selectedPlan == "api" && !planSetupComplete
+    }
+}
+
+// Type aliases for compatibility
+typealias Profile = UserProfile
 
 // Simplified local OnboardingManager for database operations
 class SimpleOnboardingManager: ObservableObject {
     static let shared = SimpleOnboardingManager()
     private init() {}
+    
+    func loadUserProfile(userId: String) async throws -> UserProfile {
+        let supabase = SupabaseManager.shared.client
+        let response: [UserProfile] = try await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", value: userId)
+            .execute()
+            .value
+        
+        guard let profile = response.first else {
+            throw NSError(domain: "ProfileNotFound", code: 404)
+        }
+        
+        return profile
+    }
     
     func updateSelectedPlan(_ plan: String, userId: String) async throws {
         let supabase = SupabaseManager.shared.client
@@ -28,7 +133,8 @@ class SimpleOnboardingManager: ObservableObject {
             .from("profiles")
             .update([
                 "user_api_key": apiKey,
-                "api_key_provider": "openai"
+                "api_key_provider": "openai",
+                "plan_setup_complete": "true"
             ])
             .eq("id", value: userId)
             .execute()
@@ -41,7 +147,7 @@ class SimpleOnboardingManager: ObservableObject {
         // For now, we'll just update the profile to mark child details complete
         try await supabase
             .from("profiles")
-            .update(["child_details_complete": true])
+            .update(["child_details_complete": "true"])
             .eq("id", value: userId)
             .execute()
         
@@ -175,12 +281,45 @@ struct OnboardingFlow: View {
             print("🎯 Authenticated user ID: \(userId)")
             print("🎯 User email: \(email ?? "No email")")
             
-            // Simulate loading profile (will add real profile loading later)
-            try await Task.sleep(nanoseconds: 1_000_000_000)
-            
-            await MainActor.run {
-                print("📋 Starting onboarding from plan selection")
-                currentView = .plan
+            do {
+                // Load user profile to check onboarding state
+                let profile = try await SimpleOnboardingManager.shared.loadUserProfile(userId: userId)
+                print("👤 Loaded user profile: \(profile.email ?? "No email")")
+                
+                await MainActor.run {
+                    print("🔍 Profile state:")
+                    print("   selectedPlan: \(profile.selectedPlan ?? "nil")")
+                    print("   planSetupComplete: \(profile.planSetupComplete)")
+                    print("   childDetailsComplete: \(profile.childDetailsComplete)")
+                    print("   isOnboardingComplete: \(profile.isOnboardingComplete)")
+                    
+                    if profile.isOnboardingComplete {
+                        print("✅ Onboarding complete! Going to main app")
+                        currentView = .main
+                    } else if profile.selectedPlan == nil {
+                        print("📋 No plan selected, starting from plan selection")
+                        currentView = .plan
+                    } else if profile.needsPayment {
+                        print("💳 Plan selected but needs payment")
+                        currentView = .payment
+                    } else if profile.needsApiKey {
+                        print("🔑 Plan selected but needs API key")
+                        currentView = .apiKey
+                    } else if !profile.childDetailsComplete {
+                        print("👶 Plan and payment complete, needs child details")
+                        currentView = .child
+                    } else {
+                        print("🎉 All steps complete, going to main app")
+                        currentView = .main
+                    }
+                }
+            } catch {
+                print("❌ Error loading profile: \(error.localizedDescription)")
+                // Fallback to plan selection if profile loading fails
+                await MainActor.run {
+                    print("⚠️ Fallback: Starting from plan selection")
+                    currentView = .plan
+                }
             }
         }
     }

@@ -189,6 +189,38 @@ class ConversationService: ObservableObject {
             throw error
         }
     }
+    
+    func getTodaysSituationCount(familyId: String) async throws -> Int {
+        print("📊 Getting today's situation count for family: \(familyId)")
+        
+        // Get today's date in YYYY-MM-DD format for comparison
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let today = dateFormatter.string(from: Date())
+        
+        do {
+            // Query to get situations created today for this family
+            let response: [[String: String?]] = try await SupabaseManager.shared.client
+                .from("situations")
+                .select("id")
+                .eq("family_id", value: familyId)
+                .gte("created_at", value: today)
+                .lt("created_at", value: "\(today)T23:59:59")
+                .execute()
+                .value
+            
+            // Count the returned rows
+            let count = response.count
+            print("✅ Found \(count) situations for today")
+            return count
+            
+        } catch {
+            print("❌ Error getting today's situation count: \(error.localizedDescription)")
+            print("❌ Full error: \(error)")
+            // Return 0 as safe fallback
+            return 0
+        }
+    }
 }
 
 // OpenAI Service Types

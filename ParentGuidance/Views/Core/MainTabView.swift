@@ -130,7 +130,7 @@ struct MainTabView: View {
                             switch activeTab {
                             case .today:
                                 NavigationStack {
-                                    TodayTimelineView()
+                                    TodayViewController()
                                 }
                             case .new:
                                 NewSituationView()

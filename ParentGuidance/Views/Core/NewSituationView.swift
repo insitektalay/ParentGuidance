@@ -407,7 +407,7 @@ struct NewSituationView: View {
         let requestBody: [String: Any] = [
             "prompt": [
                 "id": promptId,
-                "version": "11",
+                "version": "12",
                 "variables": [
                     "current_situation": situation,
                     "family_context": familyContext
@@ -508,22 +508,43 @@ struct NewSituationView: View {
     }
     
     private func extractSection(from content: String, title: String) -> String? {
-        // Look for "Section Name:" followed by content until the next section or end
-        // More flexible pattern to handle various spacing
-        let pattern = "\(title):\\s*\\n\\s*([\\s\\S]*?)(?=\\n\\s*[A-Z][a-z\\s]*:|$)"
-        let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive)
+        // Convert section titles to bracket format
+        let bracketTitle: String
+        switch title {
+        case "Title":
+            bracketTitle = "TITLE"
+        case "Situation":
+            bracketTitle = "SITUATION"
+        case "Analysis":
+            bracketTitle = "ANALYSIS"
+        case "Action Steps":
+            bracketTitle = "ACTION STEPS"
+        case "Phrases to Try":
+            bracketTitle = "PHRASES TO TRY"
+        case "Quick Comebacks":
+            bracketTitle = "QUICK COMEBACKS"
+        case "Support":
+            bracketTitle = "SUPPORT"
+        default:
+            print("❌ Unknown section title: \(title)")
+            return nil
+        }
+        
+        // Simple bracket-delimited pattern: [SECTION]\nContent until next [SECTION] or end
+        let pattern = "\\[\(NSRegularExpression.escapedPattern(for: bracketTitle))\\]\\s*\\n([\\s\\S]*?)(?=\\n\\s*\\[|$)"
+        let regex = try? NSRegularExpression(pattern: pattern, options: [])
         let range = NSRange(content.startIndex..., in: content)
         
         if let match = regex?.firstMatch(in: content, options: [], range: range) {
             if let swiftRange = Range(match.range(at: 1), in: content) {
                 let extracted = String(content[swiftRange]).trimmingCharacters(in: .whitespacesAndNewlines)
-                print("✅ Extracted \(title): \(extracted.prefix(50))...")
+                print("✅ Extracted \(title): \(extracted.count > 50 ? "\(extracted.prefix(50))..." : extracted)")
                 return extracted
             }
         }
         
         print("❌ Failed to extract \(title)")
-        print("🔍 Looking for pattern: \(pattern)")
+        print("🔍 Looking for bracket pattern: [\(bracketTitle)]")
         print("🔍 In content: \(content.prefix(200))...")
         return nil
     }

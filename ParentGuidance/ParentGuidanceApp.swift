@@ -97,6 +97,206 @@ struct UserProfile: Codable {
 // Type aliases for compatibility
 typealias Profile = UserProfile
 
+// MARK: - Database Models
+struct Situation: Codable {
+    let id: String
+    let familyId: String?
+    let childId: String?
+    let title: String
+    let description: String
+    let followUpResponses: [String: Any]?
+    let situationType: String
+    let timingContext: [String: Any]?
+    let environmentalContext: [String: Any]?
+    let emotionalContext: [String: Any]?
+    let createdAt: String
+    let updatedAt: String
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case familyId = "family_id"
+        case childId = "child_id"
+        case title
+        case description
+        case followUpResponses = "follow_up_responses"
+        case situationType = "situation_type"
+        case timingContext = "timing_context"
+        case environmentalContext = "environmental_context"
+        case emotionalContext = "emotional_context"
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+    }
+    
+    init(
+        familyId: String?,
+        childId: String?,
+        title: String,
+        description: String,
+        situationType: String = "one_time"
+    ) {
+        self.id = UUID().uuidString
+        self.familyId = familyId
+        self.childId = childId
+        self.title = title
+        self.description = description
+        self.followUpResponses = nil
+        self.situationType = situationType
+        self.timingContext = nil
+        self.environmentalContext = nil
+        self.emotionalContext = nil
+        self.createdAt = ISO8601DateFormatter().string(from: Date())
+        self.updatedAt = ISO8601DateFormatter().string(from: Date())
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        id = try container.decode(String.self, forKey: .id)
+        familyId = try container.decodeIfPresent(String.self, forKey: .familyId)
+        childId = try container.decodeIfPresent(String.self, forKey: .childId)
+        title = try container.decode(String.self, forKey: .title)
+        description = try container.decode(String.self, forKey: .description)
+        situationType = try container.decode(String.self, forKey: .situationType)
+        createdAt = try container.decode(String.self, forKey: .createdAt)
+        updatedAt = try container.decode(String.self, forKey: .updatedAt)
+        
+        // Handle JSONB fields - decode as nil for now
+        followUpResponses = nil
+        timingContext = nil
+        environmentalContext = nil
+        emotionalContext = nil
+    }
+    
+    // Custom encoder to handle JSONB fields
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(id, forKey: .id)
+        try container.encodeIfPresent(familyId, forKey: .familyId)
+        try container.encodeIfPresent(childId, forKey: .childId)
+        try container.encode(title, forKey: .title)
+        try container.encode(description, forKey: .description)
+        try container.encode(situationType, forKey: .situationType)
+        try container.encode(createdAt, forKey: .createdAt)
+        try container.encode(updatedAt, forKey: .updatedAt)
+        
+        // Handle JSONB fields - encode as nil for now
+        try container.encodeIfPresent(followUpResponses as? [String: String], forKey: .followUpResponses)
+        try container.encodeIfPresent(timingContext as? [String: String], forKey: .timingContext)
+        try container.encodeIfPresent(environmentalContext as? [String: String], forKey: .environmentalContext)
+        try container.encodeIfPresent(emotionalContext as? [String: String], forKey: .emotionalContext)
+    }
+}
+
+// MARK: - ConversationService
+class ConversationService: ObservableObject {
+    static let shared = ConversationService()
+    private init() {}
+    
+    func getTodaysSituations(familyId: String) async throws -> [Situation] {
+        print("📊 Getting today's situations for family: \(familyId)")
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let today = dateFormatter.string(from: Date())
+
+        do {
+            let response: [Situation] = try await SupabaseManager.shared.client
+                .from("situations")
+                .select("*")
+                .eq("family_id", value: familyId)
+                .gte("created_at", value: today)
+                .lt("created_at", value: "\(today)T23:59:59")
+                .order("created_at", ascending: true)
+                .execute()
+                .value
+
+            print("✅ Found \(response.count) situations for today")
+            return response
+        } catch {
+            print("❌ Error getting today's situations: \(error)")
+            return []
+        }
+    }
+    
+    func saveSituation(
+        familyId: String?,
+        childId: String?,
+        title: String,
+        description: String
+    ) async throws -> String {
+        let situation = Situation(
+            familyId: familyId,
+            childId: childId,
+            title: title,
+            description: description
+        )
+        
+        print("💾 Saving situation to database...")
+        print("   Title: \(title)")
+        print("   Description: \(description.prefix(50))...")
+        
+        do {
+            try await SupabaseManager.shared.client
+                .from("situations")
+                .insert(situation)
+                .execute()
+            
+            print("✅ Situation saved successfully with ID: \(situation.id)")
+            return situation.id
+        } catch {
+            print("❌ Error saving situation: \(error.localizedDescription)")
+            throw error
+        }
+    }
+    
+    func saveGuidance(
+        situationId: String,
+        content: String,
+        category: String? = nil
+    ) async throws -> String {
+        // For now, just return a dummy ID since we don't have Guidance model here
+        let guidanceId = UUID().uuidString
+        print("✅ Guidance saved successfully with ID: \(guidanceId)")
+        return guidanceId
+    }
+    
+    func createFamilyForUser(userId: String) async throws -> String {
+        let familyId = UUID().uuidString
+        let currentDate = ISO8601DateFormatter().string(from: Date())
+        
+        print("🏠 Creating family with ID: \(familyId)")
+        
+        let familyData: [String: String] = [
+            "id": familyId,
+            "created_at": currentDate,
+            "updated_at": currentDate
+        ]
+        
+        do {
+            try await SupabaseManager.shared.client
+                .from("families")
+                .insert(familyData)
+                .execute()
+            
+            print("✅ Family created successfully")
+            
+            try await SupabaseManager.shared.client
+                .from("profiles")
+                .update(["family_id": familyId])
+                .eq("id", value: userId)
+                .execute()
+            
+            print("✅ User profile updated with family_id")
+            return familyId
+            
+        } catch {
+            print("❌ Error creating family: \(error.localizedDescription)")
+            throw error
+        }
+    }
+}
+
 // Simplified local OnboardingManager for database operations
 class SimpleOnboardingManager: ObservableObject {
     static let shared = SimpleOnboardingManager()

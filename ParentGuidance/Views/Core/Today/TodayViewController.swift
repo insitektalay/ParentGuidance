@@ -7,10 +7,11 @@
 
 import SwiftUI
 import Foundation
+import Supabase
 
 struct TodayViewController: View {
     @State private var isLoading = true
-    @State private var situationCount = 0
+    @State private var situations: [Situation] = []
     @State private var errorMessage: String?
     
     var body: some View {
@@ -39,13 +40,13 @@ struct TodayViewController: View {
                         .padding(.top, 4)
                     
                     // Still show timeline as fallback
-                    TodayTimelineView()
+                    TodayTimelineView(situations: situations)
                         .padding(.top, 16)
                 }
                 .background(ColorPalette.navy)
-            } else if situationCount > 0 {
+            } else if !situations.isEmpty {
                 // Show timeline with data
-                TodayTimelineView()
+                TodayTimelineView(situations: situations)
             } else {
                 // Show empty state
                 TodayEmptyView(
@@ -72,26 +73,26 @@ struct TodayViewController: View {
             guard let familyId = userProfile.familyId else {
                 print("❌ No family ID found for user")
                 await MainActor.run {
-                    self.situationCount = 0
+                    self.situations = []
                     self.isLoading = false
                 }
                 return
             }
             
-            // Get today's situation count
-            let count = try await ConversationService.shared.getTodaysSituationCount(familyId: familyId)
+            // Get today's situations
+            let todaysSituations = try await ConversationService.shared.getTodaysSituations(familyId: familyId)
             
             await MainActor.run {
-                self.situationCount = count
+                self.situations = todaysSituations
                 self.isLoading = false
-                print("✅ TodayViewController: Loaded \(count) situations for today")
+                print("✅ TodayViewController: Loaded \(todaysSituations.count) situations for today")
             }
             
         } catch {
             print("❌ TodayViewController: Error loading situations: \(error)")
             await MainActor.run {
                 self.errorMessage = error.localizedDescription
-                self.situationCount = 1 // Fallback to show timeline instead of empty state
+                self.situations = [] // Fallback to show empty state on error
                 self.isLoading = false
             }
         }

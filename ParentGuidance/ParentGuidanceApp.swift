@@ -358,6 +358,26 @@ class ConversationService: ObservableObject {
         }
     }
     
+    func getAllSituations(familyId: String) async throws -> [Situation] {
+        print("📚 Getting all situations for family: \(familyId)")
+        
+        do {
+            let response: [Situation] = try await SupabaseManager.shared.client
+                .from("situations")
+                .select("*")
+                .eq("family_id", value: familyId)
+                .order("created_at", ascending: false)
+                .execute()
+                .value
+            
+            print("✅ Found \(response.count) total situations for family")
+            return response
+        } catch {
+            print("❌ Error getting all situations: \(error)")
+            throw error
+        }
+    }
+    
     func getGuidanceForSituation(situationId: String) async throws -> [Guidance] {
         print("📋 Getting guidance for situation: \(situationId)")
         

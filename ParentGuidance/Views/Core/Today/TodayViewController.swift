@@ -13,6 +13,7 @@ struct TodayViewController: View {
     @State private var isLoading = true
     @State private var situations: [Situation] = []
     @State private var errorMessage: String?
+    let onNavigateToNewTab: () -> Void
     
     var body: some View {
         Group {
@@ -50,10 +51,7 @@ struct TodayViewController: View {
             } else {
                 // Show empty state
                 TodayEmptyView(
-                    onCreateFirstSituation: {
-                        // This could trigger navigation to New tab
-                        print("Navigate to New tab to create first situation")
-                    }
+                    onCreateFirstSituation: onNavigateToNewTab
                 )
             }
         }

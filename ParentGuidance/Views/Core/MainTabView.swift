@@ -130,7 +130,9 @@ struct MainTabView: View {
                             switch activeTab {
                             case .today:
                                 NavigationStack {
-                                    TodayViewController()
+                                    TodayViewController(onNavigateToNewTab: {
+                                        activeTab = .new
+                                    })
                                 }
                             case .new:
                                 NewSituationView()

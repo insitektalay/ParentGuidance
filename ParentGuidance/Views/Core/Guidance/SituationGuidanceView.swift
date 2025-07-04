@@ -3,13 +3,17 @@ import SwiftUI
 struct SituationGuidanceView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var currentPage = 0
+    @State private var categories: [GuidanceCategory] = []
+    @State private var isLoading = true
+    @State private var errorMessage: String?
     let situation: Situation?
     
     init(situation: Situation? = nil) {
         self.situation = situation
     }
     
-    private let categories = [
+    // Fallback categories if no situation is provided
+    private let fallbackCategories = [
         GuidanceCategory(
             title: "Situation",
             content: "It sounds like Alex was deeply engaged in his Lego play when you let him know it was time to brush his teeth before bed. He reacted strongly by throwing the Lego pieces, yelling that he hates brushing his teeth, and then shutting himself in his room, clearly showing big feelings about the transition."
@@ -62,6 +66,49 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
     
     var body: some View {
         VStack(spacing: 0) {
+            if isLoading {
+                // Loading state
+                VStack {
+                    ProgressView()
+                        .tint(ColorPalette.terracotta)
+                    Text("Loading guidance...")
+                        .font(.system(size: 16))
+                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                        .padding(.top, 8)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(ColorPalette.navy)
+            } else if let error = errorMessage {
+                // Error state
+                VStack {
+                    Text("Unable to load guidance")
+                        .font(.system(size: 18))
+                        .foregroundColor(ColorPalette.white)
+                    Text(error)
+                        .font(.system(size: 14))
+                        .foregroundColor(ColorPalette.white.opacity(0.6))
+                        .padding(.top, 4)
+                    
+                    Button("Try Again") {
+                        loadGuidance()
+                    }
+                    .foregroundColor(ColorPalette.terracotta)
+                    .padding(.top, 16)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(ColorPalette.navy)
+            } else {
+                // Content state
+                guidanceContent
+            }
+        }
+        .task {
+            loadGuidance()
+        }
+    }
+    
+    private var guidanceContent: some View {
+        VStack(spacing: 0) {
             // Header with back button
             HStack(alignment: .center, spacing: 12) {
                 Button(action: {
@@ -80,7 +127,7 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
             
             // Title
             HStack {
-                Text("Morning Tooth Brushing")
+                Text(situation?.title ?? "Situation Guidance")
                     .font(.system(size: 24, weight: .semibold))
                     .foregroundColor(ColorPalette.white.opacity(0.9))
                     .padding(.horizontal, 16)
@@ -118,6 +165,118 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(ColorPalette.navy)
         .navigationBarHidden(true)
+    }
+    
+    // MARK: - Guidance Loading
+    
+    private func loadGuidance() {
+        Task {
+            await MainActor.run {
+                isLoading = true
+                errorMessage = nil
+            }
+            
+            do {
+                if let situation = situation {
+                    print("📋 Loading guidance for situation: \(situation.id)")
+                    let guidanceEntries = try await ConversationService.shared.getGuidanceForSituation(situationId: situation.id)
+                    
+                    await MainActor.run {
+                        if guidanceEntries.isEmpty {
+                            print("⚠️ No guidance found for situation, using fallback")
+                            self.categories = fallbackCategories
+                        } else {
+                            print("✅ Parsing \(guidanceEntries.count) guidance entries")
+                            self.categories = parseGuidanceContent(from: guidanceEntries)
+                        }
+                        self.isLoading = false
+                    }
+                } else {
+                    print("ℹ️ No situation provided, using fallback categories")
+                    await MainActor.run {
+                        self.categories = fallbackCategories
+                        self.isLoading = false
+                    }
+                }
+            } catch {
+                print("❌ Error loading guidance: \(error)")
+                await MainActor.run {
+                    self.errorMessage = error.localizedDescription
+                    self.categories = fallbackCategories // Fallback on error
+                    self.isLoading = false
+                }
+            }
+        }
+    }
+    
+    // MARK: - Guidance Parsing
+    
+    private func parseGuidanceContent(from guidanceEntries: [Guidance]) -> [GuidanceCategory] {
+        // Combine all guidance content (in case there are multiple entries)
+        let fullContent = guidanceEntries.map { $0.content }.joined(separator: "\n\n")
+        
+        // Extract the 6 categories using the same parsing logic as NewSituationView
+        return [
+            GuidanceCategory(
+                title: "Situation",
+                content: extractSection(from: fullContent, title: "Situation") ?? "No situation description available."
+            ),
+            GuidanceCategory(
+                title: "Analysis",
+                content: extractSection(from: fullContent, title: "Analysis") ?? "No analysis available."
+            ),
+            GuidanceCategory(
+                title: "Action Steps",
+                content: extractSection(from: fullContent, title: "Action Steps") ?? "No action steps available."
+            ),
+            GuidanceCategory(
+                title: "Phrases to Try",
+                content: extractSection(from: fullContent, title: "Phrases to Try") ?? "No phrases available."
+            ),
+            GuidanceCategory(
+                title: "Quick Comebacks",
+                content: extractSection(from: fullContent, title: "Quick Comebacks") ?? "No quick comebacks available."
+            ),
+            GuidanceCategory(
+                title: "Support",
+                content: extractSection(from: fullContent, title: "Support") ?? "No support information available."
+            )
+        ]
+    }
+    
+    private func extractSection(from content: String, title: String) -> String? {
+        // Convert section titles to bracket format
+        let bracketTitle: String
+        switch title {
+        case "Situation":
+            bracketTitle = "SITUATION"
+        case "Analysis":
+            bracketTitle = "ANALYSIS"
+        case "Action Steps":
+            bracketTitle = "ACTION STEPS"
+        case "Phrases to Try":
+            bracketTitle = "PHRASES TO TRY"
+        case "Quick Comebacks":
+            bracketTitle = "QUICK COMEBACKS"
+        case "Support":
+            bracketTitle = "SUPPORT"
+        default:
+            print("❌ Unknown section title: \(title)")
+            return nil
+        }
+        
+        // Simple bracket-delimited pattern: [SECTION]\nContent until next [SECTION] or end
+        let pattern = "\\[\(NSRegularExpression.escapedPattern(for: bracketTitle))\\]\\s*\\n([\\s\\S]*?)(?=\\n\\s*\\[|$)"
+        let regex = try? NSRegularExpression(pattern: pattern, options: [])
+        let range = NSRange(content.startIndex..., in: content)
+        
+        if let match = regex?.firstMatch(in: content, options: [], range: range) {
+            let matchRange = Range(match.range(at: 1), in: content)!
+            let extracted = String(content[matchRange]).trimmingCharacters(in: .whitespacesAndNewlines)
+            return extracted.isEmpty ? nil : extracted
+        }
+        
+        return nil
     }
 }
 

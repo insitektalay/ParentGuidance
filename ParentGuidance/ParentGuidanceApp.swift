@@ -188,6 +188,25 @@ struct Situation: Codable {
     }
 }
 
+// MARK: - Guidance Model
+struct Guidance: Codable {
+    let id: String
+    let situationId: String
+    let content: String
+    let category: String?
+    let createdAt: String
+    let updatedAt: String
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case situationId = "situation_id"
+        case content
+        case category
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+    }
+}
+
 // MARK: - ConversationService
 class ConversationService: ObservableObject {
     static let shared = ConversationService()
@@ -292,6 +311,26 @@ class ConversationService: ObservableObject {
             
         } catch {
             print("❌ Error creating family: \(error.localizedDescription)")
+            throw error
+        }
+    }
+    
+    func getGuidanceForSituation(situationId: String) async throws -> [Guidance] {
+        print("📋 Getting guidance for situation: \(situationId)")
+        
+        do {
+            let response: [Guidance] = try await SupabaseManager.shared.client
+                .from("guidance")
+                .select("*")
+                .eq("situation_id", value: situationId)
+                .order("created_at", ascending: true)
+                .execute()
+                .value
+            
+            print("✅ Found \(response.count) guidance entries for situation")
+            return response
+        } catch {
+            print("❌ Error getting guidance for situation: \(error)")
             throw error
         }
     }

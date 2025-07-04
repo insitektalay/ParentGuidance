@@ -48,6 +48,7 @@ struct PromptResponse: Codable {
 struct NewSituationView: View {
     @State private var isLoading = false
     @State private var guidanceResponse: GuidanceResponse?
+    @State private var rawGuidanceContent: String? // Store raw OpenAI response
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -103,7 +104,7 @@ struct NewSituationView: View {
             
             // Step 3: Call OpenAI API to get guidance and title
             print("📡 Step 3: Calling OpenAI API...")
-            let guidance = try await generateGuidance(
+            let (guidance, rawContent) = try await generateGuidance(
                 situation: inputText,
                 familyContext: "none",
                 apiKey: apiKey
@@ -121,16 +122,28 @@ struct NewSituationView: View {
             )
             print("✅ Situation saved with ID: \(situationId)")
             
-            // Step 5: Save the guidance response linked to the situation
+            // Step 5: Save the guidance response linked to the situation using raw content
             print("💾 Step 5: Saving guidance response to database...")
-            let guidanceContent = formatGuidanceForDatabase(guidance)
-            let guidanceId = try await ConversationService.shared.saveGuidance(
-                situationId: situationId,
-                content: guidanceContent,
-                category: "parenting_guidance"
-            )
-            print("✅ Guidance saved with ID: \(guidanceId)")
-            print("🔗 Successfully linked situation \(situationId) → guidance \(guidanceId)")
+            print("🔍 [DEBUG] About to call saveGuidance with:")
+            print("   - situationId: \(situationId)")
+            print("   - rawContent length: \(rawContent.count)")
+            print("   - rawContent sample: \(rawContent.prefix(200))...")
+            
+            do {
+                let guidanceId = try await ConversationService.shared.saveGuidance(
+                    situationId: situationId,
+                    content: rawContent, // Use raw bracket-delimited content
+                    category: "parenting_guidance"
+                )
+                print("✅ Guidance saved with ID: \(guidanceId)")
+                print("🔗 Successfully linked situation \(situationId) → guidance \(guidanceId)")
+            } catch {
+                print("❌ [CRITICAL] Failed to save guidance in handleSendMessage!")
+                print("❌ [CRITICAL] Error: \(error)")
+                print("❌ [CRITICAL] Error description: \(error.localizedDescription)")
+                // Re-throw to maintain error handling
+                throw error
+            }
             
             // Step 6: Update UI
             await MainActor.run {
@@ -207,7 +220,7 @@ struct NewSituationView: View {
         familyContext: String = "none",
         apiKey: String,
         promptId: String = "pmpt_68515280423c8193aaa00a07235b7cf206c51d869f9526ba"
-    ) async throws -> GuidanceResponse {
+    ) async throws -> (GuidanceResponse, String) {
         
         let url = URL(string: "https://api.openai.com/v1/responses")!
         var request = URLRequest(url: url)
@@ -275,7 +288,7 @@ struct NewSituationView: View {
         // Parse the response into structured guidance
         let guidance = parseGuidanceResponse(content)
         print("✅ Guidance parsed successfully")
-        return guidance
+        return (guidance, content) // Return both parsed guidance and raw content
     }
     
     private func parseGuidanceResponse(_ content: String) -> GuidanceResponse {

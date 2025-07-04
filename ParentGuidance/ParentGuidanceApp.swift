@@ -274,10 +274,53 @@ class ConversationService: ObservableObject {
         content: String,
         category: String? = nil
     ) async throws -> String {
-        // For now, just return a dummy ID since we don't have Guidance model here
+        print("🔍 [DEBUG] Starting saveGuidance method")
+        print("🔍 [DEBUG] Input parameters:")
+        print("   - situationId: \(situationId)")
+        print("   - content length: \(content.count) characters")
+        print("   - content preview: \(content.prefix(100))...")
+        print("   - category: \(category ?? "nil")")
+        
         let guidanceId = UUID().uuidString
-        print("✅ Guidance saved successfully with ID: \(guidanceId)")
-        return guidanceId
+        let currentDate = ISO8601DateFormatter().string(from: Date())
+        
+        print("🔍 [DEBUG] Generated values:")
+        print("   - guidanceId: \(guidanceId)")
+        print("   - currentDate: \(currentDate)")
+        
+        let guidance = Guidance(
+            id: guidanceId,
+            situationId: situationId,
+            content: content,
+            category: category,
+            createdAt: currentDate,
+            updatedAt: currentDate
+        )
+        
+        print("🔍 [DEBUG] Created Guidance object successfully")
+        print("💾 Attempting to save guidance to Supabase...")
+        
+        do {
+            print("🔍 [DEBUG] Calling Supabase client insert...")
+            let response = try await SupabaseManager.shared.client
+                .from("guidance")
+                .insert(guidance)
+                .execute()
+            
+            print("🔍 [DEBUG] Supabase response received")
+            print("🔍 [DEBUG] Response data: \(response)")
+            print("✅ Guidance saved successfully with ID: \(guidance.id)")
+            return guidance.id
+        } catch {
+            print("❌ [ERROR] Failed to save guidance!")
+            print("❌ [ERROR] Error type: \(type(of: error))")
+            print("❌ [ERROR] Error description: \(error.localizedDescription)")
+            print("❌ [ERROR] Full error: \(error)")
+            if let encodingError = error as? EncodingError {
+                print("❌ [ERROR] Encoding error details: \(encodingError)")
+            }
+            throw error
+        }
     }
     
     func createFamilyForUser(userId: String) async throws -> String {

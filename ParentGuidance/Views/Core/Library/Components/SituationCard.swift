@@ -6,6 +6,7 @@ struct SituationCard: View {
     let date: String
     let onTap: () -> Void
     
+    // Legacy initializer for backward compatibility
     init(
         emoji: String,
         title: String,
@@ -15,6 +16,17 @@ struct SituationCard: View {
         self.emoji = emoji
         self.title = title
         self.date = date
+        self.onTap = onTap
+    }
+    
+    // New initializer for Situation models
+    init(
+        situation: Situation,
+        onTap: @escaping () -> Void = {}
+    ) {
+        self.emoji = Self.getEmojiForSituation(situation)
+        self.title = situation.title
+        self.date = Self.formatDate(situation.createdAt)
         self.onTap = onTap
     }
     
@@ -66,6 +78,108 @@ struct SituationCard: View {
             .clipShape(RoundedRectangle(cornerRadius: 12))
         }
         .buttonStyle(PlainButtonStyle())
+    }
+    
+    // MARK: - Static Helper Methods
+    static func getEmojiForSituation(_ situation: Situation) -> String {
+        // Comprehensive emoji mapping based on keywords in title/description
+        let text = "\(situation.title) \(situation.description)".lowercased()
+        
+        // Health & hygiene
+        if text.contains("teeth") || text.contains("brush") || text.contains("dental") {
+            return "🦷"
+        } else if text.contains("bath") || text.contains("shower") || text.contains("wash") {
+            return "🛁"
+        } else if text.contains("sick") || text.contains("medicine") || text.contains("doctor") {
+            return "🏥"
+        }
+        
+        // Sleep & bedtime
+        else if text.contains("bedtime") || text.contains("sleep") || text.contains("nap") || text.contains("tired") {
+            return "😴"
+        } else if text.contains("nightmare") || text.contains("scared") || text.contains("dark") {
+            return "🌙"
+        }
+        
+        // Food & eating
+        else if text.contains("dinner") || text.contains("lunch") || text.contains("breakfast") || text.contains("food") || text.contains("eat") {
+            return "🍽️"
+        } else if text.contains("snack") || text.contains("hungry") {
+            return "🍎"
+        }
+        
+        // Transportation
+        else if text.contains("car") || text.contains("drive") || text.contains("pickup") || text.contains("drop off") {
+            return "🚗"
+        } else if text.contains("bus") || text.contains("transport") {
+            return "🚌"
+        }
+        
+        // School & learning
+        else if text.contains("school") || text.contains("homework") || text.contains("study") || text.contains("teacher") {
+            return "📚"
+        } else if text.contains("reading") || text.contains("book") {
+            return "📖"
+        }
+        
+        // Play & activities
+        else if text.contains("play") || text.contains("toy") || text.contains("game") {
+            return "🎮"
+        } else if text.contains("outside") || text.contains("park") || text.contains("playground") {
+            return "🏞️"
+        } else if text.contains("art") || text.contains("draw") || text.contains("craft") {
+            return "🎨"
+        }
+        
+        // Emotions & behavior
+        else if text.contains("tantrum") || text.contains("meltdown") || text.contains("crying") {
+            return "😭"
+        } else if text.contains("angry") || text.contains("mad") || text.contains("frustrat") {
+            return "😠"
+        } else if text.contains("happy") || text.contains("excited") || text.contains("joy") {
+            return "😊"
+        } else if text.contains("sad") || text.contains("upset") {
+            return "😢"
+        }
+        
+        // Social & family
+        else if text.contains("friend") || text.contains("social") || text.contains("sharing") {
+            return "👥"
+        } else if text.contains("sibling") || text.contains("brother") || text.contains("sister") {
+            return "👨‍👩‍👧‍👦"
+        }
+        
+        // Chores & responsibilities
+        else if text.contains("chore") || text.contains("clean") || text.contains("tidy") {
+            return "🧹"
+        } else if text.contains("help") || text.contains("responsible") {
+            return "🙋‍♀️"
+        }
+        
+        // Default fallback
+        else {
+            return "💬"
+        }
+    }
+    
+    static func formatDate(_ isoString: String) -> String {
+        let formatter = ISO8601DateFormatter()
+        guard let date = formatter.date(from: isoString) else {
+            return "Recent"
+        }
+        
+        let now = Date()
+        let calendar = Calendar.current
+        
+        if calendar.isDateInToday(date) {
+            return "Today"
+        } else if calendar.isDateInYesterday(date) {
+            return "Yesterday"
+        } else {
+            let displayFormatter = DateFormatter()
+            displayFormatter.dateFormat = "MMM d"
+            return displayFormatter.string(from: date)
+        }
     }
 }
 

@@ -14,7 +14,7 @@ struct LibraryView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 // Search bar
-                SearchBar()
+                SearchBar(searchText: $controller.searchQuery)
                     .padding(.horizontal, 16)
                 
                 // Foundation tool card
@@ -78,25 +78,62 @@ struct LibraryView: View {
                     .frame(maxWidth: .infinity)
                     
                 case .content:
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Recent Situations")
-                            .font(.system(size: 18, weight: .medium))
-                            .foregroundColor(ColorPalette.white.opacity(0.9))
-                            .padding(.horizontal, 16)
-                        
-                        VStack(spacing: 12) {
-                            ForEach(controller.situations, id: \.id) { situation in
-                                SituationCard(
-                                    emoji: getEmojiForSituation(situation),
-                                    title: situation.title,
-                                    date: formatDate(situation.createdAt),
-                                    onTap: {
-                                        print("Situation tapped: \(situation.title)")
+                    if controller.searchQuery.isEmpty {
+                        // Show grouped view when not searching
+                        ForEach(controller.groupedSituations, id: \.title) { group in
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text(group.title)
+                                    .font(.system(size: 18, weight: .medium))
+                                    .foregroundColor(ColorPalette.white.opacity(0.9))
+                                    .padding(.horizontal, 16)
+                                
+                                VStack(spacing: 12) {
+                                    ForEach(group.situations, id: \.id) { situation in
+                                        SituationCard(
+                                            situation: situation,
+                                            onTap: {
+                                                print("Situation tapped: \(situation.title)")
+                                            }
+                                        )
                                     }
-                                )
+                                }
+                                .padding(.horizontal, 16)
                             }
                         }
-                        .padding(.horizontal, 16)
+                    } else {
+                        // Show search results
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Search Results (\(controller.filteredSituations.count))")
+                                .font(.system(size: 18, weight: .medium))
+                                .foregroundColor(ColorPalette.white.opacity(0.9))
+                                .padding(.horizontal, 16)
+                            
+                            if controller.filteredSituations.isEmpty {
+                                VStack(spacing: 16) {
+                                    Text("No situations found")
+                                        .font(.system(size: 16))
+                                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                                    
+                                    Text("Try a different search term")
+                                        .font(.system(size: 14))
+                                        .foregroundColor(ColorPalette.white.opacity(0.5))
+                                }
+                                .padding(40)
+                                .frame(maxWidth: .infinity)
+                            } else {
+                                VStack(spacing: 12) {
+                                    ForEach(controller.filteredSituations, id: \.id) { situation in
+                                        SituationCard(
+                                            situation: situation,
+                                            onTap: {
+                                                print("Situation tapped: \(situation.title)")
+                                            }
+                                        )
+                                    }
+                                }
+                                .padding(.horizontal, 16)
+                            }
+                        }
                     }
                 }
             }
@@ -105,48 +142,8 @@ struct LibraryView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(ColorPalette.navy)
-    }
-    
-    private func getEmojiForSituation(_ situation: Situation) -> String {
-        // Simple emoji mapping based on keywords in title/description
-        let text = "\(situation.title) \(situation.description)".lowercased()
-        
-        if text.contains("teeth") || text.contains("brush") {
-            return "🦷"
-        } else if text.contains("bath") || text.contains("bedtime") || text.contains("sleep") {
-            return "🛁"
-        } else if text.contains("car") || text.contains("drive") || text.contains("pickup") {
-            return "🚗"
-        } else if text.contains("dinner") || text.contains("food") || text.contains("eat") {
-            return "🍽️"
-        } else if text.contains("school") || text.contains("homework") {
-            return "📚"
-        } else if text.contains("play") || text.contains("toy") {
-            return "🎮"
-        } else if text.contains("tantrum") || text.contains("meltdown") {
-            return "😭"
-        } else {
-            return "💬"
-        }
-    }
-    
-    private func formatDate(_ isoString: String) -> String {
-        let formatter = ISO8601DateFormatter()
-        guard let date = formatter.date(from: isoString) else {
-            return "Recent"
-        }
-        
-        let now = Date()
-        let calendar = Calendar.current
-        
-        if calendar.isDateInToday(date) {
-            return "Today"
-        } else if calendar.isDateInYesterday(date) {
-            return "Yesterday"
-        } else {
-            let displayFormatter = DateFormatter()
-            displayFormatter.dateFormat = "MMM d"
-            return displayFormatter.string(from: date)
+        .refreshable {
+            controller.refreshSituations()
         }
     }
 }

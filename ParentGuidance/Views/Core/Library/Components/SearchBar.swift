@@ -1,8 +1,12 @@
 import SwiftUI
 
 struct SearchBar: View {
-    @State private var searchText: String = ""
+    @Binding var searchText: String
     @FocusState private var isSearchFocused: Bool
+    
+    init(searchText: Binding<String> = .constant("")) {
+        self._searchText = searchText
+    }
     
     var body: some View {
         HStack {

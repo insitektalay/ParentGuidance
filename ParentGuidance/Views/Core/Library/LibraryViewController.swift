@@ -11,6 +11,12 @@ import SwiftUI
 class LibraryViewController: ObservableObject {
     @Published var viewState: ViewState = .loading
     @Published var situations: [Situation] = []
+    @Published var filteredSituations: [Situation] = []
+    @Published var searchQuery: String = "" {
+        didSet {
+            filterSituations()
+        }
+    }
     @Published var errorMessage: String = ""
     
     enum ViewState {
@@ -45,6 +51,7 @@ class LibraryViewController: ObservableObject {
                 
                 await MainActor.run {
                     self.situations = allSituations
+                    self.filteredSituations = allSituations
                     self.viewState = allSituations.isEmpty ? .empty : .content
                 }
                 
@@ -64,5 +71,68 @@ class LibraryViewController: ObservableObject {
     
     func refreshSituations() {
         loadSituations()
+    }
+    
+    private func filterSituations() {
+        let trimmedQuery = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        if trimmedQuery.isEmpty {
+            filteredSituations = situations
+        } else {
+            filteredSituations = situations.filter { situation in
+                situation.title.lowercased().contains(trimmedQuery.lowercased()) ||
+                situation.description.lowercased().contains(trimmedQuery.lowercased())
+            }
+        }
+    }
+    
+    // MARK: - Date Grouping Foundation
+    struct SituationGroup {
+        let title: String
+        let situations: [Situation]
+    }
+    
+    var groupedSituations: [SituationGroup] {
+        let calendar = Calendar.current
+        let now = Date()
+        
+        var todayGroup: [Situation] = []
+        var yesterdayGroup: [Situation] = []
+        var thisWeekGroup: [Situation] = []
+        var olderGroup: [Situation] = []
+        
+        for situation in filteredSituations {
+            guard let date = ISO8601DateFormatter().date(from: situation.createdAt) else {
+                olderGroup.append(situation)
+                continue
+            }
+            
+            if calendar.isDateInToday(date) {
+                todayGroup.append(situation)
+            } else if calendar.isDateInYesterday(date) {
+                yesterdayGroup.append(situation)
+            } else if calendar.dateInterval(of: .weekOfYear, for: now)?.contains(date) == true {
+                thisWeekGroup.append(situation)
+            } else {
+                olderGroup.append(situation)
+            }
+        }
+        
+        var groups: [SituationGroup] = []
+        
+        if !todayGroup.isEmpty {
+            groups.append(SituationGroup(title: "Today", situations: todayGroup))
+        }
+        if !yesterdayGroup.isEmpty {
+            groups.append(SituationGroup(title: "Yesterday", situations: yesterdayGroup))
+        }
+        if !thisWeekGroup.isEmpty {
+            groups.append(SituationGroup(title: "This Week", situations: thisWeekGroup))
+        }
+        if !olderGroup.isEmpty {
+            groups.append(SituationGroup(title: "Older", situations: olderGroup))
+        }
+        
+        return groups
     }
 }

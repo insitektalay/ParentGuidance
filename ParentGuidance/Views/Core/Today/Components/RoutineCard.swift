@@ -4,11 +4,22 @@ struct RoutineCard: View {
     let time: String
     let activity: String
     let icon: String?
+    let situation: Situation?
     
+    // Legacy initializer for compatibility
     init(time: String, activity: String, icon: String? = nil) {
         self.time = time
         self.activity = activity
         self.icon = icon
+        self.situation = nil
+    }
+    
+    // New initializer that accepts Situation object
+    init(situation: Situation, time: String, icon: String) {
+        self.time = time
+        self.activity = situation.title
+        self.icon = icon
+        self.situation = situation
     }
     
     var body: some View {
@@ -19,7 +30,7 @@ struct RoutineCard: View {
                 .foregroundColor(ColorPalette.white.opacity(0.6))
             
             // Activity card with navigation
-            NavigationLink(destination: SituationGuidanceView()) {
+            NavigationLink(destination: SituationGuidanceView(situation: situation)) {
                 HStack(alignment: .center, spacing: 12) {
                     // Icon (if provided)
                     if let iconName = icon {

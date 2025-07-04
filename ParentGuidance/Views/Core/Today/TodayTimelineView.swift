@@ -24,11 +24,12 @@ struct TodayTimelineView: View {
                 } else {
                     ForEach(situations, id: \.id) { situation in
                         let timePeriod = getTimePeriod(from: situation.createdAt)
+                        let dynamicIcon = getSituationSpecificIcon(for: situation)
                         
                         RoutineCard(
+                            situation: situation,
                             time: formatTime(from: situation.createdAt),
-                            activity: situation.title,
-                            icon: getTimePeriodIcon(for: timePeriod)
+                            icon: dynamicIcon
                         )
                         .opacity(getTimePeriodOpacity(for: timePeriod))
                     }
@@ -129,6 +130,184 @@ struct TodayTimelineView: View {
             timeFormatter.timeZone = TimeZone.current
             return timeFormatter.string(from: date)
         }
+    }
+    
+    // MARK: - Dynamic Icon Selection System
+    
+    private func getSituationSpecificIcon(for situation: Situation) -> String {
+        let text = "\(situation.title) \(situation.description)".lowercased()
+        
+        // Extract keywords and find best matching icon
+        let bestMatch = findBestIconMatch(in: text)
+        
+        // Fallback hierarchy: specific icon -> time-period icon -> default
+        if let specificIcon = bestMatch {
+            return specificIcon
+        } else {
+            // Fall back to time-period icon from Baby Step 3
+            let timePeriod = getTimePeriod(from: situation.createdAt)
+            return getTimePeriodIcon(for: timePeriod)
+        }
+    }
+    
+    private func findBestIconMatch(in text: String) -> String? {
+        // Create comprehensive keyword → SF Symbol mapping
+        let iconMappings: [String: String] = [
+            // Daily Care & Hygiene
+            "teeth": "toothbrush.fill",
+            "brush": "toothbrush.fill",
+            "brushing": "toothbrush.fill",
+            "dental": "toothbrush.fill",
+            "bath": "bathtub.fill",
+            "shower": "shower.fill",
+            "washing": "hands.sparkles.fill",
+            "wash": "hands.sparkles.fill",
+            "soap": "hands.sparkles.fill",
+            "clean": "sparkles",
+            
+            // Sleep & Rest
+            "sleep": "bed.double.fill",
+            "bed": "bed.double.fill",
+            "bedtime": "bed.double.fill",
+            "nap": "bed.double.fill",
+            "tired": "moon.zzz.fill",
+            "sleepy": "moon.zzz.fill",
+            
+            // Food & Eating
+            "eat": "fork.knife",
+            "eating": "fork.knife",
+            "food": "fork.knife",
+            "meal": "fork.knife",
+            "dinner": "fork.knife",
+            "lunch": "fork.knife",
+            "breakfast": "fork.knife",
+            "snack": "carrot.fill",
+            "hungry": "fork.knife",
+            "kitchen": "fork.knife",
+            "cooking": "frying.pan.fill",
+            
+            // Transportation
+            "car": "car.fill",
+            "drive": "car.fill",
+            "driving": "car.fill",
+            "bus": "bus.fill",
+            "walk": "figure.walk",
+            "walking": "figure.walk",
+            "bike": "bicycle",
+            "scooter": "scooter",
+            
+            // School & Learning
+            "school": "building.2.fill",
+            "homework": "pencil.and.outline",
+            "study": "book.fill",
+            "reading": "book.fill",
+            "book": "book.fill",
+            "learn": "graduationcap.fill",
+            "teacher": "person.chalkboard",
+            "class": "building.2.fill",
+            
+            // Play & Activities
+            "play": "gamecontroller.fill",
+            "playing": "gamecontroller.fill",
+            "toy": "teddybear.fill",
+            "toys": "teddybear.fill",
+            "game": "gamecontroller.fill",
+            "lego": "building.2.crop.circle.fill",
+            "blocks": "building.2.crop.circle.fill",
+            "puzzle": "puzzlepiece.fill",
+            
+            // Sports & Exercise
+            "soccer": "soccerball",
+            "football": "football.fill",
+            "basketball": "basketball.fill",
+            "tennis": "tennis.racket",
+            "swimming": "figure.pool.swim",
+            "run": "figure.run",
+            "running": "figure.run",
+            "exercise": "figure.strengthtraining.traditional",
+            "playground": "figure.playground",
+            
+            // Technology & Media
+            "tv": "tv.fill",
+            "television": "tv.fill",
+            "screen": "tv.fill",
+            "ipad": "ipad",
+            "tablet": "ipad",
+            "phone": "iphone",
+            "video": "play.rectangle.fill",
+            "movie": "tv.fill",
+            
+            // Social & Relationships
+            "friend": "person.2.fill",
+            "friends": "person.2.fill",
+            "sibling": "person.2.fill",
+            "brother": "person.2.fill",
+            "sister": "person.2.fill",
+            "share": "arrow.triangle.2.circlepath",
+            "sharing": "arrow.triangle.2.circlepath",
+            "fight": "exclamationmark.triangle.fill",
+            "argue": "exclamationmark.triangle.fill",
+            
+            // Emotions & Behavior
+            "tantrum": "exclamationmark.triangle.fill",
+            "angry": "flame.fill",
+            "mad": "flame.fill",
+            "upset": "cloud.rain.fill",
+            "cry": "drop.fill",
+            "crying": "drop.fill",
+            "sad": "cloud.fill",
+            "happy": "sun.max.fill",
+            "excited": "star.fill",
+            "scared": "exclamationmark.triangle.fill",
+            "afraid": "exclamationmark.triangle.fill",
+            
+            // Health & Medical
+            "sick": "cross.case.fill",
+            "medicine": "pills.fill",
+            "doctor": "stethoscope",
+            "fever": "thermometer",
+            "hurt": "bandage.fill",
+            "pain": "bandage.fill",
+            
+            // Locations & Places
+            "home": "house.fill",
+            "store": "cart.fill",
+            "shopping": "cart.fill",
+            "park": "tree.fill",
+            "restaurant": "fork.knife.circle.fill",
+            "library": "building.columns.fill",
+            "church": "building.columns.fill",
+            "hospital": "cross.case.fill",
+            
+            // Transitions & Changes
+            "leave": "arrow.right.circle.fill",
+            "leaving": "arrow.right.circle.fill",
+            "go": "arrow.right.circle.fill",
+            "going": "arrow.right.circle.fill",
+            "transition": "arrow.triangle.turn.up.right.circle.fill",
+            "change": "arrow.triangle.turn.up.right.circle.fill",
+            "stop": "stop.circle.fill",
+            "start": "play.circle.fill",
+            
+            // Time-specific contexts
+            "morning": "sun.max.fill",
+            "afternoon": "sun.max.fill",
+            "evening": "sun.min.fill",
+            "night": "moon.fill"
+        ]
+        
+        // Find the best matching icon by checking for keywords in text
+        var bestMatch: String?
+        var longestMatch = 0
+        
+        for (keyword, icon) in iconMappings {
+            if text.contains(keyword) && keyword.count > longestMatch {
+                bestMatch = icon
+                longestMatch = keyword.count
+            }
+        }
+        
+        return bestMatch
     }
 }
 

@@ -3,6 +3,11 @@ import SwiftUI
 struct SituationGuidanceView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var currentPage = 0
+    let situation: Situation?
+    
+    init(situation: Situation? = nil) {
+        self.situation = situation
+    }
     
     private let categories = [
         GuidanceCategory(

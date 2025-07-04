@@ -19,6 +19,12 @@ class LibraryViewController: ObservableObject {
     }
     @Published var errorMessage: String = ""
     
+    // Navigation state
+    @Published var selectedSituation: Situation?
+    @Published var selectedGuidance: [Guidance] = []
+    @Published var isLoadingGuidance: Bool = false
+    @Published var guidanceError: String?
+    
     enum ViewState {
         case loading
         case error
@@ -134,5 +140,47 @@ class LibraryViewController: ObservableObject {
         }
         
         return groups
+    }
+    
+    // MARK: - Navigation & Guidance Loading
+    func selectSituation(_ situation: Situation) {
+        selectedSituation = situation
+        loadGuidanceForSituation(situationId: situation.id)
+    }
+    
+    func clearSelection() {
+        selectedSituation = nil
+        selectedGuidance = []
+        guidanceError = nil
+    }
+    
+    private func loadGuidanceForSituation(situationId: String) {
+        isLoadingGuidance = true
+        guidanceError = nil
+        
+        Task {
+            do {
+                print("📋 Loading guidance for situation: \(situationId)")
+                let guidance = try await ConversationService.shared.getGuidanceForSituation(situationId: situationId)
+                
+                await MainActor.run {
+                    self.selectedGuidance = guidance
+                    self.isLoadingGuidance = false
+                    
+                    if guidance.isEmpty {
+                        self.guidanceError = "No guidance found for this situation"
+                    }
+                    
+                    print("✅ Loaded \(guidance.count) guidance entries")
+                }
+                
+            } catch {
+                print("❌ Error loading guidance: \(error)")
+                await MainActor.run {
+                    self.guidanceError = "Failed to load guidance. Please try again."
+                    self.isLoadingGuidance = false
+                }
+            }
+        }
     }
 }

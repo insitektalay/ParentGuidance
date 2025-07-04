@@ -162,6 +162,57 @@ struct SituationCard: View {
         }
     }
     
+    static func getIconForEmoji(_ emoji: String) -> String {
+        switch emoji {
+        case "🦷":
+            return "mouth"
+        case "🛁":
+            return "drop.fill"
+        case "🏥":
+            return "cross.case.fill"
+        case "😴":
+            return "moon.fill"
+        case "🌙":
+            return "moon.stars.fill"
+        case "🍽️":
+            return "fork.knife"
+        case "🍎":
+            return "apple.logo"
+        case "🚗":
+            return "car.fill"
+        case "🚌":
+            return "bus.fill"
+        case "📚":
+            return "book.fill"
+        case "📖":
+            return "book.closed.fill"
+        case "🎮":
+            return "gamecontroller.fill"
+        case "🏞️":
+            return "tree.fill"
+        case "🎨":
+            return "paintbrush.fill"
+        case "😭":
+            return "face.smiling.inverse"
+        case "😠":
+            return "exclamationmark.triangle.fill"
+        case "😊":
+            return "face.smiling"
+        case "😢":
+            return "drop.triangle.fill"
+        case "👥":
+            return "person.2.fill"
+        case "👨‍👩‍👧‍👦":
+            return "house.fill"
+        case "🧹":
+            return "trash.fill"
+        case "🙋‍♀️":
+            return "hand.raised.fill"
+        default:
+            return "circle.fill"
+        }
+    }
+    
     static func formatDate(_ isoString: String) -> String {
         let formatter = ISO8601DateFormatter()
         guard let date = formatter.date(from: isoString) else {

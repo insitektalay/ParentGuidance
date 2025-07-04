@@ -11,6 +11,24 @@ struct LibraryView: View {
     @StateObject private var controller = LibraryViewController()
     
     var body: some View {
+        NavigationStack {
+            if let selectedSituation = controller.selectedSituation {
+                SituationDetailView(
+                    situation: selectedSituation,
+                    guidance: controller.selectedGuidance,
+                    isLoadingGuidance: controller.isLoadingGuidance,
+                    guidanceError: controller.guidanceError,
+                    onBack: {
+                        controller.clearSelection()
+                    }
+                )
+            } else {
+                libraryListView
+            }
+        }
+    }
+    
+    private var libraryListView: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 // Search bar
@@ -92,7 +110,7 @@ struct LibraryView: View {
                                         SituationCard(
                                             situation: situation,
                                             onTap: {
-                                                print("Situation tapped: \(situation.title)")
+                                                controller.selectSituation(situation)
                                             }
                                         )
                                     }
@@ -126,7 +144,7 @@ struct LibraryView: View {
                                         SituationCard(
                                             situation: situation,
                                             onTap: {
-                                                print("Situation tapped: \(situation.title)")
+                                                controller.selectSituation(situation)
                                             }
                                         )
                                     }

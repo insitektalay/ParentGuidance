@@ -19,6 +19,20 @@ class LibraryViewController: ObservableObject {
     }
     @Published var errorMessage: String = ""
     
+    // Filter state
+    @Published var selectedDateFilter: DateFilter = .allTime
+    @Published var selectedSort: SortOption = .mostRecent
+    @Published var selectedCategories: Set<CategoryFilter> = []
+    
+    // Computed properties
+    var activeFiltersCount: Int {
+        var count = 0
+        if selectedDateFilter != .allTime { count += 1 }
+        if selectedSort != .mostRecent { count += 1 }
+        if !selectedCategories.isEmpty { count += selectedCategories.count }
+        return count
+    }
+    
     // Navigation state
     @Published var selectedSituation: Situation?
     @Published var selectedGuidance: [Guidance] = []
@@ -57,8 +71,9 @@ class LibraryViewController: ObservableObject {
                 
                 await MainActor.run {
                     self.situations = allSituations
-                    self.filteredSituations = allSituations
                     self.viewState = allSituations.isEmpty ? .empty : .content
+                    // Apply current filters to newly loaded situations
+                    self.filterSituations()
                 }
                 
             } catch {
@@ -80,16 +95,33 @@ class LibraryViewController: ObservableObject {
     }
     
     private func filterSituations() {
-        let trimmedQuery = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        var result = situations
         
-        if trimmedQuery.isEmpty {
-            filteredSituations = situations
-        } else {
-            filteredSituations = situations.filter { situation in
+        // Apply date filter
+        result = selectedDateFilter.filterSituations(result)
+        
+        // Apply category filters
+        if !selectedCategories.isEmpty {
+            result = result.filter { situation in
+                selectedCategories.contains { category in
+                    category.matchesSituation(situation)
+                }
+            }
+        }
+        
+        // Apply search query
+        let trimmedQuery = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !trimmedQuery.isEmpty {
+            result = result.filter { situation in
                 situation.title.lowercased().contains(trimmedQuery.lowercased()) ||
                 situation.description.lowercased().contains(trimmedQuery.lowercased())
             }
         }
+        
+        // Apply sorting
+        result = selectedSort.sortSituations(result)
+        
+        filteredSituations = result
     }
     
     // MARK: - Date Grouping Foundation
@@ -182,5 +214,32 @@ class LibraryViewController: ObservableObject {
                 }
             }
         }
+    }
+    
+    // MARK: - Filter Management
+    func updateDateFilter(_ filter: DateFilter) {
+        selectedDateFilter = filter
+        filterSituations()
+    }
+    
+    func updateSort(_ sort: SortOption) {
+        selectedSort = sort
+        filterSituations()
+    }
+    
+    func toggleCategory(_ category: CategoryFilter) {
+        if selectedCategories.contains(category) {
+            selectedCategories.remove(category)
+        } else {
+            selectedCategories.insert(category)
+        }
+        filterSituations()
+    }
+    
+    func clearAllFilters() {
+        selectedDateFilter = .allTime
+        selectedSort = .mostRecent
+        selectedCategories.removeAll()
+        filterSituations()
     }
 }

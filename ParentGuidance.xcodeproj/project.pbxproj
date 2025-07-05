@@ -9,6 +9,17 @@
 /* Begin PBXBuildFile section */
 		943DFD722E17CBE3004F8043 /* LibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD712E17CBE3004F8043 /* LibraryViewController.swift */; };
 		943DFD742E180D40004F8043 /* SituationDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD732E180D40004F8043 /* SituationDetailView.swift */; };
+		943DFD772E1823A5004F8043 /* LibraryFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD762E1823A5004F8043 /* LibraryFilters.swift */; };
+		943DFD792E182630004F8043 /* SearchFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD782E182630004F8043 /* SearchFilterView.swift */; };
+		943DFD7B2E182640004F8043 /* SortDropdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD7A2E182640004F8043 /* SortDropdown.swift */; };
+		943DFD7D2E182650004F8043 /* CategoryFilterChips.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD7C2E182650004F8043 /* CategoryFilterChips.swift */; };
+		943DFD7F2E18265C004F8043 /* SearchStatesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD7E2E18265C004F8043 /* SearchStatesView.swift */; };
+		943DFD812E18266B004F8043 /* LibraryHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD802E18266B004F8043 /* LibraryHeaderView.swift */; };
+		943DFD832E182676004F8043 /* FilterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD822E182676004F8043 /* FilterButton.swift */; };
+		943DFD852E182684004F8043 /* SearchHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD842E182684004F8043 /* SearchHistoryView.swift */; };
+		943DFD872E182690004F8043 /* BulkActionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD862E182690004F8043 /* BulkActionBar.swift */; };
+		943DFD892E18269D004F8043 /* ExportSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD882E18269D004F8043 /* ExportSheet.swift */; };
+		943DFD8B2E1826AF004F8043 /* ConfirmationDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD8A2E1826AF004F8043 /* ConfirmationDialog.swift */; };
 		948605C82E111824008D92DE /* TodayEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605C72E111824008D92DE /* TodayEmptyView.swift */; };
 		948605CB2E111D1D008D92DE /* TodayTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605CA2E111D1D008D92DE /* TodayTimelineView.swift */; };
 		948605CE2E115CB2008D92DE /* AlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605CD2E115CB2008D92DE /* AlertView.swift */; };
@@ -76,6 +87,17 @@
 /* Begin PBXFileReference section */
 		943DFD712E17CBE3004F8043 /* LibraryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryViewController.swift; sourceTree = "<group>"; };
 		943DFD732E180D40004F8043 /* SituationDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SituationDetailView.swift; sourceTree = "<group>"; };
+		943DFD762E1823A5004F8043 /* LibraryFilters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryFilters.swift; sourceTree = "<group>"; };
+		943DFD782E182630004F8043 /* SearchFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchFilterView.swift; sourceTree = "<group>"; };
+		943DFD7A2E182640004F8043 /* SortDropdown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortDropdown.swift; sourceTree = "<group>"; };
+		943DFD7C2E182650004F8043 /* CategoryFilterChips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryFilterChips.swift; sourceTree = "<group>"; };
+		943DFD7E2E18265C004F8043 /* SearchStatesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchStatesView.swift; sourceTree = "<group>"; };
+		943DFD802E18266B004F8043 /* LibraryHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryHeaderView.swift; sourceTree = "<group>"; };
+		943DFD822E182676004F8043 /* FilterButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterButton.swift; sourceTree = "<group>"; };
+		943DFD842E182684004F8043 /* SearchHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchHistoryView.swift; sourceTree = "<group>"; };
+		943DFD862E182690004F8043 /* BulkActionBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulkActionBar.swift; sourceTree = "<group>"; };
+		943DFD882E18269D004F8043 /* ExportSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportSheet.swift; sourceTree = "<group>"; };
+		943DFD8A2E1826AF004F8043 /* ConfirmationDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationDialog.swift; sourceTree = "<group>"; };
 		948605C72E111824008D92DE /* TodayEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayEmptyView.swift; sourceTree = "<group>"; };
 		948605CA2E111D1D008D92DE /* TodayTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayTimelineView.swift; sourceTree = "<group>"; };
 		948605CD2E115CB2008D92DE /* AlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertView.swift; sourceTree = "<group>"; };
@@ -151,6 +173,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		943DFD752E18238E004F8043 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				943DFD762E1823A5004F8043 /* LibraryFilters.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		948605C92E111832008D92DE /* Components */ = {
 			isa = PBXGroup;
 			children = (
@@ -369,6 +399,7 @@
 		94FA111A2E05C8E7003EC1E9 /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				943DFD752E18238E004F8043 /* Models */,
 				943DFD732E180D40004F8043 /* SituationDetailView.swift */,
 				94FA11422E05CCC0003EC1E9 /* Components */,
 				943DFD712E17CBE3004F8043 /* LibraryViewController.swift */,
@@ -442,6 +473,16 @@
 				94FA113D2E05CC91003EC1E9 /* SearchBar.swift */,
 				94FA113F2E05CCA1003EC1E9 /* FoundationToolCard.swift */,
 				94FA11412E05CCB1003EC1E9 /* SituationCard.swift */,
+				943DFD782E182630004F8043 /* SearchFilterView.swift */,
+				943DFD7A2E182640004F8043 /* SortDropdown.swift */,
+				943DFD7C2E182650004F8043 /* CategoryFilterChips.swift */,
+				943DFD7E2E18265C004F8043 /* SearchStatesView.swift */,
+				943DFD802E18266B004F8043 /* LibraryHeaderView.swift */,
+				943DFD822E182676004F8043 /* FilterButton.swift */,
+				943DFD842E182684004F8043 /* SearchHistoryView.swift */,
+				943DFD862E182690004F8043 /* BulkActionBar.swift */,
+				943DFD882E18269D004F8043 /* ExportSheet.swift */,
+				943DFD8A2E1826AF004F8043 /* ConfirmationDialog.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -583,24 +624,30 @@
 			buildActionMask = 2147483647;
 			files = (
 				94FA11142E05C8A7003EC1E9 /* LibraryView.swift in Sources */,
+				943DFD872E182690004F8043 /* BulkActionBar.swift in Sources */,
+				943DFD792E182630004F8043 /* SearchFilterView.swift in Sources */,
 				94FA10C62E056247003EC1E9 /* ContentView.swift in Sources */,
 				94FA11092E056D30003EC1E9 /* PaymentView.swift in Sources */,
 				94FA10C42E056247003EC1E9 /* ParentGuidanceApp.swift in Sources */,
 				94FA11272E05CBDF003EC1E9 /* SituationOrganizingView.swift in Sources */,
 				94FA11302E05CC23003EC1E9 /* InputGuidanceFooter.swift in Sources */,
 				94FA10FB2E05666F003EC1E9 /* ColorPalette.swift in Sources */,
+				943DFD812E18266B004F8043 /* LibraryHeaderView.swift in Sources */,
 				94FA10FD2E056C6C003EC1E9 /* WelcomeView.swift in Sources */,
 				94FA110D2E05BA00003EC1E9 /* MainTabView.swift in Sources */,
 				948605CB2E111D1D008D92DE /* TodayTimelineView.swift in Sources */,
 				94FA11052E056CCA003EC1E9 /* PlanSelectionView.swift in Sources */,
+				943DFD7F2E18265C004F8043 /* SearchStatesView.swift in Sources */,
 				94FA112E2E05CC15003EC1E9 /* SendButton.swift in Sources */,
 				94FA112C2E05CC08003EC1E9 /* MicButton.swift in Sources */,
 				94FA11122E05C898003EC1E9 /* NewSituationView.swift in Sources */,
 				94FA11182E05C8C1003EC1E9 /* SettingsView.swift in Sources */,
+				943DFD772E1823A5004F8043 /* LibraryFilters.swift in Sources */,
 				94FA11072E056CFD003EC1E9 /* OnboardingCoordinator.swift in Sources */,
 				94FA11012E056C93003EC1E9 /* ChildBasicsView.swift in Sources */,
 				94FA11162E05C8B6003EC1E9 /* AlertsView.swift in Sources */,
 				94FA112A2E05CBFD003EC1E9 /* ChildBadge.swift in Sources */,
+				943DFD8B2E1826AF004F8043 /* ConfirmationDialog.swift in Sources */,
 				94FA11252E05CBD4003EC1E9 /* SituationFollowUpView.swift in Sources */,
 				94B3D79C2E16C45B000F1D65 /* TodayViewController.swift in Sources */,
 				948605C82E111824008D92DE /* TodayEmptyView.swift in Sources */,
@@ -609,19 +656,24 @@
 				94FA10FF2E056C7A003EC1E9 /* AuthenticationView.swift in Sources */,
 				94FA11212E05CBB8003EC1E9 /* SituationTypingView.swift in Sources */,
 				943DFD722E17CBE3004F8043 /* LibraryViewController.swift in Sources */,
+				943DFD832E182676004F8043 /* FilterButton.swift in Sources */,
 				943DFD742E180D40004F8043 /* SituationDetailView.swift in Sources */,
 				94FA11102E05C88A003EC1E9 /* TodayView.swift in Sources */,
 				94FA110B2E056D40003EC1E9 /* APIKeyView.swift in Sources */,
 				94FA11232E05CBC3003EC1E9 /* SituationVoiceView.swift in Sources */,
+				943DFD892E18269D004F8043 /* ExportSheet.swift in Sources */,
 				94FA111F2E05CBAA003EC1E9 /* SituationInputIdleView.swift in Sources */,
 				94FA11322E05CC30003EC1E9 /* ChildHeader.swift in Sources */,
 				94FA11332E05CC40003EC1E9 /* RoutineCard.swift in Sources */,
 				948605CE2E115CB2008D92DE /* AlertView.swift in Sources */,
+				943DFD7D2E182650004F8043 /* CategoryFilterChips.swift in Sources */,
 				94FA11342E05CC50003EC1E9 /* GuidanceCard.swift in Sources */,
+				943DFD7B2E182640004F8043 /* SortDropdown.swift in Sources */,
 				94FA11362E05CC60003EC1E9 /* SituationGuidanceView.swift in Sources */,
 				94FA113A2E05CC80003EC1E9 /* NotificationCard.swift in Sources */,
 				94FA113C2E05CC90003EC1E9 /* SearchBar.swift in Sources */,
 				94FA113E2E05CCA0003EC1E9 /* FoundationToolCard.swift in Sources */,
+				943DFD852E182684004F8043 /* SearchHistoryView.swift in Sources */,
 				94FA11402E05CCB0003EC1E9 /* SituationCard.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

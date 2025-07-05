@@ -35,6 +35,9 @@ struct LibraryView: View {
                 SearchBar(searchText: $controller.searchQuery)
                     .padding(.horizontal, 16)
                 
+                // Date filter buttons
+                SearchFilterView(controller: controller)
+                
                 // Foundation tool card
                 FoundationToolCard(
                     onViewTools: {

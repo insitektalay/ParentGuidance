@@ -33,6 +33,16 @@ class LibraryViewController: ObservableObject {
         return count
     }
     
+    var dateFilterCounts: [DateFilter: Int] {
+        var counts: [DateFilter: Int] = [:]
+        
+        for filter in DateFilter.allCases {
+            counts[filter] = filter.filterSituations(situations).count
+        }
+        
+        return counts
+    }
+    
     // Navigation state
     @Published var selectedSituation: Situation?
     @Published var selectedGuidance: [Guidance] = []

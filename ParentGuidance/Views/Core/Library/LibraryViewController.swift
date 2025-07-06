@@ -12,6 +12,7 @@ class LibraryViewController: ObservableObject {
     @Published var viewState: ViewState = .loading
     @Published var situations: [Situation] = []
     @Published var filteredSituations: [Situation] = []
+    @Published var groupedSituations: [SituationGroup] = []
     @Published var searchQuery: String = "" {
         didSet {
             filterSituations()
@@ -23,6 +24,9 @@ class LibraryViewController: ObservableObject {
     @Published var selectedDateFilter: DateFilter = .allTime
     @Published var selectedSort: SortOption = .mostRecent
     @Published var selectedCategories: Set<CategoryFilter> = []
+    
+    // UI state
+    @Published var isShowingSortDropdown: Bool = false
     
     // Computed properties
     var activeFiltersCount: Int {
@@ -128,10 +132,11 @@ class LibraryViewController: ObservableObject {
             }
         }
         
-        // Apply sorting
-        result = selectedSort.sortSituations(result)
-        
+        // Don't apply sorting here - let updateGroupedSituations handle it
         filteredSituations = result
+        
+        // Update grouped situations (this will apply sorting)
+        updateGroupedSituations()
     }
     
     // MARK: - Date Grouping Foundation
@@ -140,7 +145,10 @@ class LibraryViewController: ObservableObject {
         let situations: [Situation]
     }
     
-    var groupedSituations: [SituationGroup] {
+    private func updateGroupedSituations() {
+        // First, apply sorting to the filtered situations
+        let sortedSituations = selectedSort.sortSituations(filteredSituations)
+        
         let calendar = Calendar.current
         let now = Date()
         
@@ -149,7 +157,8 @@ class LibraryViewController: ObservableObject {
         var thisWeekGroup: [Situation] = []
         var olderGroup: [Situation] = []
         
-        for situation in filteredSituations {
+        // Group the sorted situations by date, preserving the sort order
+        for situation in sortedSituations {
             guard let date = ISO8601DateFormatter().date(from: situation.createdAt) else {
                 olderGroup.append(situation)
                 continue
@@ -166,6 +175,8 @@ class LibraryViewController: ObservableObject {
             }
         }
         
+        // Don't re-sort - we already sorted before grouping
+        
         var groups: [SituationGroup] = []
         
         if !todayGroup.isEmpty {
@@ -181,7 +192,8 @@ class LibraryViewController: ObservableObject {
             groups.append(SituationGroup(title: "Older", situations: olderGroup))
         }
         
-        return groups
+        groupedSituations = groups
+        
     }
     
     // MARK: - Navigation & Guidance Loading
@@ -235,6 +247,20 @@ class LibraryViewController: ObservableObject {
     func updateSort(_ sort: SortOption) {
         selectedSort = sort
         filterSituations()
+    }
+    
+    func toggleSortDropdown() {
+        isShowingSortDropdown.toggle()
+    }
+    
+    func selectSortOption(_ option: SortOption) {
+        selectedSort = option
+        isShowingSortDropdown = false
+        filterSituations()
+    }
+    
+    func hideSortDropdown() {
+        isShowingSortDropdown = false
     }
     
     func toggleCategory(_ category: CategoryFilter) {

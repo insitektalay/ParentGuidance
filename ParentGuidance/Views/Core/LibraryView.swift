@@ -31,12 +31,8 @@ struct LibraryView: View {
     private var libraryListView: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                // Search bar
-                SearchBar(searchText: $controller.searchQuery)
-                    .padding(.horizontal, 16)
-                
-                // Date filter buttons
-                SearchFilterView(controller: controller)
+                // Library header with search, filters, and sorting
+                LibraryHeaderView(controller: controller)
                 
                 // Foundation tool card
                 FoundationToolCard(
@@ -166,6 +162,73 @@ struct LibraryView: View {
         .refreshable {
             controller.refreshSituations()
         }
+        .overlay(
+            // Sort dropdown overlay - appears above all content
+            Group {
+                if controller.isShowingSortDropdown {
+                    GeometryReader { geometry in
+                        VStack(spacing: 0) {
+                            ForEach(SortOption.allCases, id: \.self) { option in
+                                Button(action: {
+                                    controller.updateSort(option)
+                                    controller.toggleSortDropdown()
+                                }) {
+                                    HStack(spacing: 12) {
+                                        Image(systemName: option.sfSymbol)
+                                            .font(.system(size: 14, weight: .medium))
+                                            .foregroundColor(ColorPalette.white)
+                                            .frame(width: 16)
+                                        
+                                        Text(option.displayName)
+                                            .font(.system(size: 14, weight: .medium))
+                                            .foregroundColor(ColorPalette.white)
+                                        
+                                        Spacer()
+                                        
+                                        if controller.selectedSort == option {
+                                            Image(systemName: "checkmark")
+                                                .font(.system(size: 12, weight: .bold))
+                                                .foregroundColor(ColorPalette.terracotta)
+                                        }
+                                    }
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 12)
+                                    .background(
+                                        controller.selectedSort == option 
+                                            ? ColorPalette.terracotta.opacity(0.1)
+                                            : Color.clear
+                                    )
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                
+                                if option != SortOption.allCases.last {
+                                    Divider()
+                                        .background(ColorPalette.white.opacity(0.1))
+                                }
+                            }
+                        }
+                        .background(ColorPalette.navy)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(ColorPalette.white.opacity(0.2), lineWidth: 1)
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .shadow(color: .black.opacity(0.3), radius: 8, x: 0, y: 4)
+                        .frame(width: 180)
+                        .position(
+                            x: geometry.size.width - 100, // Position near right edge
+                            y: 120 // Position below header area
+                        )
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color.clear)
+                    .onTapGesture {
+                        controller.toggleSortDropdown()
+                    }
+                    .zIndex(1000)
+                }
+            }
+        )
     }
 }
 

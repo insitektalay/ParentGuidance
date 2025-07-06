@@ -1,10 +1,71 @@
+//
+//  AuthService.swift
+//  ParentGuidance
+//
+//  Created by alex kerss on 06/07/2025.
+//
+
 import Foundation
+import SwiftUI
 import Supabase
 
-class AuthService {
+// Simplified local OnboardingManager for database operations
+class AuthService: ObservableObject {
     static let shared = AuthService()
-    
     private init() {}
+    
+    func loadUserProfile(userId: String) async throws -> UserProfile {
+        let supabase = SupabaseManager.shared.client
+        let response: [UserProfile] = try await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", value: userId)
+            .execute()
+            .value
+        
+        guard let profile = response.first else {
+            throw NSError(domain: "ProfileNotFound", code: 404)
+        }
+        
+        return profile
+    }
+    
+    func updateSelectedPlan(_ plan: String, userId: String) async throws {
+        let supabase = SupabaseManager.shared.client
+        try await supabase
+            .from("profiles")
+            .update(["selected_plan": plan])
+            .eq("id", value: userId)
+            .execute()
+    }
+    
+    func saveApiKey(_ apiKey: String, userId: String) async throws {
+        let supabase = SupabaseManager.shared.client
+        try await supabase
+            .from("profiles")
+            .update([
+                "user_api_key": apiKey,
+                "api_key_provider": "openai",
+                "plan_setup_complete": "true"
+            ])
+            .eq("id", value: userId)
+            .execute()
+    }
+    
+    func saveChildDetails(name: String, birthDate: Date, userId: String) async throws {
+        let age = Calendar.current.dateComponents([.year], from: birthDate, to: Date()).year ?? 0
+        let supabase = SupabaseManager.shared.client
+        
+        // For now, we'll just update the profile to mark child details complete
+        try await supabase
+            .from("profiles")
+            .update(["child_details_complete": "true"])
+            .eq("id", value: userId)
+            .execute()
+        
+        // TODO: Create actual child record when we resolve the family_id issue
+        print("Child details: \(name), age: \(age)")
+    }
     
     // MARK: - Email/Password Authentication
     

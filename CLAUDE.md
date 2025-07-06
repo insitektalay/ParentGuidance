@@ -35,6 +35,12 @@ xcodebuild test -project ParentGuidance.xcodeproj -scheme ParentGuidance -destin
 ### Linting and Code Quality
 The project uses standard Xcode warnings and built-in Swift compiler checks. No additional linting tools are currently configured.
 
+### Quick Test Build
+```bash
+# Quick test build using the provided script
+./test_build.sh
+```
+
 ## Architecture Overview
 
 ### Technology Stack
@@ -49,9 +55,10 @@ The project uses standard Xcode warnings and built-in Swift compiler checks. No 
 ### App Architecture
 
 #### Core Navigation Flow
-1. **Entry Point**: `ParentGuidanceApp.swift` → `ContentView.swift` → `MainTabView.swift`
+1. **Entry Point**: `ParentGuidanceApp.swift` → `OnboardingFlow` → `MainTabView.swift`
 2. **Tab Structure**: 5-tab architecture managed by `Tab` enum with custom `TabButton` components
-3. **State Management**: Enum-based coordinators for onboarding and situation flows
+3. **State Management**: Enum-based coordinators for onboarding (`OnboardingStep`) and situation flows
+4. **Authentication Flow**: Checks user profile to determine onboarding state and navigation path
 
 #### Key Services (`Services/`)
 - **SupabaseManager**: Singleton managing database connections and authentication
@@ -63,15 +70,17 @@ The project uses standard Xcode warnings and built-in Swift compiler checks. No 
 #### Active OpenAI Integration (`Views/Core/NewSituationView.swift`)
 - **Primary Integration**: OpenAI Prompts API (`/v1/responses`) with prompt templates
 - **ConversationService**: Embedded service for situation-guidance conversation pairs
-- **Response Parsing**: Custom parsing logic for structured guidance format
+- **Response Parsing**: Custom regex parsing for bracket-delimited structured guidance format
+- **Prompt ID**: Uses specific prompt template ID for parenting guidance generation
 
-#### Data Models (`Models/`)
-- **DatabaseModels.swift**: 
+#### Data Models
+- **Core Models** (defined in `ParentGuidanceApp.swift`):
+  - `UserProfile`: User account with onboarding state and subscription details
   - `Situation`: Core situation model with JSONB context fields
   - `Guidance`: AI-generated guidance responses
-  - `ConversationPair`: UI convenience wrapper
-- **Child.swift**: Child profile and preferences
-- **UserProfile.swift**: User account and family settings
+  - `ConversationService`: Database operations and OpenAI integration
+- **Child.swift**: Child profile and preferences (in `Models/` directory)
+- **Additional Models**: Various view-specific models throughout the app
 
 #### Onboarding Flow (`Views/Onboarding/`)
 Enum-driven coordinator pattern through these steps:
@@ -89,11 +98,11 @@ Multi-state input system for parenting situations:
 - **Components**: `MicButton`, `SendButton`, `InputGuidanceFooter`
 
 #### Main Tab Views (`Views/Core/`)
-- **Today**: Timeline view with empty state (`TodayTimelineView`, `TodayEmptyView`)
-- **New**: Primary situation input (defaults to `NewSituationView`) 
-- **Library**: Search and browse past situations with foundation tools
-- **Alerts**: Notification management
-- **Settings**: User preferences and account management
+- **Today**: Timeline view with empty state (`TodayViewController`, `TodayTimelineView`, `TodayEmptyView`)
+- **New**: Primary situation input (`NewSituationView`) with OpenAI integration
+- **Library**: Search and browse past situations (`LibraryView`) with comprehensive filtering
+- **Alerts**: Notification management (`AlertView`)
+- **Settings**: User preferences and account management (`SettingsView`)
 
 ### Design System (`Constants/ColorPalette.swift`)
 - **Primary Colors**: Navy (#2B2D42), Terracotta (#C4816C), Cream (#F7F3E9)
@@ -130,8 +139,10 @@ The app uses Supabase with these core tables:
 - **OpenAI Integration**: 
   - **Active**: Prompts API (`/v1/responses`) in `NewSituationView.swift` with template-based requests
   - **Legacy**: Chat Completions API (`/v1/chat/completions`) in `OpenAIService.swift` (unused)
+  - **Prompt Structure**: Uses bracket-delimited sections `[TITLE]`, `[SITUATION]`, etc.
+  - **Response Format**: Structured guidance with 7 sections: Title, Situation, Analysis, Action Steps, Phrases to Try, Quick Comebacks, Support
 - **Supabase**: Singleton manager pattern with centralized client configuration
-- **Response Parsing**: Custom regex patterns for structured guidance sections (Title, Situation, Analysis, Action Steps, Phrases to Try, Quick Comebacks, Support)
+- **Database Operations**: `ConversationService` handles all data persistence for situations and guidance
 
 ### Testing Structure
 - **Unit Tests**: `ParentGuidanceTests/` (currently minimal)

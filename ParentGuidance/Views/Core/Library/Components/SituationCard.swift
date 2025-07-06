@@ -4,30 +4,47 @@ struct SituationCard: View {
     let emoji: String
     let title: String
     let date: String
+    let isFavorited: Bool
     let onTap: () -> Void
+    let onToggleFavorite: () -> Void
+    let onDelete: () -> Void
+    
+    @State private var dragOffset: CGFloat = 0
+    @State private var showingDeleteButton: Bool = false
     
     // Legacy initializer for backward compatibility
     init(
         emoji: String,
         title: String,
         date: String,
-        onTap: @escaping () -> Void = {}
+        isFavorited: Bool = false,
+        onTap: @escaping () -> Void = {},
+        onToggleFavorite: @escaping () -> Void = {},
+        onDelete: @escaping () -> Void = {}
     ) {
         self.emoji = emoji
         self.title = title
         self.date = date
+        self.isFavorited = isFavorited
         self.onTap = onTap
+        self.onToggleFavorite = onToggleFavorite
+        self.onDelete = onDelete
     }
     
     // New initializer for Situation models
     init(
         situation: Situation,
-        onTap: @escaping () -> Void = {}
+        onTap: @escaping () -> Void = {},
+        onToggleFavorite: @escaping () -> Void = {},
+        onDelete: @escaping () -> Void = {}
     ) {
         self.emoji = Self.getEmojiForSituation(situation)
         self.title = situation.title
         self.date = Self.formatDate(situation.createdAt)
+        self.isFavorited = situation.isFavorited
         self.onTap = onTap
+        self.onToggleFavorite = onToggleFavorite
+        self.onDelete = onDelete
     }
     
     private var iconForEmoji: String {
@@ -46,7 +63,33 @@ struct SituationCard: View {
     }
     
     var body: some View {
-        Button(action: onTap) {
+        ZStack {
+            // Background delete button (revealed when swiped)
+            HStack {
+                Spacer()
+                Button(action: {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        dragOffset = 0
+                        showingDeleteButton = false
+                    }
+                    onDelete()
+                }) {
+                    VStack {
+                        Image(systemName: "trash")
+                            .font(.system(size: 20, weight: .medium))
+                        Text("Delete")
+                            .font(.system(size: 12, weight: .medium))
+                    }
+                    .foregroundColor(.white)
+                    .frame(width: 80)
+                }
+                .frame(maxHeight: .infinity)
+                .background(Color.red)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+            }
+            .opacity(showingDeleteButton ? 1 : 0)
+            
+            // Main card content
             HStack(alignment: .center, spacing: 12) {
                 // Icon
                 Image(systemName: iconForEmoji)
@@ -68,6 +111,16 @@ struct SituationCard: View {
                 }
                 
                 Spacer()
+                
+                // Star favorite button
+                Button(action: onToggleFavorite) {
+                    Image(systemName: isFavorited ? "star.fill" : "star")
+                        .font(.system(size: 16))
+                        .foregroundColor(isFavorited ? ColorPalette.terracotta : ColorPalette.white.opacity(0.7))
+                        .animation(.easeInOut(duration: 0.2), value: isFavorited)
+                }
+                .accessibilityLabel(isFavorited ? "Remove from favorites" : "Add to favorites")
+                .accessibilityHint("Toggles favorite status for this situation")
             }
             .padding(12)
             .background(Color(red: 0.21, green: 0.22, blue: 0.33)) // #363853 equivalent
@@ -76,8 +129,39 @@ struct SituationCard: View {
                     .stroke(ColorPalette.white.opacity(0.1), lineWidth: 1)
             )
             .clipShape(RoundedRectangle(cornerRadius: 12))
+            .offset(x: dragOffset)
+            .onTapGesture {
+                if showingDeleteButton {
+                    // If delete button is showing, hide it instead of navigating
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        dragOffset = 0
+                        showingDeleteButton = false
+                    }
+                } else {
+                    onTap()
+                }
+            }
+            .gesture(
+                DragGesture()
+                    .onChanged { value in
+                        // Only allow left swipe (negative translation)
+                        if value.translation.width < 0 {
+                            dragOffset = max(value.translation.width, -80) // Limit to delete button width
+                        }
+                    }
+                    .onEnded { value in
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            if value.translation.width < -40 { // Threshold for showing delete
+                                dragOffset = -80
+                                showingDeleteButton = true
+                            } else {
+                                dragOffset = 0
+                                showingDeleteButton = false
+                            }
+                        }
+                    }
+            )
         }
-        .buttonStyle(PlainButtonStyle())
     }
     
     // MARK: - Static Helper Methods
@@ -236,10 +320,38 @@ struct SituationCard: View {
 
 #Preview {
     VStack(spacing: 12) {
-        SituationCard(emoji: "🦷", title: "Morning teeth brushing", date: "Oct 15")
-        SituationCard(emoji: "🛁", title: "Bedtime meltdown", date: "Oct 14")
-        SituationCard(emoji: "🚗", title: "School pickup", date: "Oct 12")
-        SituationCard(emoji: "🍽️", title: "Dinner time", date: "Oct 11")
+        SituationCard(
+            emoji: "🦷", 
+            title: "Morning teeth brushing", 
+            date: "Oct 15",
+            isFavorited: false,
+            onToggleFavorite: { print("Toggle favorite") },
+            onDelete: { print("Delete card") }
+        )
+        SituationCard(
+            emoji: "🛁", 
+            title: "Bedtime meltdown", 
+            date: "Oct 14",
+            isFavorited: true,
+            onToggleFavorite: { print("Toggle favorite") },
+            onDelete: { print("Delete card") }
+        )
+        SituationCard(
+            emoji: "🚗", 
+            title: "School pickup", 
+            date: "Oct 12",
+            isFavorited: false,
+            onToggleFavorite: { print("Toggle favorite") },
+            onDelete: { print("Delete card") }
+        )
+        SituationCard(
+            emoji: "🍽️", 
+            title: "Dinner time", 
+            date: "Oct 11",
+            isFavorited: true,
+            onToggleFavorite: { print("Toggle favorite") },
+            onDelete: { print("Delete card") }
+        )
     }
     .padding()
     .background(ColorPalette.navy)

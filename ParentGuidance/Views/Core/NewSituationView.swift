@@ -2,35 +2,7 @@ import SwiftUI
 import Foundation
 import Supabase
 
-// OpenAI Service Types
-struct GuidanceResponse {
-    let title: String
-    let situation: String
-    let analysis: String
-    let actionSteps: String
-    let phrasesToTry: String
-    let quickComebacks: String
-    let support: String
-}
-
-
-enum OpenAIError: Error {
-    case invalidResponse
-    case noContent
-    case apiKeyMissing
-}
-
-struct OpenAIResponse: Codable {
-    let choices: [Choice]
-    
-    struct Choice: Codable {
-        let message: Message
-    }
-    
-    struct Message: Codable {
-        let content: String
-    }
-}
+// OpenAI Service Types - using shared types from OpenAIService
 
 struct PromptResponse: Codable {
     let id: String
@@ -86,7 +58,7 @@ struct NewSituationView: View {
             // Step 1: Get user's family_id first
             print("💾 Step 1: Getting user's family context...")
             let userId = "15359b56-cabf-4b6a-9d2a-a3b11001b8e2"
-            let userProfile = try await SimpleOnboardingManager.shared.loadUserProfile(userId: userId)
+            let userProfile = try await AuthService.shared.loadUserProfile(userId: userId)
             print("👥 User family_id: \(userProfile.familyId ?? "nil")")
             
             // If no family_id, create a family for this user

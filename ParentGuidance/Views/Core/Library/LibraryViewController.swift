@@ -28,6 +28,10 @@ class LibraryViewController: ObservableObject {
     // UI state
     @Published var isShowingSortDropdown: Bool = false
     
+    // Delete confirmation state
+    @Published var showingDeleteConfirmation: Bool = false
+    @Published var situationToDelete: String?
+    
     // Search debouncing
     private var searchDebounceTimer: Timer?
     
@@ -73,7 +77,7 @@ class LibraryViewController: ObservableObject {
         Task {
             do {
                 let userId = "15359b56-cabf-4b6a-9d2a-a3b11001b8e2"
-                let userProfile = try await SimpleOnboardingManager.shared.loadUserProfile(userId: userId)
+                let userProfile = try await AuthService.shared.loadUserProfile(userId: userId)
                 
                 guard let familyId = userProfile.familyId else {
                     print("❌ No family_id found for user")
@@ -294,6 +298,77 @@ class LibraryViewController: ObservableObject {
         selectedSort = .mostRecent
         selectedCategories.removeAll()
         filterSituations()
+    }
+    
+    // MARK: - Situation Actions (Step 4.6)
+    
+    func deleteSituation(id: String) {
+        situationToDelete = id
+        showingDeleteConfirmation = true
+    }
+    
+    func confirmDelete() {
+        guard let situationId = situationToDelete else { return }
+        
+        Task {
+            do {
+                await MainActor.run {
+                    // Optimistically remove from UI
+                    self.situations.removeAll { $0.id == situationId }
+                    self.filterSituations()
+                }
+                
+                // Delete from database
+                try await ConversationService.shared.deleteSituation(situationId: situationId)
+                print("✅ Situation deleted successfully")
+                
+            } catch {
+                print("❌ Error deleting situation: \(error)")
+                await MainActor.run {
+                    // Reload situations to restore the failed delete
+                    self.loadSituations()
+                }
+            }
+        }
+        
+        // Clear the confirmation state
+        situationToDelete = nil
+        showingDeleteConfirmation = false
+    }
+    
+    func cancelDelete() {
+        situationToDelete = nil
+        showingDeleteConfirmation = false
+    }
+    
+    func toggleFavorite(id: String) {
+        Task {
+            do {
+                // Optimistically update the UI immediately
+                await MainActor.run {
+                    if let index = self.situations.firstIndex(where: { $0.id == id }) {
+                        let currentSituation = self.situations[index]
+                        let newFavoriteStatus = !currentSituation.isFavorited
+                        
+                        // Create a copy with only the favorite status changed, preserving all dates
+                        let updatedSituation = Situation(copying: currentSituation, isFavorited: newFavoriteStatus)
+                        self.situations[index] = updatedSituation
+                        self.filterSituations() // Update the grouped/filtered views
+                    }
+                }
+                
+                // Update in database (background operation)
+                let newStatus = try await ConversationService.shared.toggleSituationFavorite(situationId: id)
+                print("✅ Favorite status updated to: \(newStatus)")
+                
+            } catch {
+                print("❌ Error toggling favorite: \(error)")
+                await MainActor.run {
+                    // Revert the optimistic update by reloading on error
+                    self.loadSituations()
+                }
+            }
+        }
     }
     
     deinit {

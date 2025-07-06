@@ -66,7 +66,7 @@ struct TodayViewController: View {
         do {
             // Get current user and family ID
             let userId = "15359b56-cabf-4b6a-9d2a-a3b11001b8e2" // TODO: Get from auth
-            let userProfile = try await SimpleOnboardingManager.shared.loadUserProfile(userId: userId)
+            let userProfile = try await AuthService.shared.loadUserProfile(userId: userId)
             
             guard let familyId = userProfile.familyId else {
                 print("❌ No family ID found for user")

@@ -15,7 +15,7 @@ class LibraryViewController: ObservableObject {
     @Published var groupedSituations: [SituationGroup] = []
     @Published var searchQuery: String = "" {
         didSet {
-            filterSituations()
+            debounceSearch()
         }
     }
     @Published var errorMessage: String = ""
@@ -27,6 +27,9 @@ class LibraryViewController: ObservableObject {
     
     // UI state
     @Published var isShowingSortDropdown: Bool = false
+    
+    // Search debouncing
+    private var searchDebounceTimer: Timer?
     
     // Computed properties
     var activeFiltersCount: Int {
@@ -106,6 +109,20 @@ class LibraryViewController: ObservableObject {
     
     func refreshSituations() {
         loadSituations()
+    }
+    
+    // MARK: - Search Debouncing
+    private func debounceSearch() {
+        searchDebounceTimer?.invalidate()
+        searchDebounceTimer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: false) { _ in
+            Task { @MainActor in
+                self.performSearch()
+            }
+        }
+    }
+    
+    private func performSearch() {
+        filterSituations()
     }
     
     private func filterSituations() {
@@ -277,5 +294,9 @@ class LibraryViewController: ObservableObject {
         selectedSort = .mostRecent
         selectedCategories.removeAll()
         filterSituations()
+    }
+    
+    deinit {
+        searchDebounceTimer?.invalidate()
     }
 }

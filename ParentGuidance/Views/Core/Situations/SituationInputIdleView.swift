@@ -18,7 +18,7 @@ struct SituationInputIdleView: View {
     private func availableHeight(for geometry: GeometryProxy) -> CGFloat {
         let screenHeight = geometry.size.height
         let bottomControlsHeight: CGFloat = 80 // mic + send buttons space
-        let bottomPadding: CGFloat = 140 // tab bar space
+        let bottomPadding: CGFloat = 50 // tab bar space
         let topPadding: CGFloat = 40 // InputGuidanceFooter + spacing
         let minimumHeight: CGFloat = 120 // minimum usable height
         
@@ -57,7 +57,7 @@ struct SituationInputIdleView: View {
                                 lineWidth: 2
                             )
                     )
-                    .frame(height: 180)
+                    .frame(height: availableHeight(for: geometry))
                     .overlay(
                         Group {
                             if inputText.isEmpty && !isTextEditorFocused {
@@ -99,7 +99,7 @@ struct SituationInputIdleView: View {
                 )
             }
             .padding(.horizontal, 16)
-            .padding(.bottom, 140)
+            .padding(.bottom, 50)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(ColorPalette.navy)

@@ -13,6 +13,7 @@
 		943792A52E1BE9970089F512 /* FrameworkRecommendationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943792A42E1BE9970089F512 /* FrameworkRecommendationView.swift */; };
 		943792A72E1BE9A90089F512 /* FrameworkRecommendation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943792A62E1BE9A90089F512 /* FrameworkRecommendation.swift */; };
 		943792A92E1C2B610089F512 /* TabNavigationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943792A82E1C2B610089F512 /* TabNavigationManager.swift */; };
+		943792AB2E1C34520089F512 /* FrameworkGeneratingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943792AA2E1C34520089F512 /* FrameworkGeneratingView.swift */; };
 		943DFD722E17CBE3004F8043 /* LibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD712E17CBE3004F8043 /* LibraryViewController.swift */; };
 		943DFD742E180D40004F8043 /* SituationDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD732E180D40004F8043 /* SituationDetailView.swift */; };
 		943DFD772E1823A5004F8043 /* LibraryFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD762E1823A5004F8043 /* LibraryFilters.swift */; };
@@ -106,6 +107,7 @@
 		943792A42E1BE9970089F512 /* FrameworkRecommendationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameworkRecommendationView.swift; sourceTree = "<group>"; };
 		943792A62E1BE9A90089F512 /* FrameworkRecommendation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameworkRecommendation.swift; sourceTree = "<group>"; };
 		943792A82E1C2B610089F512 /* TabNavigationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabNavigationManager.swift; sourceTree = "<group>"; };
+		943792AA2E1C34520089F512 /* FrameworkGeneratingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameworkGeneratingView.swift; sourceTree = "<group>"; };
 		943DFD712E17CBE3004F8043 /* LibraryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryViewController.swift; sourceTree = "<group>"; };
 		943DFD732E180D40004F8043 /* SituationDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SituationDetailView.swift; sourceTree = "<group>"; };
 		943DFD762E1823A5004F8043 /* LibraryFilters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryFilters.swift; sourceTree = "<group>"; };
@@ -464,6 +466,7 @@
 				943DFD732E180D40004F8043 /* SituationDetailView.swift */,
 				94FA11422E05CCC0003EC1E9 /* Components */,
 				943DFD712E17CBE3004F8043 /* LibraryViewController.swift */,
+				943792AA2E1C34520089F512 /* FrameworkGeneratingView.swift */,
 			);
 			path = Library;
 			sourceTree = "<group>";
@@ -737,6 +740,7 @@
 				948605CE2E115CB2008D92DE /* AlertView.swift in Sources */,
 				943DFDA22E1A86A4004F8043 /* OnboardingManager.swift in Sources */,
 				943DFD7D2E182650004F8043 /* CategoryFilterChips.swift in Sources */,
+				943792AB2E1C34520089F512 /* FrameworkGeneratingView.swift in Sources */,
 				94FA11342E05CC50003EC1E9 /* GuidanceCard.swift in Sources */,
 				943DFD7B2E182640004F8043 /* SortDropdown.swift in Sources */,
 				943DFD932E1A85A2004F8043 /* Guidance.swift in Sources */,

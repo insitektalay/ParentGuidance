@@ -19,7 +19,9 @@ struct LibraryView: View {
     
     var body: some View {
         NavigationStack {
-            if let selectedSituation = controller.selectedSituation {
+            if selectionManager.isGeneratingFramework {
+                FrameworkGeneratingView()
+            } else if let selectedSituation = controller.selectedSituation {
                 SituationDetailView(
                     situation: selectedSituation,
                     guidance: controller.selectedGuidance,

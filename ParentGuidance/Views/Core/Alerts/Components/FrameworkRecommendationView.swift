@@ -203,12 +203,10 @@ class FrameworkAlertState: ObservableObject {
         errorMessage = nil
         
         do {
-            // Here we would use the framework ID from database in a real implementation
-            // For now, we'll simulate activation by updating the local state
+            // Activate framework in database
+            try await FrameworkStorageService.shared.activateFramework(id: framework.id)
             isActive = true
-            print("✅ Framework activated: \(framework.frameworkName)")
-            
-            // TODO: Call FrameworkStorageService.shared.activateFramework(id: framework.id)
+            print("✅ Framework activated in database: \(framework.frameworkName)")
             
         } catch {
             print("❌ Failed to activate framework: \(error)")

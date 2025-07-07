@@ -18,6 +18,9 @@ class LibrarySelectionManager: ObservableObject {
     /// Set of selected situation IDs
     @Published var selectedSituationIds: Set<String> = []
     
+    /// Whether framework generation is currently in progress
+    @Published var isGeneratingFramework: Bool = false
+    
     // MARK: - Computed Properties
     
     /// Number of currently selected situations
@@ -100,6 +103,11 @@ class LibrarySelectionManager: ObservableObject {
             return
         }
         
+        // Set loading state
+        await MainActor.run {
+            isGeneratingFramework = true
+        }
+        
         print("🚀 Framework generation initiated with \(selectedCount) situations")
         
         do {
@@ -133,6 +141,8 @@ class LibrarySelectionManager: ObservableObject {
             await MainActor.run {
                 print("📱 Triggering navigation to Alerts tab...")
                 TabNavigationManager.shared.navigateToTab(.alerts)
+                // Clear loading state after successful generation and navigation
+                isGeneratingFramework = false
             }
             
         } catch {
@@ -142,6 +152,11 @@ class LibrarySelectionManager: ObservableObject {
                 print("   Generation error: \(frameworkError.localizedDescription)")
             } else if let storageError = error as? FrameworkStorageError {
                 print("   Storage error: \(storageError.localizedDescription)")
+            }
+            
+            // Clear loading state on error
+            await MainActor.run {
+                isGeneratingFramework = false
             }
             
             // TODO: Step 7 - Show error message in UI

@@ -18,7 +18,7 @@ struct SituationInputIdleView: View {
     private func availableHeight(for geometry: GeometryProxy) -> CGFloat {
         let screenHeight = geometry.size.height
         let bottomControlsHeight: CGFloat = 80 // mic + send buttons space
-        let bottomPadding: CGFloat = 50 // tab bar space
+        let bottomPadding: CGFloat = isKeyboardVisible ? 60 : 50 // dynamic tab bar space
         let topPadding: CGFloat = 40 // InputGuidanceFooter + spacing
         let minimumHeight: CGFloat = 120 // minimum usable height
         
@@ -84,7 +84,7 @@ struct SituationInputIdleView: View {
             }
             
             // Input controls
-            HStack(spacing: 16) {
+            HStack(spacing: isKeyboardVisible ? 20 : 16) {
                 MicButton(
                     isRecording: $isRecording,
                     action: onStartRecording
@@ -97,8 +97,8 @@ struct SituationInputIdleView: View {
                     }
                 )
             }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 50)
+            .padding(.horizontal, isKeyboardVisible ? 20 : 16)
+            .padding(.bottom, isKeyboardVisible ? 60 : 50)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(ColorPalette.navy)

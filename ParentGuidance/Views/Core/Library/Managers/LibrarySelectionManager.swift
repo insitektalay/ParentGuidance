@@ -129,7 +129,11 @@ class LibrarySelectionManager: ObservableObject {
             )
             print("✅ Framework recommendation saved with ID: \(savedFrameworkId)")
             
-            // TODO: Step 8 - Navigate to Alerts page and show recommendation
+            // Step 8: Navigate to Alerts page to show recommendation
+            await MainActor.run {
+                print("📱 Triggering navigation to Alerts tab...")
+                TabNavigationManager.shared.navigateToTab(.alerts)
+            }
             
         } catch {
             print("❌ Framework generation/storage failed: \(error)")

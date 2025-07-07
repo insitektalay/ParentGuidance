@@ -66,13 +66,8 @@ struct AlertView: View {
     
     private var recentAlertsContent: some View {
         VStack(spacing: 0) {
-            NotificationCard(
-                content: "Based on the situations you've shared, some parents find the Zones of Regulation framework helpful for understanding intense emotional reactions and helping kids return to a calm state.",
-                onYesTryThis: { print("Yes, Try This tapped") },
-                onNotRightNow: { print("Not Right Now tapped") },
-                onMaybeLater: { print("Maybe Later tapped") },
-                onLearnMore: { print("Learn More tapped") }
-            )
+            // Framework recommendations (highest priority)
+            FrameworkAlertContainer()
             
             NotificationCard(
                 content: "We've noticed that Alex seems to benefit from advance warning before transitions. This pattern is common and there are strategies that can help make these moments smoother.",

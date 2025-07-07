@@ -114,6 +114,7 @@ struct SettingsScreen: View {
 
 struct MainTabView: View {
     @State private var activeTab: Tab = .new
+    @StateObject private var tabNavigationManager = TabNavigationManager.shared
 
     var body: some View {
         GeometryReader { geometry in
@@ -173,6 +174,13 @@ struct MainTabView: View {
             }
         }
         .ignoresSafeArea(.container, edges: .bottom)
+        .onReceive(tabNavigationManager.$requestedTab) { requestedTab in
+            if let tab = requestedTab {
+                print("📱 Handling navigation request to: \(tab.title)")
+                activeTab = tab
+                tabNavigationManager.clearNavigationRequest()
+            }
+        }
     }
 }
 

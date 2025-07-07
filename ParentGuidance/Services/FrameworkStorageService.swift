@@ -122,7 +122,7 @@ class FrameworkStorageService {
                 notificationText: recommendation.notificationText,
                 detailedExplanation: recommendation.notificationText,
                 situationIds: situationIds.joined(separator: ","),
-                isActive: true
+                isActive: false // New frameworks start as recommendations requiring user activation
             )
             
             // Insert into database

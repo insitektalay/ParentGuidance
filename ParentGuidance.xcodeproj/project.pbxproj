@@ -12,6 +12,7 @@
 		943792A32E1BE9850089F512 /* LibrarySelectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943792A22E1BE9850089F512 /* LibrarySelectionManager.swift */; };
 		943792A52E1BE9970089F512 /* FrameworkRecommendationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943792A42E1BE9970089F512 /* FrameworkRecommendationView.swift */; };
 		943792A72E1BE9A90089F512 /* FrameworkRecommendation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943792A62E1BE9A90089F512 /* FrameworkRecommendation.swift */; };
+		943792A92E1C2B610089F512 /* TabNavigationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943792A82E1C2B610089F512 /* TabNavigationManager.swift */; };
 		943DFD722E17CBE3004F8043 /* LibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD712E17CBE3004F8043 /* LibraryViewController.swift */; };
 		943DFD742E180D40004F8043 /* SituationDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD732E180D40004F8043 /* SituationDetailView.swift */; };
 		943DFD772E1823A5004F8043 /* LibraryFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD762E1823A5004F8043 /* LibraryFilters.swift */; };
@@ -104,6 +105,7 @@
 		943792A22E1BE9850089F512 /* LibrarySelectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySelectionManager.swift; sourceTree = "<group>"; };
 		943792A42E1BE9970089F512 /* FrameworkRecommendationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameworkRecommendationView.swift; sourceTree = "<group>"; };
 		943792A62E1BE9A90089F512 /* FrameworkRecommendation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameworkRecommendation.swift; sourceTree = "<group>"; };
+		943792A82E1C2B610089F512 /* TabNavigationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabNavigationManager.swift; sourceTree = "<group>"; };
 		943DFD712E17CBE3004F8043 /* LibraryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryViewController.swift; sourceTree = "<group>"; };
 		943DFD732E180D40004F8043 /* SituationDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SituationDetailView.swift; sourceTree = "<group>"; };
 		943DFD762E1823A5004F8043 /* LibraryFilters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryFilters.swift; sourceTree = "<group>"; };
@@ -220,6 +222,7 @@
 		943DFD9E2E1A8671004F8043 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
+				943792A82E1C2B610089F512 /* TabNavigationManager.swift */,
 				943DFDA12E1A86A4004F8043 /* OnboardingManager.swift */,
 			);
 			path = Managers;
@@ -740,6 +743,7 @@
 				94FA11362E05CC60003EC1E9 /* SituationGuidanceView.swift in Sources */,
 				94FA113A2E05CC80003EC1E9 /* NotificationCard.swift in Sources */,
 				94FA113C2E05CC90003EC1E9 /* SearchBar.swift in Sources */,
+				943792A92E1C2B610089F512 /* TabNavigationManager.swift in Sources */,
 				94FA113E2E05CCA0003EC1E9 /* FoundationToolCard.swift in Sources */,
 				943DFD852E182684004F8043 /* SearchHistoryView.swift in Sources */,
 				943792A72E1BE9A90089F512 /* FrameworkRecommendation.swift in Sources */,

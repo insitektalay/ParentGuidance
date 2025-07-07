@@ -45,10 +45,10 @@ struct SituationInputIdleView: View {
             // Main input area
             VStack(spacing: 8) {
                 TextEditor(text: $inputText)
-                    .font(.system(size: 16))
+                    .font(.system(size: isKeyboardVisible ? 16 : 18))
                     .foregroundColor(ColorPalette.white)
                     .scrollContentBackground(.hidden)
-                    .background(ColorPalette.white.opacity(0.05))
+                    .background(ColorPalette.white.opacity(isKeyboardVisible ? 0.05 : 0.08))
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
@@ -64,8 +64,8 @@ struct SituationInputIdleView: View {
                                 VStack {
                                     HStack {
                                         Text("Describe what's happening with \(childName)...")
-                                            .font(.system(size: 16))
-                                            .foregroundColor(ColorPalette.white.opacity(0.5))
+                                            .font(.system(size: isKeyboardVisible ? 16 : 18))
+                                            .foregroundColor(ColorPalette.white.opacity(isKeyboardVisible ? 0.5 : 0.6))
                                             .padding(.top, 8)
                                             .padding(.leading, 5)
                                         Spacer()
@@ -76,13 +76,12 @@ struct SituationInputIdleView: View {
                         }
                     )
                     .focused($isTextEditorFocused)
-                    .padding(.horizontal, 16)
+                    .padding(.horizontal, isKeyboardVisible ? 16 : 20)
                 
                 InputGuidanceFooter()
                     .padding(.top, 8)
+                    .padding(.bottom, 20)
             }
-            
-            Spacer()
             
             // Input controls
             HStack(spacing: 16) {

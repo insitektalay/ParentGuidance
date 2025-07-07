@@ -20,7 +20,7 @@ struct StoredFrameworkRecommendation: Codable {
     let detailedExplanation: String
     let situationIds: String
     let createdAt: String
-    let isActive: String
+    let isActive: Bool
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -31,6 +31,26 @@ struct StoredFrameworkRecommendation: Codable {
         case detailedExplanation = "detailed_explanation"
         case situationIds = "situation_ids"
         case createdAt = "created_at"
+        case isActive = "is_active"
+    }
+}
+
+struct FrameworkInsertRecord: Codable {
+    let familyId: String
+    let frameworkType: String
+    let frameworkName: String
+    let notificationText: String
+    let detailedExplanation: String
+    let situationIds: String
+    let isActive: Bool
+    
+    enum CodingKeys: String, CodingKey {
+        case familyId = "family_id"
+        case frameworkType = "framework_type"
+        case frameworkName = "framework_name"
+        case notificationText = "notification_text"
+        case detailedExplanation = "detailed_explanation"
+        case situationIds = "situation_ids"
         case isActive = "is_active"
     }
 }
@@ -93,22 +113,22 @@ class FrameworkStorageService {
             throw FrameworkStorageError.invalidFramework
         }
         
-        // Create database record
-        let frameworkRecord: [String: String] = [
-            "family_id": familyId,
-            "framework_type": recommendation.frameworkType?.rawValue ?? "unknown",
-            "framework_name": recommendation.frameworkName,
-            "notification_text": recommendation.notificationText,
-            "detailed_explanation": recommendation.notificationText, // Use notification text as explanation for now
-            "situation_ids": situationIds.joined(separator: ","),
-            "is_active": "true" // New frameworks are active by default
-        ]
-        
         do {
+            // Convert to proper encodable format
+            let insertRecord = FrameworkInsertRecord(
+                familyId: familyId,
+                frameworkType: recommendation.frameworkType?.rawValue ?? "unknown",
+                frameworkName: recommendation.frameworkName,
+                notificationText: recommendation.notificationText,
+                detailedExplanation: recommendation.notificationText,
+                situationIds: situationIds.joined(separator: ","),
+                isActive: true
+            )
+            
             // Insert into database
             let response: [StoredFrameworkRecommendation] = try await supabase
                 .from(tableName)
-                .insert(frameworkRecord)
+                .insert(insertRecord)
                 .select()
                 .execute()
                 .value
@@ -139,7 +159,7 @@ class FrameworkStorageService {
                 .from(tableName)
                 .select()
                 .eq("family_id", value: familyId)
-                .eq("is_active", value: "true")
+                .eq("is_active", value: true)
                 .order("created_at", ascending: false)
                 .limit(1)
                 .execute()
@@ -236,14 +256,14 @@ class FrameworkStorageService {
             // Deactivate all frameworks for this family
             try await supabase
                 .from(tableName)
-                .update(["is_active": "false"])
+                .update(["is_active": false])
                 .eq("family_id", value: storedFramework.familyId)
                 .execute()
             
             // Activate the selected framework
             try await supabase
                 .from(tableName)
-                .update(["is_active": "true"])
+                .update(["is_active": true])
                 .eq("id", value: id)
                 .execute()
             
@@ -263,7 +283,7 @@ class FrameworkStorageService {
         do {
             try await supabase
                 .from(tableName)
-                .update(["is_active": "false"])
+                .update(["is_active": false])
                 .eq("id", value: id)
                 .execute()
             
@@ -283,7 +303,7 @@ class FrameworkStorageService {
         do {
             try await supabase
                 .from(tableName)
-                .update(["is_active": "false"])
+                .update(["is_active": false])
                 .eq("family_id", value: familyId)
                 .execute()
             

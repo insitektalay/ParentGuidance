@@ -149,17 +149,21 @@ struct SituationInputIdleView: View {
         let newKeyboardHeight = keyboardFrame.height
         print("🎹 Keyboard will show - height: \(newKeyboardHeight)")
         
-        isKeyboardVisible = true
-        keyboardHeight = newKeyboardHeight
-        print("🎹 Updated state - isVisible: \(isKeyboardVisible), height: \(keyboardHeight)")
+        withAnimation(.easeInOut(duration: 0.3)) {
+            isKeyboardVisible = true
+            keyboardHeight = newKeyboardHeight
+        }
+        print("🎹 Updated state with animation - isVisible: \(isKeyboardVisible), height: \(keyboardHeight)")
     }
     
     private func handleKeyboardWillHide(_ notification: Notification) {
         print("🎹 Keyboard will hide")
         
-        isKeyboardVisible = false
-        keyboardHeight = 0
-        print("🎹 Updated state - isVisible: \(isKeyboardVisible), height: \(keyboardHeight)")
+        withAnimation(.easeInOut(duration: 0.3)) {
+            isKeyboardVisible = false
+            keyboardHeight = 0
+        }
+        print("🎹 Updated state with animation - isVisible: \(isKeyboardVisible), height: \(keyboardHeight)")
     }
 }
 

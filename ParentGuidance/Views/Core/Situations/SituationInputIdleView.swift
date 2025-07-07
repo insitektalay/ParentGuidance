@@ -13,8 +13,35 @@ struct SituationInputIdleView: View {
     let onStartRecording: () -> Void
     let onSendMessage: (String) -> Void
     
+    // MARK: - Height Calculations
+    
+    private func availableHeight(for geometry: GeometryProxy) -> CGFloat {
+        let screenHeight = geometry.size.height
+        let bottomControlsHeight: CGFloat = 80 // mic + send buttons space
+        let bottomPadding: CGFloat = 140 // tab bar space
+        let topPadding: CGFloat = 40 // InputGuidanceFooter + spacing
+        let minimumHeight: CGFloat = 120 // minimum usable height
+        
+        let usedSpace = bottomControlsHeight + bottomPadding + topPadding + keyboardHeight
+        let available = screenHeight - usedSpace
+        let finalHeight = max(available, minimumHeight)
+        
+        // Debug logging
+        print("📐 Screen height: \(screenHeight)")
+        print("📐 Keyboard height: \(keyboardHeight)")
+        print("📐 Used space: \(usedSpace) (controls: \(bottomControlsHeight), padding: \(bottomPadding), top: \(topPadding), keyboard: \(keyboardHeight))")
+        print("📐 Available height calculated: \(available)")
+        print("📐 Final height (with minimum): \(finalHeight)")
+        print("📐 Mode: \(isKeyboardVisible ? "keyboard" : "full-screen")")
+        
+        return finalHeight
+    }
+    
     var body: some View {
-        VStack(spacing: 0) {
+        GeometryReader { geometry in
+            let _ = availableHeight(for: geometry) // Calculate height for debugging (not used yet)
+            
+            VStack(spacing: 0) {
             // Main input area
             VStack(spacing: 8) {
                 TextEditor(text: $inputText)
@@ -73,9 +100,10 @@ struct SituationInputIdleView: View {
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 140)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(ColorPalette.navy)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(ColorPalette.navy)
         .onAppear {
             setupKeyboardObservers()
         }

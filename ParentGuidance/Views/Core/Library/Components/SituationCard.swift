@@ -5,6 +5,8 @@ struct SituationCard: View {
     let title: String
     let date: String
     let isFavorited: Bool
+    let situationId: String?
+    let selectionManager: LibrarySelectionManager?
     let onTap: () -> Void
     let onToggleFavorite: () -> Void
     let onDelete: () -> Void
@@ -12,12 +14,25 @@ struct SituationCard: View {
     @State private var dragOffset: CGFloat = 0
     @State private var showingDeleteButton: Bool = false
     
+    private var isSelected: Bool {
+        guard let situationId = situationId,
+              let manager = selectionManager else { return false }
+        return manager.isSelected(situationId: situationId)
+    }
+    
+    private var showCheckbox: Bool {
+        guard let manager = selectionManager else { return false }
+        return manager.isInSelectionMode
+    }
+    
     // Legacy initializer for backward compatibility
     init(
         emoji: String,
         title: String,
         date: String,
         isFavorited: Bool = false,
+        situationId: String? = nil,
+        selectionManager: LibrarySelectionManager? = nil,
         onTap: @escaping () -> Void = {},
         onToggleFavorite: @escaping () -> Void = {},
         onDelete: @escaping () -> Void = {}
@@ -26,6 +41,8 @@ struct SituationCard: View {
         self.title = title
         self.date = date
         self.isFavorited = isFavorited
+        self.situationId = situationId
+        self.selectionManager = selectionManager
         self.onTap = onTap
         self.onToggleFavorite = onToggleFavorite
         self.onDelete = onDelete
@@ -34,6 +51,7 @@ struct SituationCard: View {
     // New initializer for Situation models
     init(
         situation: Situation,
+        selectionManager: LibrarySelectionManager? = nil,
         onTap: @escaping () -> Void = {},
         onToggleFavorite: @escaping () -> Void = {},
         onDelete: @escaping () -> Void = {}
@@ -42,6 +60,8 @@ struct SituationCard: View {
         self.title = situation.title
         self.date = Self.formatDate(situation.createdAt)
         self.isFavorited = situation.isFavorited
+        self.situationId = situation.id
+        self.selectionManager = selectionManager
         self.onTap = onTap
         self.onToggleFavorite = onToggleFavorite
         self.onDelete = onDelete
@@ -91,6 +111,19 @@ struct SituationCard: View {
             
             // Main card content
             HStack(alignment: .center, spacing: 12) {
+                // Checkbox (shown only in selection mode)
+                if showCheckbox {
+                    Button(action: {
+                        guard let situationId = situationId else { return }
+                        selectionManager?.toggleSelection(situationId: situationId)
+                    }) {
+                        Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                            .font(.system(size: 20))
+                            .foregroundColor(isSelected ? ColorPalette.terracotta : ColorPalette.white.opacity(0.6))
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+                
                 // Icon
                 Image(systemName: iconForEmoji)
                     .font(.system(size: 20))
@@ -123,10 +156,17 @@ struct SituationCard: View {
                 .accessibilityHint("Toggles favorite status for this situation")
             }
             .padding(12)
-            .background(Color(red: 0.21, green: 0.22, blue: 0.33)) // #363853 equivalent
+            .background(
+                isSelected ? 
+                    ColorPalette.terracotta.opacity(0.2) : 
+                    Color(red: 0.21, green: 0.22, blue: 0.33) // #363853 equivalent
+            )
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(ColorPalette.white.opacity(0.1), lineWidth: 1)
+                    .stroke(
+                        isSelected ? ColorPalette.terracotta.opacity(0.6) : ColorPalette.white.opacity(0.1), 
+                        lineWidth: isSelected ? 2 : 1
+                    )
             )
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .offset(x: dragOffset)
@@ -137,7 +177,12 @@ struct SituationCard: View {
                         dragOffset = 0
                         showingDeleteButton = false
                     }
+                } else if showCheckbox {
+                    // In selection mode, tap toggles selection
+                    guard let situationId = situationId else { return }
+                    selectionManager?.toggleSelection(situationId: situationId)
                 } else {
+                    // Normal mode, navigate to detail
                     onTap()
                 }
             }

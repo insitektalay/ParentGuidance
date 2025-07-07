@@ -13,6 +13,9 @@ class LibraryViewController: ObservableObject {
     @Published var situations: [Situation] = []
     @Published var filteredSituations: [Situation] = []
     @Published var groupedSituations: [SituationGroup] = []
+    
+    // Selection manager for framework generation
+    @Published var selectionManager = LibrarySelectionManager()
     @Published var searchQuery: String = "" {
         didSet {
             debounceSearch()

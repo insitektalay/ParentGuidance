@@ -2,14 +2,14 @@ import SwiftUI
 
 struct FoundationToolCard: View {
     let onViewTools: () -> Void
-    let onManage: () -> Void
+    let onSetupFramework: () -> Void
     
     init(
         onViewTools: @escaping () -> Void = {},
-        onManage: @escaping () -> Void = {}
+        onSetupFramework: @escaping () -> Void = {}
     ) {
         self.onViewTools = onViewTools
-        self.onManage = onManage
+        self.onSetupFramework = onSetupFramework
     }
     
     var body: some View {
@@ -20,12 +20,18 @@ struct FoundationToolCard: View {
                     .font(.system(size: 20))
                     .foregroundColor(ColorPalette.white)
                 
-                Text("Zones of Regulation")
+                Text("Foundational Framework Not Yet Established")
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(ColorPalette.white)
                 
                 Spacer()
             }
+            
+            // Description
+            Text("Select situations from your library to generate a personalized parenting framework recommendation")
+                .font(.system(size: 14))
+                .foregroundColor(ColorPalette.white.opacity(0.8))
+                .lineLimit(nil)
             
             // Action buttons
             HStack(spacing: 12) {
@@ -39,8 +45,8 @@ struct FoundationToolCard: View {
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
                 
-                Button(action: onManage) {
-                    Text("Manage")
+                Button(action: onSetupFramework) {
+                    Text("Set Up Framework")
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(ColorPalette.terracotta)
                         .padding(.horizontal, 16)

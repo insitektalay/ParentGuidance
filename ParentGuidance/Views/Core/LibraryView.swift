@@ -61,8 +61,9 @@ struct LibraryView: View {
             onViewTools: {
                 print("View tools tapped")
             },
-            onManage: {
-                print("Manage tapped")
+            onSetupFramework: {
+                print("Set Up Framework tapped - will trigger selection mode in Step 2")
+                // TODO: Step 2 - trigger selection mode via LibrarySelectionManager
             }
         )
         .padding(.horizontal, 16)

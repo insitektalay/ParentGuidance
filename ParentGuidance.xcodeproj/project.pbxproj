@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9437929E2E1BE9340089F512 /* FrameworkGenerationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9437929D2E1BE9340089F512 /* FrameworkGenerationService.swift */; };
+		943792A02E1BE94A0089F512 /* FrameworkStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9437929F2E1BE94A0089F512 /* FrameworkStorageService.swift */; };
+		943792A32E1BE9850089F512 /* LibrarySelectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943792A22E1BE9850089F512 /* LibrarySelectionManager.swift */; };
+		943792A52E1BE9970089F512 /* FrameworkRecommendationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943792A42E1BE9970089F512 /* FrameworkRecommendationView.swift */; };
+		943792A72E1BE9A90089F512 /* FrameworkRecommendation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943792A62E1BE9A90089F512 /* FrameworkRecommendation.swift */; };
 		943DFD722E17CBE3004F8043 /* LibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD712E17CBE3004F8043 /* LibraryViewController.swift */; };
 		943DFD742E180D40004F8043 /* SituationDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD732E180D40004F8043 /* SituationDetailView.swift */; };
 		943DFD772E1823A5004F8043 /* LibraryFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD762E1823A5004F8043 /* LibraryFilters.swift */; };
@@ -94,6 +99,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9437929D2E1BE9340089F512 /* FrameworkGenerationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameworkGenerationService.swift; sourceTree = "<group>"; };
+		9437929F2E1BE94A0089F512 /* FrameworkStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameworkStorageService.swift; sourceTree = "<group>"; };
+		943792A22E1BE9850089F512 /* LibrarySelectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySelectionManager.swift; sourceTree = "<group>"; };
+		943792A42E1BE9970089F512 /* FrameworkRecommendationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameworkRecommendationView.swift; sourceTree = "<group>"; };
+		943792A62E1BE9A90089F512 /* FrameworkRecommendation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameworkRecommendation.swift; sourceTree = "<group>"; };
 		943DFD712E17CBE3004F8043 /* LibraryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryViewController.swift; sourceTree = "<group>"; };
 		943DFD732E180D40004F8043 /* SituationDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SituationDetailView.swift; sourceTree = "<group>"; };
 		943DFD762E1823A5004F8043 /* LibraryFilters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryFilters.swift; sourceTree = "<group>"; };
@@ -191,6 +201,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		943792A12E1BE9750089F512 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				943792A22E1BE9850089F512 /* LibrarySelectionManager.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
 		943DFD752E18238E004F8043 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -219,6 +237,7 @@
 			isa = PBXGroup;
 			children = (
 				94FA113B2E05CC81003EC1E9 /* NotificationCard.swift */,
+				943792A42E1BE9970089F512 /* FrameworkRecommendationView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -322,6 +341,7 @@
 				94FA10F72E0564DE003EC1E9 /* Core */,
 				943DFD902E1A858D004F8043 /* Situation.swift */,
 				943DFD922E1A85A2004F8043 /* Guidance.swift */,
+				943792A62E1BE9A90089F512 /* FrameworkRecommendation.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -335,6 +355,8 @@
 				948605D62E133251008D92DE /* AuthService.swift */,
 				943DFD9A2E1A85EE004F8043 /* ConversationService.swift */,
 				943DFD9C2E1A863A004F8043 /* DatabaseService.swift */,
+				9437929D2E1BE9340089F512 /* FrameworkGenerationService.swift */,
+				9437929F2E1BE94A0089F512 /* FrameworkStorageService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -434,6 +456,7 @@
 		94FA111A2E05C8E7003EC1E9 /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				943792A12E1BE9750089F512 /* Managers */,
 				943DFD752E18238E004F8043 /* Models */,
 				943DFD732E180D40004F8043 /* SituationDetailView.swift */,
 				94FA11422E05CCC0003EC1E9 /* Components */,
@@ -672,6 +695,7 @@
 				94FA110D2E05BA00003EC1E9 /* MainTabView.swift in Sources */,
 				948605CB2E111D1D008D92DE /* TodayTimelineView.swift in Sources */,
 				94FA11052E056CCA003EC1E9 /* PlanSelectionView.swift in Sources */,
+				943792A52E1BE9970089F512 /* FrameworkRecommendationView.swift in Sources */,
 				943DFD7F2E18265C004F8043 /* SearchStatesView.swift in Sources */,
 				943DFD972E1A85B9004F8043 /* AppCoordinator.swift in Sources */,
 				94FA112E2E05CC15003EC1E9 /* SendButton.swift in Sources */,
@@ -704,6 +728,7 @@
 				943DFD9B2E1A85EE004F8043 /* ConversationService.swift in Sources */,
 				943DFD892E18269D004F8043 /* ExportSheet.swift in Sources */,
 				94FA111F2E05CBAA003EC1E9 /* SituationInputIdleView.swift in Sources */,
+				943792A32E1BE9850089F512 /* LibrarySelectionManager.swift in Sources */,
 				94FA11322E05CC30003EC1E9 /* ChildHeader.swift in Sources */,
 				94FA11332E05CC40003EC1E9 /* RoutineCard.swift in Sources */,
 				948605CE2E115CB2008D92DE /* AlertView.swift in Sources */,
@@ -717,7 +742,10 @@
 				94FA113C2E05CC90003EC1E9 /* SearchBar.swift in Sources */,
 				94FA113E2E05CCA0003EC1E9 /* FoundationToolCard.swift in Sources */,
 				943DFD852E182684004F8043 /* SearchHistoryView.swift in Sources */,
+				943792A72E1BE9A90089F512 /* FrameworkRecommendation.swift in Sources */,
+				943792A02E1BE94A0089F512 /* FrameworkStorageService.swift in Sources */,
 				943DFD9D2E1A863A004F8043 /* DatabaseService.swift in Sources */,
+				9437929E2E1BE9340089F512 /* FrameworkGenerationService.swift in Sources */,
 				94FA11402E05CCB0003EC1E9 /* SituationCard.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

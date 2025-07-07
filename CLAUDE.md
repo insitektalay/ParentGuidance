@@ -66,6 +66,8 @@ The project uses standard Xcode warnings and built-in Swift compiler checks. No 
 - **AuthService**: Authentication flow management
 - **OnboardingManager**: Coordinates multi-step onboarding process
 - **AppCoordinator**: Application-level navigation coordination
+- **FrameworkGenerationService**: AI-powered generation of parenting frameworks
+- **FrameworkStorageService**: Persistence and management of framework recommendations
 
 #### Active OpenAI Integration (`Views/Core/NewSituationView.swift`)
 - **Primary Integration**: OpenAI Prompts API (`/v1/responses`) with prompt templates
@@ -80,6 +82,7 @@ The project uses standard Xcode warnings and built-in Swift compiler checks. No 
   - `Guidance`: AI-generated guidance responses
   - `ConversationService`: Database operations and OpenAI integration
 - **Child.swift**: Child profile and preferences (in `Models/` directory)
+- **FrameworkRecommendation**: AI-generated parenting framework recommendations
 - **Additional Models**: Various view-specific models throughout the app
 
 #### Onboarding Flow (`Views/Onboarding/`)
@@ -100,8 +103,8 @@ Multi-state input system for parenting situations:
 #### Main Tab Views (`Views/Core/`)
 - **Today**: Timeline view with empty state (`TodayViewController`, `TodayTimelineView`, `TodayEmptyView`)
 - **New**: Primary situation input (`NewSituationView`) with OpenAI integration
-- **Library**: Search and browse past situations (`LibraryView`) with comprehensive filtering
-- **Alerts**: Notification management (`AlertView`)
+- **Library**: Search and browse past situations (`LibraryView`) with comprehensive filtering and selection management (`LibrarySelectionManager`)
+- **Alerts**: Notification management (`AlertView`) with framework recommendations (`FrameworkRecommendationView`)
 - **Settings**: User preferences and account management (`SettingsView`)
 
 ### Design System (`Constants/ColorPalette.swift`)

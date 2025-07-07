@@ -307,7 +307,9 @@ struct GuidanceCardsView: View {
             familyId: "test",
             childId: nil,
             title: "Morning teeth brushing routine",
-            description: "My 5-year-old refuses to brush their teeth every morning. It's becoming a daily battle and we're often late for school because of it."
+            description: "My 5-year-old refuses to brush their teeth every morning. It's becoming a daily battle and we're often late for school because of it.",
+            category: "Routine-Building",
+            isIncident: true
         ),
         guidance: [],
         isLoadingGuidance: false,

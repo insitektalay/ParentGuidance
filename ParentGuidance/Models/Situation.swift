@@ -20,6 +20,8 @@ struct Situation: Codable {
     let environmentalContext: [String: Any]?
     let emotionalContext: [String: Any]?
     let isFavorited: Bool
+    let category: String?
+    let isIncident: Bool
     let createdAt: String
     let updatedAt: String
     
@@ -35,6 +37,8 @@ struct Situation: Codable {
         case environmentalContext = "environmental_context"
         case emotionalContext = "emotional_context"
         case isFavorited = "is_favorited"
+        case category
+        case isIncident = "is_incident"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
     }
@@ -45,7 +49,9 @@ struct Situation: Codable {
         title: String,
         description: String,
         situationType: String = "one_time",
-        isFavorited: Bool = false
+        isFavorited: Bool = false,
+        category: String? = nil,
+        isIncident: Bool = false
     ) {
         self.id = UUID().uuidString
         self.familyId = familyId
@@ -58,6 +64,8 @@ struct Situation: Codable {
         self.environmentalContext = nil
         self.emotionalContext = nil
         self.isFavorited = isFavorited
+        self.category = category
+        self.isIncident = isIncident
         self.createdAt = ISO8601DateFormatter().string(from: Date())
         self.updatedAt = ISO8601DateFormatter().string(from: Date())
     }
@@ -75,6 +83,8 @@ struct Situation: Codable {
         self.environmentalContext = situation.environmentalContext
         self.emotionalContext = situation.emotionalContext
         self.isFavorited = isFavorited // Only this changes
+        self.category = situation.category // Preserve original category
+        self.isIncident = situation.isIncident // Preserve original incident status
         self.createdAt = situation.createdAt // Preserve original date
         self.updatedAt = situation.updatedAt // Preserve original date
     }
@@ -94,6 +104,10 @@ struct Situation: Codable {
         // Handle favorite status with default false for backwards compatibility
         isFavorited = (try? container.decode(Bool.self, forKey: .isFavorited)) ?? false
         
+        // Handle analysis fields with defaults for backwards compatibility
+        category = try? container.decodeIfPresent(String.self, forKey: .category)
+        isIncident = (try? container.decode(Bool.self, forKey: .isIncident)) ?? false
+        
         // Handle JSONB fields - decode as nil for now
         followUpResponses = nil
         timingContext = nil
@@ -112,6 +126,8 @@ struct Situation: Codable {
         try container.encode(description, forKey: .description)
         try container.encode(situationType, forKey: .situationType)
         try container.encode(isFavorited, forKey: .isFavorited)
+        try container.encodeIfPresent(category, forKey: .category)
+        try container.encode(isIncident, forKey: .isIncident)
         try container.encode(createdAt, forKey: .createdAt)
         try container.encode(updatedAt, forKey: .updatedAt)
         

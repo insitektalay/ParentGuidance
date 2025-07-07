@@ -44,13 +44,17 @@ class ConversationService: ObservableObject {
         familyId: String?,
         childId: String?,
         title: String,
-        description: String
+        description: String,
+        category: String? = nil,
+        isIncident: Bool = false
     ) async throws -> String {
         let situation = Situation(
             familyId: familyId,
             childId: childId,
             title: title,
-            description: description
+            description: description,
+            category: category,
+            isIncident: isIncident
         )
         
         print("💾 Saving situation to database...")
@@ -280,6 +284,96 @@ class ConversationService: ObservableObject {
         } catch {
             print("❌ Error getting favorited situations: \(error)")
             throw error
+        }
+    }
+    
+    // MARK: - Situation Analysis
+    
+    func analyzeSituation(situationText: String, apiKey: String) async throws -> (category: String?, isIncident: Bool) {
+        print("🔍 Analyzing situation: \(situationText.prefix(50))...")
+        
+        let url = URL(string: "https://api.openai.com/v1/responses")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let requestBody: [String: Any] = [
+            "prompt": [
+                "id": "pmpt_686b988bf0ac8196a69e972f08842b9a05893c8e8a5153c7",
+                "version": "1",
+                "variables": [
+                    "situation_inputted": situationText
+                ]
+            ]
+        ]
+        
+        request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
+        
+        print("📡 Making analysis API request...")
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            print("❌ Invalid HTTP response for analysis")
+            throw NSError(domain: "AnalysisError", code: 500, userInfo: [NSLocalizedDescriptionKey: "Invalid response"])
+        }
+        
+        if httpResponse.statusCode != 200 {
+            print("❌ Analysis HTTP error: \(httpResponse.statusCode)")
+            if let responseString = String(data: data, encoding: .utf8) {
+                print("❌ Analysis error response: \(responseString)")
+            }
+            // Return defaults on API failure instead of throwing
+            print("⚠️ Analysis failed, using defaults")
+            return (category: nil, isIncident: false)
+        }
+        
+        print("✅ Analysis HTTP 200 response received")
+        
+        do {
+            // Parse using the same PromptResponse structure
+            let promptResponse = try JSONDecoder().decode(PromptResponse.self, from: data)
+            
+            guard let firstOutput = promptResponse.output.first,
+                  let firstContent = firstOutput.content.first else {
+                print("❌ No content in analysis response")
+                return (category: nil, isIncident: false)
+            }
+            
+            let content = firstContent.text
+            print("📝 Analysis content received: \(content)")
+            
+            // Parse the JSON response - wrap in braces to make valid JSON
+            let wrappedJson = "{\(content)}"
+            print("📝 Wrapped JSON: \(wrappedJson)")
+            
+            if let jsonData = wrappedJson.data(using: .utf8),
+               let analysisResult = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any] {
+                
+                let category = analysisResult["category"] as? String
+                let incident = analysisResult["incident"]
+                
+                // Handle both boolean and string incident values
+                let isIncident: Bool
+                if let boolValue = incident as? Bool {
+                    isIncident = boolValue
+                } else if let stringValue = incident as? String {
+                    isIncident = stringValue.lowercased() == "true"
+                } else {
+                    isIncident = false
+                }
+                
+                print("✅ Analysis completed - Category: \(category ?? "nil"), Incident: \(isIncident)")
+                return (category: category, isIncident: isIncident)
+            } else {
+                print("❌ Failed to parse analysis JSON response")
+                print("❌ Raw content was: \(content)")
+                return (category: nil, isIncident: false)
+            }
+            
+        } catch {
+            print("❌ Error parsing analysis response: \(error)")
+            return (category: nil, isIncident: false)
         }
     }
 }

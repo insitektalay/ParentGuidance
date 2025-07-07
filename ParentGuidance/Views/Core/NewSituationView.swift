@@ -84,18 +84,28 @@ struct NewSituationView: View {
             print("✅ OpenAI response received successfully")
             print("🏷️ AI-generated title: \(guidance.title)")
             
-            // Step 4: Save the situation to database with AI-generated title
-            print("💾 Step 4: Saving situation to database with AI title...")
+            // Step 4: Analyze situation for category and incident classification
+            print("🔍 Step 4: Analyzing situation...")
+            let (category, isIncident) = try await ConversationService.shared.analyzeSituation(
+                situationText: inputText,
+                apiKey: apiKey
+            )
+            print("✅ Analysis completed - Category: \(category ?? "nil"), Incident: \(isIncident)")
+            
+            // Step 5: Save the situation to database with AI-generated title and analysis
+            print("💾 Step 5: Saving situation to database with AI title and analysis...")
             let situationId = try await ConversationService.shared.saveSituation(
                 familyId: familyId,
                 childId: nil, // TODO: Get from current child context if needed
                 title: guidance.title,
-                description: inputText
+                description: inputText,
+                category: category,
+                isIncident: isIncident
             )
             print("✅ Situation saved with ID: \(situationId)")
             
-            // Step 5: Save the guidance response linked to the situation using raw content
-            print("💾 Step 5: Saving guidance response to database...")
+            // Step 6: Save the guidance response linked to the situation using raw content
+            print("💾 Step 6: Saving guidance response to database...")
             print("🔍 [DEBUG] About to call saveGuidance with:")
             print("   - situationId: \(situationId)")
             print("   - rawContent length: \(rawContent.count)")
@@ -117,7 +127,7 @@ struct NewSituationView: View {
                 throw error
             }
             
-            // Step 6: Update UI
+            // Step 7: Update UI
             await MainActor.run {
                 guidanceResponse = guidance
                 isLoading = false

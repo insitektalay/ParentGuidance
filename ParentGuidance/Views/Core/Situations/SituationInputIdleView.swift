@@ -5,6 +5,10 @@ struct SituationInputIdleView: View {
     @State private var isRecording: Bool = false
     @FocusState private var isTextEditorFocused: Bool
     
+    // Keyboard detection state
+    @State private var isKeyboardVisible: Bool = false
+    @State private var keyboardHeight: CGFloat = 0
+    
     let childName: String
     let onStartRecording: () -> Void
     let onSendMessage: (String) -> Void
@@ -72,6 +76,62 @@ struct SituationInputIdleView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(ColorPalette.navy)
+        .onAppear {
+            setupKeyboardObservers()
+        }
+        .onDisappear {
+            removeKeyboardObservers()
+        }
+    }
+    
+    // MARK: - Keyboard Detection Methods
+    
+    private func setupKeyboardObservers() {
+        print("🎹 Setting up keyboard observers")
+        
+        NotificationCenter.default.addObserver(
+            forName: UIResponder.keyboardWillShowNotification,
+            object: nil,
+            queue: .main
+        ) { notification in
+            handleKeyboardWillShow(notification)
+        }
+        
+        NotificationCenter.default.addObserver(
+            forName: UIResponder.keyboardWillHideNotification,
+            object: nil,
+            queue: .main
+        ) { notification in
+            handleKeyboardWillHide(notification)
+        }
+    }
+    
+    private func removeKeyboardObservers() {
+        print("🎹 Removing keyboard observers")
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    private func handleKeyboardWillShow(_ notification: Notification) {
+        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else {
+            print("⚠️ Could not get keyboard frame from notification")
+            return
+        }
+        
+        let newKeyboardHeight = keyboardFrame.height
+        print("🎹 Keyboard will show - height: \(newKeyboardHeight)")
+        
+        isKeyboardVisible = true
+        keyboardHeight = newKeyboardHeight
+        print("🎹 Updated state - isVisible: \(isKeyboardVisible), height: \(keyboardHeight)")
+    }
+    
+    private func handleKeyboardWillHide(_ notification: Notification) {
+        print("🎹 Keyboard will hide")
+        
+        isKeyboardVisible = false
+        keyboardHeight = 0
+        print("🎹 Updated state - isVisible: \(isKeyboardVisible), height: \(keyboardHeight)")
     }
 }
 

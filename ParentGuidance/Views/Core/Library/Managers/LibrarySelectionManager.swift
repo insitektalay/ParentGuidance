@@ -120,14 +120,24 @@ class LibrarySelectionManager: ObservableObject {
             
             print("✅ Framework generation completed: \(frameworkRecommendation.frameworkName)")
             
+            // Step 6: Save framework recommendation to database
+            print("💾 Saving framework recommendation to database...")
+            let savedFrameworkId = try await FrameworkStorageService.shared.saveFrameworkRecommendation(
+                frameworkRecommendation,
+                familyId: familyId,
+                situationIds: situationIds
+            )
+            print("✅ Framework recommendation saved with ID: \(savedFrameworkId)")
+            
             // TODO: Step 8 - Navigate to Alerts page and show recommendation
-            // TODO: Step 6 - Store framework recommendation in database
             
         } catch {
-            print("❌ Framework generation failed: \(error)")
+            print("❌ Framework generation/storage failed: \(error)")
             
             if let frameworkError = error as? FrameworkGenerationError {
-                print("   Error details: \(frameworkError.localizedDescription)")
+                print("   Generation error: \(frameworkError.localizedDescription)")
+            } else if let storageError = error as? FrameworkStorageError {
+                print("   Storage error: \(storageError.localizedDescription)")
             }
             
             // TODO: Step 7 - Show error message in UI

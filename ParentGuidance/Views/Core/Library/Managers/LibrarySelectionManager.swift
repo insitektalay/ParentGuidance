@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Supabase
 
 class LibrarySelectionManager: ObservableObject {
     // MARK: - Published Properties
@@ -92,8 +93,7 @@ class LibrarySelectionManager: ObservableObject {
     
     // MARK: - Framework Generation Methods (Placeholder for Step 5)
     
-    /// Initiate framework generation process
-    /// This is a placeholder method that will be implemented in Step 5
+    /// Initiate framework generation process using FrameworkGenerationService
     func generateFramework() async {
         guard canGenerateFramework else {
             print("❌ Cannot generate framework: insufficient selections (\(selectedCount) < 2)")
@@ -101,13 +101,58 @@ class LibrarySelectionManager: ObservableObject {
         }
         
         print("🚀 Framework generation initiated with \(selectedCount) situations")
-        print("🔧 TODO: Implement framework generation in Step 5")
         
-        // TODO: Step 5 - Implement actual framework generation
-        // 1. Extract situation data using FrameworkGenerationService
-        // 2. Call OpenAI API with prompt ID
-        // 3. Parse response and create FrameworkRecommendation
-        // 4. Navigate to Alerts page to show recommendation
+        do {
+            // Step 1: Get user's API key
+            let userId = "15359b56-cabf-4b6a-9d2a-a3b11001b8e2" // TODO: Get from current user context
+            let apiKey = try await getUserApiKey(userId: userId)
+            
+            // Step 2: Get situations from selection
+            let situationIds = Array(selectedSituationIds)
+            let familyId = "5627b7a3-3ba8-4f1b-92a8-ba0e460863e5" // TODO: Get from user context
+            
+            // Step 3: Generate framework using FrameworkGenerationService
+            let frameworkRecommendation = try await FrameworkGenerationService.shared.generateFramework(
+                from: situationIds,
+                familyId: familyId,
+                apiKey: apiKey
+            )
+            
+            print("✅ Framework generation completed: \(frameworkRecommendation.frameworkName)")
+            
+            // TODO: Step 8 - Navigate to Alerts page and show recommendation
+            // TODO: Step 6 - Store framework recommendation in database
+            
+        } catch {
+            print("❌ Framework generation failed: \(error)")
+            
+            if let frameworkError = error as? FrameworkGenerationError {
+                print("   Error details: \(frameworkError.localizedDescription)")
+            }
+            
+            // TODO: Step 7 - Show error message in UI
+        }
+    }
+    
+    /// Get user's API key (helper method)
+    private func getUserApiKey(userId: String) async throws -> String {
+        let supabase = SupabaseManager.shared.client
+        
+        // Query just the API key field and decode as a dictionary
+        let response: [[String: String?]] = try await supabase
+            .from("profiles")
+            .select("user_api_key")
+            .eq("id", value: userId)
+            .execute()
+            .value
+        
+        guard let row = response.first,
+              let apiKey = row["user_api_key"] as? String,
+              !apiKey.isEmpty else {
+            throw FrameworkGenerationError.invalidAPIKey
+        }
+        
+        return apiKey
     }
     
     /// Validate that framework generation requirements are met

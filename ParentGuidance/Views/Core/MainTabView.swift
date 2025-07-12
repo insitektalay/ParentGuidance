@@ -115,12 +115,13 @@ struct SettingsScreen: View {
 struct MainTabView: View {
     @State private var activeTab: Tab = .new
     @StateObject private var tabNavigationManager = TabNavigationManager.shared
+    @EnvironmentObject var appCoordinator: AppCoordinator
 
     var body: some View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
                 // Fixed child header - always stays at top
-                ChildHeader(childName: "Alex")
+                ChildHeader(childName: appCoordinator.children.first?.name ?? "Child")
                     .background(ColorPalette.navy)
                     .zIndex(1000)
                 

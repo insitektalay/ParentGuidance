@@ -11,6 +11,7 @@ enum AppState {
 class AppCoordinator: ObservableObject {
     @Published var currentState: AppState = .loading
     @Published var currentUserId: String?
+    @Published var children: [Child] = []
     
     private let onboardingManager = OnboardingManager.shared
     private let authService = AuthService.shared
@@ -132,6 +133,11 @@ class AppCoordinator: ObservableObject {
                 .eq("family_id", value: userId)
                 .execute()
                 .value
+            
+            // Store children data on main thread
+            DispatchQueue.main.async {
+                self.children = response
+            }
             
             if response.isEmpty {
                 if profileComplete {

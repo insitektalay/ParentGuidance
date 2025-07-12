@@ -41,6 +41,12 @@ The project uses standard Xcode warnings and built-in Swift compiler checks. No 
 ./test_build.sh
 ```
 
+### Development Environment Setup
+The project includes automation hooks in `settings.json` for Claude Code:
+- **Post-tool hooks**: Automatic linting and testing after file modifications
+- **Stop hooks**: Notification system for task completion
+- **Configuration**: Uses Opus model with smart tooling integration
+
 ## Architecture Overview
 
 ### Technology Stack
@@ -49,40 +55,50 @@ The project uses standard Xcode warnings and built-in Swift compiler checks. No 
 - **AI Integration**: OpenAI GPT-4 API
 - **Dependency Management**: Swift Package Manager
 - **Key Dependencies**: 
-  - `supabase-swift` (v2.29.3) for backend services
+  - `supabase-swift` (v2.30.0) for backend services
+  - `swift-crypto` (v3.12.3) for cryptographic functionality
+  - `swift-http-types` (v1.4.0) for HTTP type definitions
   - Built-in Foundation for networking and data handling
 
 ### App Architecture
 
 #### Core Navigation Flow
-1. **Entry Point**: `ParentGuidanceApp.swift` → `OnboardingFlow` → `MainTabView.swift`
-2. **Tab Structure**: 5-tab architecture managed by `Tab` enum with custom `TabButton` components
-3. **State Management**: Enum-based coordinators for onboarding (`OnboardingStep`) and situation flows
-4. **Authentication Flow**: Checks user profile to determine onboarding state and navigation path
+1. **Entry Point**: `ParentGuidanceApp.swift` → `AppCoordinatorView` → `AppCoordinator` (service)
+2. **App State Management**: Enum-based `AppState` (.loading, .onboarding(OnboardingStep), .mainApp) with sophisticated coordination
+3. **Tab Structure**: 5-tab architecture managed by `Tab` enum with custom `TabButton` components and `TabNavigationManager` singleton
+4. **Authentication Flow**: `AppCoordinator` handles user profile loading, onboarding progression, and fallback routing
 
 #### Key Services (`Services/`)
+- **AppCoordinator**: Central application state management, authentication flow, and user profile loading with sophisticated error handling
 - **SupabaseManager**: Singleton managing database connections and authentication
-- **OpenAIService**: Legacy GPT-4 integration (not currently used)
-- **AuthService**: Authentication flow management
-- **OnboardingManager**: Coordinates multi-step onboarding process
-- **AppCoordinator**: Application-level navigation coordination
-- **FrameworkGenerationService**: AI-powered generation of parenting frameworks
+- **TabNavigationManager**: Singleton service for programmatic tab navigation using Combine
+- **ConversationService**: Active OpenAI integration with multiple prompt templates and data persistence
+- **FrameworkGenerationService**: AI-powered generation of parenting frameworks with dedicated prompt templates
 - **FrameworkStorageService**: Persistence and management of framework recommendations
+- **OnboardingManager**: Coordinates multi-step onboarding process
+- **AuthService**: Authentication flow management
+- **OpenAIService**: Legacy GPT-4 integration (not currently used)
 
-#### Active OpenAI Integration (`Views/Core/NewSituationView.swift`)
-- **Primary Integration**: OpenAI Prompts API (`/v1/responses`) with prompt templates
-- **ConversationService**: Embedded service for situation-guidance conversation pairs
+#### Active OpenAI Integration
+- **Primary Integration**: OpenAI Prompts API (`/v1/responses`) with multiple prompt templates
+- **Prompt Templates**:
+  - Main guidance: `pmpt_68515280423c8193aaa00a07235b7cf206c51d869f9526ba` (version 12)
+  - Situation analysis: `pmpt_686b988bf0ac8196a69e972f08842b9a05893c8e8a5153c7` (version 1)
+  - Framework generation: `pmpt_68511f82ba448193a1af0dc01215706f0d3d3fe75d5db0f1` (version 3)
+- **ConversationService**: Handles situation-guidance conversation pairs and multiple OpenAI operations
 - **Response Parsing**: Custom regex parsing for bracket-delimited structured guidance format
-- **Prompt ID**: Uses specific prompt template ID for parenting guidance generation
+- **Framework Generation**: Separate AI workflow for analyzing situations and generating parenting frameworks
 
 #### Data Models
 - **Core Models** (defined in `ParentGuidanceApp.swift`):
   - `UserProfile`: User account with onboarding state and subscription details
-  - `Situation`: Core situation model with JSONB context fields
+  - `Situation`: Core situation model with JSONB context fields, category classification, and favoriting
   - `Guidance`: AI-generated guidance responses
   - `ConversationService`: Database operations and OpenAI integration
 - **Child.swift**: Child profile and preferences (in `Models/` directory)
 - **FrameworkRecommendation**: AI-generated parenting framework recommendations
+- **OpenAI Response Models**: `PromptResponse`, `GuidanceResponse`, `FrameworkAPIResponse` for API parsing
+- **Error Handling**: Custom error enums (`FrameworkGenerationError`, `FrameworkStorageError`, `OpenAIError`)
 - **Additional Models**: Various view-specific models throughout the app
 
 #### Onboarding Flow (`Views/Onboarding/`)
@@ -146,6 +162,11 @@ The app uses Supabase with these core tables:
   - **Response Format**: Structured guidance with 7 sections: Title, Situation, Analysis, Action Steps, Phrases to Try, Quick Comebacks, Support
 - **Supabase**: Singleton manager pattern with centralized client configuration
 - **Database Operations**: `ConversationService` handles all data persistence for situations and guidance
+- **Framework Generation Workflow**: 
+  1. Situation analysis using dedicated prompt template
+  2. AI-powered framework generation with structured parsing
+  3. Persistent storage through `FrameworkStorageService`
+  4. Integration with alerts and recommendation system
 
 ### Testing Structure
 - **Unit Tests**: `ParentGuidanceTests/` (currently minimal)

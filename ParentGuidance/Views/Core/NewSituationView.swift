@@ -22,6 +22,7 @@ struct NewSituationView: View {
     @State private var guidanceResponse: GuidanceResponse?
     @State private var rawGuidanceContent: String? // Store raw OpenAI response
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject var appCoordinator: AppCoordinator
     
     var body: some View {
         NavigationStack {
@@ -57,7 +58,11 @@ struct NewSituationView: View {
         do {
             // Step 1: Get user's family_id first
             print("💾 Step 1: Getting user's family context...")
-            let userId = "15359b56-cabf-4b6a-9d2a-a3b11001b8e2"
+            guard let userId = appCoordinator.currentUserId else {
+                print("❌ No current user ID available")
+                isLoading = false
+                return
+            }
             let userProfile = try await AuthService.shared.loadUserProfile(userId: userId)
             print("👥 User family_id: \(userProfile.familyId ?? "nil")")
             

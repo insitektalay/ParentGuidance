@@ -21,6 +21,10 @@ class LibrarySelectionManager: ObservableObject {
     /// Whether framework generation is currently in progress
     @Published var isGeneratingFramework: Bool = false
     
+    // MARK: - User Context
+    var currentUserId: String?
+    var currentFamilyId: String?
+    
     // MARK: - Computed Properties
     
     /// Number of currently selected situations
@@ -112,12 +116,20 @@ class LibrarySelectionManager: ObservableObject {
         
         do {
             // Step 1: Get user's API key
-            let userId = "15359b56-cabf-4b6a-9d2a-a3b11001b8e2" // TODO: Get from current user context
+            guard let userId = currentUserId else {
+                print("❌ No current user ID available")
+                await MainActor.run { isGeneratingFramework = false }
+                return
+            }
             let apiKey = try await getUserApiKey(userId: userId)
             
             // Step 2: Get situations from selection
             let situationIds = Array(selectedSituationIds)
-            let familyId = "5627b7a3-3ba8-4f1b-92a8-ba0e460863e5" // TODO: Get from user context
+            guard let familyId = currentFamilyId else {
+                print("❌ No current family ID available")
+                await MainActor.run { isGeneratingFramework = false }
+                return
+            }
             
             // Step 3: Generate framework using FrameworkGenerationService
             let frameworkRecommendation = try await FrameworkGenerationService.shared.generateFramework(

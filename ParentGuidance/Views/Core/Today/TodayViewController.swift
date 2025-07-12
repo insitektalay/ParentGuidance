@@ -13,6 +13,7 @@ struct TodayViewController: View {
     @State private var isLoading = true
     @State private var situations: [Situation] = []
     @State private var errorMessage: String?
+    @EnvironmentObject var appCoordinator: AppCoordinator
     let onNavigateToNewTab: () -> Void
     
     var body: some View {
@@ -65,7 +66,14 @@ struct TodayViewController: View {
         
         do {
             // Get current user and family ID
-            let userId = "15359b56-cabf-4b6a-9d2a-a3b11001b8e2" // TODO: Get from auth
+            guard let userId = appCoordinator.currentUserId else {
+                print("❌ No current user ID available")
+                await MainActor.run {
+                    self.situations = []
+                    self.isLoading = false
+                }
+                return
+            }
             let userProfile = try await AuthService.shared.loadUserProfile(userId: userId)
             
             guard let familyId = userProfile.familyId else {

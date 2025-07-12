@@ -10,6 +10,7 @@ import SwiftUI
 struct LibraryView: View {
     @StateObject private var controller = LibraryViewController()
     @ObservedObject private var selectionManager: LibrarySelectionManager
+    @EnvironmentObject var appCoordinator: AppCoordinator
     
     init() {
         let controller = LibraryViewController()
@@ -33,6 +34,12 @@ struct LibraryView: View {
                 )
             } else {
                 libraryListView
+            }
+        }
+        .onAppear {
+            controller.currentUserId = appCoordinator.currentUserId
+            if controller.situations.isEmpty {
+                controller.loadSituations()
             }
         }
     }
@@ -72,6 +79,7 @@ struct LibraryView: View {
     
     private var foundationToolSection: some View {
         FoundationToolCard(
+            familyId: selectionManager.currentFamilyId,
             onViewTools: {
                 print("View tools tapped")
             },

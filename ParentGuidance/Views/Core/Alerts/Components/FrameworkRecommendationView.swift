@@ -156,9 +156,10 @@ class FrameworkAlertState: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     
-    private let familyId = "5627b7a3-3ba8-4f1b-92a8-ba0e460863e5" // TODO: Get from user context
+    private let familyId: String?
     
-    init() {
+    init(familyId: String?) {
+        self.familyId = familyId
         Task {
             await loadFramework()
         }
@@ -168,6 +169,12 @@ class FrameworkAlertState: ObservableObject {
     func loadFramework() async {
         isLoading = true
         errorMessage = nil
+        
+        guard let familyId = familyId else {
+            print("❌ No family ID available for FrameworkAlertState")
+            isLoading = false
+            return
+        }
         
         do {
             if let framework = try await FrameworkStorageService.shared.getActiveFramework(familyId: familyId) {
@@ -229,7 +236,13 @@ class FrameworkAlertState: ObservableObject {
 }
 
 struct FrameworkAlertContainer: View {
-    @StateObject private var frameworkState = FrameworkAlertState()
+    let familyId: String?
+    @StateObject private var frameworkState: FrameworkAlertState
+    
+    init(familyId: String? = nil) {
+        self.familyId = familyId
+        self._frameworkState = StateObject(wrappedValue: FrameworkAlertState(familyId: familyId))
+    }
     
     var body: some View {
         Group {

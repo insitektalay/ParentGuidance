@@ -7,9 +7,10 @@ class FoundationFrameworkState: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var showingDeactivationAlert: Bool = false
     
-    private let familyId = "5627b7a3-3ba8-4f1b-92a8-ba0e460863e5" // TODO: Get from user context
+    private let familyId: String?
     
-    init() {
+    init(familyId: String?) {
+        self.familyId = familyId
         Task {
             await loadActiveFramework()
         }
@@ -18,6 +19,12 @@ class FoundationFrameworkState: ObservableObject {
     @MainActor
     func loadActiveFramework() async {
         isLoading = true
+        
+        guard let familyId = familyId else {
+            print("❌ No family ID available for FoundationFrameworkState")
+            isLoading = false
+            return
+        }
         
         do {
             currentFramework = try await FrameworkStorageService.shared.getActiveFramework(familyId: familyId)
@@ -55,15 +62,19 @@ class FoundationFrameworkState: ObservableObject {
 struct FoundationToolCard: View {
     let onViewTools: () -> Void
     let onSetupFramework: () -> Void
+    let familyId: String?
     
-    @StateObject private var frameworkState = FoundationFrameworkState()
+    @StateObject private var frameworkState: FoundationFrameworkState
     
     init(
+        familyId: String? = nil,
         onViewTools: @escaping () -> Void = {},
         onSetupFramework: @escaping () -> Void = {}
     ) {
         self.onViewTools = onViewTools
         self.onSetupFramework = onSetupFramework
+        self.familyId = familyId
+        self._frameworkState = StateObject(wrappedValue: FoundationFrameworkState(familyId: familyId))
     }
     
     var body: some View {

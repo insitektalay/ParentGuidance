@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AlertView: View {
     @State private var selectedCategory: AlertCategory = .recent
+    @EnvironmentObject var appCoordinator: AppCoordinator
     
     enum AlertCategory: String, CaseIterable {
         case recent = "Recent Alerts"
@@ -67,7 +68,7 @@ struct AlertView: View {
     private var recentAlertsContent: some View {
         VStack(spacing: 0) {
             // Framework recommendations (highest priority)
-            FrameworkAlertContainer()
+            FrameworkAlertContainer(familyId: nil) // TODO: Get familyId from user profile
         }
     }
     

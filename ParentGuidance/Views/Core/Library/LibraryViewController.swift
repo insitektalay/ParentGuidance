@@ -14,6 +14,8 @@ class LibraryViewController: ObservableObject {
     @Published var filteredSituations: [Situation] = []
     @Published var groupedSituations: [SituationGroup] = []
     
+    var currentUserId: String?
+    
     // Selection manager for framework generation
     @Published var selectionManager = LibrarySelectionManager()
     @Published var searchQuery: String = "" {
@@ -79,7 +81,13 @@ class LibraryViewController: ObservableObject {
         
         Task {
             do {
-                let userId = "15359b56-cabf-4b6a-9d2a-a3b11001b8e2"
+                guard let userId = currentUserId else {
+                    print("❌ No current user ID available")
+                    await MainActor.run {
+                        self.viewState = .empty
+                    }
+                    return
+                }
                 let userProfile = try await AuthService.shared.loadUserProfile(userId: userId)
                 
                 guard let familyId = userProfile.familyId else {
@@ -89,6 +97,10 @@ class LibraryViewController: ObservableObject {
                     }
                     return
                 }
+                
+                // Set user context for selection manager
+                selectionManager.currentUserId = userId
+                selectionManager.currentFamilyId = familyId
                 
                 print("📚 Loading all situations for family: \(familyId)")
                 let allSituations = try await ConversationService.shared.getAllSituations(familyId: familyId)

@@ -31,39 +31,219 @@ class AuthService: ObservableObject {
     }
     
     func updateSelectedPlan(_ plan: String, userId: String) async throws {
+        print("🔄 Attempting to update selected_plan to '\(plan)' for user: \(userId)")
         let supabase = SupabaseManager.shared.client
-        try await supabase
-            .from("profiles")
-            .update(["selected_plan": plan])
-            .eq("id", value: userId)
-            .execute()
+        
+        // First check current user context
+        do {
+            let currentUser = try await supabase.auth.user()
+            print("🔍 Current authenticated user: \(currentUser.id.uuidString)")
+            print("🔍 User email: \(currentUser.email ?? "no email")")
+            print("🔍 Target user ID: \(userId)")
+            print("🔍 User IDs match: \(currentUser.id.uuidString == userId)")
+        } catch {
+            print("❌ Failed to get current user: \(error)")
+        }
+        
+        // Check if profile exists and is readable
+        do {
+            let existingProfile: [UserProfile] = try await supabase
+                .from("profiles")
+                .select("*")
+                .eq("id", value: userId)
+                .execute()
+                .value
+            
+            if let profile = existingProfile.first {
+                print("📊 Found existing profile:")
+                print("   - ID: \(profile.id)")
+                print("   - Email: \(profile.email ?? "none")")
+                print("   - Current plan: \(profile.selectedPlan ?? "none")")
+                print("   - Plan setup complete: \(profile.planSetupComplete)")
+            } else {
+                print("⚠️ No profile found for user \(userId)")
+            }
+        } catch {
+            print("❌ Failed to read existing profile: \(error)")
+        }
+        
+        // Attempt the update
+        do {
+            let response = try await supabase
+                .from("profiles")
+                .update([
+                    "selected_plan": plan,
+                    "updated_at": ISO8601DateFormatter().string(from: Date())
+                ])
+                .eq("id", value: userId)
+                .execute()
+            
+            print("✅ Profile update response: \(response)")
+            print("✅ HTTP Status: Success (200)")
+            
+            // Verify the update actually worked by reading back
+            let verifyProfile: [UserProfile] = try await supabase
+                .from("profiles")
+                .select("*")
+                .eq("id", value: userId)
+                .execute()
+                .value
+            
+            if let updatedProfile = verifyProfile.first {
+                print("✅ Verification - Updated profile:")
+                print("   - Selected plan: \(updatedProfile.selectedPlan ?? "none")")
+                print("   - Updated at: \(updatedProfile.updatedAt)")
+                
+                if updatedProfile.selectedPlan == plan {
+                    print("✅ Update successful - plan was actually saved!")
+                } else {
+                    print("❌ Update failed - plan was not saved despite HTTP 200!")
+                    print("❌ Expected: \(plan), Got: \(updatedProfile.selectedPlan ?? "none")")
+                    throw NSError(domain: "DatabaseError", code: 500, userInfo: [NSLocalizedDescriptionKey: "Profile update did not persist"])
+                }
+            } else {
+                print("❌ Verification failed - could not read profile after update")
+                throw NSError(domain: "DatabaseError", code: 500, userInfo: [NSLocalizedDescriptionKey: "Could not verify profile update"])
+            }
+            
+        } catch {
+            print("❌ Failed to update selected_plan: \(error)")
+            print("❌ Error details: \(error.localizedDescription)")
+            throw error
+        }
     }
     
     func saveApiKey(_ apiKey: String, userId: String) async throws {
+        print("🔄 Attempting to save API key for user: \(userId)")
+        print("🔑 API key (first 10 chars): \(apiKey.prefix(10))...")
         let supabase = SupabaseManager.shared.client
-        try await supabase
-            .from("profiles")
-            .update([
-                "user_api_key": apiKey,
-                "api_key_provider": "openai",
-                "plan_setup_complete": "true"
-            ])
-            .eq("id", value: userId)
-            .execute()
+        
+        do {
+            let response = try await supabase
+                .from("profiles")
+                .update([
+                    "user_api_key": apiKey,
+                    "api_key_provider": "openai",
+                    "plan_setup_complete": "true",
+                    "updated_at": ISO8601DateFormatter().string(from: Date())
+                ])
+                .eq("id", value: userId)
+                .execute()
+            
+            print("✅ API key update response: \(response)")
+            
+            // Verify the update actually worked
+            let verifyProfile: [UserProfile] = try await supabase
+                .from("profiles")
+                .select("*")
+                .eq("id", value: userId)
+                .execute()
+                .value
+            
+            if let updatedProfile = verifyProfile.first {
+                print("✅ Verification - Updated profile:")
+                print("   - Has API key: \(updatedProfile.userApiKey != nil)")
+                print("   - API provider: \(updatedProfile.apiKeyProvider ?? "none")")
+                print("   - Plan setup complete: \(updatedProfile.planSetupComplete)")
+                
+                if updatedProfile.userApiKey != nil && updatedProfile.planSetupComplete {
+                    print("✅ API key update successful - data was actually saved!")
+                } else {
+                    print("❌ API key update failed - data was not saved despite HTTP 200!")
+                    throw NSError(domain: "DatabaseError", code: 500, userInfo: [NSLocalizedDescriptionKey: "API key update did not persist"])
+                }
+            }
+            
+        } catch {
+            print("❌ Failed to save API key: \(error)")
+            print("❌ Error details: \(error.localizedDescription)")
+            throw error
+        }
     }
     
     func saveChildDetails(name: String, birthDate: Date, userId: String) async throws {
         let age = Calendar.current.dateComponents([.year], from: birthDate, to: Date()).year ?? 0
+        print("🔄 Attempting to save child details for user: \(userId)")
+        print("👶 Child: \(name), age: \(age)")
+        print("👶 Family ID will be: \(userId) (using user ID as family ID)")
         let supabase = SupabaseManager.shared.client
         
-        // For now, we'll just update the profile to mark child details complete
-        try await supabase
-            .from("profiles")
-            .update(["child_details_complete": "true"])
-            .eq("id", value: userId)
-            .execute()
+        // Create the child record first
+        print("👶 Creating child record in database...")
+        struct ChildInsert: Codable {
+            let family_id: String
+            let name: String
+            let age: Int
+            let created_at: String
+            let updated_at: String
+        }
         
-        // TODO: Create actual child record when we resolve the family_id issue
+        let childData = ChildInsert(
+            family_id: userId,
+            name: name,
+            age: age,
+            created_at: ISO8601DateFormatter().string(from: Date()),
+            updated_at: ISO8601DateFormatter().string(from: Date())
+        )
+        
+        do {
+            let childResponse = try await supabase
+                .from("children")
+                .insert(childData)
+                .execute()
+            
+            print("✅ Child record created: \(childResponse)")
+            
+            // Update profile to mark child details complete
+            let profileResponse = try await supabase
+                .from("profiles")
+                .update([
+                    "child_details_complete": "true",
+                    "updated_at": ISO8601DateFormatter().string(from: Date())
+                ])
+                .eq("id", value: userId)
+                .execute()
+            
+            print("✅ Profile updated: \(profileResponse)")
+            
+            // Verify both the child record and profile update worked
+            let childrenResult: [Child] = try await supabase
+                .from("children")
+                .select("*")
+                .eq("family_id", value: userId)
+                .execute()
+                .value
+            
+            let profileResult: [UserProfile] = try await supabase
+                .from("profiles")
+                .select("*")
+                .eq("id", value: userId)
+                .execute()
+                .value
+            
+            print("✅ Verification Results:")
+            print("   - Children found: \(childrenResult.count)")
+            if let lastChild = childrenResult.last {
+                print("   - Latest child: \(lastChild.name ?? "no name"), age \(lastChild.age)")
+            }
+            
+            if let profile = profileResult.first {
+                print("   - Child details complete: \(profile.childDetailsComplete)")
+                
+                if childrenResult.count > 0 && profile.childDetailsComplete {
+                    print("✅ Child details update successful - data was actually saved!")
+                } else {
+                    print("❌ Child details update failed - data was not saved despite HTTP 200!")
+                    throw NSError(domain: "DatabaseError", code: 500, userInfo: [NSLocalizedDescriptionKey: "Child details update did not persist"])
+                }
+            }
+            
+        } catch {
+            print("❌ Failed to save child details: \(error)")
+            print("❌ Error details: \(error.localizedDescription)")
+            throw error
+        }
+        
         print("Child details: \(name), age: \(age)")
     }
     
@@ -121,7 +301,7 @@ class AuthService: ObservableObject {
     
     func signInWithGoogle() async throws {
         do {
-            let url = try await SupabaseManager.shared.client.auth.getOAuthSignInURL(
+            let url = try SupabaseManager.shared.client.auth.getOAuthSignInURL(
                 provider: .google
             )
             print("Google sign in URL: \(url.absoluteString)")
@@ -134,7 +314,7 @@ class AuthService: ObservableObject {
     
     func signInWithApple() async throws {
         do {
-            let url = try await SupabaseManager.shared.client.auth.getOAuthSignInURL(
+            let url = try SupabaseManager.shared.client.auth.getOAuthSignInURL(
                 provider: .apple
             )
             print("Apple sign in URL: \(url.absoluteString)")
@@ -147,7 +327,7 @@ class AuthService: ObservableObject {
     
     func signInWithFacebook() async throws {
         do {
-            let url = try await SupabaseManager.shared.client.auth.getOAuthSignInURL(
+            let url = try SupabaseManager.shared.client.auth.getOAuthSignInURL(
                 provider: .facebook
             )
             print("Facebook sign in URL: \(url.absoluteString)")

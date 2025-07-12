@@ -10,71 +10,62 @@ import Foundation
 import Supabase
 
 struct OnboardingFlow: View {
-    @State private var currentView: OnboardingStep = .welcome
+    let step: OnboardingStep
     @State private var isLoadingProfile = false
-    @State private var currentUserId: String = ""
     @StateObject private var authService = AuthService.shared
+    @EnvironmentObject var appCoordinator: AppCoordinator
     
-    enum OnboardingStep {
-        case welcome
-        case authentication
-        case loading
-        case plan
-        case payment
-        case apiKey
-        case child
-        case main
+    init(step: OnboardingStep) {
+        self.step = step
     }
     
+    
     var body: some View {
-        switch currentView {
+        switch step {
         case .welcome:
             WelcomeView(
                 onGetStarted: {
-                    currentView = .authentication
+                    appCoordinator.handleOnboardingStepComplete(.welcome)
                 }
             )
-        case .authentication:
+        case .auth:
             AuthenticationView(
                 onAppleSignIn: {
-                    currentView = .main
+                    // TODO: Implement Apple sign in
                 },
                 onGoogleSignIn: {
-                    currentView = .main
+                    // TODO: Implement Google sign in
                 },
                 onFacebookSignIn: {
-                    currentView = .main
+                    // TODO: Implement Facebook sign in
                 },
                 onEmailSignIn: { userId, email in
-                    handleAuthentication(userId: userId, email: email)
+                    // Notify AppCoordinator of successful authentication
+                    Task {
+                        await appCoordinator.handleSuccessfulAuthentication(userId: userId, email: email)
+                    }
                 },
                 onBackTapped: {
-                    currentView = .welcome
+                    Task {
+                        await MainActor.run {
+                            appCoordinator.currentState = .onboarding(.welcome)
+                        }
+                    }
                 }
             )
-        case .loading:
-            VStack(spacing: 20) {
-                ProgressView()
-                    .scaleEffect(1.5)
-                Text("Loading your profile...")
-                    .font(.headline)
-                    .foregroundColor(.secondary)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color(.systemBackground))
         case .plan:
             PlanSelectionView(
                 onBringOwnAPI: {
-                    savePlanSelection("api", nextStep: .apiKey)
+                    savePlanSelection("api")
                 },
                 onStarterPlan: {
-                    savePlanSelection("starter", nextStep: .payment)
+                    savePlanSelection("starter")
                 },
                 onFamilyPlan: {
-                    savePlanSelection("family", nextStep: .payment)
+                    savePlanSelection("family")
                 },
                 onPremiumPlan: {
-                    savePlanSelection("premium", nextStep: .payment)
+                    savePlanSelection("premium")
                 }
             )
         case .payment:
@@ -87,7 +78,7 @@ struct OnboardingFlow: View {
                     "Priority support"
                 ],
                 onPayment: {
-                    currentView = .main
+                    appCoordinator.handleOnboardingStepComplete(.payment)
                 }
             )
         case .apiKey:
@@ -110,79 +101,27 @@ struct OnboardingFlow: View {
                     saveChildDetails(name: name, birthDate: birthDate, isAdditional: false)
                 }
             )
-        case .main:
-            MainTabView()
         }
     }
     
-    private func handleAuthentication(userId: String, email: String?) {
-        currentView = .loading
-        currentUserId = userId
-        
-        Task {
-            print("🎯 Authenticated user ID: \(userId)")
-            print("🎯 User email: \(email ?? "No email")")
-            
-            do {
-                // Load user profile to check onboarding state
-                let profile = try await AuthService.shared.loadUserProfile(userId: userId)
-                print("👤 Loaded user profile: \(profile.email ?? "No email")")
-                
-                await MainActor.run {
-                    print("🔍 Profile state:")
-                    print("   selectedPlan: \(profile.selectedPlan ?? "nil")")
-                    print("   planSetupComplete: \(profile.planSetupComplete)")
-                    print("   childDetailsComplete: \(profile.childDetailsComplete)")
-                    print("   isOnboardingComplete: \(profile.isOnboardingComplete)")
-                    
-                    if profile.isOnboardingComplete {
-                        print("✅ Onboarding complete! Going to main app")
-                        currentView = .main
-                    } else if profile.selectedPlan == nil {
-                        print("📋 No plan selected, starting from plan selection")
-                        currentView = .plan
-                    } else if profile.needsPayment {
-                        print("💳 Plan selected but needs payment")
-                        currentView = .payment
-                    } else if profile.needsApiKey {
-                        print("🔑 Plan selected but needs API key")
-                        currentView = .apiKey
-                    } else if !profile.childDetailsComplete {
-                        print("👶 Plan and payment complete, needs child details")
-                        currentView = .child
-                    } else {
-                        print("🎉 All steps complete, going to main app")
-                        currentView = .main
-                    }
-                }
-            } catch {
-                print("❌ Error loading profile: \(error.localizedDescription)")
-                // Fallback to plan selection if profile loading fails
-                await MainActor.run {
-                    print("⚠️ Fallback: Starting from plan selection")
-                    currentView = .plan
-                }
-            }
-        }
-    }
     
-    private func savePlanSelection(_ plan: String, nextStep: OnboardingStep) {
+    private func savePlanSelection(_ plan: String) {
         Task {
             do {
                 print("💾 Saving plan selection: \(plan) to database...")
-                try await authService.updateSelectedPlan(plan, userId: currentUserId)
-                
-                await MainActor.run {
-                    print("✅ Plan saved successfully to database: \(plan)")
-                    currentView = nextStep
+                guard let userId = appCoordinator.currentUserId else {
+                    print("❌ No current user ID available for plan selection")
+                    return
                 }
+                try await authService.updateSelectedPlan(plan, userId: userId)
+                
+                print("✅ Plan saved successfully to database: \(plan)")
+                appCoordinator.handlePlanSelection(plan)
             } catch {
                 print("❌ Error saving plan to database: \(error.localizedDescription)")
-                // Still navigate even if save fails
-                await MainActor.run {
-                    print("⚠️ Proceeding despite save error")
-                    currentView = nextStep
-                }
+                // Still navigate even if save fails, assume "api" plan for now
+                print("⚠️ Proceeding despite save error")
+                appCoordinator.handlePlanSelection(plan)
             }
         }
     }
@@ -191,19 +130,19 @@ struct OnboardingFlow: View {
         Task {
             do {
                 print("🔑 Saving API key: \(apiKey.prefix(10))... to database...")
-                try await authService.saveApiKey(apiKey, userId: currentUserId)
-                
-                await MainActor.run {
-                    print("✅ API key saved successfully to database")
-                    currentView = .child
+                guard let userId = appCoordinator.currentUserId else {
+                    print("❌ No current user ID available for API key")
+                    return
                 }
+                try await authService.saveApiKey(apiKey, userId: userId)
+                
+                print("✅ API key saved successfully to database")
+                appCoordinator.handleOnboardingStepComplete(.apiKey)
             } catch {
                 print("❌ Error saving API key to database: \(error.localizedDescription)")
                 // Still navigate even if save fails
-                await MainActor.run {
-                    print("⚠️ Proceeding despite save error")
-                    currentView = .child
-                }
+                print("⚠️ Proceeding despite save error")
+                appCoordinator.handleOnboardingStepComplete(.apiKey)
             }
         }
     }
@@ -217,7 +156,11 @@ struct OnboardingFlow: View {
                 print("   Age: \(age) years old")
                 print("   Birth Date: \(DateFormatter.localizedString(from: birthDate, dateStyle: .medium, timeStyle: .none))")
                 
-                try await authService.saveChildDetails(name: name, birthDate: birthDate, userId: currentUserId)
+                guard let userId = appCoordinator.currentUserId else {
+                    print("❌ No current user ID available for child details")
+                    return
+                }
+                try await authService.saveChildDetails(name: name, birthDate: birthDate, userId: userId)
                 
                 await MainActor.run {
                     print("✅ Child details saved successfully to database")
@@ -226,8 +169,9 @@ struct OnboardingFlow: View {
                         print("🔄 Ready to add another child")
                         // Stay on child details screen for additional child
                     } else {
-                        print("🎉 Onboarding complete! Navigating to main app")
-                        currentView = .main
+                        print("🎉 Child details complete! Notifying AppCoordinator")
+                        // Call AppCoordinator to handle the completion
+                        appCoordinator.handleOnboardingStepComplete(.child)
                     }
                 }
             } catch {
@@ -237,8 +181,9 @@ struct OnboardingFlow: View {
                     if isAdditional {
                         print("🔄 Ready to add another child (despite error)")
                     } else {
-                        print("🎉 Onboarding complete! Navigating to main app (despite error)")
-                        currentView = .main
+                        print("🎉 Child details complete! Notifying AppCoordinator (despite error)")
+                        // Call AppCoordinator to handle the completion even if save failed
+                        appCoordinator.handleOnboardingStepComplete(.child)
                     }
                 }
             }
@@ -248,7 +193,6 @@ struct OnboardingFlow: View {
 
 // MARK: - OnboardingManager Class
 
-// Use the OnboardingStep enum from OnboardingCoordinator
 struct OnboardingStatus {
     let isComplete: Bool
     let nextStep: OnboardingStep?

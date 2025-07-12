@@ -16,9 +16,7 @@ import SwiftUI
 struct ParentGuidanceApp: App {
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
-                OnboardingFlow()
-            }
+            AppCoordinatorView()
         }
     }
 }

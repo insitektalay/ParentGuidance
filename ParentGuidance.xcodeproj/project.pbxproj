@@ -42,7 +42,10 @@
 		948605D12E133149008D92DE /* SupabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605D02E133149008D92DE /* SupabaseManager.swift */; };
 		948605D42E133217008D92DE /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 948605D32E133217008D92DE /* Supabase */; };
 		948605D52E133250008D92DE /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605D62E133251008D92DE /* AuthService.swift */; };
+		949600D42E20F2B1008EC0C0 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949600D22E20F2B1008EC0C0 /* LoadingView.swift */; };
+		949600D52E20F2B1008EC0C0 /* AppCoordinatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949600D32E20F2B1008EC0C0 /* AppCoordinatorView.swift */; };
 		94B3D79C2E16C45B000F1D65 /* TodayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B3D79B2E16C45B000F1D65 /* TodayViewController.swift */; };
+		94CBD5152E20F80C0014C22A /* FakeFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94CBD5142E20F80C0014C22A /* FakeFile.swift */; };
 		94FA10C42E056247003EC1E9 /* ParentGuidanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA10C32E056247003EC1E9 /* ParentGuidanceApp.swift */; };
 		94FA10C62E056247003EC1E9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA10C52E056247003EC1E9 /* ContentView.swift */; };
 		94FA10C82E056249003EC1E9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 94FA10C72E056249003EC1E9 /* Assets.xcassets */; };
@@ -135,7 +138,10 @@
 		948605CD2E115CB2008D92DE /* AlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertView.swift; sourceTree = "<group>"; };
 		948605D02E133149008D92DE /* SupabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseManager.swift; sourceTree = "<group>"; };
 		948605D62E133251008D92DE /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		949600D22E20F2B1008EC0C0 /* LoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
+		949600D32E20F2B1008EC0C0 /* AppCoordinatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppCoordinatorView.swift; sourceTree = "<group>"; };
 		94B3D79B2E16C45B000F1D65 /* TodayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayViewController.swift; sourceTree = "<group>"; };
+		94CBD5142E20F80C0014C22A /* FakeFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FakeFile.swift; sourceTree = "<group>"; };
 		94FA10C02E056247003EC1E9 /* ParentGuidance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ParentGuidance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		94FA10C32E056247003EC1E9 /* ParentGuidanceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentGuidanceApp.swift; sourceTree = "<group>"; };
 		94FA10C52E056247003EC1E9 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -257,6 +263,7 @@
 		94FA10B72E056247003EC1E9 = {
 			isa = PBXGroup;
 			children = (
+				94CBD5142E20F80C0014C22A /* FakeFile.swift */,
 				94FA10C22E056247003EC1E9 /* ParentGuidance */,
 				94FA10D32E056249003EC1E9 /* ParentGuidanceTests */,
 				94FA10DD2E056249003EC1E9 /* ParentGuidanceUITests */,
@@ -391,6 +398,7 @@
 		94FA10F42E056465003EC1E9 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				949600D32E20F2B1008EC0C0 /* AppCoordinatorView.swift */,
 				94FA111D2E05C904003EC1E9 /* Today */,
 				94FA111C2E05C8FC003EC1E9 /* Alerts */,
 				94FA111B2E05C8F2003EC1E9 /* Situations */,
@@ -426,6 +434,7 @@
 			children = (
 				94FA11292E05CBFD003EC1E9 /* ChildBadge.swift */,
 				94FA11312E05CC30003EC1E9 /* ChildHeader.swift */,
+				949600D22E20F2B1008EC0C0 /* LoadingView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -736,6 +745,7 @@
 				94FA111F2E05CBAA003EC1E9 /* SituationInputIdleView.swift in Sources */,
 				943792A32E1BE9850089F512 /* LibrarySelectionManager.swift in Sources */,
 				94FA11322E05CC30003EC1E9 /* ChildHeader.swift in Sources */,
+				949600D52E20F2B1008EC0C0 /* AppCoordinatorView.swift in Sources */,
 				94FA11332E05CC40003EC1E9 /* RoutineCard.swift in Sources */,
 				948605CE2E115CB2008D92DE /* AlertView.swift in Sources */,
 				943DFDA22E1A86A4004F8043 /* OnboardingManager.swift in Sources */,
@@ -747,6 +757,7 @@
 				94FA11362E05CC60003EC1E9 /* SituationGuidanceView.swift in Sources */,
 				94FA113A2E05CC80003EC1E9 /* NotificationCard.swift in Sources */,
 				94FA113C2E05CC90003EC1E9 /* SearchBar.swift in Sources */,
+				94CBD5152E20F80C0014C22A /* FakeFile.swift in Sources */,
 				943792A92E1C2B610089F512 /* TabNavigationManager.swift in Sources */,
 				94FA113E2E05CCA0003EC1E9 /* FoundationToolCard.swift in Sources */,
 				943DFD852E182684004F8043 /* SearchHistoryView.swift in Sources */,
@@ -755,6 +766,7 @@
 				943DFD9D2E1A863A004F8043 /* DatabaseService.swift in Sources */,
 				9437929E2E1BE9340089F512 /* FrameworkGenerationService.swift in Sources */,
 				94FA11402E05CCB0003EC1E9 /* SituationCard.swift in Sources */,
+				949600D42E20F2B1008EC0C0 /* LoadingView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

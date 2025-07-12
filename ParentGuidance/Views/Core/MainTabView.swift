@@ -101,16 +101,6 @@ struct AlertsScreen: View {
     }
 }
 
-struct SettingsScreen: View {
-    var body: some View {
-        ZStack {
-            ColorPalette.navy.ignoresSafeArea()
-            Text("Settings Screen")
-                .font(.title)
-                .foregroundColor(ColorPalette.white)
-        }
-    }
-}
 
 struct MainTabView: View {
     @State private var activeTab: Tab = .new
@@ -143,7 +133,7 @@ struct MainTabView: View {
                             case .alerts:
                                 AlertView()
                             case .settings:
-                                SettingsScreen()
+                                SettingsView()
                             }
                         }
                         .frame(minHeight: geometry.size.height - 140) // Account for header and tab bar

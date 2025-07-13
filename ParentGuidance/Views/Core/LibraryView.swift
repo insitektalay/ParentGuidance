@@ -79,7 +79,7 @@ struct LibraryView: View {
     
     private var foundationToolSection: some View {
         FoundationToolCard(
-            familyId: selectionManager.currentFamilyId,
+            familyId: appCoordinator.currentUserId,
             onViewTools: {
                 print("View tools tapped")
             },

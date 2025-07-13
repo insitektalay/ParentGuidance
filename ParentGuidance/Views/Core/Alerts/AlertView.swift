@@ -68,7 +68,7 @@ struct AlertView: View {
     private var recentAlertsContent: some View {
         VStack(spacing: 0) {
             // Framework recommendations (highest priority)
-            FrameworkAlertContainer(familyId: nil) // TODO: Get familyId from user profile
+            FrameworkAlertContainer(familyId: appCoordinator.currentFamilyId)
         }
     }
     

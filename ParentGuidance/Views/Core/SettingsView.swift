@@ -7,8 +7,64 @@
 
 import SwiftUI
 
+// MARK: - Framework State Management
+
+class SettingsFrameworkState: ObservableObject {
+    @Published var currentFramework: FrameworkRecommendation?
+    @Published var isLoading: Bool = false
+    @Published var errorMessage: String?
+    
+    private var familyId: String?
+    
+    @MainActor
+    func loadFramework(familyId: String?) async {
+        guard let familyId = familyId else {
+            print("❌ No family ID available for SettingsFrameworkState")
+            return
+        }
+        
+        self.familyId = familyId
+        isLoading = true
+        errorMessage = nil
+        
+        do {
+            currentFramework = try await FrameworkStorageService.shared.getActiveFramework(familyId: familyId)
+            if let framework = currentFramework {
+                print("✅ Settings: Loaded active framework: \(framework.frameworkName)")
+            } else {
+                print("📭 Settings: No active framework found")
+            }
+        } catch {
+            print("❌ Settings: Failed to load framework: \(error)")
+            errorMessage = "Unable to load framework status"
+        }
+        
+        isLoading = false
+    }
+    
+    @MainActor
+    func deactivateFramework() async {
+        guard let framework = currentFramework else { return }
+        
+        isLoading = true
+        errorMessage = nil
+        
+        do {
+            try await FrameworkStorageService.shared.deactivateFramework(id: framework.id)
+            currentFramework = nil
+            print("✅ Settings: Framework deactivated: \(framework.frameworkName)")
+        } catch {
+            print("❌ Settings: Failed to deactivate framework: \(error)")
+            errorMessage = "Unable to deactivate framework"
+        }
+        
+        isLoading = false
+    }
+}
+
 struct SettingsView: View {
     @EnvironmentObject var appCoordinator: AppCoordinator
+    @StateObject private var frameworkState = SettingsFrameworkState()
     
     var body: some View {
         ScrollView {
@@ -51,24 +107,25 @@ struct SettingsView: View {
                 .padding(.horizontal, 16)
             
             VStack(alignment: .leading, spacing: 16) {
-                Text("Framework Status")
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(ColorPalette.white.opacity(0.9))
-                
-                Text("No active framework currently set up")
-                    .font(.system(size: 14))
-                    .foregroundColor(ColorPalette.white.opacity(0.7))
-                
-                Button("View Framework Tools") {
-                    // TODO: Navigate to framework tools
+                if frameworkState.isLoading {
+                    loadingFrameworkView
+                } else if let errorMessage = frameworkState.errorMessage {
+                    errorFrameworkView(errorMessage)
+                } else if let framework = frameworkState.currentFramework {
+                    activeFrameworkView(framework)
+                } else {
+                    inactiveFrameworkView
                 }
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(ColorPalette.terracotta)
             }
             .padding(16)
             .background(ColorPalette.white.opacity(0.05))
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .padding(.horizontal, 16)
+        }
+        .onAppear {
+            Task {
+                await frameworkState.loadFramework(familyId: appCoordinator.currentUserId)
+            }
         }
     }
     
@@ -236,6 +293,116 @@ struct SettingsView: View {
             .background(ColorPalette.white.opacity(0.05))
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .padding(.horizontal, 16)
+        }
+    }
+    
+    // MARK: - Framework State Views
+    
+    private var loadingFrameworkView: some View {
+        HStack(spacing: 12) {
+            ProgressView()
+                .scaleEffect(0.8)
+                .foregroundColor(ColorPalette.white)
+            
+            Text("Loading framework status...")
+                .font(.system(size: 14))
+                .foregroundColor(ColorPalette.white.opacity(0.7))
+        }
+    }
+    
+    private func errorFrameworkView(_ errorMessage: String) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Unable to load framework status")
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(ColorPalette.white.opacity(0.9))
+            
+            Text(errorMessage)
+                .font(.system(size: 14))
+                .foregroundColor(ColorPalette.white.opacity(0.7))
+            
+            Button("Try Again") {
+                Task {
+                    await frameworkState.loadFramework(familyId: appCoordinator.currentUserId)
+                }
+            }
+            .font(.system(size: 14, weight: .medium))
+            .foregroundColor(ColorPalette.terracotta)
+        }
+    }
+    
+    private func activeFrameworkView(_ framework: FrameworkRecommendation) -> some View {
+        VStack(alignment: .leading, spacing: 16) {
+            // Active framework header
+            HStack(spacing: 8) {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 16))
+                    .foregroundColor(ColorPalette.brightBlue)
+                
+                Text("Active Framework")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(ColorPalette.brightBlue)
+                
+                Spacer()
+            }
+            
+            // Framework details
+            VStack(alignment: .leading, spacing: 8) {
+                Text(framework.frameworkName)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(ColorPalette.white)
+                
+                Text(framework.notificationText)
+                    .font(.system(size: 14))
+                    .foregroundColor(ColorPalette.white.opacity(0.8))
+                    .lineLimit(3)
+            }
+            
+            // Framework actions
+            HStack(spacing: 12) {
+                Button("Framework Guide") {
+                    // TODO: Navigate to framework guide
+                }
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(ColorPalette.white)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(ColorPalette.brightBlue)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                
+                Button("Deactivate") {
+                    Task {
+                        await frameworkState.deactivateFramework()
+                    }
+                }
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(ColorPalette.terracotta)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(ColorPalette.terracotta, lineWidth: 1)
+                )
+                
+                Spacer()
+            }
+        }
+    }
+    
+    private var inactiveFrameworkView: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Framework Status")
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(ColorPalette.white.opacity(0.9))
+            
+            Text("No active framework currently set up")
+                .font(.system(size: 14))
+                .foregroundColor(ColorPalette.white.opacity(0.7))
+            
+            Button("View Framework Tools") {
+                // TODO: Navigate to framework tools
+            }
+            .font(.system(size: 14, weight: .medium))
+            .foregroundColor(ColorPalette.terracotta)
         }
     }
 }

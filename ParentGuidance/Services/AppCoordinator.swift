@@ -11,6 +11,7 @@ enum AppState {
 class AppCoordinator: ObservableObject {
     @Published var currentState: AppState = .loading
     @Published var currentUserId: String?
+    @Published var currentFamilyId: String?
     @Published var children: [Child] = []
     
     private let onboardingManager = OnboardingManager.shared
@@ -74,6 +75,11 @@ class AppCoordinator: ObservableObject {
                 print("   - Child Details Complete: \(profile.childDetailsComplete)")
                 print("   - Onboarding Complete: \(profile.isOnboardingComplete)")
                 
+                // Set family ID from profile
+                await MainActor.run {
+                    self.currentFamilyId = profile.familyId
+                }
+                
                 // Load and display actual child data
                 await loadAndDisplayChildData(userId: userId, profileComplete: profile.childDetailsComplete)
             } else {
@@ -86,6 +92,8 @@ class AppCoordinator: ObservableObject {
                 
                 await MainActor.run {
                     self.currentUserId = userId
+                    // For new users without profiles, familyId equals userId
+                    self.currentFamilyId = userId
                     self.currentState = .onboarding(.plan)
                 }
                 return
@@ -117,6 +125,8 @@ class AppCoordinator: ObservableObject {
             // If it's just a profile loading issue, proceed to plan selection anyway
             await MainActor.run {
                 self.currentUserId = userId
+                // For users with loading errors, familyId equals userId as fallback
+                self.currentFamilyId = userId
                 self.currentState = .onboarding(.plan)
             }
         }

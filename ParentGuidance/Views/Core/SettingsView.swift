@@ -124,7 +124,14 @@ struct SettingsView: View {
     
     @State private var showingChildEdit: Bool = false
     
-    // MARK: - Age Formatting Helper
+    // MARK: - Account Data State
+    
+    @State private var userProfile: UserProfile?
+    @State private var isLoadingProfile: Bool = false
+    @State private var showingApiKeyManagement: Bool = false
+    @State private var showingSignOutConfirmation: Bool = false
+    
+    // MARK: - Formatting Helpers
     
     private func formatChildAge(_ child: Child?) -> String {
         guard let child = child, let age = child.age else {
@@ -141,6 +148,93 @@ struct SettingsView: View {
             return "1 year old"
         } else {
             return "\(age) years old"
+        }
+    }
+    
+    private func formatEmailText() -> String {
+        if isLoadingProfile {
+            return "Loading..."
+        }
+        return userProfile?.email ?? "Not available"
+    }
+    
+    private func formatPlanText() -> String {
+        if isLoadingProfile {
+            return "Loading..."
+        }
+        
+        guard let plan = userProfile?.selectedPlan else {
+            return "No plan selected"
+        }
+        
+        switch plan.lowercased() {
+        case "api":
+            return "Bring Your Own API"
+        case "basic":
+            return "Basic Plan"
+        case "premium":
+            return "Premium Plan"
+        case "family":
+            return "Family Plan"
+        default:
+            return plan.capitalized
+        }
+    }
+    
+    private func formatApiKeyStatus() -> String {
+        if isLoadingProfile {
+            return "Loading..."
+        }
+        
+        guard let profile = userProfile else {
+            return "Unknown"
+        }
+        
+        if let apiKey = profile.userApiKey, !apiKey.isEmpty {
+            return "Connected (\(profile.apiKeyProvider?.capitalized ?? "OpenAI"))"
+        } else if profile.selectedPlan == "api" {
+            return "Not configured"
+        } else {
+            return "Not required"
+        }
+    }
+    
+    private func shouldShowApiKeyManagement() -> Bool {
+        guard let profile = userProfile else { return false }
+        return profile.selectedPlan == "api"
+    }
+    
+    // MARK: - Sign Out Handler
+    
+    private func handleSignOut() {
+        showingSignOutConfirmation = false
+        appCoordinator.signOut()
+    }
+    
+    // MARK: - Account Data Loading
+    
+    private func loadUserProfile() async {
+        guard let userId = appCoordinator.currentUserId else {
+            print("❌ No current user ID available for loading profile")
+            return
+        }
+        
+        await MainActor.run {
+            isLoadingProfile = true
+        }
+        
+        do {
+            let profile = try await AuthService.shared.loadUserProfile(userId: userId)
+            await MainActor.run {
+                self.userProfile = profile
+                self.isLoadingProfile = false
+            }
+            print("✅ Settings: User profile loaded successfully")
+        } catch {
+            print("❌ Settings: Failed to load user profile: \(error.localizedDescription)")
+            await MainActor.run {
+                self.isLoadingProfile = false
+            }
         }
     }
     
@@ -193,6 +287,7 @@ struct SettingsView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(ColorPalette.navy)
         .overlay(frameworkRemovalConfirmationOverlay)
+        .overlay(signOutConfirmationOverlay)
         .sheet(isPresented: $showingChildEdit) {
             if let firstChild = appCoordinator.children.first {
                 ChildProfileEditView(
@@ -205,6 +300,35 @@ struct SettingsView: View {
                 Text("ERROR: No child data")
                     .foregroundColor(.red)
                     .padding()
+            }
+        }
+        .sheet(isPresented: $showingApiKeyManagement) {
+            if let profile = userProfile {
+                NavigationView {
+                    VStack {
+                        Text("API Key Management")
+                            .font(.title2)
+                            .foregroundColor(ColorPalette.white)
+                            .padding()
+                        
+                        Text("API Key management functionality coming soon")
+                            .foregroundColor(ColorPalette.white.opacity(0.8))
+                            .padding()
+                        
+                        Spacer()
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(ColorPalette.navy)
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button("Close") {
+                                showingApiKeyManagement = false
+                            }
+                            .foregroundColor(ColorPalette.white)
+                        }
+                    }
+                }
             }
         }
     }
@@ -237,6 +361,7 @@ struct SettingsView: View {
         .onAppear {
             Task {
                 await frameworkState.loadFrameworks(familyId: appCoordinator.currentUserId)
+                await loadUserProfile()
             }
         }
     }
@@ -303,25 +428,45 @@ struct SettingsView: View {
                     
                     Spacer()
                     
-                    Text("Loading...")
+                    Text(formatEmailText())
                         .font(.system(size: 14))
                         .foregroundColor(ColorPalette.white.opacity(0.7))
                 }
                 
                 HStack {
-                    Text("Subscription")
+                    Text("Plan")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(ColorPalette.white.opacity(0.9))
                     
                     Spacer()
                     
-                    Text("Free Plan")
+                    Text(formatPlanText())
                         .font(.system(size: 14))
                         .foregroundColor(ColorPalette.white.opacity(0.7))
                 }
                 
+                HStack {
+                    Text("API Key")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                    
+                    Spacer()
+                    
+                    Text(formatApiKeyStatus())
+                        .font(.system(size: 14))
+                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                }
+                
+                if shouldShowApiKeyManagement() {
+                    Button("Manage API Key") {
+                        showingApiKeyManagement = true
+                    }
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(ColorPalette.terracotta)
+                }
+                
                 Button("Sign Out") {
-                    // TODO: Handle sign out
+                    showingSignOutConfirmation = true
                 }
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(ColorPalette.terracotta)
@@ -489,6 +634,37 @@ struct SettingsView: View {
             }
             .font(.system(size: 14, weight: .medium))
             .foregroundColor(ColorPalette.terracotta)
+        }
+    }
+    
+    // MARK: - Sign Out Confirmation
+    
+    private var signOutConfirmationOverlay: some View {
+        Group {
+            if showingSignOutConfirmation {
+                ZStack {
+                    // Semi-transparent background
+                    Color.black.opacity(0.5)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            showingSignOutConfirmation = false
+                        }
+                    
+                    // Confirmation dialog
+                    ConfirmationDialog(
+                        title: "Sign Out",
+                        message: "Are you sure you want to sign out? You'll need to sign in again to access your account.",
+                        destructiveButtonTitle: "Sign Out",
+                        onDestruct: {
+                            handleSignOut()
+                        },
+                        onCancel: {
+                            showingSignOutConfirmation = false
+                        }
+                    )
+                }
+                .zIndex(3000)
+            }
         }
     }
     

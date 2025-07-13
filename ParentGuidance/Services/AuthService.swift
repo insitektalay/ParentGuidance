@@ -247,6 +247,62 @@ class AuthService: ObservableObject {
         print("Child details: \(name), age: \(age)")
     }
     
+    func updateChild(childId: String, name: String, age: Int?, pronouns: String?) async throws {
+        print("🔄 Attempting to update child: \(childId)")
+        print("👶 Updated data: name=\(name), age=\(age ?? 0), pronouns=\(pronouns ?? "none")")
+        
+        let supabase = SupabaseManager.shared.client
+        
+        do {
+            // Create update struct similar to insert pattern
+            struct ChildUpdate: Codable {
+                let name: String
+                let age: Int?
+                let pronouns: String?
+                let updated_at: String
+            }
+            
+            let updateData = ChildUpdate(
+                name: name,
+                age: age,
+                pronouns: pronouns,
+                updated_at: ISO8601DateFormatter().string(from: Date())
+            )
+            
+            let updateResponse = try await supabase
+                .from("children")
+                .update(updateData)
+                .eq("id", value: childId)
+                .execute()
+            
+            print("✅ Child update response: \(updateResponse)")
+            
+            // Verify the update worked by fetching the updated record
+            let verificationResult: [Child] = try await supabase
+                .from("children")
+                .select("*")
+                .eq("id", value: childId)
+                .execute()
+                .value
+            
+            if let updatedChild = verificationResult.first {
+                print("✅ Child update verification:")
+                print("   - Name: \(updatedChild.name ?? "no name")")
+                print("   - Age: \(updatedChild.age ?? 0)")
+                print("   - Pronouns: \(updatedChild.pronouns ?? "none")")
+                print("✅ Child update successful!")
+            } else {
+                print("❌ Child update verification failed - record not found")
+                throw NSError(domain: "DatabaseError", code: 404, userInfo: [NSLocalizedDescriptionKey: "Updated child record not found"])
+            }
+            
+        } catch {
+            print("❌ Failed to update child: \(error)")
+            print("❌ Error details: \(error.localizedDescription)")
+            throw error
+        }
+    }
+    
     // MARK: - Email/Password Authentication
     
     func signUp(email: String, password: String) async throws -> (userId: String, email: String?) {

@@ -120,6 +120,10 @@ struct SettingsView: View {
     @EnvironmentObject var appCoordinator: AppCoordinator
     @StateObject private var frameworkState = SettingsFrameworkState()
     
+    // MARK: - Child Profile Edit State
+    
+    @State private var showingChildEdit: Bool = false
+    
     // MARK: - Age Formatting Helper
     
     private func formatChildAge(_ child: Child?) -> String {
@@ -137,6 +141,25 @@ struct SettingsView: View {
             return "1 year old"
         } else {
             return "\(age) years old"
+        }
+    }
+    
+    // MARK: - Child Profile Save Handler
+    
+    private func handleChildSave(childId: String, name: String, age: Int?, pronouns: String?) async -> Bool {
+        do {
+            // Update child in database
+            try await AuthService.shared.updateChild(childId: childId, name: name, age: age, pronouns: pronouns)
+            
+            // Refresh children data in AppCoordinator
+            await appCoordinator.refreshChildren()
+            
+            print("✅ Child profile updated successfully")
+            return true
+            
+        } catch {
+            print("❌ Failed to save child profile: \(error.localizedDescription)")
+            return false
         }
     }
     
@@ -170,6 +193,20 @@ struct SettingsView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(ColorPalette.navy)
         .overlay(frameworkRemovalConfirmationOverlay)
+        .sheet(isPresented: $showingChildEdit) {
+            if let firstChild = appCoordinator.children.first {
+                ChildProfileEditView(
+                    child: firstChild,
+                    onSave: { name, age, pronouns in
+                        await handleChildSave(childId: firstChild.id, name: name, age: age, pronouns: pronouns)
+                    }
+                )
+            } else {
+                Text("ERROR: No child data")
+                    .foregroundColor(.red)
+                    .padding()
+            }
+        }
     }
     
     // MARK: - Section Views
@@ -237,7 +274,9 @@ struct SettingsView: View {
                 }
                 
                 Button("Edit Profile") {
-                    // TODO: Navigate to child profile editing
+                    if appCoordinator.children.first != nil {
+                        showingChildEdit = true
+                    }
                 }
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(ColorPalette.terracotta)

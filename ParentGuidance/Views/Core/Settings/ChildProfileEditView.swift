@@ -1,10 +1,60 @@
 import SwiftUI
 
+struct SettingsDatePicker: View {
+    let label: String
+    @Binding var date: Date
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(label)
+                .font(.system(size: 14))
+                .foregroundColor(ColorPalette.white.opacity(0.9))
+            
+            DatePicker("", selection: $date, displayedComponents: .date)
+                .datePickerStyle(.wheel)
+                .labelsHidden()
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(ColorPalette.white)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(ColorPalette.terracotta.opacity(0.3), lineWidth: 1)
+                )
+        }
+    }
+}
+
+struct SettingsTextField: View {
+    let label: String
+    let placeholder: String
+    @Binding var text: String
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(label)
+                .font(.system(size: 14))
+                .foregroundColor(ColorPalette.white.opacity(0.9))
+            
+            TextField(placeholder, text: $text)
+                .font(.system(size: 16))
+                .foregroundColor(ColorPalette.navy)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(ColorPalette.white)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(ColorPalette.terracotta.opacity(0.3), lineWidth: 1)
+                )
+        }
+    }
+}
+
 struct ChildProfileEditView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var childName: String = ""
-    @State private var childAge: String = ""
-    @State private var childPronouns: String = ""
+    @State private var birthDate: Date = Date()
     @State private var isSaving: Bool = false
     @State private var errorMessage: String? = nil
     @State private var showingError: Bool = false
@@ -34,23 +84,15 @@ struct ChildProfileEditView: View {
                     
                     // Form fields section
                     VStack(spacing: 24) {
-                        CustomTextField(
+                        SettingsTextField(
                             label: "Child's Name",
                             placeholder: "Enter name",
                             text: $childName
                         )
                         
-                        CustomTextField(
-                            label: "Age (years)",
-                            placeholder: "Enter age",
-                            text: $childAge
-                        )
-                        .keyboardType(.numberPad)
-                        
-                        CustomTextField(
-                            label: "Pronouns (optional)",
-                            placeholder: "e.g., they/them, she/her, he/him",
-                            text: $childPronouns
+                        SettingsDatePicker(
+                            label: "Date of Birth",
+                            date: $birthDate
                         )
                     }
                     .padding(.horizontal, 24)
@@ -96,16 +138,30 @@ struct ChildProfileEditView: View {
     // MARK: - Form Validation
     
     private var isValidForm: Bool {
-        !childName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-        (childAge.isEmpty || (Int(childAge) != nil && Int(childAge)! >= 0 && Int(childAge)! <= 18))
+        !childName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
     
     // MARK: - Data Loading
     
     private func loadChildData() {
         childName = child.name ?? ""
-        childAge = child.age != nil ? String(child.age!) : ""
-        childPronouns = child.pronouns ?? ""
+        
+        // Calculate birth date from age if available
+        if let age = child.age, age > 0 {
+            let calendar = Calendar.current
+            // Calculate birth date more precisely by subtracting years and setting to beginning of year
+            let currentYear = calendar.component(.year, from: Date())
+            let birthYear = currentYear - age
+            var dateComponents = DateComponents()
+            dateComponents.year = birthYear
+            dateComponents.month = 1
+            dateComponents.day = 1
+            birthDate = calendar.date(from: dateComponents) ?? Date()
+        } else {
+            // Default to a reasonable child birth date if no age is stored
+            let calendar = Calendar.current
+            birthDate = calendar.date(byAdding: .year, value: -5, to: Date()) ?? Date()
+        }
     }
     
     // MARK: - Save Logic
@@ -117,10 +173,12 @@ struct ChildProfileEditView: View {
         errorMessage = nil
         
         let trimmedName = childName.trimmingCharacters(in: .whitespacesAndNewlines)
-        let age = childAge.isEmpty ? nil : Int(childAge)
-        let pronouns = childPronouns.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : childPronouns.trimmingCharacters(in: .whitespacesAndNewlines)
         
-        let success = await onSave(trimmedName, age, pronouns)
+        // Calculate age from birth date
+        let calendar = Calendar.current
+        let age = calendar.dateComponents([.year], from: birthDate, to: Date()).year ?? 0
+        
+        let success = await onSave(trimmedName, age, nil)
         
         await MainActor.run {
             isSaving = false

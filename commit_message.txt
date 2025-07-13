@@ -1,61 +1,39 @@
-feat: Create ChildProfileEditView for Settings child profile editing
+feat: implement complete child profile editing functionality in Settings
 
-This commit implements a complete child profile editing interface following the minimal Settings implementation plan, providing users with the  ability to update their child's basic information.
+This commit implements a fully functional child profile editing system within the Settings tab, allowing users to modify their child's basic   information through a clean modal interface.
 
-## New File Created:
-- `ParentGuidance/Views/Core/Settings/ChildProfileEditView.swift`
-- Added to Xcode project and build target successfully
+## Key Features Added:
 
-## Implementation Details:
+### Child Profile Edit Navigation (Step 3: Connect Edit Navigation)
+- Fixed SwiftUI state timing issue that was causing white screen on Edit Profile button tap
+- Removed intermediate `editingChild` state variable and simplified sheet presentation
+- Edit Profile button now properly opens ChildProfileEditView with current child data
 
-### Form Interface:
-- **Name Field**: Required text input using existing CustomTextField component
-- **Age Field**: Optional numeric input with .numberPad keyboard and 0-18 validation
-- **Pronouns Field**: Optional text field with helpful placeholder examples
-- Pre-populates all fields with existing child data on view appearance
+### Complete Child Profile Edit Form
+- Created ChildProfileEditView with proper navigation structure (Cancel/Save buttons)
+- Implemented form validation ensuring name is required
+- Added proper error handling and loading states during save operations
+- Integrated with existing AuthService.updateChild() method for database persistence
 
-### Navigation & User Experience:
-- NavigationView with inline title display mode
-- Cancel button (leading) dismisses view without saving
-- Save button (trailing) with dynamic states:
-  - Disabled and grayed out when form invalid
-  - Shows "Saving..." text during async operations
-  - Terracotta color when enabled following app design patterns
+### Database Integration & State Management
+- Connected edit form to AuthService.updateChild() method using Codable struct pattern
+- Integrated with AppCoordinator.refreshChildren() to update UI after successful saves
+- Ensured proper async/await patterns with MainActor for thread-safe UI updates
 
-### Form Validation:
-- Name is required (non-empty after trimming whitespace)
-- Age must be valid integer between 0-18 years (optional field)
-- Pronouns field completely optional
-- Real-time validation with immediate UI feedback
+### UI/UX Improvements
+- Replaced age text input with date picker wheel matching onboarding experience
+- Added SettingsDatePicker component with consistent styling (ColorPalette.swift)
+- Removed pronouns field to simplify form to essential information only
+- Improved birth date calculation from stored age (sets to January 1st of calculated birth year)
+- Enhanced age formatting helper in Settings to display "X years old" vs "Not set"
 
-### Data Management:
-- Loads existing child data using `loadChildData()` method
-- Handles String ↔ Int conversion for age field properly
-- Trims whitespace from all text inputs before saving
-- Async save operation with proper error handling
+### Technical Implementation Details
+- Converts stored age integer to approximate birth date for date picker display
+- Calculates age from selected birth date when saving (maintains existing database schema)
+- Preserves existing pronouns data in database (passes nil to avoid overwriting)
+- Uses sheet presentation with proper dismiss() integration
+- Follows established codebase patterns for async operations and error handling
 
-### Error Handling:
-- Alert dialog for save failures with user-friendly messages
-- Loading states prevent multiple save attempts
-- Graceful handling of missing or invalid data
-
-## Design Consistency:
-- Uses existing CustomTextField component from ChildBasicsView.swift
-- Follows ColorPalette theming (navy background, white text, terracotta accents)
-- Matches spacing and layout patterns from other forms (24px padding, proper VStack spacing)
-- Consistent with app's navigation and button styling patterns
-
-## Technical Architecture:
-- **Callback Pattern**: Uses `onSave` closure for parent view integration
-- **Environment Integration**: Proper use of `@Environment(\.dismiss)` for navigation
-- **State Management**: Clean @State usage for form fields and UI states
-- **Async/Await**: Modern Swift concurrency with MainActor updates
-- **Preview Provider**: Includes working preview for design iteration
-
-## Build Verification:
-- Compiles successfully with no errors or warnings
-- All imports and dependencies properly resolved
-- Ready for integration with Settings tab navigation
-
-This creates the foundation for child profile editing functionality, following the minimal essential approach while providing a complete,  user-friendly editing experience. The view is designed to be easily integrated with the existing Settings tab structure.
+## End-to-End Workflow:
+Settings → Child Profile section → Edit Profile button → Modal form → Save → Database update → UI refresh
 

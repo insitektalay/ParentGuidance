@@ -176,6 +176,42 @@ class AppCoordinator: ObservableObject {
         }
     }
     
+    // MARK: - Child Data Management
+    
+    func refreshChildren() async {
+        guard let userId = currentUserId else {
+            print("❌ No current user ID available for refreshing children")
+            return
+        }
+        
+        print("🔄 Refreshing children data for user: \(userId)")
+        
+        do {
+            let supabase = SupabaseManager.shared.client
+            
+            // Load children from database using family_id (which equals userId)
+            let response: [Child] = try await supabase
+                .from("children")
+                .select("*")
+                .eq("family_id", value: userId)
+                .execute()
+                .value
+            
+            // Store children data on main thread
+            await MainActor.run {
+                self.children = response
+            }
+            
+            print("✅ Children refreshed: \(response.count) found")
+            for (index, child) in response.enumerated() {
+                print("👶 Child \(index + 1): \(child.name ?? "no name"), age \(child.age ?? 0)")
+            }
+            
+        } catch {
+            print("❌ Error refreshing child data: \(error.localizedDescription)")
+        }
+    }
+    
     // MARK: - Onboarding Progress Management
     
     func handleOnboardingStepComplete(_ step: OnboardingStep) {

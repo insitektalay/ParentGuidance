@@ -1,57 +1,15 @@
-feat: implement framework card components with individual toggle management
+feat: Complete framework removal functionality with confirmation dialog
 
-## Summary
+This commit implements the complete framework removal workflow for the Settings tab Foundation Tools section:
 
-Transformed Foundation Tools section from single framework display to comprehensive multi-framework management with individual cards, toggle
-switches, and real-time status updates.
+- Added frameworkRemovalConfirmationOverlay view to SettingsView that displays when showingRemovalConfirmation is true
+- Implemented confirmation dialog using existing ConfirmationDialog component following LibraryView deletion pattern
+- Added semi-transparent background overlay that cancels removal when tapped outside dialog
+- Custom confirmation message warns users about permanent framework removal
+- Dynamic button text shows "Removing..." state during async removal operation
+- Proper z-index (2000) ensures dialog appears above all other UI elements
+- Connects to existing removal state management (prepareForRemoval, cancelRemoval, removeFramework methods)
+- Maintains UI consistency with existing app confirmation dialog patterns
 
-## Changes Made
-
-### Framework State Management Overhaul
-- **SettingsFrameworkState**: Replaced single framework tracking with comprehensive list management
-  - `frameworks: [FrameworkRecommendation]` - All user frameworks from database
-  - `activeFrameworkIds: Set<String>` - Track multiple active frameworks simultaneously
-  - `loadFrameworks(familyId:)` - Load all frameworks via `getFrameworkHistory(familyId:)`
-  - `toggleFramework(frameworkId:)` - Individual framework activation/deactivation
-
-### Framework Card Component
-- **FrameworkCard**: New SwiftUI component for individual framework management
-  - Framework name, status indicator (Active/Inactive), and description display
-  - Custom animated toggle switch with smooth 0.2s easeInOut transitions
-  - Visual state differentiation: active cards show blue accent borders and backgrounds
-  - Action buttons: "Framework Guide" (blue) and "Remove" (terracotta outline)
-  - Responsive card styling with opacity changes based on active status
-
-### Multi-Framework Support
-- **Independent Management**: Each framework can be toggled individually without affecting others
-- **Multiple Active Frameworks**: Supports simultaneous activation of multiple frameworks (per business requirements)
-- **Real-time Updates**: Immediate UI feedback when toggling framework status
-- **Optimistic UI**: Toggle animations occur instantly while background API calls complete
-
-### UI/UX Enhancements
-- **Framework List View**: "Your Frameworks (X)" header with scrollable card layout
-- **Empty State**: Improved messaging with guidance to use Library for framework generation
-- **Loading States**: Consistent loading indicators during framework operations
-- **Error Handling**: Retry functionality for failed framework loads with user feedback
-
-### Visual Design
-- **Card-based Layout**: Each framework displayed in individual rounded cards
-- **Status Indicators**: Checkmark/circle icons with active (blue) vs inactive (gray) states
-- **Toggle Switch Design**: Custom iOS-style toggle with white circle and colored backgrounds
-- **Consistent Theming**: ColorPalette integration with navy backgrounds, white text, blue/terracotta accents
-- **Responsive Spacing**: 12pt card padding, 16pt section spacing, 8pt corner radius
-
-### Database Integration
-- **Comprehensive Framework Loading**: Uses `FrameworkStorageService.getFrameworkHistory()` for complete framework list
-- **Active Framework Detection**: Combines with `getActiveFramework()` to identify current active frameworks
-- **Toggle Operations**: Integrates existing `activateFramework()` and `deactivateFramework()` service methods
-- **Error Recovery**: Proper error handling with user-friendly retry mechanisms
-
-## Technical Architecture
-- **State-Driven UI**: Conditional rendering based on framework count and status
-- **Component Reusability**: FrameworkCard designed for scalable framework display
-- **Async State Management**: MainActor annotations with proper loading state coordination
-- **Performance**: Efficient ForEach rendering with framework ID-based identification
-
-This implementation provides users with complete visibility and control over their frameworks directly within Settings, supporting the
-multi-framework workflow while maintaining consistency with existing app design patterns.
+Framework removal now provides proper user confirmation before permanent deletion from database, completing the core Foundation Tools
+management functionality.

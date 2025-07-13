@@ -14,6 +14,9 @@ class SettingsFrameworkState: ObservableObject {
     @Published var activeFrameworkIds: Set<String> = []
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
+    @Published var showingRemovalConfirmation: Bool = false
+    @Published var frameworkToRemove: FrameworkRecommendation?
+    @Published var isRemoving: Bool = false
     
     private var familyId: String?
     
@@ -72,6 +75,45 @@ class SettingsFrameworkState: ObservableObject {
         
         isLoading = false
     }
+    
+    @MainActor
+    func removeFramework(frameworkId: String) async {
+        isRemoving = true
+        errorMessage = nil
+        
+        do {
+            // Remove from database
+            try await FrameworkStorageService.shared.deleteFrameworkRecommendation(id: frameworkId)
+            
+            // Remove from local state
+            frameworks.removeAll { $0.id == frameworkId }
+            activeFrameworkIds.remove(frameworkId)
+            
+            print("✅ Settings: Framework removed successfully: \(frameworkId)")
+            
+            // Clear removal state
+            frameworkToRemove = nil
+            showingRemovalConfirmation = false
+            
+        } catch {
+            print("❌ Settings: Failed to remove framework: \(error)")
+            errorMessage = "Unable to remove framework"
+        }
+        
+        isRemoving = false
+    }
+    
+    @MainActor
+    func prepareForRemoval(framework: FrameworkRecommendation) {
+        frameworkToRemove = framework
+        showingRemovalConfirmation = true
+    }
+    
+    @MainActor
+    func cancelRemoval() {
+        frameworkToRemove = nil
+        showingRemovalConfirmation = false
+    }
 }
 
 struct SettingsView: View {
@@ -107,6 +149,7 @@ struct SettingsView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(ColorPalette.navy)
+        .overlay(frameworkRemovalConfirmationOverlay)
     }
     
     // MARK: - Section Views
@@ -360,8 +403,7 @@ struct SettingsView: View {
                         }
                     },
                     onRemove: {
-                        // TODO: Implement framework removal
-                        print("Remove framework: \(framework.frameworkName)")
+                        frameworkState.prepareForRemoval(framework: framework)
                     }
                 )
             }
@@ -388,6 +430,41 @@ struct SettingsView: View {
             }
             .font(.system(size: 14, weight: .medium))
             .foregroundColor(ColorPalette.terracotta)
+        }
+    }
+    
+    // MARK: - Framework Removal Confirmation
+    
+    private var frameworkRemovalConfirmationOverlay: some View {
+        Group {
+            if frameworkState.showingRemovalConfirmation {
+                ZStack {
+                    // Semi-transparent background
+                    Color.black.opacity(0.5)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            frameworkState.cancelRemoval()
+                        }
+                    
+                    // Confirmation dialog
+                    ConfirmationDialog(
+                        title: "Remove Framework",
+                        message: "Are you sure you want to permanently remove this framework? This action cannot be undone.",
+                        destructiveButtonTitle: frameworkState.isRemoving ? "Removing..." : "Remove",
+                        onDestruct: {
+                            if let framework = frameworkState.frameworkToRemove {
+                                Task {
+                                    await frameworkState.removeFramework(frameworkId: framework.id)
+                                }
+                            }
+                        },
+                        onCancel: {
+                            frameworkState.cancelRemoval()
+                        }
+                    )
+                }
+                .zIndex(2000)
+            }
         }
     }
 }

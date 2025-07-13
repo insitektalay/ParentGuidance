@@ -523,33 +523,36 @@ struct FrameworkCard: View {
                 Button("Framework Guide") {
                     // TODO: Navigate to framework guide
                 }
-                .font(.system(size: 12, weight: .medium))
+                .font(.system(size: 14, weight: .medium))
                 .foregroundColor(ColorPalette.white)
-                .padding(.horizontal, 12)
+                .padding(.horizontal, 16)
                 .padding(.vertical, 6)
                 .background(ColorPalette.brightBlue)
-                .clipShape(RoundedRectangle(cornerRadius: 6))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
                 
                 Button("Remove") {
                     onRemove()
                 }
-                .font(.system(size: 12, weight: .medium))
+                .font(.system(size: 14, weight: .medium))
                 .foregroundColor(ColorPalette.terracotta)
-                .padding(.horizontal, 12)
+                .padding(.horizontal, 16)
                 .padding(.vertical, 6)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 6)
+                    RoundedRectangle(cornerRadius: 8)
                         .stroke(ColorPalette.terracotta, lineWidth: 1)
                 )
                 
                 Spacer()
             }
         }
-        .padding(12)
-        .background(ColorPalette.white.opacity(isActive ? 0.08 : 0.03))
-        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .padding(16)
+        .background(
+            Color(red: 0.21, green: 0.22, blue: 0.33)
+                .opacity(isActive ? 1.0 : 0.8)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 12))
         .overlay(
-            RoundedRectangle(cornerRadius: 8)
+            RoundedRectangle(cornerRadius: 12)
                 .stroke(isActive ? ColorPalette.brightBlue.opacity(0.3) : ColorPalette.white.opacity(0.1), lineWidth: 1)
         )
     }

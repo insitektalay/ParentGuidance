@@ -10,14 +10,15 @@ import SwiftUI
 // MARK: - Framework State Management
 
 class SettingsFrameworkState: ObservableObject {
-    @Published var currentFramework: FrameworkRecommendation?
+    @Published var frameworks: [FrameworkRecommendation] = []
+    @Published var activeFrameworkIds: Set<String> = []
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     
     private var familyId: String?
     
     @MainActor
-    func loadFramework(familyId: String?) async {
+    func loadFrameworks(familyId: String?) async {
         guard let familyId = familyId else {
             print("❌ No family ID available for SettingsFrameworkState")
             return
@@ -28,34 +29,45 @@ class SettingsFrameworkState: ObservableObject {
         errorMessage = nil
         
         do {
-            currentFramework = try await FrameworkStorageService.shared.getActiveFramework(familyId: familyId)
-            if let framework = currentFramework {
-                print("✅ Settings: Loaded active framework: \(framework.frameworkName)")
+            // Load all frameworks for this family
+            frameworks = try await FrameworkStorageService.shared.getFrameworkHistory(familyId: familyId)
+            
+            // Load active framework to identify which ones are active
+            if let activeFramework = try await FrameworkStorageService.shared.getActiveFramework(familyId: familyId) {
+                activeFrameworkIds = [activeFramework.id]
+                print("✅ Settings: Loaded \(frameworks.count) frameworks, 1 active: \(activeFramework.frameworkName)")
             } else {
-                print("📭 Settings: No active framework found")
+                activeFrameworkIds = []
+                print("✅ Settings: Loaded \(frameworks.count) frameworks, none active")
             }
         } catch {
-            print("❌ Settings: Failed to load framework: \(error)")
-            errorMessage = "Unable to load framework status"
+            print("❌ Settings: Failed to load frameworks: \(error)")
+            errorMessage = "Unable to load frameworks"
         }
         
         isLoading = false
     }
     
     @MainActor
-    func deactivateFramework() async {
-        guard let framework = currentFramework else { return }
-        
+    func toggleFramework(frameworkId: String) async {
         isLoading = true
         errorMessage = nil
         
         do {
-            try await FrameworkStorageService.shared.deactivateFramework(id: framework.id)
-            currentFramework = nil
-            print("✅ Settings: Framework deactivated: \(framework.frameworkName)")
+            if activeFrameworkIds.contains(frameworkId) {
+                // Deactivate framework
+                try await FrameworkStorageService.shared.deactivateFramework(id: frameworkId)
+                activeFrameworkIds.remove(frameworkId)
+                print("✅ Settings: Framework deactivated: \(frameworkId)")
+            } else {
+                // Activate framework
+                try await FrameworkStorageService.shared.activateFramework(id: frameworkId)
+                activeFrameworkIds.insert(frameworkId)
+                print("✅ Settings: Framework activated: \(frameworkId)")
+            }
         } catch {
-            print("❌ Settings: Failed to deactivate framework: \(error)")
-            errorMessage = "Unable to deactivate framework"
+            print("❌ Settings: Failed to toggle framework: \(error)")
+            errorMessage = "Unable to update framework"
         }
         
         isLoading = false
@@ -111,10 +123,10 @@ struct SettingsView: View {
                     loadingFrameworkView
                 } else if let errorMessage = frameworkState.errorMessage {
                     errorFrameworkView(errorMessage)
-                } else if let framework = frameworkState.currentFramework {
-                    activeFrameworkView(framework)
+                } else if frameworkState.frameworks.isEmpty {
+                    noFrameworksView
                 } else {
-                    inactiveFrameworkView
+                    frameworkListView
                 }
             }
             .padding(16)
@@ -124,7 +136,7 @@ struct SettingsView: View {
         }
         .onAppear {
             Task {
-                await frameworkState.loadFramework(familyId: appCoordinator.currentUserId)
+                await frameworkState.loadFrameworks(familyId: appCoordinator.currentUserId)
             }
         }
     }
@@ -322,7 +334,7 @@ struct SettingsView: View {
             
             Button("Try Again") {
                 Task {
-                    await frameworkState.loadFramework(familyId: appCoordinator.currentUserId)
+                    await frameworkState.loadFrameworks(familyId: appCoordinator.currentUserId)
                 }
             }
             .font(.system(size: 14, weight: .medium))
@@ -330,80 +342,139 @@ struct SettingsView: View {
         }
     }
     
-    private func activeFrameworkView(_ framework: FrameworkRecommendation) -> some View {
+    private var frameworkListView: some View {
         VStack(alignment: .leading, spacing: 16) {
-            // Active framework header
+            // Section header with count
+            Text("Your Frameworks (\(frameworkState.frameworks.count))")
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(ColorPalette.white.opacity(0.9))
+            
+            // Framework cards
+            ForEach(frameworkState.frameworks, id: \.id) { framework in
+                FrameworkCard(
+                    framework: framework,
+                    isActive: frameworkState.activeFrameworkIds.contains(framework.id),
+                    onToggle: {
+                        Task {
+                            await frameworkState.toggleFramework(frameworkId: framework.id)
+                        }
+                    },
+                    onRemove: {
+                        // TODO: Implement framework removal
+                        print("Remove framework: \(framework.frameworkName)")
+                    }
+                )
+            }
+        }
+    }
+    
+    private var noFrameworksView: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Framework Status")
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(ColorPalette.white.opacity(0.9))
+            
+            Text("No frameworks set up yet")
+                .font(.system(size: 14))
+                .foregroundColor(ColorPalette.white.opacity(0.7))
+            
+            Text("Generate frameworks by selecting situations from your Library and tapping 'Set Up Framework'.")
+                .font(.system(size: 12))
+                .foregroundColor(ColorPalette.white.opacity(0.6))
+                .lineLimit(nil)
+            
+            Button("Go to Library") {
+                // TODO: Navigate to Library tab
+            }
+            .font(.system(size: 14, weight: .medium))
+            .foregroundColor(ColorPalette.terracotta)
+        }
+    }
+}
+
+// MARK: - Framework Card Component
+
+struct FrameworkCard: View {
+    let framework: FrameworkRecommendation
+    let isActive: Bool
+    let onToggle: () -> Void
+    let onRemove: () -> Void
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // Framework header with status
             HStack(spacing: 8) {
-                Image(systemName: "checkmark.circle.fill")
+                Image(systemName: isActive ? "checkmark.circle.fill" : "circle")
                     .font(.system(size: 16))
-                    .foregroundColor(ColorPalette.brightBlue)
+                    .foregroundColor(isActive ? ColorPalette.brightBlue : ColorPalette.white.opacity(0.6))
                 
-                Text("Active Framework")
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(ColorPalette.brightBlue)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(framework.frameworkName)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(ColorPalette.white)
+                    
+                    Text(isActive ? "Active" : "Inactive")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(isActive ? ColorPalette.brightBlue : ColorPalette.white.opacity(0.6))
+                }
                 
                 Spacer()
+                
+                // Toggle switch
+                Button(action: onToggle) {
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(isActive ? ColorPalette.brightBlue : ColorPalette.white.opacity(0.3))
+                        .frame(width: 44, height: 24)
+                        .overlay(
+                            Circle()
+                                .fill(ColorPalette.white)
+                                .frame(width: 20, height: 20)
+                                .offset(x: isActive ? 10 : -10)
+                        )
+                        .animation(.easeInOut(duration: 0.2), value: isActive)
+                }
             }
             
-            // Framework details
-            VStack(alignment: .leading, spacing: 8) {
-                Text(framework.frameworkName)
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(ColorPalette.white)
-                
-                Text(framework.notificationText)
-                    .font(.system(size: 14))
-                    .foregroundColor(ColorPalette.white.opacity(0.8))
-                    .lineLimit(3)
-            }
+            // Framework description
+            Text(framework.notificationText)
+                .font(.system(size: 14))
+                .foregroundColor(ColorPalette.white.opacity(0.8))
+                .lineLimit(2)
             
             // Framework actions
             HStack(spacing: 12) {
                 Button("Framework Guide") {
                     // TODO: Navigate to framework guide
                 }
-                .font(.system(size: 14, weight: .medium))
+                .font(.system(size: 12, weight: .medium))
                 .foregroundColor(ColorPalette.white)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
                 .background(ColorPalette.brightBlue)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .clipShape(RoundedRectangle(cornerRadius: 6))
                 
-                Button("Deactivate") {
-                    Task {
-                        await frameworkState.deactivateFramework()
-                    }
+                Button("Remove") {
+                    onRemove()
                 }
-                .font(.system(size: 14, weight: .medium))
+                .font(.system(size: 12, weight: .medium))
                 .foregroundColor(ColorPalette.terracotta)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: 6)
                         .stroke(ColorPalette.terracotta, lineWidth: 1)
                 )
                 
                 Spacer()
             }
         }
-    }
-    
-    private var inactiveFrameworkView: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Framework Status")
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
-            
-            Text("No active framework currently set up")
-                .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
-            
-            Button("View Framework Tools") {
-                // TODO: Navigate to framework tools
-            }
-            .font(.system(size: 14, weight: .medium))
-            .foregroundColor(ColorPalette.terracotta)
-        }
+        .padding(12)
+        .background(ColorPalette.white.opacity(isActive ? 0.08 : 0.03))
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(isActive ? ColorPalette.brightBlue.opacity(0.3) : ColorPalette.white.opacity(0.1), lineWidth: 1)
+        )
     }
 }
 

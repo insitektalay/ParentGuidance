@@ -1,89 +1,57 @@
-feat: dynamic Foundation Tools and framework sync fix
-
-fix: resolve framework activation status sync between Library and Alerts views
-
-The Library view's FoundationToolCard was showing "Foundational Framework Not Yet Established"
-even after frameworks were successfully activated in the Alerts view, while the Settings view
-correctly displayed active frameworks.
-
-Root Cause:
-- Settings view uses appCoordinator.currentUserId as familyId for framework queries
-- Library view was using selectionManager.currentFamilyId which wasn't properly synchronized
-- This caused FoundationToolCard to query the database with different/nil familyId values
-- Framework generation worked and saved correctly, but Library couldn't retrieve the active status
-
-Solution:
-- Updated LibraryView to pass appCoordinator.currentUserId to FoundationToolCard
-- This mirrors the working pattern from SettingsView exactly
-- Ensures consistent familyId usage across all framework state management
-
-Impact:
-- Framework activation status now syncs correctly between all views
-- Users can see active framework status immediately in Library after activation
-- Complete framework lifecycle now works end-to-end: generate → activate → display
-
-Files Modified:
-- Services/AppCoordinator.swift: Added currentFamilyId property and population during auth
-- Views/Core/Alerts/AlertView.swift: Fixed hardcoded familyId: nil to use appCoordinator
-- Views/Core/LibraryView.swift: Changed FoundationToolCard familyId source to appCoordinator
-
-This resolves the framework generation dysfunction where users couldn't see their activated
-frameworks and the generate button became unresponsive after the first use.
-
-feat: implement dynamic Foundation Tools management in Settings tab
+feat: implement framework card components with individual toggle management
 
 ## Summary
-Transformed the static Foundation Tools section in Settings into a fully dynamic, database-integrated framework management interface with
-real-time status display and framework actions.
+
+Transformed Foundation Tools section from single framework display to comprehensive multi-framework management with individual cards, toggle
+switches, and real-time status updates.
 
 ## Changes Made
 
-### Core Implementation
-- **SettingsFrameworkState Class**: Created ObservableObject with `@Published` properties for framework state management
-  - `currentFramework: FrameworkRecommendation?` - Active framework data
-  - `isLoading: Bool` - Loading state tracking
-  - `errorMessage: String?` - Error handling and display
-  - `loadFramework(familyId:)` - Async database integration with FrameworkStorageService
-  - `deactivateFramework()` - Framework deactivation functionality
+### Framework State Management Overhaul
+- **SettingsFrameworkState**: Replaced single framework tracking with comprehensive list management
+  - `frameworks: [FrameworkRecommendation]` - All user frameworks from database
+  - `activeFrameworkIds: Set<String>` - Track multiple active frameworks simultaneously
+  - `loadFrameworks(familyId:)` - Load all frameworks via `getFrameworkHistory(familyId:)`
+  - `toggleFramework(frameworkId:)` - Individual framework activation/deactivation
+
+### Framework Card Component
+- **FrameworkCard**: New SwiftUI component for individual framework management
+  - Framework name, status indicator (Active/Inactive), and description display
+  - Custom animated toggle switch with smooth 0.2s easeInOut transitions
+  - Visual state differentiation: active cards show blue accent borders and backgrounds
+  - Action buttons: "Framework Guide" (blue) and "Remove" (terracotta outline)
+  - Responsive card styling with opacity changes based on active status
+
+### Multi-Framework Support
+- **Independent Management**: Each framework can be toggled individually without affecting others
+- **Multiple Active Frameworks**: Supports simultaneous activation of multiple frameworks (per business requirements)
+- **Real-time Updates**: Immediate UI feedback when toggling framework status
+- **Optimistic UI**: Toggle animations occur instantly while background API calls complete
+
+### UI/UX Enhancements
+- **Framework List View**: "Your Frameworks (X)" header with scrollable card layout
+- **Empty State**: Improved messaging with guidance to use Library for framework generation
+- **Loading States**: Consistent loading indicators during framework operations
+- **Error Handling**: Retry functionality for failed framework loads with user feedback
+
+### Visual Design
+- **Card-based Layout**: Each framework displayed in individual rounded cards
+- **Status Indicators**: Checkmark/circle icons with active (blue) vs inactive (gray) states
+- **Toggle Switch Design**: Custom iOS-style toggle with white circle and colored backgrounds
+- **Consistent Theming**: ColorPalette integration with navy backgrounds, white text, blue/terracotta accents
+- **Responsive Spacing**: 12pt card padding, 16pt section spacing, 8pt corner radius
 
 ### Database Integration
-- **Dynamic Data Loading**: Integrated `FrameworkStorageService.shared.getActiveFramework(familyId:)` for real framework status
-- **Family ID Context**: Uses `appCoordinator.currentUserId` as familyId following existing app patterns
-- **Proper Async Handling**: MainActor annotations and error handling for database operations
-
-### UI State Management
-- **Loading State**: ProgressView with "Loading framework status..." message
-- **Error State**: Error display with "Try Again" retry functionality
-- **Active Framework State**: Rich display with:
-  - Checkmark icon and "Active Framework" label in bright blue
-  - Framework name in large semibold text
-  - Framework description from notificationText
-  - "Framework Guide" button (blue) and "Deactivate" button (terracotta outline)
-- **Inactive State**: Clean "No active framework currently set up" with "View Framework Tools" button
-
-### Framework Actions
-- **Deactivate Framework**: Fully functional integration with `FrameworkStorageService.deactivateFramework(id:)`
-- **Framework Guide**: Button prepared for future navigation implementation
-- **View Framework Tools**: Button ready for framework discovery flow
-- **Error Retry**: "Try Again" functionality for failed framework loads
-
-### Design Consistency
-- Applied ColorPalette theming (navy background, white text, terracotta accents, bright blue active states)
-- Followed existing app button styling patterns and visual hierarchy
-- Consistent spacing and typography matching FoundationToolCard patterns
-- Proper card backgrounds and corner radius styling
+- **Comprehensive Framework Loading**: Uses `FrameworkStorageService.getFrameworkHistory()` for complete framework list
+- **Active Framework Detection**: Combines with `getActiveFramework()` to identify current active frameworks
+- **Toggle Operations**: Integrates existing `activateFramework()` and `deactivateFramework()` service methods
+- **Error Recovery**: Proper error handling with user-friendly retry mechanisms
 
 ## Technical Architecture
-- **State-Driven UI**: Conditional rendering based on framework loading, error, active, and inactive states
-- **Reactive Updates**: `@StateObject` integration for automatic UI updates on framework state changes
-- **Error Handling**: Comprehensive error catching with user-friendly retry mechanisms
-- **Performance**: Efficient loading on view appearance with proper cleanup
+- **State-Driven UI**: Conditional rendering based on framework count and status
+- **Component Reusability**: FrameworkCard designed for scalable framework display
+- **Async State Management**: MainActor annotations with proper loading state coordination
+- **Performance**: Efficient ForEach rendering with framework ID-based identification
 
-## Integration Points
-- **AppCoordinator**: Seamless integration with existing user context and family ID management
-- **FrameworkStorageService**: Full utilization of existing framework database operations
-- **Settings Navigation**: Properly integrated into MainTabView Settings tab workflow
-
-This transformation provides users with real-time framework status visibility and management capabilities directly within Settings, replacing
-static placeholder content with a fully functional framework management interface.
-
+This implementation provides users with complete visibility and control over their frameworks directly within Settings, supporting the
+multi-framework workflow while maintaining consistency with existing app design patterns.

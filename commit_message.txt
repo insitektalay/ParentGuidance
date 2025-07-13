@@ -1,40 +1,61 @@
-feat: Add dynamic child age display to Settings tab
+feat: Create ChildProfileEditView for Settings child profile editing
 
-This commit implements dynamic child age formatting in the Settings Child Profile section, replacing the hardcoded "Not set" placeholder with 
-actual child age data.
+This commit implements a complete child profile editing interface following the minimal Settings implementation plan, providing users with the  ability to update their child's basic information.
+
+## New File Created:
+- `ParentGuidance/Views/Core/Settings/ChildProfileEditView.swift`
+- Added to Xcode project and build target successfully
 
 ## Implementation Details:
 
-### Child Model Research:
-- Analyzed Child.swift model structure: stores age as `Int?` representing years
-- Found existing age calculation pattern in OnboardingManager/AuthService using Calendar.dateComponents
-- Identified formatting pattern "X years old" used in onboarding flow
+### Form Interface:
+- **Name Field**: Required text input using existing CustomTextField component
+- **Age Field**: Optional numeric input with .numberPad keyboard and 0-18 validation
+- **Pronouns Field**: Optional text field with helpful placeholder examples
+- Pre-populates all fields with existing child data on view appearance
 
-### Age Formatting Logic:
-- Added `formatChildAge(_ child: Child?) -> String` helper function to SettingsView
-- Implemented proper singular/plural formatting: 
-  - 1 year old (singular)
-  - X years old (plural for ages > 1)
-- Added comprehensive edge case handling: 
-  - No child data: "Not set"
-  - Missing age property: "Not set"
-  - Invalid age (≤0): "Not set"
+### Navigation & User Experience:
+- NavigationView with inline title display mode
+- Cancel button (leading) dismisses view without saving
+- Save button (trailing) with dynamic states:
+  - Disabled and grayed out when form invalid
+  - Shows "Saving..." text during async operations
+  - Terracotta color when enabled following app design patterns
 
-### UI Integration:
-- Updated Settings Child Profile age display (line 234) to use `formatChildAge(appCoordinator.children.first)`
-- Replaced hardcoded "Not set" text with dynamic data from appCoordinator.children array
-- Maintains existing styling and layout consistency
+### Form Validation:
+- Name is required (non-empty after trimming whitespace)
+- Age must be valid integer between 0-18 years (optional field)
+- Pronouns field completely optional
+- Real-time validation with immediate UI feedback
 
-## User Experience Improvement:
-- Settings now shows meaningful child information instead of placeholder text
-- Age display matches the "X years old" pattern established in onboarding
-- Graceful fallback to "Not set" when data is unavailable
-- Foundation established for upcoming child profile editing functionality
+### Data Management:
+- Loads existing child data using `loadChildData()` method
+- Handles String ↔ Int conversion for age field properly
+- Trims whitespace from all text inputs before saving
+- Async save operation with proper error handling
 
-## Technical Verification:
-- Build tested successfully with ./test_build.sh
-- No compilation errors or warnings
-- Maintains existing app architecture patterns
+### Error Handling:
+- Alert dialog for save failures with user-friendly messages
+- Loading states prevent multiple save attempts
+- Graceful handling of missing or invalid data
 
-This change completes Step 1 of the Basic Child Profile Management implementation, providing immediate value to users while establishing the 
-foundation for child profile editing capabilities.
+## Design Consistency:
+- Uses existing CustomTextField component from ChildBasicsView.swift
+- Follows ColorPalette theming (navy background, white text, terracotta accents)
+- Matches spacing and layout patterns from other forms (24px padding, proper VStack spacing)
+- Consistent with app's navigation and button styling patterns
+
+## Technical Architecture:
+- **Callback Pattern**: Uses `onSave` closure for parent view integration
+- **Environment Integration**: Proper use of `@Environment(\.dismiss)` for navigation
+- **State Management**: Clean @State usage for form fields and UI states
+- **Async/Await**: Modern Swift concurrency with MainActor updates
+- **Preview Provider**: Includes working preview for design iteration
+
+## Build Verification:
+- Compiles successfully with no errors or warnings
+- All imports and dependencies properly resolved
+- Ready for integration with Settings tab navigation
+
+This creates the foundation for child profile editing functionality, following the minimal essential approach while providing a complete,  user-friendly editing experience. The view is designed to be easily integrated with the existing Settings tab structure.
+

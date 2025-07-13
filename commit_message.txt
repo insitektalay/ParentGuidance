@@ -1,37 +1,40 @@
-feat: Complete Settings Foundation Tools management implementation
+feat: Add dynamic child age display to Settings tab
 
-This commit implements the complete Foundation Tools management system for the Settings tab, providing comprehensive framework management   capabilities:
+This commit implements dynamic child age formatting in the Settings Child Profile section, replacing the hardcoded "Not set" placeholder with 
+actual child age data.
 
-## Framework Card Styling (Task 8):
-- Updated FrameworkCard corner radius from 8px to 12px to match app standards
-- Increased card padding from 12px to 16px for consistency with other cards
-- Replaced variable opacity background with standard dark card color (Color(red: 0.21, green: 0.22, blue: 0.33))
-- Updated button styling: font size 12px→14px, padding 12px→16px horizontal, corner radius 6px→8px
-- Applied opacity differentiation (1.0 active, 0.8 inactive) for visual state indication
-- Ensures visual consistency with FoundationToolCard and SituationCard components
+## Implementation Details:
 
-## Framework Removal Confirmation Dialog (Task 7):
-- Implemented frameworkRemovalConfirmationOverlay following LibraryView deletion pattern
-- Added semi-transparent background overlay that cancels removal when tapped
-- Custom ConfirmationDialog with "Remove Framework" title and permanent removal warning
-- Dynamic button text showing "Removing..." during async operation
-- Proper z-index (2000) to ensure dialog appears above all UI elements
-- Connected to existing removal state management (prepareForRemoval, cancelRemoval, removeFramework)
+### Child Model Research:
+- Analyzed Child.swift model structure: stores age as `Int?` representing years
+- Found existing age calculation pattern in OnboardingManager/AuthService using Calendar.dateComponents
+- Identified formatting pattern "X years old" used in onboarding flow
 
-## Testing and Verification (Task 9):
-- Verified project builds successfully using ./test_build.sh
-- Confirmed all Swift syntax and imports are correct
-- Validated proper integration of all framework management components
-- Verified state management follows SwiftUI best practices
-- Confirmed design patterns match established app conventions
-- Tested async/await patterns and error handling implementation
+### Age Formatting Logic:
+- Added `formatChildAge(_ child: Child?) -> String` helper function to SettingsView
+- Implemented proper singular/plural formatting: 
+  - 1 year old (singular)
+  - X years old (plural for ages > 1)
+- Added comprehensive edge case handling: 
+  - No child data: "Not set"
+  - Missing age property: "Not set"
+  - Invalid age (≤0): "Not set"
 
-## Technical Implementation Details:
-- Multi-framework support with Set<String> for activeFrameworkIds
-- Proper @MainActor annotations for UI updates
-- Comprehensive error handling with user-facing messages
-- State cleanup after all operations (toggle, removal, cancellation)
-- Database integration via FrameworkStorageService methods
-- Consistent ColorPalette usage throughout
+### UI Integration:
+- Updated Settings Child Profile age display (line 234) to use `formatChildAge(appCoordinator.children.first)`
+- Replaced hardcoded "Not set" text with dynamic data from appCoordinator.children array
+- Maintains existing styling and layout consistency
 
-The Foundation Tools section now provides complete framework management functionality with professional UI/UX patterns, proper error handling,    and seamless database integration.
+## User Experience Improvement:
+- Settings now shows meaningful child information instead of placeholder text
+- Age display matches the "X years old" pattern established in onboarding
+- Graceful fallback to "Not set" when data is unavailable
+- Foundation established for upcoming child profile editing functionality
+
+## Technical Verification:
+- Build tested successfully with ./test_build.sh
+- No compilation errors or warnings
+- Maintains existing app architecture patterns
+
+This change completes Step 1 of the Basic Child Profile Management implementation, providing immediate value to users while establishing the 
+foundation for child profile editing capabilities.

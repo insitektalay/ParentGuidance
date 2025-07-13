@@ -120,6 +120,26 @@ struct SettingsView: View {
     @EnvironmentObject var appCoordinator: AppCoordinator
     @StateObject private var frameworkState = SettingsFrameworkState()
     
+    // MARK: - Age Formatting Helper
+    
+    private func formatChildAge(_ child: Child?) -> String {
+        guard let child = child, let age = child.age else {
+            return "Not set"
+        }
+        
+        // Handle edge cases
+        if age <= 0 {
+            return "Not set"
+        }
+        
+        // Format age consistently with onboarding pattern
+        if age == 1 {
+            return "1 year old"
+        } else {
+            return "\(age) years old"
+        }
+    }
+    
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
@@ -211,7 +231,7 @@ struct SettingsView: View {
                     
                     Spacer()
                     
-                    Text("Not set")
+                    Text(formatChildAge(appCoordinator.children.first))
                         .font(.system(size: 14))
                         .foregroundColor(ColorPalette.white.opacity(0.7))
                 }

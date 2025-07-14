@@ -182,6 +182,137 @@ class VoiceRecorderService: NSObject, ObservableObject {
         print("✅ Recording canceled")
     }
     
+    // MARK: - OpenAI Transcription
+    
+    func transcribeAudio(fileURL: URL, apiKey: String) async throws -> String {
+        print("🎤 Starting transcription for file: \(fileURL.lastPathComponent)")
+        
+        // Validate file exists and size
+        try validateRecordingFile(at: fileURL)
+        
+        // Read audio file data
+        let audioData: Data
+        do {
+            audioData = try Data(contentsOf: fileURL)
+            print("📁 Audio file loaded: \(audioData.count) bytes")
+        } catch {
+            print("❌ Failed to read audio file: \(error)")
+            throw VoiceRecorderError.fileNotFound
+        }
+        
+        // Create multipart form-data request
+        let boundary = "----Boundary\(UUID().uuidString)"
+        let url = URL(string: "https://api.openai.com/v1/audio/transcriptions")!
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        
+        // Build multipart body
+        var body = Data()
+        
+        // Add model field
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"model\"\r\n\r\n".data(using: .utf8)!)
+        body.append("gpt-4o-transcribe\r\n".data(using: .utf8)!)
+        
+        // Add file field
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"file\"; filename=\"\(fileURL.lastPathComponent)\"\r\n".data(using: .utf8)!)
+        body.append("Content-Type: audio/m4a\r\n\r\n".data(using: .utf8)!)
+        body.append(audioData)
+        body.append("\r\n".data(using: .utf8)!)
+        
+        // Add response_format field
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"response_format\"\r\n\r\n".data(using: .utf8)!)
+        body.append("json\r\n".data(using: .utf8)!)
+        
+        // Close boundary
+        body.append("--\(boundary)--\r\n".data(using: .utf8)!)
+        
+        request.httpBody = body
+        
+        print("📡 Sending transcription request to OpenAI...")
+        print("🔗 URL: \(url)")
+        print("📦 Body size: \(body.count) bytes")
+        
+        // Send request
+        let (data, response): (Data, URLResponse)
+        do {
+            (data, response) = try await URLSession.shared.data(for: request)
+        } catch {
+            print("❌ Network error during transcription: \(error)")
+            throw VoiceRecorderError.networkError(error)
+        }
+        
+        // Check HTTP response
+        guard let httpResponse = response as? HTTPURLResponse else {
+            print("❌ Invalid HTTP response for transcription")
+            throw VoiceRecorderError.invalidResponse
+        }
+        
+        print("📊 Transcription response status: \(httpResponse.statusCode)")
+        
+        if httpResponse.statusCode != 200 {
+            print("❌ Transcription HTTP error: \(httpResponse.statusCode)")
+            if let responseString = String(data: data, encoding: .utf8) {
+                print("❌ Error response: \(responseString)")
+            }
+            throw VoiceRecorderError.transcriptionFailed(NSError(domain: "OpenAIError", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP \(httpResponse.statusCode)"]))
+        }
+        
+        // Parse JSON response
+        do {
+            if let responseString = String(data: data, encoding: .utf8) {
+                print("📝 Raw transcription response: \(responseString)")
+            }
+            
+            let jsonResponse = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+            guard let transcriptionText = jsonResponse?["text"] as? String else {
+                print("❌ No transcription text in response")
+                throw VoiceRecorderError.noTranscriptionContent
+            }
+            
+            print("✅ Transcription successful")
+            print("📝 Transcribed text: \(transcriptionText)")
+            
+            return transcriptionText
+            
+        } catch {
+            print("❌ Failed to parse transcription response: \(error)")
+            throw VoiceRecorderError.transcriptionFailed(error)
+        }
+    }
+    
+    // MARK: - Complete Recording and Transcription Flow
+    
+    func recordAndTranscribe(apiKey: String) async throws -> String {
+        print("🎙️ Starting complete record and transcribe flow...")
+        
+        // Start recording
+        let recordingURL = try await startRecording()
+        
+        // Wait for user to stop (this will be handled by UI)
+        // For now, this method assumes recording is stopped externally
+        
+        return recordingURL.path // Placeholder - actual transcription will happen when stopRecording is called
+    }
+    
+    func stopRecordingAndTranscribe(apiKey: String) async throws -> (recordingURL: URL, transcription: String) {
+        print("🛑 Stopping recording and starting transcription...")
+        
+        // Stop recording and get file URL
+        let recordingURL = try await stopRecording()
+        
+        // Transcribe the audio
+        let transcription = try await transcribeAudio(fileURL: recordingURL, apiKey: apiKey)
+        
+        print("✅ Complete flow finished successfully")
+        return (recordingURL: recordingURL, transcription: transcription)
+    }
+    
     // MARK: - File Management
     
     func cleanupRecordingFile(_ url: URL) {

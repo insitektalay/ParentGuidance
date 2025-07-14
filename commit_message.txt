@@ -1,16 +1,20 @@
-feat: implement framework-integrated guidance generation
+feat: add framework awareness to situation analysis workflow
 
-Add conditional OpenAI prompt selection based on active foundational frameworks. When a family has an active framework, the system now uses a   specialized prompt that incorporates framework-specific guidance.
+Extend framework integration to the situation analysis step by updating the analyzeSituation function to accept and log active framework 
+context while maintaining framework-agnostic analysis logic.
 
 Key Changes:
 
-- Updated generateGuidance() function to accept optional FrameworkRecommendation parameter
-- Added conditional prompt selection logic:
-  - No framework: uses existing prompt (pmpt_68515280423c8193aaa00a07235b7cf206c51d869f9526ba v12) with current_situation and family_context   variables
-  - Active framework: uses framework-integrated prompt (pmpt_68516f961dc08190aceb4f591ee010050a454989b0581453 v3) with current_situation and   active_foundation_tools variables
-- Integrated FrameworkStorageService to detect active frameworks before API calls
-- Enhanced handleSendMessage() workflow to include framework detection step
-- Framework data is formatted as "FrameworkName: NotificationText" for the prompt variable
+- Updated ConversationService.analyzeSituation() function signature to accept optional FrameworkRecommendation parameter
+- Added framework context logging when active framework is present during analysis
+- Updated analyzeSituation call site in NewSituationView to pass detected active framework
+- Maintained existing analysis prompt (pmpt_686b988bf0ac8196a69e972f08842b9a05893c8e8a5153c7) for objective situation categorization
 
-This enables the AI to provide guidance that's informed by the family's chosen foundational framework (e.g., Zones of Regulation, Focus Map)   while maintaining backward compatibility for families without active frameworks.
+Design Decision:
 
+Situation analysis remains framework-agnostic to ensure objective categorization and incident classification. Framework integration occurs at
+the guidance generation level where contextual advice is provided. This approach maintains analytical consistency while enabling comprehensive
+framework-aware logging throughout the situation processing pipeline.
+
+The complete workflow now has consistent framework detection and context passing from input → analysis → guidance generation → database
+storage.

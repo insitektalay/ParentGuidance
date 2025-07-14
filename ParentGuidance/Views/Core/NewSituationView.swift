@@ -103,7 +103,8 @@ struct NewSituationView: View {
             print("🔍 Step 4: Analyzing situation...")
             let (category, isIncident) = try await ConversationService.shared.analyzeSituation(
                 situationText: inputText,
-                apiKey: apiKey
+                apiKey: apiKey,
+                activeFramework: activeFramework
             )
             print("✅ Analysis completed - Category: \(category ?? "nil"), Incident: \(isIncident)")
             

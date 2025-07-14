@@ -289,8 +289,11 @@ class ConversationService: ObservableObject {
     
     // MARK: - Situation Analysis
     
-    func analyzeSituation(situationText: String, apiKey: String) async throws -> (category: String?, isIncident: Bool) {
+    func analyzeSituation(situationText: String, apiKey: String, activeFramework: FrameworkRecommendation? = nil) async throws -> (category: String?, isIncident: Bool) {
         print("🔍 Analyzing situation: \(situationText.prefix(50))...")
+        if let framework = activeFramework {
+            print("📋 Framework context: \(framework.frameworkName)")
+        }
         
         let url = URL(string: "https://api.openai.com/v1/responses")!
         var request = URLRequest(url: url)

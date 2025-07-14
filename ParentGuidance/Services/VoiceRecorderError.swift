@@ -9,7 +9,7 @@ import Foundation
 
 // MARK: - Voice Recorder Error Types
 
-enum VoiceRecorderError: Error {
+enum VoiceRecorderError: Error, Equatable {
     case permissionDenied
     case permissionUndetermined
     case audioSessionConfigurationFailed(Error)
@@ -26,6 +26,32 @@ enum VoiceRecorderError: Error {
     case networkError(Error)
     case invalidResponse
     case unknown(Error)
+    
+    static func == (lhs: VoiceRecorderError, rhs: VoiceRecorderError) -> Bool {
+        switch (lhs, rhs) {
+        case (.permissionDenied, .permissionDenied),
+             (.permissionUndetermined, .permissionUndetermined),
+             (.recordingNotStarted, .recordingNotStarted),
+             (.recordingAlreadyInProgress, .recordingAlreadyInProgress),
+             (.fileNotFound, .fileNotFound),
+             (.invalidFileFormat, .invalidFileFormat),
+             (.noTranscriptionContent, .noTranscriptionContent),
+             (.apiKeyMissing, .apiKeyMissing),
+             (.invalidResponse, .invalidResponse):
+            return true
+        case (.fileTooLarge(let lhsSize), .fileTooLarge(let rhsSize)):
+            return lhsSize == rhsSize
+        case (.audioSessionConfigurationFailed, .audioSessionConfigurationFailed),
+             (.recordingInitializationFailed, .recordingInitializationFailed),
+             (.recordingFailed, .recordingFailed),
+             (.transcriptionFailed, .transcriptionFailed),
+             (.networkError, .networkError),
+             (.unknown, .unknown):
+            return true // For Error types, we consider them equal if they're the same case
+        default:
+            return false
+        }
+    }
 }
 
 // MARK: - Error Descriptions

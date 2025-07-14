@@ -79,12 +79,22 @@ struct NewSituationView: View {
             let apiKey = try await getUserApiKey(userId: userId)
             print("✅ Retrieved API key: \(apiKey.prefix(10))...")
             
+            // Step 2.5: Check for active framework
+            print("🔍 Step 2.5: Checking for active framework...")
+            let activeFramework = try? await FrameworkStorageService.shared.getActiveFramework(familyId: familyId!)
+            if let framework = activeFramework {
+                print("✅ Found active framework: \(framework.frameworkName)")
+            } else {
+                print("📭 No active framework found")
+            }
+            
             // Step 3: Call OpenAI API to get guidance and title
             print("📡 Step 3: Calling OpenAI API...")
             let (guidance, rawContent) = try await generateGuidance(
                 situation: inputText,
                 familyContext: "none",
-                apiKey: apiKey
+                apiKey: apiKey,
+                activeFramework: activeFramework
             )
             print("✅ OpenAI response received successfully")
             print("🏷️ AI-generated title: \(guidance.title)")
@@ -206,7 +216,7 @@ struct NewSituationView: View {
         situation: String,
         familyContext: String = "none",
         apiKey: String,
-        promptId: String = "pmpt_68515280423c8193aaa00a07235b7cf206c51d869f9526ba"
+        activeFramework: FrameworkRecommendation? = nil
     ) async throws -> (GuidanceResponse, String) {
         
         let url = URL(string: "https://api.openai.com/v1/responses")!
@@ -215,14 +225,33 @@ struct NewSituationView: View {
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
+        let (promptId, version, variables): (String, String, [String: Any]) = {
+            if let framework = activeFramework {
+                return (
+                    "pmpt_68516f961dc08190aceb4f591ee010050a454989b0581453",
+                    "3",
+                    [
+                        "current_situation": situation,
+                        "active_foundation_tools": "\(framework.frameworkName): \(framework.notificationText)"
+                    ]
+                )
+            } else {
+                return (
+                    "pmpt_68515280423c8193aaa00a07235b7cf206c51d869f9526ba",
+                    "12",
+                    [
+                        "current_situation": situation,
+                        "family_context": familyContext
+                    ]
+                )
+            }
+        }()
+        
         let requestBody: [String: Any] = [
             "prompt": [
                 "id": promptId,
-                "version": "12",
-                "variables": [
-                    "current_situation": situation,
-                    "family_context": familyContext
-                ]
+                "version": version,
+                "variables": variables
             ]
         ]
         

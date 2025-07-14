@@ -213,6 +213,22 @@ struct NewSituationView: View {
         return apiKey
     }
     
+    private func formatFrameworkForPrompt(_ framework: FrameworkRecommendation) -> String {
+        // Validate framework data and provide fallback formatting
+        let name = framework.frameworkName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let description = framework.notificationText.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        guard !name.isEmpty else {
+            return "Active Framework: \(description.isEmpty ? "No details available" : description)"
+        }
+        
+        guard !description.isEmpty else {
+            return name
+        }
+        
+        return "\(name): \(description)"
+    }
+    
     private func generateGuidance(
         situation: String,
         familyContext: String = "none",
@@ -233,7 +249,7 @@ struct NewSituationView: View {
                     "3",
                     [
                         "current_situation": situation,
-                        "active_foundation_tools": "\(framework.frameworkName): \(framework.notificationText)"
+                        "active_foundation_tools": formatFrameworkForPrompt(framework)
                     ]
                 )
             } else {

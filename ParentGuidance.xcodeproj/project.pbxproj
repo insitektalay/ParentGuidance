@@ -37,6 +37,8 @@
 		943DFD9D2E1A863A004F8043 /* DatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD9C2E1A863A004F8043 /* DatabaseService.swift */; };
 		943DFDA22E1A86A4004F8043 /* OnboardingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFDA12E1A86A4004F8043 /* OnboardingManager.swift */; };
 		9481564C2E23CDC000C28273 /* ChildProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */; };
+		9481564E2E25334C00C28273 /* AudioPermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564D2E25334C00C28273 /* AudioPermissionManager.swift */; };
+		948156502E2533EE00C28273 /* VoiceRecorderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */; };
 		948605C82E111824008D92DE /* TodayEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605C72E111824008D92DE /* TodayEmptyView.swift */; };
 		948605CB2E111D1D008D92DE /* TodayTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605CA2E111D1D008D92DE /* TodayTimelineView.swift */; };
 		948605CE2E115CB2008D92DE /* AlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605CD2E115CB2008D92DE /* AlertView.swift */; };
@@ -135,6 +137,8 @@
 		943DFD9C2E1A863A004F8043 /* DatabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseService.swift; sourceTree = "<group>"; };
 		943DFDA12E1A86A4004F8043 /* OnboardingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingManager.swift; sourceTree = "<group>"; };
 		9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildProfileEditView.swift; sourceTree = "<group>"; };
+		9481564D2E25334C00C28273 /* AudioPermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPermissionManager.swift; sourceTree = "<group>"; };
+		9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorderError.swift; sourceTree = "<group>"; };
 		948605C72E111824008D92DE /* TodayEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayEmptyView.swift; sourceTree = "<group>"; };
 		948605CA2E111D1D008D92DE /* TodayTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayTimelineView.swift; sourceTree = "<group>"; };
 		948605CD2E115CB2008D92DE /* AlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertView.swift; sourceTree = "<group>"; };
@@ -371,6 +375,8 @@
 				943DFD9C2E1A863A004F8043 /* DatabaseService.swift */,
 				9437929D2E1BE9340089F512 /* FrameworkGenerationService.swift */,
 				9437929F2E1BE94A0089F512 /* FrameworkStorageService.swift */,
+				9481564D2E25334C00C28273 /* AudioPermissionManager.swift */,
+				9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -704,6 +710,7 @@
 				943DFD792E182630004F8043 /* SearchFilterView.swift in Sources */,
 				94FA10C62E056247003EC1E9 /* ContentView.swift in Sources */,
 				94FA11092E056D30003EC1E9 /* PaymentView.swift in Sources */,
+				9481564E2E25334C00C28273 /* AudioPermissionManager.swift in Sources */,
 				94FA10C42E056247003EC1E9 /* ParentGuidanceApp.swift in Sources */,
 				94FA11272E05CBDF003EC1E9 /* SituationOrganizingView.swift in Sources */,
 				94FA11302E05CC23003EC1E9 /* InputGuidanceFooter.swift in Sources */,
@@ -765,6 +772,7 @@
 				94FA113E2E05CCA0003EC1E9 /* FoundationToolCard.swift in Sources */,
 				943DFD852E182684004F8043 /* SearchHistoryView.swift in Sources */,
 				943792A72E1BE9A90089F512 /* FrameworkRecommendation.swift in Sources */,
+				948156502E2533EE00C28273 /* VoiceRecorderError.swift in Sources */,
 				943792A02E1BE94A0089F512 /* FrameworkStorageService.swift in Sources */,
 				9481564C2E23CDC000C28273 /* ChildProfileEditView.swift in Sources */,
 				943DFD9D2E1A863A004F8043 /* DatabaseService.swift in Sources */,

@@ -1,17 +1,14 @@
 import SwiftUI
 
 struct MicButton: View {
-    @Binding var isRecording: Bool
+    let isRecording: Bool
     let action: () -> Void
     
     @State private var pulseScale: Double = 1.0
     @State private var glowOpacity: Double = 0.0
     
     var body: some View {
-        Button(action: {
-            isRecording.toggle()
-            action()
-        }) {
+        Button(action: action) {
             ZStack {
                 // Outer glow effect when recording
                 if isRecording {
@@ -39,7 +36,7 @@ struct MicButton: View {
                     )
                 
                 // Microphone icon
-                Image(systemName: isRecording ? "mic.fill" : "mic.fill")
+                Image(systemName: isRecording ? "stop.fill" : "mic.fill")
                     .font(.system(size: 24, weight: .medium))
                     .foregroundColor(ColorPalette.white)
                     .scaleEffect(isRecording ? 1.1 : 1.0)

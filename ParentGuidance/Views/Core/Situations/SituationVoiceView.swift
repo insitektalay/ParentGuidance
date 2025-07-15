@@ -154,9 +154,9 @@ struct SituationVoiceView: View {
         } message: {
             Text(voiceRecorderViewModel.errorMessage ?? "An error occurred")
         }
-        .onChange(of: voiceRecorderViewModel.transcriptionText) { [voiceRecorderViewModel] in
-            if !voiceRecorderViewModel.transcriptionText.isEmpty {
-                onTranscriptionComplete(voiceRecorderViewModel.transcriptionText)
+        .onChange(of: voiceRecorderViewModel.transcriptionText) { _, newValue in
+            if !newValue.isEmpty {
+                onTranscriptionComplete(newValue)
             }
         }
     }
@@ -174,7 +174,11 @@ struct SituationVoiceView: View {
     }
     
     private func stopRecordingAndTranscribe() async {
-        await voiceRecorderViewModel.stopRecordingAndTranscribe(apiKey: apiKey)
+        do {
+            let _ = try await voiceRecorderViewModel.stopRecordingAndTranscribe(apiKey: apiKey)
+        } catch {
+            print("❌ Recording failed: \(error)")
+        }
     }
 }
 

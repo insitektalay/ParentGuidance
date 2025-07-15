@@ -1,16 +1,37 @@
-Title
-refactor: remove voice recording navigation for in-place recording redesign
-Description
-Remove the two-step voice recording navigation in preparation for implementing direct in-place recording functionality. This change eliminates 
-the separate SituationVoiceView screen and associated navigation logic.
-Changes made:
-- Remove showVoiceRecording state variable from NewSituationView
-- Remove conditional rendering block for SituationVoiceView navigation
-- Remove handleTranscriptionComplete() function (no longer needed)
-- Temporarily disable onStartRecording callback with placeholder implementation
-- Maintain existing text input functionality and app stability
-This is Phase 1 of the voice recording UX redesign. The mic button now does nothing (logs message only) instead of navigating to a separate 
-screen. Next phase will implement direct recording within the text input area.
-🎯 Goal: Transform from two-tap navigation flow to single-tap inline recording
-📱 Impact: No user-facing changes yet - internal refactoring only
-✅ Verified: App builds successfully and all existing functionality preserved
+feat: implement single-tap inline voice recording with text integration
+
+Complete redesign of voice recording UX from two-step navigation to seamless single-tap inline recording. Users can now record voice directly
+within the text input area, edit transcribed text, and append multiple recordings without leaving the input screen.
+
+## Key Features Implemented:
+- **Single-tap recording**: Mic button starts recording immediately (no navigation)
+- **Visual feedback**: Pulsing red button with glow effects and voice indicator waves
+- **Text integration**: Transcribed text appears in input field for editing
+- **Multiple recordings**: Support appending additional voice recordings to existing text
+- **Smart spacing**: Automatic spacing between typed and voice content
+
+## Technical Changes:
+- **SituationInputIdleView**: Added VoiceRecorderViewModel integration and transcription handling
+- **MicButton**: Updated to use recording state parameter instead of binding, enhanced visual feedback
+- **SituationFollowUpView**: Fixed MicButton parameter compatibility (binding → value)
+- **SituationVoiceView**: Updated for VoiceRecorderViewModel method signature changes
+- **NewSituationView**: Added apiKey parameter passing for transcription functionality
+
+## Implementation Details:
+- Integrated VoiceRecorderViewModel directly into SituationInputIdleView
+- Modified handleTranscriptionComplete() to insert/append text to input field
+- Updated MicButton interface from @Binding to direct Bool parameter
+- Added proper error handling for recording operations
+- Maintained existing keyboard detection and UI responsiveness
+
+## User Experience:
+- Single tap to start recording (mic → stop icon transformation)
+- Rich visual feedback with pulsing animation and voice waves
+- Transcription appears in editable text field
+- Can record multiple times to build longer messages
+- Seamless integration with existing text input workflow
+
+🎯 Completed all 5 phases of the voice recording redesign
+✅ Build successful with comprehensive visual feedback
+🎤 From two-tap navigation to single-tap inline recording
+

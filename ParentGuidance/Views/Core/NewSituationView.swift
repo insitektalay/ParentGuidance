@@ -40,9 +40,9 @@ struct NewSituationView: View {
                 print("📝 Rendering: Input view (no guidance yet)")
                 return AnyView(SituationInputIdleView(
                     childName: "Alex",
+                    apiKey: userApiKey,
                     onStartRecording: {
-                        // Temporarily disabled - will implement direct recording in Phase 2
-                        print("🎙️ Mic button tapped - direct recording coming in Phase 2")
+                        // Recording is now handled internally by SituationInputIdleView
                     },
                     onSendMessage: { inputText in
                         Task {
@@ -556,7 +556,7 @@ class VoiceRecorderViewModel: ObservableObject {
         }
     }
     
-    func stopRecordingAndTranscribe(apiKey: String) async {
+    func stopRecordingAndTranscribe(apiKey: String) async throws -> (recordingURL: URL, transcription: String) {
         print("🛑 ViewModel: Stopping recording and transcribing...")
         
         do {
@@ -565,10 +565,12 @@ class VoiceRecorderViewModel: ObservableObject {
             transcriptionText = result.transcription
             isTranscribing = false
             print("✅ ViewModel: Transcription completed: \(result.transcription)")
+            return result
         } catch {
             print("❌ ViewModel: Stop and transcribe failed - \(error)")
             isTranscribing = false
             await handleError(error)
+            throw error
         }
     }
     

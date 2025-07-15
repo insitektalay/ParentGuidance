@@ -1,15 +1,17 @@
 import SwiftUI
+import Combine
 
 struct SituationInputIdleView: View {
     @State private var inputText: String = ""
-    @State private var isRecording: Bool = false
     @FocusState private var isTextEditorFocused: Bool
+    @StateObject private var voiceRecorderViewModel = VoiceRecorderViewModel()
     
     // Keyboard detection state
     @State private var isKeyboardVisible: Bool = false
     @State private var keyboardHeight: CGFloat = 0
     
     let childName: String
+    let apiKey: String
     let onStartRecording: () -> Void
     let onSendMessage: (String) -> Void
     
@@ -86,8 +88,12 @@ struct SituationInputIdleView: View {
             // Input controls
             HStack(spacing: isKeyboardVisible ? 20 : 16) {
                 MicButton(
-                    isRecording: $isRecording,
-                    action: onStartRecording
+                    isRecording: voiceRecorderViewModel.isRecording,
+                    action: {
+                        Task {
+                            await handleMicButtonTap()
+                        }
+                    }
                 )
                 
                 SendButton(
@@ -108,6 +114,46 @@ struct SituationInputIdleView: View {
         }
         .onDisappear {
             removeKeyboardObservers()
+        }
+        .alert("Recording Error", isPresented: $voiceRecorderViewModel.showError) {
+            Button("OK") {
+                voiceRecorderViewModel.clearError()
+            }
+        } message: {
+            Text(voiceRecorderViewModel.errorMessage ?? "An error occurred")
+        }
+    }
+    
+    // MARK: - Voice Recording Methods
+    
+    private func handleMicButtonTap() async {
+        if voiceRecorderViewModel.isRecording {
+            // Stop recording and transcribe
+            do {
+                let result = try await voiceRecorderViewModel.stopRecordingAndTranscribe(apiKey: apiKey)
+                await MainActor.run {
+                    handleTranscriptionComplete(result.transcription)
+                }
+            } catch {
+                print("❌ Recording failed: \(error)")
+            }
+        } else {
+            // Start recording
+            await voiceRecorderViewModel.startRecording()
+        }
+    }
+    
+    private func handleTranscriptionComplete(_ transcription: String) {
+        // Integrate transcription with text input
+        print("🎤 Transcription received: \(transcription)")
+        
+        // If input is empty, set the transcription as the new text
+        if inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            inputText = transcription
+        } else {
+            // If input already has text, append with proper spacing
+            let cleanedInput = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
+            inputText = cleanedInput + " " + transcription
         }
     }
     
@@ -169,6 +215,7 @@ struct SituationInputIdleView: View {
 #Preview {
     SituationInputIdleView(
         childName: "Alex",
+        apiKey: "test-api-key",
         onStartRecording: {},
         onSendMessage: { _ in }
     )

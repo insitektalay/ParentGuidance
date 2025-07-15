@@ -80,7 +80,7 @@ struct SituationFollowUpView: View {
                     
                     // Mic button overlaid at bottom-right
                     MicButton(
-                        isRecording: $isRecording,
+                        isRecording: isRecording,
                         action: onStartRecording
                     )
                     .padding(.bottom, 8)

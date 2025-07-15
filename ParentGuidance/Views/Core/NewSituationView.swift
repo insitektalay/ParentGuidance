@@ -22,7 +22,6 @@ struct NewSituationView: View {
     @State private var isLoading = false
     @State private var guidanceResponse: GuidanceResponse?
     @State private var rawGuidanceContent: String? // Store raw OpenAI response
-    @State private var showVoiceRecording = false
     @State private var userApiKey: String = ""
     @StateObject private var voiceRecorderViewModel = VoiceRecorderViewModel()
     @Environment(\.dismiss) private var dismiss
@@ -37,28 +36,13 @@ struct NewSituationView: View {
                 print("✅ Rendering: Guidance view with content")
                 print("   Situation: \(guidance.situation.prefix(30))...")
                 return AnyView(SituationGuidanceViewWithData(guidance: guidance))
-            } else if showVoiceRecording {
-                print("🎙️ Rendering: Voice recording view")
-                return AnyView(SituationVoiceView(
-                    voiceRecorderViewModel: voiceRecorderViewModel,
-                    childName: "Alex",
-                    apiKey: userApiKey,
-                    onTranscriptionComplete: { transcription in
-                        Task {
-                            await handleTranscriptionComplete(transcription)
-                        }
-                    },
-                    onCancel: {
-                        showVoiceRecording = false
-                        voiceRecorderViewModel.clearTranscription()
-                    }
-                ))
             } else {
                 print("📝 Rendering: Input view (no guidance yet)")
                 return AnyView(SituationInputIdleView(
                     childName: "Alex",
                     onStartRecording: {
-                        showVoiceRecording = true
+                        // Temporarily disabled - will implement direct recording in Phase 2
+                        print("🎙️ Mic button tapped - direct recording coming in Phase 2")
                     },
                     onSendMessage: { inputText in
                         Task {
@@ -192,12 +176,6 @@ struct NewSituationView: View {
         print("🏁 Message handling completed")
     }
     
-    private func handleTranscriptionComplete(_ transcription: String) async {
-        print("🎤 Transcription completed: \(transcription)")
-        showVoiceRecording = false
-        voiceRecorderViewModel.clearTranscription()
-        await handleSendMessage(transcription)
-    }
     
     private func loadUserApiKey() async {
         guard let userId = appCoordinator.currentUserId else {

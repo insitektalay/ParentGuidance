@@ -74,7 +74,6 @@
 		94FA11182E05C8C1003EC1E9 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA11172E05C8C1003EC1E9 /* SettingsView.swift */; };
 		94FA111F2E05CBAA003EC1E9 /* SituationInputIdleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA111E2E05CBAA003EC1E9 /* SituationInputIdleView.swift */; };
 		94FA11212E05CBB8003EC1E9 /* SituationTypingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA11202E05CBB8003EC1E9 /* SituationTypingView.swift */; };
-		94FA11232E05CBC3003EC1E9 /* SituationVoiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA11222E05CBC3003EC1E9 /* SituationVoiceView.swift */; };
 		94FA11252E05CBD4003EC1E9 /* SituationFollowUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA11242E05CBD4003EC1E9 /* SituationFollowUpView.swift */; };
 		94FA11272E05CBDF003EC1E9 /* SituationOrganizingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA11262E05CBDF003EC1E9 /* SituationOrganizingView.swift */; };
 		94FA112A2E05CBFD003EC1E9 /* ChildBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA11292E05CBFD003EC1E9 /* ChildBadge.swift */; };
@@ -178,7 +177,6 @@
 		94FA11172E05C8C1003EC1E9 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		94FA111E2E05CBAA003EC1E9 /* SituationInputIdleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SituationInputIdleView.swift; sourceTree = "<group>"; };
 		94FA11202E05CBB8003EC1E9 /* SituationTypingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SituationTypingView.swift; sourceTree = "<group>"; };
-		94FA11222E05CBC3003EC1E9 /* SituationVoiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SituationVoiceView.swift; sourceTree = "<group>"; };
 		94FA11242E05CBD4003EC1E9 /* SituationFollowUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SituationFollowUpView.swift; sourceTree = "<group>"; };
 		94FA11262E05CBDF003EC1E9 /* SituationOrganizingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SituationOrganizingView.swift; sourceTree = "<group>"; };
 		94FA11292E05CBFD003EC1E9 /* ChildBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildBadge.swift; sourceTree = "<group>"; };
@@ -501,7 +499,6 @@
 				94FA11282E05CBEB003EC1E9 /* Components */,
 				94FA111E2E05CBAA003EC1E9 /* SituationInputIdleView.swift */,
 				94FA11202E05CBB8003EC1E9 /* SituationTypingView.swift */,
-				94FA11222E05CBC3003EC1E9 /* SituationVoiceView.swift */,
 				94FA11242E05CBD4003EC1E9 /* SituationFollowUpView.swift */,
 				94FA11262E05CBDF003EC1E9 /* SituationOrganizingView.swift */,
 			);
@@ -756,7 +753,6 @@
 				943DFD742E180D40004F8043 /* SituationDetailView.swift in Sources */,
 				94FA11102E05C88A003EC1E9 /* TodayView.swift in Sources */,
 				94FA110B2E056D40003EC1E9 /* APIKeyView.swift in Sources */,
-				94FA11232E05CBC3003EC1E9 /* SituationVoiceView.swift in Sources */,
 				943DFD9B2E1A85EE004F8043 /* ConversationService.swift in Sources */,
 				943DFD892E18269D004F8043 /* ExportSheet.swift in Sources */,
 				94FA111F2E05CBAA003EC1E9 /* SituationInputIdleView.swift in Sources */,

@@ -560,9 +560,13 @@ class VoiceRecorderViewModel: ObservableObject {
         print("🛑 ViewModel: Stopping recording and transcribing...")
         
         do {
+            // Set transcribing state first to avoid timing gap
             isTranscribing = true
+            
             let result = try await voiceRecorder.stopRecordingAndTranscribe(apiKey: apiKey)
             transcriptionText = result.transcription
+            
+            // Only reset transcribing state after everything is complete
             isTranscribing = false
             print("✅ ViewModel: Transcription completed: \(result.transcription)")
             return result

@@ -24,6 +24,10 @@ class VoiceRecorderService: NSObject, ObservableObject {
     private var recordingTimer: Timer?
     private var permissionManager = AudioPermissionManager.shared
     
+    // MARK: - Delegate
+    
+    weak var delegate: VoiceRecorderDelegate?
+    
     // MARK: - Recording State
     
     enum RecordingState: Equatable {
@@ -60,18 +64,30 @@ class VoiceRecorderService: NSObject, ObservableObject {
     func startRecording() async throws -> URL {
         print("🎙️ Starting recording...")
         
+        // Notify delegate that recording will start
+        await MainActor.run {
+            delegate?.voiceRecorderWillStartRecording(self)
+        }
+        
         // Check permissions first
         let hasPermission = await permissionManager.checkAndRequestPermission()
         guard hasPermission else {
             print("❌ Recording failed: Permission denied")
             await updateRecordingState(.error(.permissionDenied))
+            await MainActor.run {
+                delegate?.voiceRecorderDidEncounterError(self, error: .permissionDenied)
+            }
             throw VoiceRecorderError.permissionDenied
         }
         
         // Check if already recording
         guard recordingState != .recording else {
             print("❌ Recording failed: Already recording")
-            throw VoiceRecorderError.recordingAlreadyInProgress
+            let error = VoiceRecorderError.recordingAlreadyInProgress
+            await MainActor.run {
+                delegate?.voiceRecorderDidEncounterError(self, error: error)
+            }
+            throw error
         }
         
         await updateRecordingState(.preparing)
@@ -104,13 +120,22 @@ class VoiceRecorderService: NSObject, ObservableObject {
             // Start timer
             startRecordingTimer()
             
+            // Notify delegate that recording started
+            await MainActor.run {
+                delegate?.voiceRecorderDidStartRecording(self, fileURL: recordingURL)
+            }
+            
             print("✅ Recording started successfully")
             return recordingURL
             
         } catch {
             print("❌ Recording start failed: \(error)")
             await updateRecordingState(.error(.recordingInitializationFailed(error)))
-            throw VoiceRecorderError.recordingInitializationFailed(error)
+            let voiceError = VoiceRecorderError.recordingInitializationFailed(error)
+            await MainActor.run {
+                delegate?.voiceRecorderDidEncounterError(self, error: voiceError)
+            }
+            throw voiceError
         }
     }
     
@@ -146,6 +171,11 @@ class VoiceRecorderService: NSObject, ObservableObject {
         // Validate file exists and has content
         try validateRecordingFile(at: recordingURL)
         
+        // Notify delegate that recording stopped
+        await MainActor.run {
+            delegate?.voiceRecorderDidStopRecording(self, fileURL: recordingURL, duration: recordingDuration)
+        }
+        
         print("✅ Recording stopped successfully")
         print("📊 Final duration: \(recordingDuration) seconds")
         print("📁 File saved at: \(recordingURL.path)")
@@ -179,6 +209,11 @@ class VoiceRecorderService: NSObject, ObservableObject {
         // Deactivate audio session
         permissionManager.deactivateAudioSession()
         
+        // Notify delegate
+        await MainActor.run {
+            delegate?.voiceRecorderDidCancelRecording(self)
+        }
+        
         print("✅ Recording canceled")
     }
     
@@ -186,6 +221,11 @@ class VoiceRecorderService: NSObject, ObservableObject {
     
     func transcribeAudio(fileURL: URL, apiKey: String) async throws -> String {
         print("🎤 Starting transcription for file: \(fileURL.lastPathComponent)")
+        
+        // Notify delegate that transcription will start
+        await MainActor.run {
+            delegate?.voiceRecorderWillStartTranscription(self, fileURL: fileURL)
+        }
         
         // Validate file exists and size
         try validateRecordingFile(at: fileURL)
@@ -278,11 +318,20 @@ class VoiceRecorderService: NSObject, ObservableObject {
             print("✅ Transcription successful")
             print("📝 Transcribed text: \(transcriptionText)")
             
+            // Notify delegate of successful transcription
+            await MainActor.run {
+                delegate?.voiceRecorderDidCompleteTranscription(self, transcription: transcriptionText, fileURL: fileURL)
+            }
+            
             return transcriptionText
             
         } catch {
             print("❌ Failed to parse transcription response: \(error)")
-            throw VoiceRecorderError.transcriptionFailed(error)
+            let voiceError = VoiceRecorderError.transcriptionFailed(error)
+            await MainActor.run {
+                delegate?.voiceRecorderDidEncounterError(self, error: voiceError)
+            }
+            throw voiceError
         }
     }
     
@@ -308,6 +357,11 @@ class VoiceRecorderService: NSObject, ObservableObject {
         
         // Transcribe the audio
         let transcription = try await transcribeAudio(fileURL: recordingURL, apiKey: apiKey)
+        
+        // Notify delegate of complete flow completion
+        await MainActor.run {
+            delegate?.voiceRecorderDidCompleteRecordingAndTranscription(self, transcription: transcription, fileURL: recordingURL, duration: recordingDuration)
+        }
         
         print("✅ Complete flow finished successfully")
         return (recordingURL: recordingURL, transcription: transcription)
@@ -419,6 +473,9 @@ class VoiceRecorderService: NSObject, ObservableObject {
         }
         
         recordingDuration = recorder.currentTime
+        
+        // Notify delegate of duration update
+        delegate?.voiceRecorderDidUpdateRecordingDuration(self, duration: recordingDuration)
     }
     
     // MARK: - State Management

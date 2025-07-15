@@ -1,31 +1,6 @@
-feat: integrate OpenAI speech-to-text transcription API
-
-Complete Step 4 of OpenAI speech-to-text integration by adding full transcription capabilities using multipart form-data requests to OpenAI's   audio transcription endpoint.
-
-## OpenAI Transcription Integration
-- Added transcribeAudio() method to VoiceRecorderService with multipart form-data request construction
-- Implemented proper boundary generation using UUID for form-data separation
-- Configured gpt-4o-transcribe model with audio/m4a content type and JSON response format
-- Added comprehensive request logging including URL, body size, and response status tracking
-- Built robust JSON response parsing to extract transcribed text from OpenAI API response
-
-## Complete Recording-to-Text Workflow
-- Created stopRecordingAndTranscribe() method for end-to-end voice-to-text functionality
-- Integrated existing file validation (size limits, existence checks) before transcription
-- Added convenience method recordAndTranscribe() for future UI integration patterns
-- Maintains existing error handling patterns with proper VoiceRecorderError mapping
-
-## Error Handling & Network Management
-- Enhanced error handling for network failures, HTTP errors, and JSON parsing issues
-- Proper Bearer token authentication using existing API key patterns from codebase
-- Added transcription-specific error cases with detailed logging for debugging
-- Follows established codebase patterns for async/await error propagation
-
-## Technical Implementation Details
-- Multipart form-data construction with proper Content-Disposition headers
-- File data reading with Data(contentsOf:) and comprehensive error handling
-- HTTP status code validation with detailed error response logging
-- JSON deserialization with fallback error handling for malformed responses
-
-Service now provides complete recording → transcription → text workflow while maintaining clean separation of concerns and following existing   architectural patterns.
-
+Title    fix: add microphone usage description to resolve permission crash
+Description    Add NSMicrophoneUsageDescription to Info.plist configuration to fix app crash when accessing microphone for voice recording functionality. The   description explains that the microphone is used to record voice input for parenting situation transcription via OpenAI API.
+- Added INFOPLIST_KEY_NSMicrophoneUsageDescription to project.pbxproj
+- Applies to both Debug and Release configurations
+- Prevents privacy-related crash when requesting microphone access
+- Enables proper permission flow for voice recording feature

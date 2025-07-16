@@ -119,7 +119,7 @@ class SettingsFrameworkState: ObservableObject {
 struct SettingsView: View {
     @EnvironmentObject var appCoordinator: AppCoordinator
     @StateObject private var frameworkState = SettingsFrameworkState()
-    @StateObject private var guidanceStructureSettings = GuidanceStructureSettings()
+    @ObservedObject private var guidanceStructureSettings = GuidanceStructureSettings.shared
     
     // MARK: - Child Profile Edit State
     

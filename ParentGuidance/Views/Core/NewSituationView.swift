@@ -20,37 +20,40 @@ struct PromptResponse: Codable {
 
 struct NewSituationView: View {
     @State private var isLoading = false
-    @State private var guidanceResponse: GuidanceResponse?
+    @State private var guidanceResponse: GuidanceResponseProtocol?
     @State private var rawGuidanceContent: String? // Store raw OpenAI response
     @State private var userApiKey: String = ""
     @StateObject private var voiceRecorderViewModel = VoiceRecorderViewModel()
-    @StateObject private var guidanceStructureSettings = GuidanceStructureSettings()
+    @ObservedObject private var guidanceStructureSettings = GuidanceStructureSettings.shared
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var appCoordinator: AppCoordinator
     
     var body: some View {
         NavigationStack {
-            if isLoading {
-                print("🔄 Rendering: Loading view")
-                return AnyView(SituationOrganizingView())
-            } else if let guidance = guidanceResponse {
-                print("✅ Rendering: Guidance view with content")
-                print("   Situation: \(guidance.situation.prefix(30))...")
-                return AnyView(SituationGuidanceViewWithData(guidance: guidance))
-            } else {
-                print("📝 Rendering: Input view (no guidance yet)")
-                return AnyView(SituationInputIdleView(
-                    childName: "Alex",
-                    apiKey: userApiKey,
-                    onStartRecording: {
-                        // Recording is now handled internally by SituationInputIdleView
-                    },
-                    onSendMessage: { inputText in
-                        Task {
-                            await handleSendMessage(inputText)
+            Group {
+                if isLoading {
+                    let _ = print("🔄 Rendering: Loading view")
+                    SituationOrganizingView()
+                } else if let guidance = guidanceResponse {
+                    let _ = print("✅ Rendering: Guidance view with content")
+                    let _ = print("   Title: \(guidance.title)")
+                    let _ = print("   Sections: \(guidance.sectionCount)")
+                    SituationGuidanceViewWithData(guidance: guidance)
+                } else {
+                    let _ = print("📝 Rendering: Input view (no guidance yet)")
+                    SituationInputIdleView(
+                        childName: "Alex",
+                        apiKey: userApiKey,
+                        onStartRecording: {
+                            // Recording is now handled internally by SituationInputIdleView
+                        },
+                        onSendMessage: { inputText in
+                            Task {
+                                await handleSendMessage(inputText)
+                            }
                         }
-                    }
-                ))
+                    )
+                }
             }
         }
         .background(ColorPalette.navy)
@@ -161,7 +164,9 @@ struct NewSituationView: View {
                 print("   isLoading: \(isLoading)")
                 print("   guidanceResponse is nil: \(guidanceResponse == nil)")
                 if let gr = guidanceResponse {
-                    print("   Situation content: \(gr.situation.prefix(30))...")
+                    print("   Guidance title: \(gr.title)")
+                    print("   Section count: \(gr.sectionCount)")
+                    print("   Sections: \(gr.displaySections.map { $0.title }.joined(separator: ", "))")
                 }
             }
             print("📱 Guidance response set, UI should update")
@@ -262,7 +267,7 @@ struct NewSituationView: View {
         familyContext: String = "none",
         apiKey: String,
         activeFramework: FrameworkRecommendation? = nil
-    ) async throws -> (GuidanceResponse, String) {
+    ) async throws -> (GuidanceResponseProtocol, String) {
         
         let url = URL(string: "https://api.openai.com/v1/responses")!
         var request = URLRequest(url: url)
@@ -270,10 +275,17 @@ struct NewSituationView: View {
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
+        // Debug: Log current settings state
+        print("🔍 [DEBUG] Current guidance structure settings:")
+        print("   - Current mode: \(guidanceStructureSettings.currentMode.displayName)")
+        print("   - Is using dynamic: \(guidanceStructureSettings.isUsingDynamicStructure)")
+        print("   - Has active framework: \(activeFramework != nil)")
+        
         let (promptId, version, variables): (String, String, [String: Any]) = {
             if let framework = activeFramework {
                 // With Framework - Choose version based on mode
-                let version = guidanceStructureSettings.isUsingDynamicStructure ? "4" : "3"
+                let version = guidanceStructureSettings.isUsingDynamicStructure ? "5" : "3"
+                print("🔍 [DEBUG] Framework path - Selected version: \(version) (dynamic: \(guidanceStructureSettings.isUsingDynamicStructure))")
                 return (
                     "pmpt_68516f961dc08190aceb4f591ee010050a454989b0581453",
                     version,
@@ -285,6 +297,7 @@ struct NewSituationView: View {
             } else {
                 // No Framework - Choose version based on mode
                 let version = guidanceStructureSettings.isUsingDynamicStructure ? "16" : "12"
+                print("🔍 [DEBUG] No framework path - Selected version: \(version) (dynamic: \(guidanceStructureSettings.isUsingDynamicStructure))")
                 return (
                     "pmpt_68515280423c8193aaa00a07235b7cf206c51d869f9526ba",
                     version,
@@ -305,7 +318,11 @@ struct NewSituationView: View {
         ]
         
         print("🔗 API URL: \(url)")
-        print("📦 Request body: \(requestBody)")
+        print("📦 [DEBUG] Full request body:")
+        print("   - Prompt ID: \(promptId)")
+        print("   - Version: \(version)")
+        print("   - Variables: \(variables)")
+        print("📦 Complete request: \(requestBody)")
         
         request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
         
@@ -348,11 +365,42 @@ struct NewSituationView: View {
         
         let content = firstContent.text
         
-        print("📝 Content received: \(content.prefix(100))...")
+        print("📝 [DEBUG] Raw OpenAI response content:")
+        print("   - Length: \(content.count) characters")
+        print("   - First 200 chars: \(content.prefix(200))...")
+        print("   - Contains brackets: \(content.contains("[") && content.contains("]"))")
         
-        // Parse the response into structured guidance
-        let guidance = parseGuidanceResponse(content)
-        print("✅ Guidance parsed successfully")
+        // Parse the response into structured guidance based on user preference
+        print("🔍 [DEBUG] Parsing decision:")
+        print("   - Settings says use dynamic: \(guidanceStructureSettings.isUsingDynamicStructure)")
+        print("   - About to enter \(guidanceStructureSettings.isUsingDynamicStructure ? "DYNAMIC" : "FIXED") parsing path")
+        
+        let guidance: GuidanceResponseProtocol
+        if guidanceStructureSettings.isUsingDynamicStructure {
+            print("🔄 [DEBUG] ENTERING DYNAMIC PARSING PATH")
+            // Use dynamic parser for flexible sections with enhanced fallback
+            if let dynamicResponse = DynamicGuidanceParser.shared.parseWithFallback(content) {
+                guidance = dynamicResponse
+                print("✅ [DEBUG] Dynamic parsing SUCCESS - \(dynamicResponse.displaySections.count) sections")
+                print("   - Section titles: \(dynamicResponse.displaySections.map { $0.title }.joined(separator: ", "))")
+            } else {
+                // Ultimate fallback: create basic response with error content
+                print("❌ [DEBUG] All dynamic parsing methods FAILED, creating fallback response")
+                guidance = createFallbackResponse(content: content)
+            }
+        } else {
+            print("🔄 [DEBUG] ENTERING FIXED PARSING PATH")
+            // Use fixed parser for traditional 7-section structure with enhanced validation
+            let fixedResponse = parseGuidanceResponse(content)
+            if validateGuidanceResponse(fixedResponse) {
+                guidance = fixedResponse
+                print("✅ [DEBUG] Fixed parsing SUCCESS with validation")
+            } else {
+                print("⚠️ [DEBUG] Fixed parsing validation FAILED, creating enhanced fallback")
+                guidance = createFallbackResponse(content: content)
+            }
+        }
+        
         return (guidance, content) // Return both parsed guidance and raw content
     }
     
@@ -437,22 +485,86 @@ struct NewSituationView: View {
         print("🔍 In content: \(content.prefix(200))...")
         return nil
     }
+    
+    // MARK: - Enhanced Error Handling & Validation
+    
+    private func validateGuidanceResponse(_ response: GuidanceResponse) -> Bool {
+        // Validate that essential sections have meaningful content
+        let minContentLength = 10 // Minimum characters for valid content
+        
+        let validTitle = response.title.count >= 3
+        let validSituation = response.situation.count >= minContentLength
+        let validAnalysis = response.analysis.count >= minContentLength
+        let validActionSteps = response.actionSteps.count >= minContentLength
+        
+        let isValid = validTitle && validSituation && validAnalysis && validActionSteps
+        
+        if !isValid {
+            print("❌ Validation failed:")
+            print("   Title valid: \(validTitle) (length: \(response.title.count))")
+            print("   Situation valid: \(validSituation) (length: \(response.situation.count))")
+            print("   Analysis valid: \(validAnalysis) (length: \(response.analysis.count))")
+            print("   Action Steps valid: \(validActionSteps) (length: \(response.actionSteps.count))")
+        }
+        
+        return isValid
+    }
+    
+    private func createFallbackResponse(content: String) -> GuidanceResponse {
+        print("🔧 Creating fallback response from raw content")
+        
+        // Try to extract at least a title from the content
+        let fallbackTitle = extractBasicTitle(from: content) ?? "Parenting Guidance"
+        
+        // Create a basic structured response with the raw content
+        let fallbackContent = """
+        We received your situation and our AI provided guidance, but we're having trouble formatting it properly. Here's the complete response:
+        
+        \(content)
+        """
+        
+        return GuidanceResponse(
+            title: fallbackTitle,
+            situation: "Your parenting situation has been processed.",
+            analysis: fallbackContent.prefix(500).description,
+            actionSteps: "Please review the complete guidance above for specific action steps.",
+            phrasesToTry: "Please check the complete guidance for suggested phrases.",
+            quickComebacks: "Please refer to the complete guidance for response ideas.",
+            support: "If you continue to have issues, please try again or contact support."
+        )
+    }
+    
+    private func extractBasicTitle(from content: String) -> String? {
+        // Simple title extraction as fallback
+        let lines = content.components(separatedBy: .newlines)
+        
+        // Look for the first substantial line that might be a title
+        for line in lines.prefix(10) {
+            let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            // Skip empty lines, brackets, and very short lines
+            if !trimmed.isEmpty && 
+               !trimmed.hasPrefix("[") && 
+               trimmed.count > 5 && 
+               trimmed.count < 100 &&
+               !trimmed.contains("Content received:") {
+                return trimmed
+            }
+        }
+        
+        return nil
+    }
 }
 
 struct SituationGuidanceViewWithData: View {
-    let guidance: GuidanceResponse
+    let guidance: GuidanceResponseProtocol
     @Environment(\.dismiss) private var dismiss
     @State private var currentPage = 0
     
     private var categories: [GuidanceCategory] {
-        [
-            GuidanceCategory(title: "Situation", content: guidance.situation),
-            GuidanceCategory(title: "Analysis", content: guidance.analysis),
-            GuidanceCategory(title: "Action Steps", content: guidance.actionSteps),
-            GuidanceCategory(title: "Phrases to Try", content: guidance.phrasesToTry),
-            GuidanceCategory(title: "Quick Comebacks", content: guidance.quickComebacks),
-            GuidanceCategory(title: "Support", content: guidance.support)
-        ]
+        guidance.displaySections.map { section in
+            GuidanceCategory(title: section.title, content: section.content)
+        }
     }
     
     var body: some View {

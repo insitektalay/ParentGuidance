@@ -32,11 +32,17 @@ enum GuidanceStructureMode: String, CaseIterable {
 
 // MARK: - Settings Manager
 class GuidanceStructureSettings: ObservableObject {
+    static let shared = GuidanceStructureSettings()
+    
     @AppStorage("guidanceStructureMode") private var storedMode: String = GuidanceStructureMode.fixed.rawValue
+    
+    private init() {
+        // Private initializer to enforce singleton pattern
+    }
     
     var currentMode: GuidanceStructureMode {
         get {
-            GuidanceStructureMode(rawValue: storedMode) ?? .fixed
+            return GuidanceStructureMode(rawValue: storedMode) ?? .fixed
         }
         set {
             storedMode = newValue.rawValue
@@ -45,7 +51,7 @@ class GuidanceStructureSettings: ObservableObject {
     }
     
     var isUsingDynamicStructure: Bool {
-        currentMode == .dynamic
+        return currentMode == .dynamic
     }
     
     func toggleMode() {

@@ -43,6 +43,7 @@
 		948156542E253D4400C28273 /* VoiceRecorderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948156532E253D4400C28273 /* VoiceRecorderDelegate.swift */; };
 		948156562E2762BA00C28273 /* DynamicGuidanceModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948156552E2762BA00C28273 /* DynamicGuidanceModels.swift */; };
 		948156582E2762C700C28273 /* GuidanceStructureSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948156572E2762C700C28273 /* GuidanceStructureSettings.swift */; };
+		9481565A2E2773FC00C28273 /* DynamicGuidanceParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948156592E2773FC00C28273 /* DynamicGuidanceParser.swift */; };
 		948605C82E111824008D92DE /* TodayEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605C72E111824008D92DE /* TodayEmptyView.swift */; };
 		948605CB2E111D1D008D92DE /* TodayTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605CA2E111D1D008D92DE /* TodayTimelineView.swift */; };
 		948605CE2E115CB2008D92DE /* AlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605CD2E115CB2008D92DE /* AlertView.swift */; };
@@ -146,6 +147,7 @@
 		948156532E253D4400C28273 /* VoiceRecorderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorderDelegate.swift; sourceTree = "<group>"; };
 		948156552E2762BA00C28273 /* DynamicGuidanceModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicGuidanceModels.swift; sourceTree = "<group>"; };
 		948156572E2762C700C28273 /* GuidanceStructureSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidanceStructureSettings.swift; sourceTree = "<group>"; };
+		948156592E2773FC00C28273 /* DynamicGuidanceParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicGuidanceParser.swift; sourceTree = "<group>"; };
 		948605C72E111824008D92DE /* TodayEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayEmptyView.swift; sourceTree = "<group>"; };
 		948605CA2E111D1D008D92DE /* TodayTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayTimelineView.swift; sourceTree = "<group>"; };
 		948605CD2E115CB2008D92DE /* AlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertView.swift; sourceTree = "<group>"; };
@@ -387,6 +389,7 @@
 				9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */,
 				948156512E25370900C28273 /* VoiceRecorderService.swift */,
 				948156532E253D4400C28273 /* VoiceRecorderDelegate.swift */,
+				948156592E2773FC00C28273 /* DynamicGuidanceParser.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -758,6 +761,7 @@
 				943DFD832E182676004F8043 /* FilterButton.swift in Sources */,
 				948156542E253D4400C28273 /* VoiceRecorderDelegate.swift in Sources */,
 				943DFD742E180D40004F8043 /* SituationDetailView.swift in Sources */,
+				9481565A2E2773FC00C28273 /* DynamicGuidanceParser.swift in Sources */,
 				94FA11102E05C88A003EC1E9 /* TodayView.swift in Sources */,
 				94FA110B2E056D40003EC1E9 /* APIKeyView.swift in Sources */,
 				943DFD9B2E1A85EE004F8043 /* ConversationService.swift in Sources */,

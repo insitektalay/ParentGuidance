@@ -24,6 +24,7 @@ struct NewSituationView: View {
     @State private var rawGuidanceContent: String? // Store raw OpenAI response
     @State private var userApiKey: String = ""
     @StateObject private var voiceRecorderViewModel = VoiceRecorderViewModel()
+    @StateObject private var guidanceStructureSettings = GuidanceStructureSettings()
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var appCoordinator: AppCoordinator
     
@@ -271,18 +272,22 @@ struct NewSituationView: View {
         
         let (promptId, version, variables): (String, String, [String: Any]) = {
             if let framework = activeFramework {
+                // With Framework - Choose version based on mode
+                let version = guidanceStructureSettings.isUsingDynamicStructure ? "4" : "3"
                 return (
                     "pmpt_68516f961dc08190aceb4f591ee010050a454989b0581453",
-                    "3",
+                    version,
                     [
                         "current_situation": situation,
                         "active_foundation_tools": formatFrameworkForPrompt(framework)
                     ]
                 )
             } else {
+                // No Framework - Choose version based on mode
+                let version = guidanceStructureSettings.isUsingDynamicStructure ? "16" : "12"
                 return (
                     "pmpt_68515280423c8193aaa00a07235b7cf206c51d869f9526ba",
-                    "12",
+                    version,
                     [
                         "current_situation": situation,
                         "family_context": familyContext

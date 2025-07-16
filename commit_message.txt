@@ -1,27 +1,30 @@
-feat: add guidance structure preference setting in Settings
+feat: implement version-based prompt selection for dynamic guidance structure
 
-Complete Step 2 of dynamic guidance structure implementation by adding user preference controls in the Settings view.
+Complete Step 3 of dynamic guidance structure implementation by adding intelligent prompt version selection based on user preferences.
 
 ## Key Features Added:
-- New "Guidance Structure" section in SettingsView between Foundation Tools and Child Profile
-- Integrated GuidanceStructureSettings as @StateObject for preference management
-- Segmented picker allowing users to switch between Fixed and Dynamic structure modes
-- Real-time mode description display explaining differences between options
+- Settings integration in NewSituationView with GuidanceStructureSettings @StateObject
+- Dynamic prompt version selection based on user's guidance structure mode preference
+- Conditional logic to choose appropriate prompt versions for each mode
 
 ## Technical Implementation:
-- Added @StateObject private var guidanceStructureSettings to SettingsView
-- Created guidanceStructureSection view with consistent styling matching existing patterns
-- Implemented segmented picker with .colorScheme(.dark) for proper visibility
-- Dynamic description text updates based on currentMode selection
-- Leverages existing @AppStorage persistence from GuidanceStructureSettings class
+- **Fixed Mode**: Uses existing prompt versions (v12 no framework, v3 with framework) to preserve current 7-section behavior
+- **Dynamic Mode**: Uses newer prompt versions (v16 no framework, v4 with framework) designed for 3-8 flexible sections
+- **Same Prompt IDs**: Leverages existing prompt infrastructure with version-based differentiation:
+  - No framework: pmpt_68515280423c8193aaa00a07235b7cf206c51d869f9526ba
+  - With framework: pmpt_68516f961dc08190aceb4f591ee010050a454989b0581453
+
+## Code Changes:
+- Added @StateObject private var guidanceStructureSettings to NewSituationView.swift
+- Updated generateGuidance() function with conditional version selection logic
+- Replaced hardcoded version numbers with dynamic selection based on isUsingDynamicStructure
 
 ## User Experience:
-- Clear visual distinction between modes with descriptive explanations
-- Fixed Structure: '7 consistent sections: Situation, Analysis, Action Steps, Phrases to Try, Quick Comebacks, and Support'
-- Dynamic Structure: '3-8 flexible sections with AI-generated titles that adapt to your specific situation'
-- Settings persist automatically across app sessions
-- Immediate visual feedback when switching between modes
+- Fixed Mode users continue to receive structured 7-section guidance unchanged
+- Dynamic Mode users will receive AI-generated flexible sections (when parser is implemented)
+- Immediate response to preference changes in Settings
+- Zero breaking changes to existing functionality
 
-This completes Step 2 of the 6-step dynamic guidance structure implementation plan, enabling users to choose their preferred guidance format
-while maintaining full backward compatibility.
+This completes Step 3 of the 6-step implementation plan, establishing the prompt infrastructure needed for Step 4 (Dynamic Parser) while
+maintaining full backward compatibility.
 

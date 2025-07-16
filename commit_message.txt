@@ -1,65 +1,27 @@
-feat: add data models for dynamic guidance structure system
+feat: add guidance structure preference setting in Settings
 
-    Implement foundational data models to support user-configurable guidance structure modes (fixed vs dynamic) as the first step of a 6-step
-    implementation plan. This introduces the capability for AI to generate 3-8 flexible sections with dynamic titles instead of the current fixed
-    7-section format.
+Complete Step 2 of dynamic guidance structure implementation by adding user preference controls in the Settings view.
 
-    ## New Files Added:
+## Key Features Added:
+- New "Guidance Structure" section in SettingsView between Foundation Tools and Child Profile
+- Integrated GuidanceStructureSettings as @StateObject for preference management
+- Segmented picker allowing users to switch between Fixed and Dynamic structure modes
+- Real-time mode description display explaining differences between options
 
-    ### DynamicGuidanceModels.swift
-    - **DynamicGuidanceResponse**: Core model for flexible guidance with variable sections (3-8)
-    - **GuidanceSection**: Individual section model with dynamic titles, content, and ordering
-    - **GuidanceResponseProtocol**: Unified interface for both fixed and dynamic guidance types
-    - **Protocol Extensions**: Backward compatibility bridge for existing GuidanceResponse
+## Technical Implementation:
+- Added @StateObject private var guidanceStructureSettings to SettingsView
+- Created guidanceStructureSection view with consistent styling matching existing patterns
+- Implemented segmented picker with .colorScheme(.dark) for proper visibility
+- Dynamic description text updates based on currentMode selection
+- Leverages existing @AppStorage persistence from GuidanceStructureSettings class
 
-    ### GuidanceStructureSettings.swift
-    - **GuidanceStructureMode**: Enum defining fixed vs dynamic structure modes with user-friendly descriptions
-    - **GuidanceStructureSettings**: ObservableObject managing user preferences with @AppStorage persistence
-    - **Mode Management**: Toggle functionality and computed properties for structure type detection
+## User Experience:
+- Clear visual distinction between modes with descriptive explanations
+- Fixed Structure: '7 consistent sections: Situation, Analysis, Action Steps, Phrases to Try, Quick Comebacks, and Support'
+- Dynamic Structure: '3-8 flexible sections with AI-generated titles that adapt to your specific situation'
+- Settings persist automatically across app sessions
+- Immediate visual feedback when switching between modes
 
-    ## Technical Implementation:
-
-    ### Dynamic Guidance Architecture
-    ```swift
-    struct DynamicGuidanceResponse {
-        let title: String
-        let sections: [GuidanceSection]  // 3-8 flexible sections
-        let totalSections: Int
-    }
-    ```
-    Unified Protocol Design
-
-    - Common interface for both guidance response types
-    - Seamless conversion between fixed and dynamic formats
-    - Maintains existing functionality while enabling new features
-
-    User Preference Storage
-
-    - Persistent settings using @AppStorage with "guidanceStructureMode" key
-    - Default to fixed structure (maintains current behavior)
-    - ObservableObject integration for real-time UI updates
-
-    Backward Compatibility:
-
-    - ✅ Zero impact on existing code
-    - ✅ Current GuidanceResponse works unchanged
-    - ✅ Protocol extensions provide seamless integration
-    - ✅ Default mode preserves current user experience
-
-    Foundation for Future Steps:
-
-    - Settings UI toggle (Step 2)
-    - OpenAI prompt logic updates (Step 3)
-    - Dynamic content parsing (Step 4)
-    - UI component updates (Step 5)
-    - Error handling and fallbacks (Step 6)
-
-    Build Status:
-
-    ✅ Clean compilation with no errors or conflicts
-    📦 3 files changed, 111 insertions (+), 2 deletions (-)
-    🏗️ Project structure prepared for dynamic guidance implementation
-
-    This establishes the data layer foundation for flexible AI-generated guidance sections while maintaining full compatibility with the existing
-    fixed structure system.
+This completes Step 2 of the 6-step dynamic guidance structure implementation plan, enabling users to choose their preferred guidance format
+while maintaining full backward compatibility.
 

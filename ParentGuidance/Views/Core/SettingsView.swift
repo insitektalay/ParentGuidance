@@ -119,6 +119,7 @@ class SettingsFrameworkState: ObservableObject {
 struct SettingsView: View {
     @EnvironmentObject var appCoordinator: AppCoordinator
     @StateObject private var frameworkState = SettingsFrameworkState()
+    @StateObject private var guidanceStructureSettings = GuidanceStructureSettings()
     
     // MARK: - Child Profile Edit State
     
@@ -617,6 +618,9 @@ struct SettingsView: View {
                 // Foundation Tools Section
                 foundationToolsSection
                 
+                // Guidance Structure Section
+                guidanceStructureSection
+                
                 // Child Profile Section
                 childProfileSection
                 
@@ -726,6 +730,50 @@ struct SettingsView: View {
                 await frameworkState.loadFrameworks(familyId: appCoordinator.currentUserId)
                 await loadUserProfile()
             }
+        }
+    }
+    
+    private var guidanceStructureSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Guidance Structure")
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundColor(ColorPalette.white)
+                .padding(.horizontal, 16)
+            
+            VStack(alignment: .leading, spacing: 16) {
+                // Current mode display
+                HStack {
+                    Text("Mode")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                    
+                    Spacer()
+                    
+                    Text(guidanceStructureSettings.currentMode.displayName)
+                        .font(.system(size: 14))
+                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                }
+                
+                // Mode description
+                Text(guidanceStructureSettings.currentMode.description)
+                    .font(.system(size: 14))
+                    .foregroundColor(ColorPalette.white.opacity(0.7))
+                    .lineLimit(nil)
+                
+                // Mode picker
+                Picker("Guidance Structure", selection: $guidanceStructureSettings.currentMode) {
+                    ForEach(GuidanceStructureMode.allCases, id: \.self) { mode in
+                        Text(mode.displayName)
+                            .tag(mode)
+                    }
+                }
+                .pickerStyle(SegmentedPickerStyle())
+                .colorScheme(.dark)
+            }
+            .padding(16)
+            .background(ColorPalette.white.opacity(0.05))
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .padding(.horizontal, 16)
         }
     }
     

@@ -41,6 +41,8 @@
 		948156502E2533EE00C28273 /* VoiceRecorderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */; };
 		948156522E25370900C28273 /* VoiceRecorderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948156512E25370900C28273 /* VoiceRecorderService.swift */; };
 		948156542E253D4400C28273 /* VoiceRecorderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948156532E253D4400C28273 /* VoiceRecorderDelegate.swift */; };
+		948156562E2762BA00C28273 /* DynamicGuidanceModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948156552E2762BA00C28273 /* DynamicGuidanceModels.swift */; };
+		948156582E2762C700C28273 /* GuidanceStructureSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948156572E2762C700C28273 /* GuidanceStructureSettings.swift */; };
 		948605C82E111824008D92DE /* TodayEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605C72E111824008D92DE /* TodayEmptyView.swift */; };
 		948605CB2E111D1D008D92DE /* TodayTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605CA2E111D1D008D92DE /* TodayTimelineView.swift */; };
 		948605CE2E115CB2008D92DE /* AlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605CD2E115CB2008D92DE /* AlertView.swift */; };
@@ -142,6 +144,8 @@
 		9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorderError.swift; sourceTree = "<group>"; };
 		948156512E25370900C28273 /* VoiceRecorderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorderService.swift; sourceTree = "<group>"; };
 		948156532E253D4400C28273 /* VoiceRecorderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorderDelegate.swift; sourceTree = "<group>"; };
+		948156552E2762BA00C28273 /* DynamicGuidanceModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicGuidanceModels.swift; sourceTree = "<group>"; };
+		948156572E2762C700C28273 /* GuidanceStructureSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidanceStructureSettings.swift; sourceTree = "<group>"; };
 		948605C72E111824008D92DE /* TodayEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayEmptyView.swift; sourceTree = "<group>"; };
 		948605CA2E111D1D008D92DE /* TodayTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayTimelineView.swift; sourceTree = "<group>"; };
 		948605CD2E115CB2008D92DE /* AlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertView.swift; sourceTree = "<group>"; };
@@ -362,6 +366,8 @@
 				943DFD902E1A858D004F8043 /* Situation.swift */,
 				943DFD922E1A85A2004F8043 /* Guidance.swift */,
 				943792A62E1BE9A90089F512 /* FrameworkRecommendation.swift */,
+				948156552E2762BA00C28273 /* DynamicGuidanceModels.swift */,
+				948156572E2762C700C28273 /* GuidanceStructureSettings.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -743,6 +749,7 @@
 				94FA11252E05CBD4003EC1E9 /* SituationFollowUpView.swift in Sources */,
 				94B3D79C2E16C45B000F1D65 /* TodayViewController.swift in Sources */,
 				948605C82E111824008D92DE /* TodayEmptyView.swift in Sources */,
+				948156562E2762BA00C28273 /* DynamicGuidanceModels.swift in Sources */,
 				948605D12E133149008D92DE /* SupabaseManager.swift in Sources */,
 				948605D52E133250008D92DE /* AuthService.swift in Sources */,
 				94FA10FF2E056C7A003EC1E9 /* AuthenticationView.swift in Sources */,
@@ -780,6 +787,7 @@
 				943792A02E1BE94A0089F512 /* FrameworkStorageService.swift in Sources */,
 				9481564C2E23CDC000C28273 /* ChildProfileEditView.swift in Sources */,
 				943DFD9D2E1A863A004F8043 /* DatabaseService.swift in Sources */,
+				948156582E2762C700C28273 /* GuidanceStructureSettings.swift in Sources */,
 				9437929E2E1BE9340089F512 /* FrameworkGenerationService.swift in Sources */,
 				94FA11402E05CCB0003EC1E9 /* SituationCard.swift in Sources */,
 				949600D42E20F2B1008EC0C0 /* LoadingView.swift in Sources */,
@@ -949,10 +957,10 @@
 				DEVELOPMENT_TEAM = L53X4LP47U;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "ParentGuidance uses the microphone to record your voice when describing parenting situations, allowing you to quickly capture and transcribe your concerns for AI-powered guidance.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "ParentGuidance uses the microphone to record your voice when describing parenting situations, allowing you to quickly capture and transcribe your concerns for AI-powered guidance.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -979,10 +987,10 @@
 				DEVELOPMENT_TEAM = L53X4LP47U;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "ParentGuidance uses the microphone to record your voice when describing parenting situations, allowing you to quickly capture and transcribe your concerns for AI-powered guidance.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "ParentGuidance uses the microphone to record your voice when describing parenting situations, allowing you to quickly capture and transcribe your concerns for AI-powered guidance.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (

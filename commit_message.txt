@@ -1,39 +1,65 @@
-fix: resolve microphone button animation persistence after voice transcription
-Fix critical UX issue where microphone button continued animating (pulsing, color changing) after voice transcription completed and text was   inserted into input field. The button now properly returns to a static terracotta state after recording workflow completes.
-## Problem Solved:
-- Microphone button was stuck in infinite animation loop after transcription
-- Button exhibited smooth up/down movement and color transitions (terracotta to green)
-- Animation persisted even when both isRecording and isTranscribing states were false
-- Created confusing user experience suggesting ongoing recording activity
-## Root Cause:
-SwiftUI's `.repeatForever()` animations were not properly terminating when recording state changed to false. Multiple animation sources (scale   effects, color transitions, glow effects) continued running despite state management working correctly.
-## Technical Changes:
-### MicButton.swift - Complete Rewrite:
-- **Removed all animation state variables** (`pulseScale`, `glowOpacity`)
-- **Eliminated `.onChange` handlers** that could trigger residual animations
-- **Simplified button structure** to static elements with conditional animation layer
-- **Added `.buttonStyle(PlainButtonStyle())`** to disable system button animations
-- **Added `.animation(nil)`** to explicitly disable all animations on button
-- **Isolated animation effects** to only appear when `isRecording` is true
-### SituationInputIdleView.swift:
-- **Enhanced combined state logic** (`isRecording || isTranscribing`) for proper button state
-- **Added transcription blocking** to prevent button interaction during processing
-- **Improved state management** to ensure smooth recording workflow
-### VoiceRecorderViewModel:
-- **Added timing coordination** to prevent race conditions between recording and transcription states
-- **Enhanced debugging** for state transition monitoring
-## User Experience Impact:
-- ✅ Button now returns to completely static state after transcription
-- ✅ No residual animations or color changes
-- ✅ Clear visual feedback during recording (red + pulsing) vs idle (terracotta + static)
-- ✅ Proper button behavior throughout entire voice recording workflow
-- ✅ Consistent UX matching initial button state before recording
-## Testing:
-- Verified button animation starts correctly when recording begins
-- Confirmed button returns to static terracotta state after transcription completes
-- Tested multiple recording cycles without animation persistence
-- Validated proper state management through console debugging
-🎯 Critical UX fix: Voice recording button now behaves predictably
-🛑 Animation persistence issue resolved
-✅ Clean, professional microphone button interaction
+feat: add data models for dynamic guidance structure system
+
+    Implement foundational data models to support user-configurable guidance structure modes (fixed vs dynamic) as the first step of a 6-step
+    implementation plan. This introduces the capability for AI to generate 3-8 flexible sections with dynamic titles instead of the current fixed
+    7-section format.
+
+    ## New Files Added:
+
+    ### DynamicGuidanceModels.swift
+    - **DynamicGuidanceResponse**: Core model for flexible guidance with variable sections (3-8)
+    - **GuidanceSection**: Individual section model with dynamic titles, content, and ordering
+    - **GuidanceResponseProtocol**: Unified interface for both fixed and dynamic guidance types
+    - **Protocol Extensions**: Backward compatibility bridge for existing GuidanceResponse
+
+    ### GuidanceStructureSettings.swift
+    - **GuidanceStructureMode**: Enum defining fixed vs dynamic structure modes with user-friendly descriptions
+    - **GuidanceStructureSettings**: ObservableObject managing user preferences with @AppStorage persistence
+    - **Mode Management**: Toggle functionality and computed properties for structure type detection
+
+    ## Technical Implementation:
+
+    ### Dynamic Guidance Architecture
+    ```swift
+    struct DynamicGuidanceResponse {
+        let title: String
+        let sections: [GuidanceSection]  // 3-8 flexible sections
+        let totalSections: Int
+    }
+    ```
+    Unified Protocol Design
+
+    - Common interface for both guidance response types
+    - Seamless conversion between fixed and dynamic formats
+    - Maintains existing functionality while enabling new features
+
+    User Preference Storage
+
+    - Persistent settings using @AppStorage with "guidanceStructureMode" key
+    - Default to fixed structure (maintains current behavior)
+    - ObservableObject integration for real-time UI updates
+
+    Backward Compatibility:
+
+    - ✅ Zero impact on existing code
+    - ✅ Current GuidanceResponse works unchanged
+    - ✅ Protocol extensions provide seamless integration
+    - ✅ Default mode preserves current user experience
+
+    Foundation for Future Steps:
+
+    - Settings UI toggle (Step 2)
+    - OpenAI prompt logic updates (Step 3)
+    - Dynamic content parsing (Step 4)
+    - UI component updates (Step 5)
+    - Error handling and fallbacks (Step 6)
+
+    Build Status:
+
+    ✅ Clean compilation with no errors or conflicts
+    📦 3 files changed, 111 insertions (+), 2 deletions (-)
+    🏗️ Project structure prepared for dynamic guidance implementation
+
+    This establishes the data layer foundation for flexible AI-generated guidance sections while maintaining full compatibility with the existing
+    fixed structure system.
 

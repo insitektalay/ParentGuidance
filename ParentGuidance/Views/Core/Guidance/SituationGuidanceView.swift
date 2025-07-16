@@ -6,6 +6,7 @@ struct SituationGuidanceView: View {
     @State private var categories: [GuidanceCategory] = []
     @State private var isLoading = true
     @State private var errorMessage: String?
+    @ObservedObject private var guidanceStructureSettings = GuidanceStructureSettings.shared
     let situation: Situation?
     
     init(situation: Situation? = nil) {
@@ -215,7 +216,31 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
         // Combine all guidance content (in case there are multiple entries)
         let fullContent = guidanceEntries.map { $0.content }.joined(separator: "\n\n")
         
-        // Extract the 6 categories using the same parsing logic as NewSituationView
+        print("🔍 [DEBUG] SituationGuidanceView: Parsing guidance content")
+        print("   - Settings says use dynamic: \(guidanceStructureSettings.isUsingDynamicStructure)")
+        print("   - Content length: \(fullContent.count) characters")
+        
+        // Parse based on user preference (same logic as NewSituationView)
+        if guidanceStructureSettings.isUsingDynamicStructure {
+            print("🔄 [DEBUG] SituationGuidanceView: Using DYNAMIC parsing")
+            // Try dynamic parser first
+            if let dynamicResponse = DynamicGuidanceParser.shared.parseWithFallback(fullContent) {
+                print("✅ [DEBUG] Dynamic parsing SUCCESS - \(dynamicResponse.displaySections.count) sections")
+                return dynamicResponse.displaySections.map { section in
+                    GuidanceCategory(title: section.title, content: section.content)
+                }
+            } else {
+                print("❌ [DEBUG] Dynamic parsing FAILED, falling back to fixed")
+                return parseFixedGuidanceContent(from: fullContent)
+            }
+        } else {
+            print("🔄 [DEBUG] SituationGuidanceView: Using FIXED parsing")
+            return parseFixedGuidanceContent(from: fullContent)
+        }
+    }
+    
+    private func parseFixedGuidanceContent(from fullContent: String) -> [GuidanceCategory] {
+        // Extract the 6 fixed categories
         return [
             GuidanceCategory(
                 title: "Situation",

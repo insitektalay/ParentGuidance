@@ -741,34 +741,156 @@ struct SettingsView: View {
                 .padding(.horizontal, 16)
             
             VStack(alignment: .leading, spacing: 16) {
-                // Current mode display
-                HStack {
-                    Text("Mode")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                // Current mode status
+                HStack(spacing: 8) {
+                    Image(systemName: guidanceStructureSettings.currentMode.iconName)
+                        .font(.system(size: 16))
+                        .foregroundColor(ColorPalette.brightBlue)
+                    
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Active Mode")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(ColorPalette.white)
+                        
+                        Text(guidanceStructureSettings.currentMode.displayName)
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(ColorPalette.brightBlue)
+                    }
                     
                     Spacer()
                     
-                    Text(guidanceStructureSettings.currentMode.displayName)
-                        .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                    // Mode indicator badge
+                    Text(guidanceStructureSettings.currentMode.sectionCount)
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(ColorPalette.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(ColorPalette.brightBlue.opacity(0.2))
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
                 
                 // Mode description
                 Text(guidanceStructureSettings.currentMode.description)
                     .font(.system(size: 14))
-                    .foregroundColor(ColorPalette.white.opacity(0.7))
+                    .foregroundColor(ColorPalette.white.opacity(0.8))
                     .lineLimit(nil)
                 
-                // Mode picker
-                Picker("Guidance Structure", selection: $guidanceStructureSettings.currentMode) {
+                // Mode selection cards
+                VStack(spacing: 12) {
                     ForEach(GuidanceStructureMode.allCases, id: \.self) { mode in
-                        Text(mode.displayName)
-                            .tag(mode)
+                        GuidanceModeCard(
+                            mode: mode,
+                            isSelected: guidanceStructureSettings.currentMode == mode,
+                            onSelect: {
+                                guidanceStructureSettings.currentMode = mode
+                            }
+                        )
                     }
                 }
-                .pickerStyle(SegmentedPickerStyle())
-                .colorScheme(.dark)
+                
+                // Guidance Style selection
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Guidance Style")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                        .padding(.top, 8)
+                    
+                    VStack(spacing: 8) {
+                        // Warm & Practical toggle
+                        HStack {
+                            Text("Warm & Practical")
+                                .font(.system(size: 14))
+                                .foregroundColor(ColorPalette.white)
+                            
+                            Spacer()
+                            
+                            Button(action: {
+                                if guidanceStructureSettings.currentStyle != .warmPractical {
+                                    guidanceStructureSettings.currentStyle = .warmPractical
+                                }
+                            }) {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(guidanceStructureSettings.currentStyle == .warmPractical ? ColorPalette.brightBlue : ColorPalette.white.opacity(0.3))
+                                    .frame(width: 44, height: 24)
+                                    .overlay(
+                                        Circle()
+                                            .fill(ColorPalette.white)
+                                            .frame(width: 20, height: 20)
+                                            .offset(x: guidanceStructureSettings.currentStyle == .warmPractical ? 10 : -10)
+                                    )
+                                    .animation(.easeInOut(duration: 0.2), value: guidanceStructureSettings.currentStyle)
+                            }
+                        }
+                        
+                        // Analytical & Scientific toggle
+                        HStack {
+                            Text("Analytical & Scientific")
+                                .font(.system(size: 14))
+                                .foregroundColor(ColorPalette.white)
+                            
+                            Spacer()
+                            
+                            Button(action: {
+                                if guidanceStructureSettings.currentStyle != .analyticalScientific {
+                                    guidanceStructureSettings.currentStyle = .analyticalScientific
+                                }
+                            }) {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(guidanceStructureSettings.currentStyle == .analyticalScientific ? ColorPalette.brightBlue : ColorPalette.white.opacity(0.3))
+                                    .frame(width: 44, height: 24)
+                                    .overlay(
+                                        Circle()
+                                            .fill(ColorPalette.white)
+                                            .frame(width: 20, height: 20)
+                                            .offset(x: guidanceStructureSettings.currentStyle == .analyticalScientific ? 10 : -10)
+                                    )
+                                    .animation(.easeInOut(duration: 0.2), value: guidanceStructureSettings.currentStyle)
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 4)
+                }
+                
+                // Mode benefits info
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Benefits of \(guidanceStructureSettings.currentMode.displayName)")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                    
+                    Text(guidanceStructureSettings.currentMode.benefits)
+                        .font(.system(size: 12))
+                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                        .lineLimit(nil)
+                }
+                .padding(.top, 8)
+                
+                // Action buttons
+                HStack(spacing: 12) {
+                    Button("Learn More") {
+                        showingDocumentation = true
+                    }
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(ColorPalette.white)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 6)
+                    .background(ColorPalette.brightBlue)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    
+                    Button("Preview Mode") {
+                        // TODO: Add preview functionality
+                    }
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(ColorPalette.terracotta)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 6)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(ColorPalette.terracotta, lineWidth: 1)
+                    )
+                    
+                    Spacer()
+                }
+                .padding(.top, 12)
             }
             .padding(16)
             .background(ColorPalette.white.opacity(0.05))
@@ -1175,6 +1297,68 @@ struct SettingsView: View {
                 .zIndex(2000)
             }
         }
+    }
+}
+
+// MARK: - Guidance Mode Card Component
+
+struct GuidanceModeCard: View {
+    let mode: GuidanceStructureMode
+    let isSelected: Bool
+    let onSelect: () -> Void
+    
+    var body: some View {
+        Button(action: onSelect) {
+            HStack(spacing: 12) {
+                // Mode icon
+                Image(systemName: mode.iconName)
+                    .font(.system(size: 20))
+                    .foregroundColor(isSelected ? ColorPalette.brightBlue : ColorPalette.white.opacity(0.6))
+                    .frame(width: 24, height: 24)
+                
+                // Mode info
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 8) {
+                        Text(mode.displayName)
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(ColorPalette.white)
+                        
+                        Text(mode.sectionCount)
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundColor(ColorPalette.white.opacity(0.6))
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(ColorPalette.white.opacity(0.1))
+                            .clipShape(RoundedRectangle(cornerRadius: 4))
+                    }
+                    
+                    Text(mode.description)
+                        .font(.system(size: 13))
+                        .foregroundColor(ColorPalette.white.opacity(0.8))
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+                }
+                
+                Spacer()
+                
+                // Selection indicator
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 20))
+                    .foregroundColor(isSelected ? ColorPalette.brightBlue : ColorPalette.white.opacity(0.4))
+                    .animation(.easeInOut(duration: 0.2), value: isSelected)
+            }
+            .padding(16)
+            .background(
+                Color(red: 0.21, green: 0.22, blue: 0.33)
+                    .opacity(isSelected ? 1.0 : 0.6)
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(isSelected ? ColorPalette.brightBlue.opacity(0.4) : ColorPalette.white.opacity(0.1), lineWidth: 1.5)
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
     }
 }
 

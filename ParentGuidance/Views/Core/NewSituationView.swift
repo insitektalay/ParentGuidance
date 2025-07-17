@@ -278,14 +278,15 @@ struct NewSituationView: View {
         // Debug: Log current settings state
         print("🔍 [DEBUG] Current guidance structure settings:")
         print("   - Current mode: \(guidanceStructureSettings.currentMode.displayName)")
+        print("   - Current style: \(guidanceStructureSettings.currentStyle.displayName)")
         print("   - Is using dynamic: \(guidanceStructureSettings.isUsingDynamicStructure)")
         print("   - Has active framework: \(activeFramework != nil)")
         
         let (promptId, version, variables): (String, String, [String: Any]) = {
             if let framework = activeFramework {
-                // With Framework - Choose version based on mode
-                let version = guidanceStructureSettings.isUsingDynamicStructure ? "5" : "3"
-                print("🔍 [DEBUG] Framework path - Selected version: \(version) (dynamic: \(guidanceStructureSettings.isUsingDynamicStructure))")
+                // With Framework - Choose version based on style and structure mode
+                let version = guidanceStructureSettings.getPromptVersion(hasFramework: true)
+                print("🔍 [DEBUG] Framework path - Selected version: \(version) (style: \(guidanceStructureSettings.currentStyle.displayName), structure: \(guidanceStructureSettings.currentMode.displayName))")
                 return (
                     "pmpt_68516f961dc08190aceb4f591ee010050a454989b0581453",
                     version,
@@ -295,9 +296,9 @@ struct NewSituationView: View {
                     ]
                 )
             } else {
-                // No Framework - Choose version based on mode
-                let version = guidanceStructureSettings.isUsingDynamicStructure ? "16" : "12"
-                print("🔍 [DEBUG] No framework path - Selected version: \(version) (dynamic: \(guidanceStructureSettings.isUsingDynamicStructure))")
+                // No Framework - Choose version based on style and structure mode
+                let version = guidanceStructureSettings.getPromptVersion(hasFramework: false)
+                print("🔍 [DEBUG] No framework path - Selected version: \(version) (style: \(guidanceStructureSettings.currentStyle.displayName), structure: \(guidanceStructureSettings.currentMode.displayName))")
                 return (
                     "pmpt_68515280423c8193aaa00a07235b7cf206c51d869f9526ba",
                     version,

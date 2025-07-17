@@ -11,6 +11,7 @@ struct LibraryView: View {
     @StateObject private var controller = LibraryViewController()
     @ObservedObject private var selectionManager: LibrarySelectionManager
     @EnvironmentObject var appCoordinator: AppCoordinator
+    @State private var showingContextualKnowledgeBase = false
     
     init() {
         let controller = LibraryViewController()
@@ -42,6 +43,11 @@ struct LibraryView: View {
                 controller.loadSituations()
             }
         }
+        .sheet(isPresented: $showingContextualKnowledgeBase) {
+            if let familyId = appCoordinator.currentUserId {
+                ContextualKnowledgeBaseView(familyId: familyId)
+            }
+        }
     }
     
     private var libraryListView: some View {
@@ -52,6 +58,9 @@ struct LibraryView: View {
                 
                 // Foundation tool card
                 foundationToolSection
+                
+                // Your Child's World card
+                yourChildsWorldSection
                 
                 // Selection header (when in selection mode)
                 if selectionManager.isInSelectionMode {
@@ -87,6 +96,17 @@ struct LibraryView: View {
                 print("Set Up Framework tapped - entering selection mode")
                 selectionManager.enterSelectionMode()
                 print("Selection mode state: \(selectionManager.isInSelectionMode)")
+            }
+        )
+        .padding(.horizontal, 16)
+    }
+    
+    private var yourChildsWorldSection: some View {
+        YourChildsWorldCard(
+            familyId: appCoordinator.currentUserId,
+            onViewInsights: {
+                print("View insights tapped")
+                showingContextualKnowledgeBase = true
             }
         )
         .padding(.horizontal, 16)

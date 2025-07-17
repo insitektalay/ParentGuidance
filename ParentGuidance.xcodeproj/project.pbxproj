@@ -44,6 +44,12 @@
 		948156562E2762BA00C28273 /* DynamicGuidanceModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948156552E2762BA00C28273 /* DynamicGuidanceModels.swift */; };
 		948156582E2762C700C28273 /* GuidanceStructureSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948156572E2762C700C28273 /* GuidanceStructureSettings.swift */; };
 		9481565A2E2773FC00C28273 /* DynamicGuidanceParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948156592E2773FC00C28273 /* DynamicGuidanceParser.swift */; };
+		9481565C2E29019600C28273 /* ContextualInsight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481565B2E29019600C28273 /* ContextualInsight.swift */; };
+		9481565E2E29023B00C28273 /* ContextualInsightService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481565D2E29023B00C28273 /* ContextualInsightService.swift */; };
+		948156602E29042F00C28273 /* ContextualKnowledgeBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481565F2E29042F00C28273 /* ContextualKnowledgeBaseView.swift */; };
+		948156622E2904B100C28273 /* YourChildsWorldCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948156612E2904B100C28273 /* YourChildsWorldCard.swift */; };
+		948156642E2904D200C28273 /* ContextCategoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948156632E2904D200C28273 /* ContextCategoryView.swift */; };
+		948156662E2904E100C28273 /* ContextInsightCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948156652E2904E100C28273 /* ContextInsightCard.swift */; };
 		948605C82E111824008D92DE /* TodayEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605C72E111824008D92DE /* TodayEmptyView.swift */; };
 		948605CB2E111D1D008D92DE /* TodayTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605CA2E111D1D008D92DE /* TodayTimelineView.swift */; };
 		948605CE2E115CB2008D92DE /* AlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605CD2E115CB2008D92DE /* AlertView.swift */; };
@@ -148,6 +154,12 @@
 		948156552E2762BA00C28273 /* DynamicGuidanceModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicGuidanceModels.swift; sourceTree = "<group>"; };
 		948156572E2762C700C28273 /* GuidanceStructureSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidanceStructureSettings.swift; sourceTree = "<group>"; };
 		948156592E2773FC00C28273 /* DynamicGuidanceParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicGuidanceParser.swift; sourceTree = "<group>"; };
+		9481565B2E29019600C28273 /* ContextualInsight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextualInsight.swift; sourceTree = "<group>"; };
+		9481565D2E29023B00C28273 /* ContextualInsightService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextualInsightService.swift; sourceTree = "<group>"; };
+		9481565F2E29042F00C28273 /* ContextualKnowledgeBaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextualKnowledgeBaseView.swift; sourceTree = "<group>"; };
+		948156612E2904B100C28273 /* YourChildsWorldCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YourChildsWorldCard.swift; sourceTree = "<group>"; };
+		948156632E2904D200C28273 /* ContextCategoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextCategoryView.swift; sourceTree = "<group>"; };
+		948156652E2904E100C28273 /* ContextInsightCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextInsightCard.swift; sourceTree = "<group>"; };
 		948605C72E111824008D92DE /* TodayEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayEmptyView.swift; sourceTree = "<group>"; };
 		948605CA2E111D1D008D92DE /* TodayTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayTimelineView.swift; sourceTree = "<group>"; };
 		948605CD2E115CB2008D92DE /* AlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertView.swift; sourceTree = "<group>"; };
@@ -370,6 +382,7 @@
 				943792A62E1BE9A90089F512 /* FrameworkRecommendation.swift */,
 				948156552E2762BA00C28273 /* DynamicGuidanceModels.swift */,
 				948156572E2762C700C28273 /* GuidanceStructureSettings.swift */,
+				9481565B2E29019600C28273 /* ContextualInsight.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -390,6 +403,7 @@
 				948156512E25370900C28273 /* VoiceRecorderService.swift */,
 				948156532E253D4400C28273 /* VoiceRecorderDelegate.swift */,
 				948156592E2773FC00C28273 /* DynamicGuidanceParser.swift */,
+				9481565D2E29023B00C28273 /* ContextualInsightService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -498,6 +512,8 @@
 				94FA11422E05CCC0003EC1E9 /* Components */,
 				943DFD712E17CBE3004F8043 /* LibraryViewController.swift */,
 				943792AA2E1C34520089F512 /* FrameworkGeneratingView.swift */,
+				9481565F2E29042F00C28273 /* ContextualKnowledgeBaseView.swift */,
+				948156632E2904D200C28273 /* ContextCategoryView.swift */,
 			);
 			path = Library;
 			sourceTree = "<group>";
@@ -564,6 +580,7 @@
 		94FA11422E05CCC0003EC1E9 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				948156612E2904B100C28273 /* YourChildsWorldCard.swift */,
 				94FA113D2E05CC91003EC1E9 /* SearchBar.swift */,
 				94FA113F2E05CCA1003EC1E9 /* FoundationToolCard.swift */,
 				94FA11412E05CCB1003EC1E9 /* SituationCard.swift */,
@@ -577,6 +594,7 @@
 				943DFD862E182690004F8043 /* BulkActionBar.swift */,
 				943DFD882E18269D004F8043 /* ExportSheet.swift */,
 				943DFD8A2E1826AF004F8043 /* ConfirmationDialog.swift */,
+				948156652E2904E100C28273 /* ContextInsightCard.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -751,11 +769,15 @@
 				943DFD8F2E1A856E004F8043 /* Child.swift in Sources */,
 				94FA11252E05CBD4003EC1E9 /* SituationFollowUpView.swift in Sources */,
 				94B3D79C2E16C45B000F1D65 /* TodayViewController.swift in Sources */,
+				948156622E2904B100C28273 /* YourChildsWorldCard.swift in Sources */,
 				948605C82E111824008D92DE /* TodayEmptyView.swift in Sources */,
 				948156562E2762BA00C28273 /* DynamicGuidanceModels.swift in Sources */,
+				9481565C2E29019600C28273 /* ContextualInsight.swift in Sources */,
 				948605D12E133149008D92DE /* SupabaseManager.swift in Sources */,
 				948605D52E133250008D92DE /* AuthService.swift in Sources */,
+				9481565E2E29023B00C28273 /* ContextualInsightService.swift in Sources */,
 				94FA10FF2E056C7A003EC1E9 /* AuthenticationView.swift in Sources */,
+				948156602E29042F00C28273 /* ContextualKnowledgeBaseView.swift in Sources */,
 				94FA11212E05CBB8003EC1E9 /* SituationTypingView.swift in Sources */,
 				943DFD722E17CBE3004F8043 /* LibraryViewController.swift in Sources */,
 				943DFD832E182676004F8043 /* FilterButton.swift in Sources */,
@@ -769,6 +791,7 @@
 				94FA111F2E05CBAA003EC1E9 /* SituationInputIdleView.swift in Sources */,
 				943792A32E1BE9850089F512 /* LibrarySelectionManager.swift in Sources */,
 				94FA11322E05CC30003EC1E9 /* ChildHeader.swift in Sources */,
+				948156662E2904E100C28273 /* ContextInsightCard.swift in Sources */,
 				949600D52E20F2B1008EC0C0 /* AppCoordinatorView.swift in Sources */,
 				948156522E25370900C28273 /* VoiceRecorderService.swift in Sources */,
 				94FA11332E05CC40003EC1E9 /* RoutineCard.swift in Sources */,
@@ -788,6 +811,7 @@
 				943DFD852E182684004F8043 /* SearchHistoryView.swift in Sources */,
 				943792A72E1BE9A90089F512 /* FrameworkRecommendation.swift in Sources */,
 				948156502E2533EE00C28273 /* VoiceRecorderError.swift in Sources */,
+				948156642E2904D200C28273 /* ContextCategoryView.swift in Sources */,
 				943792A02E1BE94A0089F512 /* FrameworkStorageService.swift in Sources */,
 				9481564C2E23CDC000C28273 /* ChildProfileEditView.swift in Sources */,
 				943DFD9D2E1A863A004F8043 /* DatabaseService.swift in Sources */,

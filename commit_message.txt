@@ -1,41 +1,26 @@
-fix: Library tab dynamic guidance display and UX improvements
-
-Fix Library tab to properly display dynamic guidance in swipeable cards and improve user experience with layout reordering and copy   functionality.
-
-## Key Issues Fixed:
-- Dynamic guidance was showing as "long vertical stream of text" instead of swipeable cards
-- Display order showed original situation first, then guidance
-- No copy functionality for original situation text
-- Inconsistent experience across tabs for dynamic content
-
-## Changes Made:
-
-### Dynamic Structure Support
-- Added @ObservedObject private var guidanceStructureSettings = GuidanceStructureSettings.shared to SituationDetailView
-- Updated parseGuidanceContent() method to check user preference and use appropriate parser
-- Integrated DynamicGuidanceParser for handling variable section counts (3-8 sections)
-- Added parseFixedGuidanceContent() method for traditional 6-section format
-
-### Card Display System
-- Replaced hardcoded GuidanceCardsView component with flexible TabView+GuidanceCard system
-- Updated guidance display to use same swipeable card interface as New Situation and Today tabs
-- Added proper page indicators and navigation for variable section counts
-- Improved fallback handling to show content in card format even when parsing fails
-
-### Layout and UX Improvements
-- Reordered display layout to show guidance cards first, then original situation below
-- Added copy-to-clipboard button with clipboard icon next to "Original Situation" header
-- Implemented haptic feedback and visual confirmation overlay for copy operations
-- Added .textSelection(.enabled) for better text interaction
-
-### Code Quality
-- Removed obsolete GuidanceCardsView component
-- Added comprehensive debug logging for troubleshooting
-- Maintained backward compatibility with existing fixed guidance content
-
-## Expected Outcome:
-- Fixed guidance: Continues working correctly in swipeable cards (6 sections)
-- Dynamic guidance: Now displays properly in swipeable cards (3-8 sections)
-- Consistent swipeable card experience across all tabs (New, Today, Library)
-- Enhanced user workflow with copyable situation text and improved layout
-
+Title:   feat: add Your Child's World contextual knowledge base with automatic insight extraction
+Description:   Implement comprehensive contextual knowledge base feature that automatically extracts and categorizes insights from user situations using   OpenAI integration.   
+Backend Implementation:   
+• Add ContextualInsight model with 11 categories and 5 regulation tool subcategories   
+• Create ContextualInsightService with OpenAI Prompts API integration for context extraction   
+• Integrate automatic background context extraction in NewSituationView workflow   
+• Add database operations for insight storage, retrieval, and deletion with proper RLS    
+UI Components:   
+• YourChildsWorldCard in Library tab showing insight counts and navigation   
+• ContextualKnowledgeBaseView with responsive 2-column grid of category cards   
+• ContextCategoryView displaying insights per category with empty states   
+• ContextInsightCard with swipe-to-delete functionality and date formatting   
+• Sheet-based navigation flow integrated with existing Library architecture    
+Key Features:   
+• Automatic context extraction runs in background after situation guidance is saved   
+• 11 insight categories: Family Context, Proven Regulation Tools, Medical/Health, Educational/Academic, Peer/Social, Behavioral Patterns, Daily    
+Life/Practical, Temporal/Timing, Environmental & Tech Triggers, Parenting Approaches, Sibling Dynamics   
+• Real-time insight counts with loading states and error handling   
+• Swipe-to-delete individual insights with confirmation alerts   
+• Comprehensive empty states and loading indicators throughout    
+Technical Details:   
+• Uses OpenAI prompt template pmpt_68778827e310819792876a9f5a844c050059609da32e4637 v4   
+• Parses 14-section API response format with regex-based content extraction   
+• Implements proper enum mapping between API responses and database storage   
+• Non-blocking background task execution to avoid disrupting main guidance flow   
+• Follows existing app design patterns and ColorPalette theming

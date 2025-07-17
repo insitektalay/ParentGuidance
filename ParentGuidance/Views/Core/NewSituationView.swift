@@ -156,7 +156,29 @@ struct NewSituationView: View {
                 throw error
             }
             
-            // Step 7: Update UI
+            // Step 7: Extract contextual insights (background task)
+            print("🔍 Step 7: Extracting contextual insights...")
+            Task {
+                do {
+                    let insights = try await ContextualInsightService.shared.extractContextFromSituation(
+                        situationText: inputText,
+                        apiKey: apiKey,
+                        familyId: familyId!,
+                        childId: nil, // TODO: Get from current child context if needed
+                        situationId: situationId
+                    )
+                    print("✅ Extracted \(insights.count) contextual insights")
+                    
+                    // Save insights to database
+                    try await ContextualInsightService.shared.saveContextInsights(insights)
+                    print("✅ Contextual insights saved to database")
+                } catch {
+                    print("⚠️ Context extraction failed (non-critical): \(error)")
+                    print("⚠️ This won't affect the main guidance flow")
+                }
+            }
+            
+            // Step 8: Update UI
             await MainActor.run {
                 guidanceResponse = guidance
                 isLoading = false

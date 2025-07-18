@@ -12,6 +12,7 @@ struct LibraryView: View {
     @ObservedObject private var selectionManager: LibrarySelectionManager
     @EnvironmentObject var appCoordinator: AppCoordinator
     @State private var showingContextualKnowledgeBase = false
+    @State private var showingRegulationInsights = false
     
     init() {
         let controller = LibraryViewController()
@@ -48,6 +49,11 @@ struct LibraryView: View {
                 ContextualKnowledgeBaseView(familyId: familyId)
             }
         }
+        .sheet(isPresented: $showingRegulationInsights) {
+            if let familyId = appCoordinator.currentUserId {
+                RegulationInsightsView(familyId: familyId)
+            }
+        }
     }
     
     private var libraryListView: some View {
@@ -58,6 +64,9 @@ struct LibraryView: View {
                 
                 // Foundation tool card
                 foundationToolSection
+                
+                // Noticing What Matters card
+                noticingWhatMattersSection
                 
                 // Your Child's World card
                 yourChildsWorldSection
@@ -96,6 +105,17 @@ struct LibraryView: View {
                 print("Set Up Framework tapped - entering selection mode")
                 selectionManager.enterSelectionMode()
                 print("Selection mode state: \(selectionManager.isInSelectionMode)")
+            }
+        )
+        .padding(.horizontal, 16)
+    }
+    
+    private var noticingWhatMattersSection: some View {
+        NoticingWhatMattersCard(
+            familyId: appCoordinator.currentUserId,
+            onViewInsights: {
+                print("View regulation insights tapped")
+                showingRegulationInsights = true
             }
         )
         .padding(.horizontal, 16)

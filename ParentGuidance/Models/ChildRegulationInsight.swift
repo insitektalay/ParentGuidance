@@ -43,6 +43,17 @@ enum RegulationCategory: String, Codable, CaseIterable {
     var displayName: String {
         return self.rawValue
     }
+    
+    var parentFriendlyName: String {
+        switch self {
+        case .core:
+            return "Emotional Self-Regulation"
+        case .adhd:
+            return "Attention & Focus Patterns"
+        case .mildAutism:
+            return "Flexibility & Social Understanding"
+        }
+    }
 }
 
 // MARK: - Child Regulation Insights Response

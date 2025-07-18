@@ -178,6 +178,28 @@ struct NewSituationView: View {
                 }
             }
             
+            // Step 7.5: Extract child regulation insights (background task)
+            print("🧠 Step 7.5: Extracting child regulation insights...")
+            Task {
+                do {
+                    let regulationInsights = try await ContextualInsightService.shared.extractChildRegulationInsights(
+                        situationText: inputText,
+                        apiKey: apiKey,
+                        familyId: familyId!,
+                        childId: nil, // TODO: Get from current child context if needed
+                        situationId: situationId
+                    )
+                    print("✅ Extracted \(regulationInsights.count) child regulation insights")
+                    
+                    // Save regulation insights to database
+                    try await ContextualInsightService.shared.saveChildRegulationInsights(regulationInsights)
+                    print("✅ Child regulation insights saved to database")
+                } catch {
+                    print("⚠️ Child regulation insights extraction failed (non-critical): \(error)")
+                    print("⚠️ This won't affect the main guidance flow")
+                }
+            }
+            
             // Step 8: Update UI
             await MainActor.run {
                 guidanceResponse = guidance

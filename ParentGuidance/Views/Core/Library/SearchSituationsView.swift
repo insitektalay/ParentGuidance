@@ -57,37 +57,41 @@ struct SearchSituationsView: View {
     
     private var searchView: some View {
         VStack(spacing: 0) {
-            // Header
-            HStack(alignment: .center, spacing: 12) {
-                Button(action: {
-                    if isSelectionMode {
-                        selectionManager.exitSelectionMode()
+            // Fixed Header - Navigation + Search + Filters
+            VStack(spacing: 0) {
+                // Navigation Header
+                HStack(alignment: .center, spacing: 12) {
+                    Button(action: {
+                        if isSelectionMode {
+                            selectionManager.exitSelectionMode()
+                        }
+                        dismiss()
+                    }) {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 18, weight: .medium))
+                            .foregroundColor(ColorPalette.white.opacity(0.9))
                     }
-                    dismiss()
-                }) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 18, weight: .medium))
+                    
+                    Spacer()
+                    
+                    Text(isSelectionMode ? "Select Situations" : "Search Situations")
+                        .font(.system(size: 24, weight: .semibold))
                         .foregroundColor(ColorPalette.white.opacity(0.9))
+                    
+                    Spacer()
                 }
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
+                .padding(.bottom, 16)
                 
-                Spacer()
-                
-                Text(isSelectionMode ? "Select Situations" : "Search Situations")
-                    .font(.system(size: 24, weight: .semibold))
-                    .foregroundColor(ColorPalette.white.opacity(0.9))
-                
-                Spacer()
+                // Search Header with Filters
+                searchHeaderSection
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
-            .padding(.bottom, 16)
+            .background(ColorPalette.navy)
             
-            // Search content
+            // Scrollable Content
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
-                    // Search header with filters
-                    searchHeaderSection
-                    
                     // Selection header (when in selection mode)
                     if selectionManager.isInSelectionMode {
                         selectionHeader

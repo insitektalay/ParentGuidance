@@ -69,6 +69,9 @@ struct LibraryView: View {
     private var libraryListView: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
+                // Search Situations card
+                searchSituationsSection
+                
                 // Foundation tool card
                 foundationToolSection
                 
@@ -77,9 +80,6 @@ struct LibraryView: View {
                 
                 // Your Child's World card
                 yourChildsWorldSection
-                
-                // Search Situations card
-                searchSituationsSection
                 
                 // Selection header (when in selection mode)
                 if selectionManager.isInSelectionMode {

@@ -1,26 +1,14 @@
-Title:   feat: add Your Child's World contextual knowledge base with automatic insight extraction
-Description:   Implement comprehensive contextual knowledge base feature that automatically extracts and categorizes insights from user situations using   OpenAI integration.   
-Backend Implementation:   
-• Add ContextualInsight model with 11 categories and 5 regulation tool subcategories   
-• Create ContextualInsightService with OpenAI Prompts API integration for context extraction   
-• Integrate automatic background context extraction in NewSituationView workflow   
-• Add database operations for insight storage, retrieval, and deletion with proper RLS    
-UI Components:   
-• YourChildsWorldCard in Library tab showing insight counts and navigation   
-• ContextualKnowledgeBaseView with responsive 2-column grid of category cards   
-• ContextCategoryView displaying insights per category with empty states   
-• ContextInsightCard with swipe-to-delete functionality and date formatting   
-• Sheet-based navigation flow integrated with existing Library architecture    
-Key Features:   
-• Automatic context extraction runs in background after situation guidance is saved   
-• 11 insight categories: Family Context, Proven Regulation Tools, Medical/Health, Educational/Academic, Peer/Social, Behavioral Patterns, Daily    
-Life/Practical, Temporal/Timing, Environmental & Tech Triggers, Parenting Approaches, Sibling Dynamics   
-• Real-time insight counts with loading states and error handling   
-• Swipe-to-delete individual insights with confirmation alerts   
-• Comprehensive empty states and loading indicators throughout    
-Technical Details:   
-• Uses OpenAI prompt template pmpt_68778827e310819792876a9f5a844c050059609da32e4637 v4   
-• Parses 14-section API response format with regex-based content extraction   
-• Implements proper enum mapping between API responses and database storage   
-• Non-blocking background task execution to avoid disrupting main guidance flow   
-• Follows existing app design patterns and ColorPalette theming
+feat: fix contextual knowledge base navigation with NavigationLink approach
+
+Fixed navigation issue in the "Your Child's World" contextual knowledge base where category cards were not responding to taps. The problem was  
+caused by conflicting Button wrappers inside NavigationLink components.   
+
+Key changes:  
+- Refactored CategoryCard to separate visual content from button logic  
+- Created CategoryCardContent view for use within NavigationLink destinations  
+- Replaced failed navigationDestination approach with direct NavigationLink implementation  
+- Removed conflicting onTap handlers that were preventing navigation   
+
+The contextual knowledge base now properly navigates from category grid to individual insight views, completing the full user flow: Library →  
+Your Child's World → Category Selection → Individual Insights with swipe-to-delete functionality.
+

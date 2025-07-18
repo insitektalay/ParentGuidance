@@ -9,7 +9,7 @@ import Foundation
 
 // MARK: - Context Categories
 
-enum ContextCategory: String, CaseIterable, Codable {
+enum ContextCategory: String, CaseIterable, Codable, Identifiable {
     case familyContext = "family_context"
     case provenRegulationTools = "proven_regulation_tools"
     case medicalHealth = "medical_health"
@@ -21,6 +21,8 @@ enum ContextCategory: String, CaseIterable, Codable {
     case environmentalTechTriggers = "environmental_tech_triggers"
     case parentingApproaches = "parenting_approaches"
     case siblingDynamics = "sibling_dynamics"
+    
+    var id: String { rawValue }
     
     var displayName: String {
         switch self {

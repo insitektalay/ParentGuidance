@@ -13,7 +13,6 @@ struct ContextualKnowledgeBaseView: View {
     @State private var insightCounts: [ContextCategory: Int] = [:]
     @State private var isLoading = true
     @State private var hasError = false
-    @State private var selectedCategory: ContextCategory?
     
     var body: some View {
         NavigationStack {
@@ -58,13 +57,6 @@ struct ContextualKnowledgeBaseView: View {
                 await loadInsightCounts()
             }
         }
-        .navigationDestination(item: $selectedCategory) { category in
-            ContextCategoryView(
-                familyId: familyId,
-                category: category,
-                insightCount: insightCounts[category] ?? 0
-            )
-        }
     }
     
     private var loadingView: some View {
@@ -108,13 +100,17 @@ struct ContextualKnowledgeBaseView: View {
                 GridItem(.flexible(), spacing: 16)
             ], spacing: 16) {
                 ForEach(ContextCategory.allCases, id: \.self) { category in
-                    CategoryCard(
+                    NavigationLink(destination: ContextCategoryView(
+                        familyId: familyId,
                         category: category,
-                        insightCount: insightCounts[category] ?? 0,
-                        onTap: {
-                            selectedCategory = category
-                        }
-                    )
+                        insightCount: insightCounts[category] ?? 0
+                    )) {
+                        CategoryCardContent(
+                            category: category,
+                            insightCount: insightCounts[category] ?? 0
+                        )
+                    }
+                    .buttonStyle(PlainButtonStyle())
                 }
             }
             .padding(.horizontal, 16)
@@ -146,56 +142,65 @@ struct CategoryCard: View {
     
     var body: some View {
         Button(action: onTap) {
-            VStack(alignment: .leading, spacing: 12) {
-                // Icon and count
-                HStack(alignment: .top) {
-                    Image(systemName: category.iconName)
-                        .font(.system(size: 24, weight: .medium))
-                        .foregroundColor(ColorPalette.brightBlue)
-                    
-                    Spacer()
-                    
-                    if insightCount > 0 {
-                        Text("\(insightCount)")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(ColorPalette.white)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(ColorPalette.terracotta)
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                    }
-                }
-                
-                // Category name
-                Text(category.displayName)
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(ColorPalette.white)
-                    .multilineTextAlignment(.leading)
-                    .lineLimit(2)
+            CategoryCardContent(category: category, insightCount: insightCount)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
+struct CategoryCardContent: View {
+    let category: ContextCategory
+    let insightCount: Int
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // Icon and count
+            HStack(alignment: .top) {
+                Image(systemName: category.iconName)
+                    .font(.system(size: 24, weight: .medium))
+                    .foregroundColor(ColorPalette.brightBlue)
                 
                 Spacer()
                 
-                // Insight count or empty state
                 if insightCount > 0 {
-                    Text("\(insightCount) insight\(insightCount == 1 ? "" : "s")")
-                        .font(.system(size: 12))
-                        .foregroundColor(ColorPalette.white.opacity(0.7))
-                } else {
-                    Text("No insights yet")
-                        .font(.system(size: 12))
-                        .foregroundColor(ColorPalette.white.opacity(0.5))
+                    Text("\(insightCount)")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundColor(ColorPalette.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(ColorPalette.terracotta)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
             }
-            .padding(16)
-            .frame(height: 140)
-            .background(Color(red: 0.21, green: 0.22, blue: 0.33))
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(ColorPalette.white.opacity(0.1), lineWidth: 1)
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            
+            // Category name
+            Text(category.displayName)
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(ColorPalette.white)
+                .multilineTextAlignment(.leading)
+                .lineLimit(2)
+            
+            Spacer()
+            
+            // Insight count or empty state
+            if insightCount > 0 {
+                Text("\(insightCount) insight\(insightCount == 1 ? "" : "s")")
+                    .font(.system(size: 12))
+                    .foregroundColor(ColorPalette.white.opacity(0.7))
+            } else {
+                Text("No insights yet")
+                    .font(.system(size: 12))
+                    .foregroundColor(ColorPalette.white.opacity(0.5))
+            }
         }
-        .buttonStyle(PlainButtonStyle())
+        .padding(16)
+        .frame(height: 140)
+        .background(Color(red: 0.21, green: 0.22, blue: 0.33))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(ColorPalette.white.opacity(0.1), lineWidth: 1)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }
 

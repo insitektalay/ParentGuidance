@@ -36,7 +36,7 @@ class ContextualInsightService {
                 "id": "pmpt_6877c15da6388196a389c79feeefd4e30cccdbe5ba3909fb",
                 "version": "5",
                 "variables": [
-                    "situation_inputted": situationText
+                    "long_prompt": situationText
                 ]
             ]
         ]

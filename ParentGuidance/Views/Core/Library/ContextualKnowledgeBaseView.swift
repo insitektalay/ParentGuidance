@@ -95,10 +95,7 @@ struct ContextualKnowledgeBaseView: View {
     
     private var categoryGridView: some View {
         ScrollView {
-            LazyVGrid(columns: [
-                GridItem(.flexible(), spacing: 16),
-                GridItem(.flexible(), spacing: 16)
-            ], spacing: 16) {
+            VStack(spacing: 16) {
                 ForEach(ContextCategory.allCases, id: \.self) { category in
                     NavigationLink(destination: ContextCategoryView(
                         familyId: familyId,
@@ -153,48 +150,47 @@ struct CategoryCardContent: View {
     let insightCount: Int
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // Icon and count
-            HStack(alignment: .top) {
-                Image(systemName: category.iconName)
-                    .font(.system(size: 24, weight: .medium))
-                    .foregroundColor(ColorPalette.brightBlue)
-                
-                Spacer()
+        HStack(alignment: .center, spacing: 16) {
+            // Icon
+            Image(systemName: category.iconName)
+                .font(.system(size: 28, weight: .medium))
+                .foregroundColor(ColorPalette.brightBlue)
+                .frame(width: 32, height: 32)
+            
+            // Content
+            VStack(alignment: .leading, spacing: 4) {
+                Text(category.displayName)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(ColorPalette.white)
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(2)
                 
                 if insightCount > 0 {
-                    Text("\(insightCount)")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(ColorPalette.white)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(ColorPalette.terracotta)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    Text("\(insightCount) insight\(insightCount == 1 ? "" : "s") collected")
+                        .font(.system(size: 14))
+                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                } else {
+                    Text("No insights collected yet")
+                        .font(.system(size: 14))
+                        .foregroundColor(ColorPalette.white.opacity(0.5))
                 }
             }
             
-            // Category name
-            Text(category.displayName)
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(ColorPalette.white)
-                .multilineTextAlignment(.leading)
-                .lineLimit(2)
-            
             Spacer()
             
-            // Insight count or empty state
+            // Count badge
             if insightCount > 0 {
-                Text("\(insightCount) insight\(insightCount == 1 ? "" : "s")")
-                    .font(.system(size: 12))
-                    .foregroundColor(ColorPalette.white.opacity(0.7))
-            } else {
-                Text("No insights yet")
-                    .font(.system(size: 12))
-                    .foregroundColor(ColorPalette.white.opacity(0.5))
+                Text("\(insightCount)")
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundColor(ColorPalette.white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(ColorPalette.terracotta)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
             }
         }
-        .padding(16)
-        .frame(height: 140)
+        .padding(20)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(red: 0.21, green: 0.22, blue: 0.33))
         .overlay(
             RoundedRectangle(cornerRadius: 12)

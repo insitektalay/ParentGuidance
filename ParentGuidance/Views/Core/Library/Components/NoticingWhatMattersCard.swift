@@ -49,34 +49,44 @@ struct NoticingWhatMattersCard: View {
                 } else if hasError {
                     Text("Unable to load insights")
                         .font(.system(size: 12))
-                        .foregroundColor(ColorPalette.terracotta.opacity(0.8))
+                        .foregroundColor(ColorPalette.white.opacity(0.6))
                 } else {
                     let totalInsights = insightCounts.values.reduce(0, +)
-                    Text(totalInsights == 0 ? "No insights yet" : "\(totalInsights) insight\(totalInsights == 1 ? "" : "s")")
-                        .font(.system(size: 12))
-                        .foregroundColor(ColorPalette.white.opacity(0.6))
+                    if totalInsights > 0 {
+                        Text("\(totalInsights) insights across \(insightCounts.count) categories")
+                            .font(.system(size: 12))
+                            .foregroundColor(ColorPalette.white.opacity(0.6))
+                    } else {
+                        Text("No insights collected yet")
+                            .font(.system(size: 12))
+                            .foregroundColor(ColorPalette.white.opacity(0.6))
+                    }
                 }
             }
             
-            // View Insights button
-            Button(action: onViewInsights) {
-                HStack(spacing: 6) {
+            // Action button
+            HStack(spacing: 12) {
+                Button(action: onViewInsights) {
                     Text("View Insights")
                         .font(.system(size: 14, weight: .medium))
-                    
-                    Image(systemName: "arrow.right.circle.fill")
-                        .font(.system(size: 14))
+                        .foregroundColor(ColorPalette.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 6)
+                        .background(ColorPalette.terracotta)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
-                .foregroundColor(ColorPalette.terracotta)
+                .disabled(isLoading)
+                
+                Spacer()
             }
-            .disabled(isLoading)
         }
         .padding(16)
-        .background(
+        .background(Color(red: 0.21, green: 0.22, blue: 0.33)) // #363853 equivalent
+        .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .fill(ColorPalette.white.opacity(0.05))
                 .stroke(ColorPalette.white.opacity(0.1), lineWidth: 1)
         )
+        .clipShape(RoundedRectangle(cornerRadius: 12))
         .onAppear {
             loadInsightCounts()
         }

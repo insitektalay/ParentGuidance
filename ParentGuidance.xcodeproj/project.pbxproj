@@ -55,6 +55,8 @@
 		9481566C2E2A11E200C28273 /* RegulationInsightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481566B2E2A11E200C28273 /* RegulationInsightsView.swift */; };
 		9481566E2E2A12B600C28273 /* RegulationCategoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481566D2E2A12B600C28273 /* RegulationCategoryView.swift */; };
 		948156702E2A12C700C28273 /* RegulationInsightCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481566F2E2A12C700C28273 /* RegulationInsightCard.swift */; };
+		948156722E2A1D9800C28273 /* SearchSituationsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948156712E2A1D9800C28273 /* SearchSituationsCard.swift */; };
+		948156742E2A1E6800C28273 /* SearchSituationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948156732E2A1E6800C28273 /* SearchSituationsView.swift */; };
 		948605C82E111824008D92DE /* TodayEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605C72E111824008D92DE /* TodayEmptyView.swift */; };
 		948605CB2E111D1D008D92DE /* TodayTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605CA2E111D1D008D92DE /* TodayTimelineView.swift */; };
 		948605CE2E115CB2008D92DE /* AlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605CD2E115CB2008D92DE /* AlertView.swift */; };
@@ -170,6 +172,8 @@
 		9481566B2E2A11E200C28273 /* RegulationInsightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegulationInsightsView.swift; sourceTree = "<group>"; };
 		9481566D2E2A12B600C28273 /* RegulationCategoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegulationCategoryView.swift; sourceTree = "<group>"; };
 		9481566F2E2A12C700C28273 /* RegulationInsightCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegulationInsightCard.swift; sourceTree = "<group>"; };
+		948156712E2A1D9800C28273 /* SearchSituationsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchSituationsCard.swift; sourceTree = "<group>"; };
+		948156732E2A1E6800C28273 /* SearchSituationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchSituationsView.swift; sourceTree = "<group>"; };
 		948605C72E111824008D92DE /* TodayEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayEmptyView.swift; sourceTree = "<group>"; };
 		948605CA2E111D1D008D92DE /* TodayTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayTimelineView.swift; sourceTree = "<group>"; };
 		948605CD2E115CB2008D92DE /* AlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertView.swift; sourceTree = "<group>"; };
@@ -527,6 +531,7 @@
 				948156632E2904D200C28273 /* ContextCategoryView.swift */,
 				9481566B2E2A11E200C28273 /* RegulationInsightsView.swift */,
 				9481566D2E2A12B600C28273 /* RegulationCategoryView.swift */,
+				948156732E2A1E6800C28273 /* SearchSituationsView.swift */,
 			);
 			path = Library;
 			sourceTree = "<group>";
@@ -610,6 +615,7 @@
 				948156652E2904E100C28273 /* ContextInsightCard.swift */,
 				948156692E2A108900C28273 /* NoticingWhatMattersCard.swift */,
 				9481566F2E2A12C700C28273 /* RegulationInsightCard.swift */,
+				948156712E2A1D9800C28273 /* SearchSituationsCard.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -763,6 +769,7 @@
 				94FA10FB2E05666F003EC1E9 /* ColorPalette.swift in Sources */,
 				943DFD812E18266B004F8043 /* LibraryHeaderView.swift in Sources */,
 				94FA10FD2E056C6C003EC1E9 /* WelcomeView.swift in Sources */,
+				948156742E2A1E6800C28273 /* SearchSituationsView.swift in Sources */,
 				94FA110D2E05BA00003EC1E9 /* MainTabView.swift in Sources */,
 				948605CB2E111D1D008D92DE /* TodayTimelineView.swift in Sources */,
 				94FA11052E056CCA003EC1E9 /* PlanSelectionView.swift in Sources */,
@@ -790,6 +797,7 @@
 				948156622E2904B100C28273 /* YourChildsWorldCard.swift in Sources */,
 				948605C82E111824008D92DE /* TodayEmptyView.swift in Sources */,
 				948156562E2762BA00C28273 /* DynamicGuidanceModels.swift in Sources */,
+				948156722E2A1D9800C28273 /* SearchSituationsCard.swift in Sources */,
 				9481565C2E29019600C28273 /* ContextualInsight.swift in Sources */,
 				948605D12E133149008D92DE /* SupabaseManager.swift in Sources */,
 				948605D52E133250008D92DE /* AuthService.swift in Sources */,

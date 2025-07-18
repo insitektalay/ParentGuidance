@@ -15,6 +15,82 @@ class ContextualInsightService {
     
     // MARK: - Context Extraction
     
+    func extractChildRegulationInsights(
+        situationText: String,
+        apiKey: String,
+        familyId: String,
+        childId: String? = nil,
+        situationId: String
+    ) async throws -> [ChildRegulationInsight] {
+        print("🧠 Starting child regulation insights extraction for situation: \(situationId)")
+        print("📝 Situation text: \(situationText.prefix(100))...")
+        
+        let url = URL(string: "https://api.openai.com/v1/responses")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let requestBody: [String: Any] = [
+            "prompt": [
+                "id": "pmpt_6877c15da6388196a389c79feeefd4e30cccdbe5ba3909fb",
+                "version": "5",
+                "variables": [
+                    "situation_inputted": situationText
+                ]
+            ]
+        ]
+        
+        print("📡 Making child regulation insights API request...")
+        request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            print("❌ Invalid HTTP response for child regulation insights")
+            throw ContextualInsightError.invalidResponse
+        }
+        
+        if httpResponse.statusCode != 200 {
+            print("❌ Child regulation insights HTTP error: \(httpResponse.statusCode)")
+            if let responseString = String(data: data, encoding: .utf8) {
+                print("❌ Error response: \(responseString)")
+            }
+            throw ContextualInsightError.apiError(httpResponse.statusCode)
+        }
+        
+        print("✅ Child regulation insights HTTP 200 response received")
+        
+        do {
+            // Parse using the same PromptResponse structure
+            let promptResponse = try JSONDecoder().decode(PromptResponse.self, from: data)
+            
+            guard let firstOutput = promptResponse.output.first,
+                  let firstContent = firstOutput.content.first else {
+                print("❌ No content in child regulation insights response")
+                throw ContextualInsightError.noContent
+            }
+            
+            let content = firstContent.text
+            print("📝 Child regulation insights content received: \(content.prefix(200))...")
+            
+            // Parse JSON response into regulation insights
+            let insights = try parseRegulationInsightsResponse(
+                content: content,
+                familyId: familyId,
+                childId: childId,
+                situationId: situationId
+            )
+            
+            print("✅ Parsed \(insights.count) child regulation insights")
+            return insights
+            
+        } catch {
+            print("❌ Error parsing child regulation insights response: \(error)")
+            throw ContextualInsightError.parsingError(error)
+        }
+    }
+    
     func extractContextFromSituation(
         situationText: String,
         apiKey: String,
@@ -92,6 +168,144 @@ class ContextualInsightService {
     }
     
     // MARK: - Response Parsing
+    
+    private func parseRegulationInsightsResponse(
+        content: String,
+        familyId: String,
+        childId: String?,
+        situationId: String
+    ) throws -> [ChildRegulationInsight] {
+        print("🧠 Parsing regulation insights JSON response...")
+        
+        // Try to parse as JSON first
+        guard let jsonData = content.data(using: .utf8) else {
+            print("❌ Could not convert response to data")
+            throw ContextualInsightError.parsingError(NSError(domain: "JSONParsingError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Could not convert response to data"]))
+        }
+        
+        do {
+            let decoder = JSONDecoder()
+            let regulationResponse = try decoder.decode(ChildRegulationInsightsResponse.self, from: jsonData)
+            
+            // Convert to individual bullet points using the model's extension
+            let insights = regulationResponse.toBulletPoints(
+                familyId: familyId,
+                childId: childId,
+                situationId: situationId,
+                responseId: UUID().uuidString
+            )
+            
+            // Filter out "No strong patterns found" responses
+            let filteredInsights = insights.filter { !$0.isNoPatternFound }
+            
+            print("✅ Parsed \(insights.count) total insights, \(filteredInsights.count) after filtering")
+            return filteredInsights
+            
+        } catch {
+            print("❌ JSON parsing failed, trying fallback parsing: \(error)")
+            
+            // Fallback: try to parse as plain text with JSON-like structure
+            return parseFallbackRegulationResponse(
+                content: content,
+                familyId: familyId,
+                childId: childId,
+                situationId: situationId
+            )
+        }
+    }
+    
+    private func parseFallbackRegulationResponse(
+        content: String,
+        familyId: String,
+        childId: String?,
+        situationId: String
+    ) -> [ChildRegulationInsight] {
+        print("🔄 Using fallback parsing for regulation insights...")
+        
+        var insights: [ChildRegulationInsight] = []
+        let responseId = UUID().uuidString
+        
+        // Try to extract sections by category names
+        let categories: [(name: String, category: RegulationCategory)] = [
+            ("Core", .core),
+            ("ADHD", .adhd),
+            ("Mild Autism", .mildAutism)
+        ]
+        
+        for (categoryName, category) in categories {
+            if let sectionContent = extractRegulationSection(from: content, categoryName: categoryName) {
+                let bulletPoints = extractBulletPoints(from: sectionContent)
+                
+                for bulletPoint in bulletPoints {
+                    if !bulletPoint.contains("No strong patterns found") {
+                        let insight = ChildRegulationInsight(
+                            familyId: familyId,
+                            childId: childId,
+                            situationId: situationId,
+                            category: category,
+                            content: bulletPoint,
+                            insightResponseId: responseId
+                        )
+                        insights.append(insight)
+                    }
+                }
+            }
+        }
+        
+        print("✅ Fallback parsing created \(insights.count) insights")
+        return insights
+    }
+    
+    private func extractRegulationSection(from content: String, categoryName: String) -> String? {
+        // Look for patterns like "Core": [...] or "Core" : [...]
+        let patterns = [
+            "\"\(categoryName)\"\\s*:\\s*\\[([^\\]]+)\\]",
+            "\(categoryName)\\s*:\\s*\\[([^\\]]+)\\]",
+            "\"\(categoryName)\"\\s*:\\s*([^,}]+)"
+        ]
+        
+        for pattern in patterns {
+            let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive])
+            let range = NSRange(content.startIndex..., in: content)
+            
+            if let match = regex?.firstMatch(in: content, options: [], range: range) {
+                if let swiftRange = Range(match.range(at: 1), in: content) {
+                    let extracted = String(content[swiftRange]).trimmingCharacters(in: .whitespacesAndNewlines)
+                    print("✅ Extracted \(categoryName) section: \(extracted.prefix(50))...")
+                    return extracted
+                }
+            }
+        }
+        
+        print("⚠️ No section found for: \(categoryName)")
+        return nil
+    }
+    
+    private func extractBulletPoints(from content: String) -> [String] {
+        // Remove quotes and brackets, then split by common separators
+        let cleaned = content
+            .replacingOccurrences(of: "\"", with: "")
+            .replacingOccurrences(of: "[", with: "")
+            .replacingOccurrences(of: "]", with: "")
+        
+        // Split by commas, newlines, and bullets
+        let separators = [",", "\n", "•", "- "]
+        var bulletPoints = [cleaned]
+        
+        for separator in separators {
+            var newPoints: [String] = []
+            for point in bulletPoints {
+                let parts = point.components(separatedBy: separator)
+                newPoints.append(contentsOf: parts)
+            }
+            bulletPoints = newPoints
+        }
+        
+        // Clean and filter
+        return bulletPoints
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty && $0.count > 5 }
+    }
     
     private func parseContextResponse(
         content: String,
@@ -216,6 +430,101 @@ class ContextualInsightService {
     }
     
     // MARK: - Database Operations
+    
+    func saveChildRegulationInsights(_ insights: [ChildRegulationInsight]) async throws {
+        print("💾 Saving \(insights.count) child regulation insights to database...")
+        
+        guard !insights.isEmpty else {
+            print("⚠️ No regulation insights to save")
+            return
+        }
+        
+        do {
+            try await SupabaseManager.shared.client
+                .from("insight_bullet_points")
+                .insert(insights)
+                .execute()
+            
+            print("✅ Successfully saved \(insights.count) child regulation insights")
+        } catch {
+            print("❌ Error saving child regulation insights: \(error)")
+            throw ContextualInsightError.databaseError(error)
+        }
+    }
+    
+    func getChildRegulationInsights(
+        familyId: String,
+        childId: String? = nil,
+        category: RegulationCategory? = nil,
+        situationId: String? = nil
+    ) async throws -> [ChildRegulationInsight] {
+        print("📋 Getting child regulation insights for family: \(familyId)")
+        
+        do {
+            var query = SupabaseManager.shared.client
+                .from("insight_bullet_points")
+                .select("*")
+                .eq("family_id", value: familyId)
+            
+            if let childId = childId {
+                query = query.eq("child_id", value: childId)
+            }
+            
+            if let category = category {
+                query = query.eq("category", value: category.rawValue)
+            }
+            
+            if let situationId = situationId {
+                query = query.eq("situation_id", value: situationId)
+            }
+            
+            let response: [ChildRegulationInsight] = try await query
+                .order("created_at", ascending: false)
+                .execute().value
+            
+            print("✅ Found \(response.count) child regulation insights")
+            return response
+        } catch {
+            print("❌ Error getting child regulation insights: \(error)")
+            throw ContextualInsightError.databaseError(error)
+        }
+    }
+    
+    func getRegulationInsightCounts(familyId: String, childId: String? = nil) async throws -> [RegulationCategory: Int] {
+        print("📊 Getting regulation insight counts for family: \(familyId)")
+        
+        do {
+            let allInsights = try await getChildRegulationInsights(familyId: familyId, childId: childId)
+            var counts: [RegulationCategory: Int] = [:]
+            
+            for insight in allInsights {
+                counts[insight.category, default: 0] += 1
+            }
+            
+            print("✅ Calculated regulation insight counts for \(counts.count) categories")
+            return counts
+        } catch {
+            print("❌ Error getting regulation insight counts: \(error)")
+            throw ContextualInsightError.databaseError(error)
+        }
+    }
+    
+    func deleteChildRegulationInsight(id: String) async throws {
+        print("🗑️ Deleting child regulation insight: \(id)")
+        
+        do {
+            try await SupabaseManager.shared.client
+                .from("insight_bullet_points")
+                .delete()
+                .eq("id", value: id)
+                .execute()
+            
+            print("✅ Successfully deleted child regulation insight: \(id)")
+        } catch {
+            print("❌ Error deleting child regulation insight: \(error)")
+            throw ContextualInsightError.databaseError(error)
+        }
+    }
     
     func saveContextInsights(_ insights: [ContextualInsight]) async throws {
         print("💾 Saving \(insights.count) contextual insights to database...")

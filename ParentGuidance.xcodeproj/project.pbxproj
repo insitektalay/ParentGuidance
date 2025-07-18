@@ -50,6 +50,7 @@
 		948156622E2904B100C28273 /* YourChildsWorldCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948156612E2904B100C28273 /* YourChildsWorldCard.swift */; };
 		948156642E2904D200C28273 /* ContextCategoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948156632E2904D200C28273 /* ContextCategoryView.swift */; };
 		948156662E2904E100C28273 /* ContextInsightCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948156652E2904E100C28273 /* ContextInsightCard.swift */; };
+		948156682E2A02FC00C28273 /* ChildRegulationInsight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948156672E2A02FC00C28273 /* ChildRegulationInsight.swift */; };
 		948605C82E111824008D92DE /* TodayEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605C72E111824008D92DE /* TodayEmptyView.swift */; };
 		948605CB2E111D1D008D92DE /* TodayTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605CA2E111D1D008D92DE /* TodayTimelineView.swift */; };
 		948605CE2E115CB2008D92DE /* AlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605CD2E115CB2008D92DE /* AlertView.swift */; };
@@ -160,6 +161,7 @@
 		948156612E2904B100C28273 /* YourChildsWorldCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YourChildsWorldCard.swift; sourceTree = "<group>"; };
 		948156632E2904D200C28273 /* ContextCategoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextCategoryView.swift; sourceTree = "<group>"; };
 		948156652E2904E100C28273 /* ContextInsightCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextInsightCard.swift; sourceTree = "<group>"; };
+		948156672E2A02FC00C28273 /* ChildRegulationInsight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildRegulationInsight.swift; sourceTree = "<group>"; };
 		948605C72E111824008D92DE /* TodayEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayEmptyView.swift; sourceTree = "<group>"; };
 		948605CA2E111D1D008D92DE /* TodayTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayTimelineView.swift; sourceTree = "<group>"; };
 		948605CD2E115CB2008D92DE /* AlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertView.swift; sourceTree = "<group>"; };
@@ -383,6 +385,7 @@
 				948156552E2762BA00C28273 /* DynamicGuidanceModels.swift */,
 				948156572E2762C700C28273 /* GuidanceStructureSettings.swift */,
 				9481565B2E29019600C28273 /* ContextualInsight.swift */,
+				948156672E2A02FC00C28273 /* ChildRegulationInsight.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -759,6 +762,7 @@
 				943DFD912E1A858D004F8043 /* Situation.swift in Sources */,
 				94FA112C2E05CC08003EC1E9 /* MicButton.swift in Sources */,
 				94FA11122E05C898003EC1E9 /* NewSituationView.swift in Sources */,
+				948156682E2A02FC00C28273 /* ChildRegulationInsight.swift in Sources */,
 				94FA11182E05C8C1003EC1E9 /* SettingsView.swift in Sources */,
 				943DFD772E1823A5004F8043 /* LibraryFilters.swift in Sources */,
 				94FA11072E056CFD003EC1E9 /* OnboardingCoordinator.swift in Sources */,

@@ -75,6 +75,7 @@ The project includes automation hooks in `settings.json` for Claude Code:
 - **ConversationService**: Active OpenAI integration with multiple prompt templates and data persistence
 - **FrameworkGenerationService**: AI-powered generation of parenting frameworks with dedicated prompt templates
 - **FrameworkStorageService**: Persistence and management of framework recommendations
+- **ContextualInsightService**: Automatic context extraction and categorization from user situations using OpenAI integration
 - **OnboardingManager**: Coordinates multi-step onboarding process
 - **AuthService**: Authentication flow management
 - **OpenAIService**: Legacy GPT-4 integration (not currently used)
@@ -85,9 +86,11 @@ The project includes automation hooks in `settings.json` for Claude Code:
   - Main guidance: `pmpt_68515280423c8193aaa00a07235b7cf206c51d869f9526ba` (version 12)
   - Situation analysis: `pmpt_686b988bf0ac8196a69e972f08842b9a05893c8e8a5153c7` (version 1)
   - Framework generation: `pmpt_68511f82ba448193a1af0dc01215706f0d3d3fe75d5db0f1` (version 3)
+  - Context extraction: `pmpt_68778827e310819792876a9f5a844c050059609da32e4637` (version 4)
 - **ConversationService**: Handles situation-guidance conversation pairs and multiple OpenAI operations
 - **Response Parsing**: Custom regex parsing for bracket-delimited structured guidance format
 - **Framework Generation**: Separate AI workflow for analyzing situations and generating parenting frameworks
+- **Contextual Insights**: Background extraction of insights from situations with 11 categories and 5 regulation tool subcategories
 
 #### Data Models
 - **Core Models** (defined in `ParentGuidanceApp.swift`):
@@ -97,6 +100,7 @@ The project includes automation hooks in `settings.json` for Claude Code:
   - `ConversationService`: Database operations and OpenAI integration
 - **Child.swift**: Child profile and preferences (in `Models/` directory)
 - **FrameworkRecommendation**: AI-generated parenting framework recommendations
+- **ContextualInsight**: Automatic insight extraction with 11 categories (Family Context, Regulation Tools, Medical/Health, etc.)
 - **OpenAI Response Models**: `PromptResponse`, `GuidanceResponse`, `FrameworkAPIResponse` for API parsing
 - **Error Handling**: Custom error enums (`FrameworkGenerationError`, `FrameworkStorageError`, `OpenAIError`)
 - **Additional Models**: Various view-specific models throughout the app
@@ -118,8 +122,8 @@ Multi-state input system for parenting situations:
 
 #### Main Tab Views (`Views/Core/`)
 - **Today**: Timeline view with empty state (`TodayViewController`, `TodayTimelineView`, `TodayEmptyView`)
-- **New**: Primary situation input (`NewSituationView`) with OpenAI integration
-- **Library**: Search and browse past situations (`LibraryView`) with comprehensive filtering and selection management (`LibrarySelectionManager`)
+- **New**: Primary situation input (`NewSituationView`) with OpenAI integration and background context extraction
+- **Library**: Search and browse past situations (`LibraryView`) with comprehensive filtering, selection management (`LibrarySelectionManager`), and contextual knowledge base (`YourChildsWorldCard`, `ContextualKnowledgeBaseView`)
 - **Alerts**: Notification management (`AlertView`) with framework recommendations (`FrameworkRecommendationView`)
 - **Settings**: User preferences and account management (`SettingsView`)
 
@@ -133,8 +137,10 @@ Multi-state input system for parenting situations:
 The app uses Supabase with these core tables:
 - **situations**: User-submitted parenting scenarios with JSONB context fields
 - **guidance**: AI-generated responses linked to situations
+- **contextual_insights**: Automatically extracted insights categorized into 11 types
 - **families**: Family group management
 - **children**: Child profiles and characteristics
+- **framework_recommendations**: AI-generated parenting frameworks
 
 ### Current Implementation Status
 - ✅ Complete UI/UX implementation for all core flows
@@ -142,6 +148,8 @@ The app uses Supabase with these core tables:
 - ✅ OpenAI GPT-4 integration with structured response parsing
 - ✅ Multi-step onboarding with plan selection
 - ✅ Tab-based navigation with situation input states
+- ✅ Contextual knowledge base with automatic insight extraction and categorization
+- ✅ Framework generation and recommendation system
 - ⚠️ Testing implementation is minimal (placeholder tests only)
 - ⚠️ Error handling and edge cases need enhancement
 
@@ -172,3 +180,15 @@ The app uses Supabase with these core tables:
 - **Unit Tests**: `ParentGuidanceTests/` (currently minimal)
 - **UI Tests**: `ParentGuidanceUITests/` (currently minimal)
 - **Testing Gap**: Comprehensive test coverage needed for services and data models
+
+## Database Management
+
+### SQL Development Files
+- **User Creation**: SQL scripts in root directory for test user setup
+- **Debug Queries**: Pre-written queries for common debugging scenarios
+- **RLS Policies**: Row Level Security policies for data access control
+
+### Development Database Operations
+- **Test Data Setup**: Automated scripts for creating development users and sample data
+- **Schema Management**: SQL files for database structure and policies
+- **Local Development**: Supabase local development environment support

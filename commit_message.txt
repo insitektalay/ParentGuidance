@@ -1,14 +1,11 @@
-feat: fix contextual knowledge base navigation with NavigationLink approach
+feat: add child regulation insights infrastructure with database schema and Swift models
 
-Fixed navigation issue in the "Your Child's World" contextual knowledge base where category cards were not responding to taps. The problem was  
-caused by conflicting Button wrappers inside NavigationLink components.   
+Create foundation for Child_Regulation_Insights system prompt integration:
+- Add insight_bullet_points table with RLS policies for storing individual behavioral observations
+- Implement ChildRegulationInsight Swift model with Core/ADHD/Mild Autism categories
+- Add ChildRegulationInsightsResponse model for OpenAI API response parsing
+- Include convenience extensions for converting API responses to database records
+- Support linking insights to specific children, situations, and families
 
-Key changes:  
-- Refactored CategoryCard to separate visual content from button logic  
-- Created CategoryCardContent view for use within NavigationLink destinations  
-- Replaced failed navigationDestination approach with direct NavigationLink implementation  
-- Removed conflicting onTap handlers that were preventing navigation   
-
-The contextual knowledge base now properly navigates from category grid to individual insight views, completing the full user flow: Library →  
-Your Child's World → Category Selection → Individual Insights with swipe-to-delete functionality.
-
+This establishes the data layer for automatic extraction of nervous system traits,
+emotional regulation patterns, and developmental observations from parent-submitted situations.

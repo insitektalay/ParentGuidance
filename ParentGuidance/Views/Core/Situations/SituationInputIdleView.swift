@@ -65,7 +65,7 @@ struct SituationInputIdleView: View {
                             if inputText.isEmpty && !isTextEditorFocused {
                                 VStack {
                                     HStack {
-                                        Text("Describe what's happening with \(childName)...")
+                                        Text(String(localized: "situation.input.placeholder \(childName)"))
                                             .font(.system(size: isKeyboardVisible ? 16 : 18))
                                             .foregroundColor(ColorPalette.white.opacity(isKeyboardVisible ? 0.5 : 0.6))
                                             .padding(.top, 8)
@@ -117,12 +117,12 @@ struct SituationInputIdleView: View {
         .onDisappear {
             removeKeyboardObservers()
         }
-        .alert("Recording Error", isPresented: $voiceRecorderViewModel.showError) {
-            Button("OK") {
+        .alert(String(localized: "situation.input.recordingError"), isPresented: $voiceRecorderViewModel.showError) {
+            Button(String(localized: "common.ok")) {
                 voiceRecorderViewModel.clearError()
             }
         } message: {
-            Text(voiceRecorderViewModel.errorMessage ?? "An error occurred")
+            Text(voiceRecorderViewModel.errorMessage ?? String(localized: "common.error.generic"))
         }
     }
     

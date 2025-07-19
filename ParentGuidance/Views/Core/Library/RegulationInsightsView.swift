@@ -29,7 +29,7 @@ struct RegulationInsightsView: View {
                     
                     Spacer()
                     
-                    Text("How Your Child Responds")
+                    Text(String(localized: "regulation.insights.title"))
                         .font(.system(size: 24, weight: .semibold))
                         .foregroundColor(ColorPalette.white.opacity(0.9))
                     
@@ -65,7 +65,7 @@ struct RegulationInsightsView: View {
                 .scaleEffect(1.5)
                 .foregroundColor(ColorPalette.white.opacity(0.8))
             
-            Text("Loading insights...")
+            Text(String(localized: "regulation.insights.loading"))
                 .font(.system(size: 16))
                 .foregroundColor(ColorPalette.white.opacity(0.7))
         }
@@ -74,15 +74,15 @@ struct RegulationInsightsView: View {
     
     private var errorView: some View {
         VStack(spacing: 16) {
-            Text("Unable to load insights")
+            Text(String(localized: "regulation.insights.error.title"))
                 .font(.system(size: 18, weight: .medium))
                 .foregroundColor(ColorPalette.white.opacity(0.9))
             
-            Text("Please try again later")
+            Text(String(localized: "regulation.insights.error.subtitle"))
                 .font(.system(size: 14))
                 .foregroundColor(ColorPalette.white.opacity(0.7))
             
-            Button("Retry") {
+            Button(String(localized: "common.retry")) {
                 Task {
                     await loadInsightCounts()
                 }
@@ -166,11 +166,11 @@ struct RegulationCategoryCardContent: View {
             
             // Insight count description
             if insightCount > 0 {
-                Text("\(insightCount) insight\(insightCount == 1 ? "" : "s") collected")
+                Text(String(localized: "regulation.insights.count \(insightCount)"))
                     .font(.system(size: 14))
                     .foregroundColor(ColorPalette.white.opacity(0.7))
             } else {
-                Text("No patterns identified yet")
+                Text(String(localized: "regulation.insights.empty"))
                     .font(.system(size: 14))
                     .foregroundColor(ColorPalette.white.opacity(0.5))
             }

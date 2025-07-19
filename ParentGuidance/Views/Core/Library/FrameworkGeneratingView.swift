@@ -53,7 +53,7 @@ struct FrameworkGeneratingView: View {
             .padding(.bottom, 40)
             
             // Main text
-            Text("Generating your framework...")
+            Text(String(localized: "alerts.generating.title"))
                 .font(.system(size: 24, weight: .medium))
                 .foregroundColor(ColorPalette.white)
                 .multilineTextAlignment(.center)
@@ -61,7 +61,7 @@ struct FrameworkGeneratingView: View {
                 .padding(.bottom, 16)
             
             // Subtitle
-            Text("Analyzing your situations to create personalized guidance")
+            Text(String(localized: "alerts.generating.subtitle"))
                 .font(.system(size: 16))
                 .foregroundColor(ColorPalette.white.opacity(0.7))
                 .multilineTextAlignment(.center)

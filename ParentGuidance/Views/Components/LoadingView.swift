@@ -23,7 +23,7 @@ struct LoadingView: View {
                         .animation(.linear(duration: 1).repeatForever(autoreverses: false), value: isAnimating)
                 )
             
-            Text("Loading...")
+            Text(String(localized: "common.loading"))
                 .font(.headline)
                 .foregroundColor(ColorPalette.navy)
         }

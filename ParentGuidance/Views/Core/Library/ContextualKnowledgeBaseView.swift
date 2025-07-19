@@ -29,7 +29,7 @@ struct ContextualKnowledgeBaseView: View {
                     
                     Spacer()
                     
-                    Text("contextual knowledge base")
+                    Text(String(localized: "library.insights.title"))
                         .font(.system(size: 24, weight: .semibold))
                         .foregroundColor(ColorPalette.white.opacity(0.9))
                     
@@ -65,7 +65,7 @@ struct ContextualKnowledgeBaseView: View {
                 .scaleEffect(1.5)
                 .foregroundColor(ColorPalette.white.opacity(0.8))
             
-            Text("Loading insights...")
+            Text(String(localized: "library.insights.loading"))
                 .font(.system(size: 16))
                 .foregroundColor(ColorPalette.white.opacity(0.7))
         }
@@ -74,15 +74,15 @@ struct ContextualKnowledgeBaseView: View {
     
     private var errorView: some View {
         VStack(spacing: 16) {
-            Text("Unable to load insights")
+            Text(String(localized: "library.insights.error.title"))
                 .font(.system(size: 18, weight: .medium))
                 .foregroundColor(ColorPalette.white.opacity(0.9))
             
-            Text("Please try again later")
+            Text(String(localized: "library.insights.error.subtitle"))
                 .font(.system(size: 14))
                 .foregroundColor(ColorPalette.white.opacity(0.7))
             
-            Button("Retry") {
+            Button(String(localized: "common.retry")) {
                 Task {
                     await loadInsightCounts()
                 }
@@ -166,11 +166,11 @@ struct CategoryCardContent: View {
                     .lineLimit(2)
                 
                 if insightCount > 0 {
-                    Text("\(insightCount) insight\(insightCount == 1 ? "" : "s") collected")
+                    Text(String(localized: "library.insights.category.count \(insightCount)"))
                         .font(.system(size: 14))
                         .foregroundColor(ColorPalette.white.opacity(0.7))
                 } else {
-                    Text("No insights collected yet")
+                    Text(String(localized: "library.insights.category.empty"))
                         .font(.system(size: 14))
                         .foregroundColor(ColorPalette.white.opacity(0.5))
                 }

@@ -23,7 +23,7 @@ struct TodayViewController: View {
                 VStack {
                     ProgressView()
                         .tint(ColorPalette.terracotta)
-                    Text("Loading today's timeline...")
+                    Text(String(localized: "today.loading"))
                         .font(.system(size: 16))
                         .foregroundColor(ColorPalette.white.opacity(0.7))
                         .padding(.top, 8)
@@ -33,7 +33,7 @@ struct TodayViewController: View {
             } else if let error = errorMessage {
                 // Show error state (fallback to timeline)
                 VStack {
-                    Text("Unable to load timeline")
+                    Text(String(localized: "today.error.title"))
                         .font(.system(size: 18))
                         .foregroundColor(ColorPalette.white)
                     Text(error)

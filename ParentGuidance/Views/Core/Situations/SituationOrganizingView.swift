@@ -53,7 +53,7 @@ struct SituationOrganizingView: View {
             .padding(.bottom, 40)
             
             // Main text
-            Text("Organizing your guidance...")
+            Text(String(localized: "situation.organizing.title"))
                 .font(.system(size: 24, weight: .medium))
                 .foregroundColor(ColorPalette.white)
                 .multilineTextAlignment(.center)
@@ -61,7 +61,7 @@ struct SituationOrganizingView: View {
                 .padding(.bottom, 16)
             
             // Subtitle
-            Text("This will just take a moment")
+            Text(String(localized: "situation.organizing.subtitle"))
                 .font(.system(size: 16))
                 .foregroundColor(ColorPalette.white.opacity(0.7))
                 .multilineTextAlignment(.center)

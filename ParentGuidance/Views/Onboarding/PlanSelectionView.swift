@@ -72,13 +72,13 @@ struct PlanSelectionView: View {
     var body: some View {
         VStack(spacing: 0) {
             VStack(spacing: 4) {
-                Text("You're ready to start!")
+                Text(String(localized: "planSelection.title"))
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(ColorPalette.white)
                     .multilineTextAlignment(.center)
                 
-                Text("Choose your plan to continue")
+                Text(String(localized: "planSelection.subtitle"))
                     .font(.body)
                     .foregroundColor(ColorPalette.white.opacity(0.6))
                     .multilineTextAlignment(.center)
@@ -90,37 +90,37 @@ struct PlanSelectionView: View {
                 VStack(spacing: 12) {
                     PlanCard(
                         icon: "gearshape",
-                        title: "Bring Your Own API",
-                        description: "Full control & functionality",
+                        title: String(localized: "planSelection.bringOwnAPI.title"),
+                        description: String(localized: "planSelection.bringOwnAPI.description"),
                         price: nil,
-                        buttonText: "Use My API Key",
+                        buttonText: String(localized: "planSelection.bringOwnAPI.button"),
                         action: onBringOwnAPI
                     )
                     
                     PlanCard(
                         icon: "star",
-                        title: "Starter Plan",
-                        description: "Occasional use",
-                        price: "£3/month",
-                        buttonText: "Choose Starter Plan",
+                        title: String(localized: "planSelection.starter.title"),
+                        description: String(localized: "planSelection.starter.description"),
+                        price: String(localized: "planSelection.starter.price"),
+                        buttonText: String(localized: "planSelection.starter.button"),
                         action: onStarterPlan
                     )
                     
                     PlanCard(
                         icon: "person.2",
-                        title: "Family Plan",
-                        description: "Multiple children support",
-                        price: "£5/month",
-                        buttonText: "Choose Family Plan",
+                        title: String(localized: "planSelection.family.title"),
+                        description: String(localized: "planSelection.family.description"),
+                        price: String(localized: "planSelection.family.price"),
+                        buttonText: String(localized: "planSelection.family.button"),
                         action: onFamilyPlan
                     )
                     
                     PlanCard(
                         icon: "diamond",
-                        title: "Premium Plan",
-                        description: "Priority processing",
-                        price: "£10/month",
-                        buttonText: "Choose Premium Plan",
+                        title: String(localized: "planSelection.premium.title"),
+                        description: String(localized: "planSelection.premium.description"),
+                        price: String(localized: "planSelection.premium.price"),
+                        buttonText: String(localized: "planSelection.premium.button"),
                         action: onPremiumPlan
                     )
                 }

@@ -152,13 +152,13 @@ struct LibraryView: View {
             
             Spacer()
             
-            Button("Cancel") {
+            Button(String(localized: "common.cancel")) {
                 selectionManager.exitSelectionMode()
             }
             .font(.system(size: 14, weight: .medium))
             .foregroundColor(ColorPalette.white.opacity(0.8))
             
-            Button("Generate Framework") {
+            Button(String(localized: "library.selection.generateFramework")) {
                 print("Generate Framework tapped - placeholder for Step 5")
                 selectionManager.handleGenerateFrameworkTap()
             }

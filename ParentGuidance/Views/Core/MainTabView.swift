@@ -9,11 +9,11 @@ enum Tab: String, CaseIterable {
     
     var title: String {
         switch self {
-        case .today: return "Today"
-        case .new: return "New"
-        case .library: return "Library"
-        case .alerts: return "Alerts"
-        case .settings: return "Settings"
+        case .today: return String(localized: "tab.today")
+        case .new: return String(localized: "tab.new")
+        case .library: return String(localized: "tab.library")
+        case .alerts: return String(localized: "tab.alerts")
+        case .settings: return String(localized: "tab.settings")
         }
     }
     
@@ -61,7 +61,7 @@ struct TodayScreen: View {
     var body: some View {
         ZStack {
             ColorPalette.navy.ignoresSafeArea()
-            Text("Today Screen")
+            Text(String(localized: "screen.today.title"))
                 .font(.title)
                 .foregroundColor(ColorPalette.white)
         }
@@ -72,7 +72,7 @@ struct NewScreen: View {
     var body: some View {
         ZStack {
             ColorPalette.navy.ignoresSafeArea()
-            Text("New Screen")
+            Text(String(localized: "screen.new.title"))
                 .font(.title)
                 .foregroundColor(ColorPalette.white)
         }
@@ -83,7 +83,7 @@ struct LibraryScreen: View {
     var body: some View {
         ZStack {
             ColorPalette.navy.ignoresSafeArea()
-            Text("Library Screen")
+            Text(String(localized: "screen.library.title"))
                 .font(.title)
                 .foregroundColor(ColorPalette.white)
         }
@@ -94,7 +94,7 @@ struct AlertsScreen: View {
     var body: some View {
         ZStack {
             ColorPalette.navy.ignoresSafeArea()
-            Text("Alerts Screen")
+            Text(String(localized: "screen.alerts.title"))
                 .font(.title)
                 .foregroundColor(ColorPalette.white)
         }

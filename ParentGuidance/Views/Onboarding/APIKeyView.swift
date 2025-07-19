@@ -13,13 +13,13 @@ struct APIKeyView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     VStack(spacing: 8) {
-                        Text("Enter Your OpenAI API Key")
+                        Text(String(localized: "apiKey.title"))
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(ColorPalette.white)
                             .multilineTextAlignment(.center)
                         
-                        Text("Your key is stored securely and only used for your guidance")
+                        Text(String(localized: "apiKey.subtitle"))
                             .font(.body)
                             .foregroundColor(ColorPalette.white.opacity(0.7))
                             .multilineTextAlignment(.center)
@@ -28,7 +28,7 @@ struct APIKeyView: View {
                     .padding(.horizontal, 24)
                     
                     VStack(spacing: 16) {
-                        TextField("sk-...", text: $apiKey)
+                        TextField(String(localized: "apiKey.placeholder"), text: $apiKey)
                             .font(.system(size: 16))
                             .foregroundColor(ColorPalette.navy)
                             .padding(.horizontal, 16)
@@ -37,7 +37,7 @@ struct APIKeyView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                         
                         Button(action: { onTestConnection(apiKey) }) {
-                            Text("Test Connection")
+                            Text(String(localized: "apiKey.testConnection"))
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(ColorPalette.white)
                                 .frame(maxWidth: .infinity)
@@ -47,7 +47,7 @@ struct APIKeyView: View {
                         }
                         
                         Button(action: { onSaveAndContinue(apiKey) }) {
-                            Text("Save and Continue")
+                            Text(String(localized: "apiKey.saveAndContinue"))
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(ColorPalette.white)
                                 .frame(maxWidth: .infinity)
@@ -64,19 +64,19 @@ struct APIKeyView: View {
             }
             
             VStack(spacing: 8) {
-                Text("Need an API key?")
+                Text(String(localized: "apiKey.needKey"))
                     .font(.system(size: 14))
                     .foregroundColor(ColorPalette.white.opacity(0.9))
                 
                 HStack(spacing: 16) {
                     Button(action: onGetAPIKey) {
-                        Text("Get OpenAI API Key")
+                        Text(String(localized: "apiKey.getKey"))
                             .font(.system(size: 14, weight: .medium))
                             .foregroundColor(ColorPalette.terracotta)
                     }
                     
                     Button(action: onWhatsThis) {
-                        Text("What's this?")
+                        Text(String(localized: "apiKey.whatsThis"))
                             .font(.system(size: 14, weight: .medium))
                             .foregroundColor(ColorPalette.terracotta)
                     }

@@ -46,7 +46,7 @@ struct PaymentView: View {
         VStack(spacing: 0) {
             ScrollView {
                 VStack(spacing: 0) {
-                    Text("Complete Your Purchase")
+                    Text(String(localized: "payment.title"))
                         .font(.title2)
                         .fontWeight(.bold)
                         .foregroundColor(ColorPalette.white)
@@ -62,7 +62,7 @@ struct PaymentView: View {
                         
                         HStack {
                             Spacer()
-                            Text("Total: \(monthlyPrice)/month")
+                            Text(String(localized: "payment.total \(monthlyPrice)"))
                                 .font(.system(size: 16, weight: .bold))
                                 .foregroundColor(ColorPalette.white)
                         }
@@ -81,7 +81,7 @@ struct PaymentView: View {
                             .font(.system(size: 20))
                             .foregroundColor(ColorPalette.white)
                         
-                        Text("Pay")
+                        Text(String(localized: "payment.payButton"))
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(ColorPalette.white)
                     }
@@ -97,7 +97,7 @@ struct PaymentView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
                 
-                Text("Cancel anytime")
+                Text(String(localized: "payment.cancelAnytime"))
                     .font(.system(size: 12))
                     .foregroundColor(ColorPalette.white.opacity(0.6))
                     .multilineTextAlignment(.center)

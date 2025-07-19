@@ -74,7 +74,7 @@ struct SearchSituationsView: View {
                     
                     Spacer()
                     
-                    Text(isSelectionMode ? "Select Situations" : "Search Situations")
+                    Text(isSelectionMode ? String(localized: "library.search.selectTitle") : String(localized: "library.search.title"))
                         .font(.system(size: 24, weight: .semibold))
                         .foregroundColor(ColorPalette.white.opacity(0.9))
                     
@@ -156,14 +156,14 @@ struct SearchSituationsView: View {
             
             Spacer()
             
-            Button("Cancel") {
+            Button(String(localized: "common.cancel")) {
                 selectionManager.exitSelectionMode()
                 dismiss()
             }
             .font(.system(size: 14, weight: .medium))
             .foregroundColor(ColorPalette.white.opacity(0.8))
             
-            Button("Generate Framework") {
+            Button(String(localized: "library.selection.generateFramework")) {
                 print("Generate Framework tapped - placeholder for Step 5")
                 selectionManager.handleGenerateFrameworkTap()
                 dismiss()
@@ -208,7 +208,7 @@ struct SearchSituationsView: View {
                 .scaleEffect(1.5)
                 .foregroundColor(ColorPalette.white.opacity(0.8))
             
-            Text("Loading your situations...")
+            Text(String(localized: "library.search.loading"))
                 .font(.system(size: 16))
                 .foregroundColor(ColorPalette.white.opacity(0.7))
         }
@@ -218,7 +218,7 @@ struct SearchSituationsView: View {
     
     private var errorView: some View {
         VStack(spacing: 16) {
-            Text("Unable to load situations")
+            Text(String(localized: "library.search.error.title"))
                 .font(.system(size: 18, weight: .medium))
                 .foregroundColor(ColorPalette.white.opacity(0.9))
             
@@ -227,7 +227,7 @@ struct SearchSituationsView: View {
                 .foregroundColor(ColorPalette.white.opacity(0.7))
                 .multilineTextAlignment(.center)
             
-            Button("Try Again") {
+            Button(String(localized: "common.tryAgain")) {
                 controller.retry()
             }
             .foregroundColor(ColorPalette.terracotta)
@@ -239,11 +239,11 @@ struct SearchSituationsView: View {
     
     private var emptyView: some View {
         VStack(spacing: 16) {
-            Text("No situations yet")
+            Text(String(localized: "library.search.empty.title"))
                 .font(.system(size: 18, weight: .medium))
                 .foregroundColor(ColorPalette.white.opacity(0.9))
             
-            Text("Start by adding your first parenting situation in the New tab")
+            Text(String(localized: "library.search.empty.subtitle"))
                 .font(.system(size: 14))
                 .foregroundColor(ColorPalette.white.opacity(0.7))
                 .multilineTextAlignment(.center)
@@ -294,18 +294,18 @@ struct SearchSituationsView: View {
     
     private var searchResultsView: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Search Results (\(controller.filteredSituations.count))")
+            Text(String(localized: "library.search.results \(controller.filteredSituations.count)"))
                 .font(.system(size: 18, weight: .medium))
                 .foregroundColor(ColorPalette.white.opacity(0.9))
                 .padding(.horizontal, 16)
             
             if controller.filteredSituations.isEmpty {
                 VStack(spacing: 16) {
-                    Text("No situations found")
+                    Text(String(localized: "library.search.noResults.title"))
                         .font(.system(size: 16))
                         .foregroundColor(ColorPalette.white.opacity(0.7))
                     
-                    Text("Try a different search term")
+                    Text(String(localized: "library.search.noResults.subtitle"))
                         .font(.system(size: 14))
                         .foregroundColor(ColorPalette.white.opacity(0.5))
                 }
@@ -414,8 +414,8 @@ struct SearchSituationsView: View {
                     
                     // Confirmation dialog
                     ConfirmationDialog(
-                        title: "Delete Situation",
-                        message: "Are you sure you want to delete this situation? This action cannot be undone and will also remove any associated guidance.",
+                        title: String(localized: "library.delete.title"),
+                        message: String(localized: "library.delete.message"),
                         onDestruct: {
                             controller.confirmDelete()
                         },

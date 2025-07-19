@@ -14,6 +14,15 @@ struct AlertView: View {
     enum AlertCategory: String, CaseIterable {
         case recent = "Recent Alerts"
         case previous = "Previous Alerts"
+        
+        var localizedName: String {
+            switch self {
+            case .recent:
+                return String(localized: "alerts.category.recent")
+            case .previous:
+                return String(localized: "alerts.category.previous")
+            }
+        }
     }
     
     var body: some View {
@@ -24,7 +33,7 @@ struct AlertView: View {
                     Button(action: {
                         selectedCategory = category
                     }) {
-                        Text(category.rawValue)
+                        Text(category.localizedName)
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(selectedCategory == category ? ColorPalette.terracotta : ColorPalette.white.opacity(0.6))
                             .frame(maxWidth: .infinity)

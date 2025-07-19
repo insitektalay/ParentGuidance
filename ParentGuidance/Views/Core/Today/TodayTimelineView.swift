@@ -16,7 +16,7 @@ struct TodayTimelineView: View {
             VStack(alignment: .leading, spacing: 0) {
                 if situations.isEmpty {
                     // Empty state message
-                    Text("No situations recorded today")
+                    Text(String(localized: "today.timeline.empty"))
                         .font(.system(size: 16))
                         .foregroundColor(ColorPalette.white.opacity(0.7))
                         .padding(.top, 32)

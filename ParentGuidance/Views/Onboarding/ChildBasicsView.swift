@@ -63,13 +63,13 @@ struct ChildBasicsView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     VStack(spacing: 8) {
-                        Text("Tell us about your child")
+                        Text(String(localized: "childBasics.title"))
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(ColorPalette.white)
                             .multilineTextAlignment(.center)
                         
-                        Text("Just the basics to get started")
+                        Text(String(localized: "childBasics.subtitle"))
                             .font(.body)
                             .foregroundColor(ColorPalette.white.opacity(0.8))
                             .multilineTextAlignment(.center)
@@ -79,18 +79,18 @@ struct ChildBasicsView: View {
                     
                     VStack(spacing: 24) {
                         CustomTextField(
-                            label: "What should we call your child?",
-                            placeholder: "Child's name",
+                            label: String(localized: "childBasics.nameLabel"),
+                            placeholder: String(localized: "childBasics.namePlaceholder"),
                             text: $childName
                         )
                         
                         CustomDatePicker(
-                            label: "When was your child born?",
+                            label: String(localized: "childBasics.birthDateLabel"),
                             date: $birthDate
                         )
                         
                         Button(action: { onAddAnotherChild(childName, birthDate) }) {
-                            Text("+ Add Another Child")
+                            Text(String(localized: "childBasics.addAnother"))
                                 .font(.system(size: 16))
                                 .foregroundColor(ColorPalette.terracotta)
                                 .frame(maxWidth: .infinity)
@@ -105,13 +105,13 @@ struct ChildBasicsView: View {
             }
             
             VStack(spacing: 16) {
-                Text("You can add more details anytime in Settings")
+                Text(String(localized: "childBasics.moreDetailsHint"))
                     .font(.system(size: 14))
                     .foregroundColor(ColorPalette.white.opacity(0.6))
                     .multilineTextAlignment(.center)
                 
                 Button(action: { onContinue(childName, birthDate) }) {
-                    Text("Continue")
+                    Text(String(localized: "childBasics.continue"))
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(ColorPalette.white)
                         .frame(maxWidth: .infinity)

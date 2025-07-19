@@ -58,12 +58,12 @@ struct OnboardingCoordinator: View {
 
         case .payment:
             PaymentView(
-                planTitle: "\(selectedPlan?.capitalized ?? "") Plan – £5/month",
+                planTitle: String(localized: "onboarding.planTitle \(selectedPlan?.capitalized ?? "") Plan"),
                 monthlyPrice: "£5.00",
                 benefits: [
-                    "Up to 5 family members",
-                    "Premium features",
-                    "Priority support"
+                    String(localized: "onboarding.benefit.familyMembers"),
+                    String(localized: "onboarding.benefit.premiumFeatures"),
+                    String(localized: "onboarding.benefit.prioritySupport")
                 ],
                 onPayment: {
                     step = .child

@@ -68,13 +68,13 @@ struct ChildProfileEditView: View {
                 VStack(spacing: 24) {
                     // Header section
                     VStack(spacing: 8) {
-                        Text("Edit Child Profile")
+                        Text(String(localized: "childProfileEdit.title"))
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(ColorPalette.white)
                             .multilineTextAlignment(.center)
                         
-                        Text("Update your child's basic information")
+                        Text(String(localized: "childProfileEdit.subtitle"))
                             .font(.body)
                             .foregroundColor(ColorPalette.white.opacity(0.8))
                             .multilineTextAlignment(.center)
@@ -85,13 +85,13 @@ struct ChildProfileEditView: View {
                     // Form fields section
                     VStack(spacing: 24) {
                         SettingsTextField(
-                            label: "Child's Name",
-                            placeholder: "Enter name",
+                            label: String(localized: "childProfileEdit.nameLabel"),
+                            placeholder: String(localized: "childProfileEdit.namePlaceholder"),
                             text: $childName
                         )
                         
                         SettingsDatePicker(
-                            label: "Date of Birth",
+                            label: String(localized: "childProfileEdit.birthDateLabel"),
                             date: $birthDate
                         )
                     }
@@ -106,14 +106,14 @@ struct ChildProfileEditView: View {
             .navigationBarBackButtonHidden(true)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
+                    Button(String(localized: "common.cancel")) {
                         dismiss()
                     }
                     .foregroundColor(ColorPalette.white.opacity(0.8))
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(isSaving ? "Saving..." : "Save") {
+                    Button(isSaving ? String(localized: "childProfileEdit.saving") : String(localized: "common.save")) {
                         Task {
                             await handleSave()
                         }
@@ -126,12 +126,12 @@ struct ChildProfileEditView: View {
         .onAppear {
             loadChildData()
         }
-        .alert("Error", isPresented: $showingError) {
-            Button("OK") {
+        .alert(String(localized: "common.error.title"), isPresented: $showingError) {
+            Button(String(localized: "common.ok")) {
                 showingError = false
             }
         } message: {
-            Text(errorMessage ?? "An error occurred while saving")
+            Text(errorMessage ?? String(localized: "childProfileEdit.errorSaving"))
         }
     }
     
@@ -186,7 +186,7 @@ struct ChildProfileEditView: View {
             if success {
                 dismiss()
             } else {
-                errorMessage = "Failed to save child profile. Please try again."
+                errorMessage = String(localized: "childProfileEdit.saveFailure")
                 showingError = true
             }
         }

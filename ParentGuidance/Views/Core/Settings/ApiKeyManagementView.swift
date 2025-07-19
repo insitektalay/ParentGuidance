@@ -23,13 +23,13 @@ struct ApiKeyManagementView: View {
                 VStack(spacing: 24) {
                     // Header section
                     VStack(spacing: 8) {
-                        Text("API Key Management")
+                        Text(String(localized: "apiKeyManagement.title"))
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(ColorPalette.white)
                             .multilineTextAlignment(.center)
                         
-                        Text("Manage your OpenAI API key for personalized AI responses")
+                        Text(String(localized: "apiKeyManagement.subtitle"))
                             .font(.body)
                             .foregroundColor(ColorPalette.white.opacity(0.8))
                             .multilineTextAlignment(.center)
@@ -40,7 +40,7 @@ struct ApiKeyManagementView: View {
                     // Current API Key Status
                     VStack(spacing: 16) {
                         HStack {
-                            Text("Current Status")
+                            Text(String(localized: "apiKeyManagement.currentStatus"))
                                 .font(.system(size: 16, weight: .semibold))
                                 .foregroundColor(ColorPalette.white)
                             
@@ -48,7 +48,7 @@ struct ApiKeyManagementView: View {
                         }
                         
                         HStack {
-                            Text("API Key")
+                            Text(String(localized: "apiKeyManagement.apiKey"))
                                 .font(.system(size: 14))
                                 .foregroundColor(ColorPalette.white.opacity(0.9))
                             
@@ -61,7 +61,7 @@ struct ApiKeyManagementView: View {
                         
                         if let testResult = testResult {
                             HStack {
-                                Text("Connection")
+                                Text(String(localized: "apiKeyManagement.connection"))
                                     .font(.system(size: 14))
                                     .foregroundColor(ColorPalette.white.opacity(0.9))
                                 
@@ -72,7 +72,7 @@ struct ApiKeyManagementView: View {
                                     HStack(spacing: 4) {
                                         Image(systemName: "checkmark.circle.fill")
                                             .foregroundColor(.green)
-                                        Text("Connected")
+                                        Text(String(localized: "apiKeyManagement.connected"))
                                             .foregroundColor(.green)
                                     }
                                     .font(.system(size: 14))
@@ -81,7 +81,7 @@ struct ApiKeyManagementView: View {
                                     HStack(spacing: 4) {
                                         Image(systemName: "xmark.circle.fill")
                                             .foregroundColor(.red)
-                                        Text("Failed")
+                                        Text(String(localized: "apiKeyManagement.failed"))
                                             .foregroundColor(.red)
                                     }
                                     .font(.system(size: 14))
@@ -97,7 +97,7 @@ struct ApiKeyManagementView: View {
                     // API Key Input
                     VStack(spacing: 16) {
                         HStack {
-                            Text("Update API Key")
+                            Text(String(localized: "apiKeyManagement.updateKey"))
                                 .font(.system(size: 16, weight: .semibold))
                                 .foregroundColor(ColorPalette.white)
                             
@@ -105,11 +105,11 @@ struct ApiKeyManagementView: View {
                         }
                         
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("OpenAI API Key")
+                            Text(String(localized: "apiKeyManagement.openaiKey"))
                                 .font(.system(size: 14))
                                 .foregroundColor(ColorPalette.white.opacity(0.9))
                             
-                            SecureField("sk-...", text: $apiKey)
+                            SecureField(String(localized: "apiKeyManagement.placeholder"), text: $apiKey)
                                 .font(.system(size: 14, family: .monospaced))
                                 .foregroundColor(ColorPalette.navy)
                                 .padding(.horizontal, 16)
@@ -123,7 +123,7 @@ struct ApiKeyManagementView: View {
                         }
                         
                         HStack(spacing: 12) {
-                            Button(isTestingConnection ? "Testing..." : "Test Connection") {
+                            Button(isTestingConnection ? String(localized: "apiKeyManagement.testing") : String(localized: "apiKeyManagement.testConnection")) {
                                 Task {
                                     await testApiKey()
                                 }
@@ -153,14 +153,14 @@ struct ApiKeyManagementView: View {
             .navigationBarBackButtonHidden(true)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
+                    Button(String(localized: "common.cancel")) {
                         dismiss()
                     }
                     .foregroundColor(ColorPalette.white.opacity(0.8))
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(isSaving ? "Saving..." : "Save") {
+                    Button(isSaving ? String(localized: "apiKeyManagement.saving") : String(localized: "common.save")) {
                         Task {
                             await saveApiKey()
                         }
@@ -174,11 +174,11 @@ struct ApiKeyManagementView: View {
             loadCurrentApiKey()
         }
         .alert("Error", isPresented: $showingError) {
-            Button("OK") {
+            Button(String(localized: "common.ok")) {
                 showingError = false
             }
         } message: {
-            Text(errorMessage ?? "An error occurred")
+            Text(errorMessage ?? String(localized: "common.error.generic"))
         }
     }
     
@@ -205,7 +205,7 @@ struct ApiKeyManagementView: View {
             let suffix = String(currentKey.suffix(4))
             return "\(prefix)...\(suffix)"
         } else {
-            return "Not configured"
+            return String(localized: "apiKeyManagement.notConfigured")
         }
     }
     

@@ -72,7 +72,7 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
                 VStack {
                     ProgressView()
                         .tint(ColorPalette.terracotta)
-                    Text("Loading guidance...")
+                    Text(String(localized: "guidance.loading"))
                         .font(.system(size: 16))
                         .foregroundColor(ColorPalette.white.opacity(0.7))
                         .padding(.top, 8)
@@ -82,7 +82,7 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
             } else if let error = errorMessage {
                 // Error state
                 VStack {
-                    Text("Unable to load guidance")
+                    Text(String(localized: "guidance.error.title"))
                         .font(.system(size: 18))
                         .foregroundColor(ColorPalette.white)
                     Text(error)
@@ -90,7 +90,7 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
                         .foregroundColor(ColorPalette.white.opacity(0.6))
                         .padding(.top, 4)
                     
-                    Button("Try Again") {
+                    Button(String(localized: "common.tryAgain")) {
                         loadGuidance()
                     }
                     .foregroundColor(ColorPalette.terracotta)

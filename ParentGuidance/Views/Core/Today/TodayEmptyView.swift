@@ -15,7 +15,7 @@ struct TodayEmptyView: View {
             // Main content
             VStack(spacing: 24) {
                 // Main headline
-                Text("Let's build your daily routine support")
+                Text(String(localized: "today.empty.title"))
                     .font(.system(size: 28, weight: .medium))
                     .foregroundColor(ColorPalette.white)
                     .multilineTextAlignment(.center)
@@ -23,7 +23,7 @@ struct TodayEmptyView: View {
                     .padding(.horizontal, 32)
                 
                 // Subtitle
-                Text("Start by describing a parenting situation you're facing with Alex")
+                Text(String(localized: "today.empty.subtitle"))
                     .font(.system(size: 18))
                     .foregroundColor(ColorPalette.white.opacity(0.8))
                     .multilineTextAlignment(.center)
@@ -31,7 +31,7 @@ struct TodayEmptyView: View {
                     .padding(.horizontal, 32)
                 
                 // Description text
-                Text("The more situations you add, the more organized guidance you'll have for your daily routine")
+                Text(String(localized: "today.empty.description"))
                     .font(.system(size: 16))
                     .foregroundColor(ColorPalette.white.opacity(0.7))
                     .multilineTextAlignment(.center)
@@ -41,7 +41,7 @@ struct TodayEmptyView: View {
                 
                 // Create First Situation button
                 Button(action: onCreateFirstSituation) {
-                    Text("Create Your First Situation")
+                    Text(String(localized: "today.empty.createButton"))
                         .font(.system(size: 18, weight: .medium))
                         .foregroundColor(ColorPalette.white)
                         .frame(maxWidth: .infinity)
@@ -53,7 +53,7 @@ struct TodayEmptyView: View {
                 .padding(.bottom, 32)
                 
                 // Footer instruction
-                Text("Tap the + New tab below to get started")
+                Text(String(localized: "today.empty.instruction"))
                     .font(.system(size: 16))
                     .foregroundColor(ColorPalette.white.opacity(0.6))
                     .multilineTextAlignment(.center)

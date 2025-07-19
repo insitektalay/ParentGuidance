@@ -23,7 +23,7 @@ struct YourChildsWorldCard: View {
                     .font(.system(size: 20))
                     .foregroundColor(ColorPalette.brightBlue)
                 
-                Text("Your Child's World")
+                Text(String(localized: "library.childsWorld.title"))
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(ColorPalette.white)
                 
@@ -32,7 +32,7 @@ struct YourChildsWorldCard: View {
             
             // Description and insight count
             VStack(alignment: .leading, spacing: 8) {
-                Text("Contextual knowledge base")
+                Text(String(localized: "library.childsWorld.subtitle"))
                     .font(.system(size: 14))
                     .foregroundColor(ColorPalette.white.opacity(0.8))
                 
@@ -42,22 +42,22 @@ struct YourChildsWorldCard: View {
                             .scaleEffect(0.6)
                             .foregroundColor(ColorPalette.white.opacity(0.6))
                         
-                        Text("Loading insights...")
+                        Text(String(localized: "library.childsWorld.loading"))
                             .font(.system(size: 12))
                             .foregroundColor(ColorPalette.white.opacity(0.6))
                     }
                 } else if hasError {
-                    Text("Unable to load insights")
+                    Text(String(localized: "library.childsWorld.error"))
                         .font(.system(size: 12))
                         .foregroundColor(ColorPalette.white.opacity(0.6))
                 } else {
                     let totalInsights = insightCounts.values.reduce(0, +)
                     if totalInsights > 0 {
-                        Text("\(totalInsights) insights across \(insightCounts.count) categories")
+                        Text(String(localized: "library.childsWorld.count \(totalInsights) \(insightCounts.count)"))
                             .font(.system(size: 12))
                             .foregroundColor(ColorPalette.white.opacity(0.6))
                     } else {
-                        Text("No insights collected yet")
+                        Text(String(localized: "library.childsWorld.empty"))
                             .font(.system(size: 12))
                             .foregroundColor(ColorPalette.white.opacity(0.6))
                     }
@@ -67,7 +67,7 @@ struct YourChildsWorldCard: View {
             // Action button
             HStack(spacing: 12) {
                 Button(action: onViewInsights) {
-                    Text("View Insights")
+                    Text(String(localized: "library.childsWorld.button"))
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(ColorPalette.white)
                         .padding(.horizontal, 16)

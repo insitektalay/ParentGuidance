@@ -169,12 +169,12 @@ struct WelcomeView: View {
             
             VStack(alignment: .leading, spacing: 0) {
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("ParentPal")
+                    Text(String(localized: "welcome.title"))
                         .font(.title)
                         .fontWeight(.bold)
                         .foregroundColor(ColorPalette.white)
                     
-                    Text("Great parenting happens when you stay present and engaged with your child. Enhance your intuition—understand more, respond better.")
+                    Text(String(localized: "welcome.subtitle"))
                         .font(.body)
                         .italic()
                         .foregroundColor(ColorPalette.white)
@@ -186,7 +186,7 @@ struct WelcomeView: View {
                 Spacer()
                 
                 Button(action: onGetStarted) {
-                    Text("GET STARTED")
+                    Text(String(localized: "welcome.getStarted"))
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(ColorPalette.white)
                         .frame(maxWidth: .infinity)

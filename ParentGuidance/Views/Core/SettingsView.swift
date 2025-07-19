@@ -521,7 +521,7 @@ struct SettingsView: View {
     private var debugInfoSection: some View {
         VStack(spacing: 4) {
             HStack {
-                Text("iOS Version")
+                Text(String(localized: "settings.device.iosVersion"))
                     .font(.system(size: 12))
                     .foregroundColor(ColorPalette.white.opacity(0.6))
                 
@@ -533,7 +533,7 @@ struct SettingsView: View {
             }
             
             HStack {
-                Text("Device")
+                Text(String(localized: "settings.device.device"))
                     .font(.system(size: 12))
                     .foregroundColor(ColorPalette.white.opacity(0.6))
                 
@@ -546,7 +546,7 @@ struct SettingsView: View {
             
             if let userId = appCoordinator.currentUserId {
                 HStack {
-                    Text("User ID")
+                    Text(String(localized: "settings.device.userId"))
                         .font(.system(size: 12))
                         .foregroundColor(ColorPalette.white.opacity(0.6))
                     
@@ -610,7 +610,7 @@ struct SettingsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 // Settings title
-                Text("Settings")
+                Text(String(localized: "settings.title"))
                     .font(.system(size: 28, weight: .bold))
                     .foregroundColor(ColorPalette.white)
                     .padding(.horizontal, 16)
@@ -650,7 +650,7 @@ struct SettingsView: View {
                     }
                 )
             } else {
-                Text("ERROR: No child data")
+                Text(String(localized: "settings.error.noChildData"))
                     .foregroundColor(.red)
                     .padding()
             }
@@ -659,12 +659,12 @@ struct SettingsView: View {
             if let profile = userProfile {
                 NavigationView {
                     VStack {
-                        Text("API Key Management")
+                        Text(String(localized: "settings.apiKey.title"))
                             .font(.title2)
                             .foregroundColor(ColorPalette.white)
                             .padding()
                         
-                        Text("API Key management functionality coming soon")
+                        Text(String(localized: "settings.apiKey.comingSoon"))
                             .foregroundColor(ColorPalette.white.opacity(0.8))
                             .padding()
                         
@@ -675,7 +675,7 @@ struct SettingsView: View {
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .navigationBarLeading) {
-                            Button("Close") {
+                            Button(String(localized: "common.close")) {
                                 showingApiKeyManagement = false
                             }
                             .foregroundColor(ColorPalette.white)
@@ -685,7 +685,7 @@ struct SettingsView: View {
             }
         }
         .alert("Export Status", isPresented: $showingExportSuccess) {
-            Button("OK") {
+            Button(String(localized: "common.ok")) {
                 showingExportSuccess = false
                 exportSuccessMessage = nil
             }
@@ -704,7 +704,7 @@ struct SettingsView: View {
     
     private var foundationToolsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Foundation Tools")
+            Text(String(localized: "settings.foundationTools.title"))
                 .font(.system(size: 20, weight: .semibold))
                 .foregroundColor(ColorPalette.white)
                 .padding(.horizontal, 16)
@@ -735,7 +735,7 @@ struct SettingsView: View {
     
     private var guidanceStructureSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Guidance Structure")
+            Text(String(localized: "settings.guidanceStructure.title"))
                 .font(.system(size: 20, weight: .semibold))
                 .foregroundColor(ColorPalette.white)
                 .padding(.horizontal, 16)
@@ -748,7 +748,7 @@ struct SettingsView: View {
                         .foregroundColor(ColorPalette.brightBlue)
                     
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Active Mode")
+                        Text(String(localized: "settings.guidanceStructure.activeMode"))
                             .font(.system(size: 16, weight: .semibold))
                             .foregroundColor(ColorPalette.white)
                         
@@ -790,7 +790,7 @@ struct SettingsView: View {
                 
                 // Guidance Style selection
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Guidance Style")
+                    Text(String(localized: "settings.guidanceStructure.style"))
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(ColorPalette.white.opacity(0.9))
                         .padding(.top, 8)
@@ -798,7 +798,7 @@ struct SettingsView: View {
                     VStack(spacing: 8) {
                         // Warm & Practical toggle
                         HStack {
-                            Text("Warm & Practical")
+                            Text(String(localized: "settings.guidanceStructure.style.warmPractical"))
                                 .font(.system(size: 14))
                                 .foregroundColor(ColorPalette.white)
                             
@@ -824,7 +824,7 @@ struct SettingsView: View {
                         
                         // Analytical & Scientific toggle
                         HStack {
-                            Text("Analytical & Scientific")
+                            Text(String(localized: "settings.guidanceStructure.style.analyticalScientific"))
                                 .font(.system(size: 14))
                                 .foregroundColor(ColorPalette.white)
                             
@@ -853,7 +853,7 @@ struct SettingsView: View {
                 
                 // Mode benefits info
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Benefits of \(guidanceStructureSettings.currentMode.displayName)")
+                    Text(String(localized: "settings.guidanceStructure.benefits \(guidanceStructureSettings.currentMode.displayName)"))
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(ColorPalette.white.opacity(0.9))
                     
@@ -866,7 +866,7 @@ struct SettingsView: View {
                 
                 // Action buttons
                 HStack(spacing: 12) {
-                    Button("Learn More") {
+                    Button(String(localized: "settings.guidanceStructure.learnMore")) {
                         showingDocumentation = true
                     }
                     .font(.system(size: 14, weight: .medium))
@@ -876,7 +876,7 @@ struct SettingsView: View {
                     .background(ColorPalette.brightBlue)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                     
-                    Button("Preview Mode") {
+                    Button(String(localized: "settings.guidanceStructure.previewMode")) {
                         // TODO: Add preview functionality
                     }
                     .font(.system(size: 14, weight: .medium))
@@ -901,14 +901,14 @@ struct SettingsView: View {
     
     private var childProfileSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Child Profile")
+            Text(String(localized: "settings.childProfile.title"))
                 .font(.system(size: 20, weight: .semibold))
                 .foregroundColor(ColorPalette.white)
                 .padding(.horizontal, 16)
             
             VStack(alignment: .leading, spacing: 16) {
                 HStack {
-                    Text("Child Name")
+                    Text(String(localized: "settings.childProfile.name"))
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(ColorPalette.white.opacity(0.9))
                     
@@ -920,7 +920,7 @@ struct SettingsView: View {
                 }
                 
                 HStack {
-                    Text("Age")
+                    Text(String(localized: "settings.childProfile.age"))
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(ColorPalette.white.opacity(0.9))
                     
@@ -931,7 +931,7 @@ struct SettingsView: View {
                         .foregroundColor(ColorPalette.white.opacity(0.7))
                 }
                 
-                Button("Edit Profile") {
+                Button(String(localized: "settings.childProfile.editProfile")) {
                     if appCoordinator.children.first != nil {
                         showingChildEdit = true
                     }
@@ -948,14 +948,14 @@ struct SettingsView: View {
     
     private var accountSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Account")
+            Text(String(localized: "settings.account.title"))
                 .font(.system(size: 20, weight: .semibold))
                 .foregroundColor(ColorPalette.white)
                 .padding(.horizontal, 16)
             
             VStack(alignment: .leading, spacing: 16) {
                 HStack {
-                    Text("Email")
+                    Text(String(localized: "settings.account.email"))
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(ColorPalette.white.opacity(0.9))
                     
@@ -967,7 +967,7 @@ struct SettingsView: View {
                 }
                 
                 HStack {
-                    Text("Plan")
+                    Text(String(localized: "settings.account.plan"))
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(ColorPalette.white.opacity(0.9))
                     
@@ -979,7 +979,7 @@ struct SettingsView: View {
                 }
                 
                 HStack {
-                    Text("API Key")
+                    Text(String(localized: "settings.account.apiKey"))
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(ColorPalette.white.opacity(0.9))
                     
@@ -991,14 +991,14 @@ struct SettingsView: View {
                 }
                 
                 if shouldShowApiKeyManagement() {
-                    Button("Manage API Key") {
+                    Button(String(localized: "settings.account.manageApiKey")) {
                         showingApiKeyManagement = true
                     }
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(ColorPalette.terracotta)
                 }
                 
-                Button("Sign Out") {
+                Button(String(localized: "settings.account.signOut")) {
                     showingSignOutConfirmation = true
                 }
                 .font(.system(size: 14, weight: .medium))
@@ -1013,7 +1013,7 @@ struct SettingsView: View {
     
     private var privacyDataSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Privacy & Data")
+            Text(String(localized: "settings.privacyData.title"))
                 .font(.system(size: 20, weight: .semibold))
                 .foregroundColor(ColorPalette.white)
                 .padding(.horizontal, 16)
@@ -1029,14 +1029,14 @@ struct SettingsView: View {
                 .foregroundColor(ColorPalette.white.opacity(0.9))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
-                Button("Privacy Policy") {
+                Button(String(localized: "settings.privacyData.privacyPolicy")) {
                     showingPrivacyPolicy = true
                 }
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(ColorPalette.white.opacity(0.9))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
-                Button("Delete Account") {
+                Button(String(localized: "settings.account.deleteAccount")) {
                     deleteConfirmationStep = 0
                     showingDeleteConfirmation = true
                 }
@@ -1053,20 +1053,20 @@ struct SettingsView: View {
     
     private var helpSupportSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Help & Support")
+            Text(String(localized: "settings.helpSupport.title"))
                 .font(.system(size: 20, weight: .semibold))
                 .foregroundColor(ColorPalette.white)
                 .padding(.horizontal, 16)
             
             VStack(alignment: .leading, spacing: 16) {
-                Button("Documentation") {
+                Button(String(localized: "settings.helpSupport.documentation")) {
                     showingDocumentation = true
                 }
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(ColorPalette.white.opacity(0.9))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
-                Button("Contact Support") {
+                Button(String(localized: "settings.helpSupport.contactSupport")) {
                     openSupportEmail()
                 }
                 .font(.system(size: 16, weight: .medium))
@@ -1075,7 +1075,7 @@ struct SettingsView: View {
                 
                 VStack(spacing: 8) {
                     HStack {
-                        Text("App Version")
+                        Text(String(localized: "settings.helpSupport.appVersion"))
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(ColorPalette.white.opacity(0.9))
                         
@@ -1090,7 +1090,7 @@ struct SettingsView: View {
                     }
                     
                     HStack {
-                        Text("Build")
+                        Text(String(localized: "settings.helpSupport.build"))
                             .font(.system(size: 14))
                             .foregroundColor(ColorPalette.white.opacity(0.7))
                         
@@ -1122,7 +1122,7 @@ struct SettingsView: View {
                 .scaleEffect(0.8)
                 .foregroundColor(ColorPalette.white)
             
-            Text("Loading framework status...")
+            Text(String(localized: "settings.foundationTools.loading"))
                 .font(.system(size: 14))
                 .foregroundColor(ColorPalette.white.opacity(0.7))
         }
@@ -1130,7 +1130,7 @@ struct SettingsView: View {
     
     private func errorFrameworkView(_ errorMessage: String) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Unable to load framework status")
+            Text(String(localized: "settings.foundationTools.error"))
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(ColorPalette.white.opacity(0.9))
             
@@ -1138,7 +1138,7 @@ struct SettingsView: View {
                 .font(.system(size: 14))
                 .foregroundColor(ColorPalette.white.opacity(0.7))
             
-            Button("Try Again") {
+            Button(String(localized: "common.tryAgain")) {
                 Task {
                     await frameworkState.loadFrameworks(familyId: appCoordinator.currentUserId)
                 }
@@ -1151,7 +1151,7 @@ struct SettingsView: View {
     private var frameworkListView: some View {
         VStack(alignment: .leading, spacing: 16) {
             // Section header with count
-            Text("Your Frameworks (\(frameworkState.frameworks.count))")
+            Text(String(localized: "settings.foundationTools.frameworks \(frameworkState.frameworks.count)"))
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(ColorPalette.white.opacity(0.9))
             
@@ -1175,20 +1175,20 @@ struct SettingsView: View {
     
     private var noFrameworksView: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Framework Status")
+            Text(String(localized: "settings.foundationTools.status"))
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(ColorPalette.white.opacity(0.9))
             
-            Text("No frameworks set up yet")
+            Text(String(localized: "settings.foundationTools.noFrameworks"))
                 .font(.system(size: 14))
                 .foregroundColor(ColorPalette.white.opacity(0.7))
             
-            Text("Generate frameworks by selecting situations from your Library and tapping 'Set Up Framework'.")
+            Text(String(localized: "settings.foundationTools.generateHint"))
                 .font(.system(size: 12))
                 .foregroundColor(ColorPalette.white.opacity(0.6))
                 .lineLimit(nil)
             
-            Button("Go to Library") {
+            Button(String(localized: "settings.foundationTools.goToLibrary")) {
                 // TODO: Navigate to Library tab
             }
             .font(.system(size: 14, weight: .medium))
@@ -1487,12 +1487,12 @@ struct DeleteAccountConfirmationDialog: View {
     
     private var firstStepContent: some View {
         VStack(spacing: 16) {
-            Text("Delete Account?")
+            Text(String(localized: "settings.account.delete.title"))
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(ColorPalette.navy)
             
-            Text("This action will permanently delete your account and all associated data including:")
+            Text(String(localized: "settings.account.delete.warning"))
                 .font(.body)
                 .foregroundColor(ColorPalette.navy.opacity(0.8))
                 .multilineTextAlignment(.center)
@@ -1500,19 +1500,19 @@ struct DeleteAccountConfirmationDialog: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     Image(systemName: "person.crop.circle")
-                    Text("Your profile and account information")
+                    Text(String(localized: "settings.account.delete.item.profile"))
                 }
                 HStack {
                     Image(systemName: "figure.child")
-                    Text("All child profiles and data")
+                    Text(String(localized: "settings.account.delete.item.children"))
                 }
                 HStack {
                     Image(systemName: "bubble.left.and.bubble.right")
-                    Text("All situations and guidance history")
+                    Text(String(localized: "settings.account.delete.item.history"))
                 }
                 HStack {
                     Image(systemName: "chart.bar.doc.horizontal")
-                    Text("All framework recommendations")
+                    Text(String(localized: "settings.account.delete.item.frameworks"))
                 }
             }
             .font(.system(size: 14))
@@ -1546,17 +1546,17 @@ struct DeleteAccountConfirmationDialog: View {
     
     private var secondStepContent: some View {
         VStack(spacing: 16) {
-            Text("Are You Sure?")
+            Text(String(localized: "settings.account.delete.confirm.title"))
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(ColorPalette.navy)
             
-            Text("We recommend exporting your data first. Once deleted, this data cannot be recovered.")
+            Text(String(localized: "settings.account.delete.confirm.warning"))
                 .font(.body)
                 .foregroundColor(ColorPalette.navy.opacity(0.8))
                 .multilineTextAlignment(.center)
             
-            Text("This action is permanent and irreversible.")
+            Text(String(localized: "settings.account.delete.confirm.permanent"))
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(.red)
                 .multilineTextAlignment(.center)
@@ -1589,12 +1589,12 @@ struct DeleteAccountConfirmationDialog: View {
     
     private var finalStepContent: some View {
         VStack(spacing: 16) {
-            Text("Final Confirmation")
+            Text(String(localized: "settings.account.delete.final.title"))
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(.red)
             
-            Text("Type DELETE to confirm account deletion")
+            Text(String(localized: "settings.account.delete.final.instruction"))
                 .font(.body)
                 .foregroundColor(ColorPalette.navy.opacity(0.8))
                 .multilineTextAlignment(.center)
@@ -1603,7 +1603,7 @@ struct DeleteAccountConfirmationDialog: View {
                 VStack(spacing: 12) {
                     ProgressView()
                         .scaleEffect(1.2)
-                    Text("Deleting account...")
+                    Text(String(localized: "settings.account.delete.deleting"))
                         .font(.system(size: 16))
                         .foregroundColor(ColorPalette.navy.opacity(0.7))
                 }
@@ -1674,7 +1674,7 @@ struct PrivacyPolicyView: View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    Text("Privacy Policy")
+                    Text(String(localized: "settings.privacyData.privacyPolicy"))
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .foregroundColor(ColorPalette.white)
@@ -1710,7 +1710,7 @@ struct PrivacyPolicyView: View {
                         content: "For privacy-related questions or concerns, please contact us through the Support section in Settings."
                     )
                     
-                    Text("Last updated: July 2025")
+                    Text(String(localized: "settings.privacyData.lastUpdated"))
                         .font(.caption)
                         .foregroundColor(ColorPalette.white.opacity(0.6))
                         .padding(.top, 24)
@@ -1756,7 +1756,7 @@ struct DocumentationView: View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    Text("Documentation")
+                    Text(String(localized: "settings.helpSupport.documentation"))
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .foregroundColor(ColorPalette.white)

@@ -23,7 +23,7 @@ struct SearchSituationsCard: View {
                     .font(.system(size: 20))
                     .foregroundColor(ColorPalette.brightBlue)
                 
-                Text("Search Situations")
+                Text(String(localized: "library.searchCard.title"))
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(ColorPalette.white)
                 
@@ -32,7 +32,7 @@ struct SearchSituationsCard: View {
             
             // Description and situation count
             VStack(alignment: .leading, spacing: 8) {
-                Text("Find and organize your parenting situations")
+                Text(String(localized: "library.searchCard.subtitle"))
                     .font(.system(size: 14))
                     .foregroundColor(ColorPalette.white.opacity(0.8))
                 
@@ -42,21 +42,21 @@ struct SearchSituationsCard: View {
                             .scaleEffect(0.6)
                             .foregroundColor(ColorPalette.white.opacity(0.6))
                         
-                        Text("Loading situations...")
+                        Text(String(localized: "library.searchCard.loading"))
                             .font(.system(size: 12))
                             .foregroundColor(ColorPalette.white.opacity(0.6))
                     }
                 } else if hasError {
-                    Text("Unable to load situations")
+                    Text(String(localized: "library.searchCard.error"))
                         .font(.system(size: 12))
                         .foregroundColor(ColorPalette.white.opacity(0.6))
                 } else {
                     if situationCount > 0 {
-                        Text("\(situationCount) situations available to search")
+                        Text(String(localized: "library.searchCard.count \(situationCount)"))
                             .font(.system(size: 12))
                             .foregroundColor(ColorPalette.white.opacity(0.6))
                     } else {
-                        Text("No situations collected yet")
+                        Text(String(localized: "library.searchCard.empty"))
                             .font(.system(size: 12))
                             .foregroundColor(ColorPalette.white.opacity(0.6))
                     }
@@ -66,7 +66,7 @@ struct SearchSituationsCard: View {
             // Action button
             HStack(spacing: 12) {
                 Button(action: onSearchSituations) {
-                    Text("Search Situations")
+                    Text(String(localized: "library.searchCard.button"))
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(ColorPalette.white)
                         .padding(.horizontal, 16)

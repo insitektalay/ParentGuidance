@@ -176,12 +176,12 @@ struct AuthenticationView: View {
                 
                 VStack(spacing: 32) {
                     VStack(spacing: 8) {
-                        Text("Sign in to continue")
+                        Text(String(localized: "auth.signInTitle"))
                             .font(.title2)
                             .fontWeight(.semibold)
                             .foregroundColor(ColorPalette.white)
                         
-                        Text("Quick and secure access to your parenting co-pilot")
+                        Text(String(localized: "auth.signInSubtitle"))
                             .font(.body)
                             .foregroundColor(ColorPalette.white.opacity(0.6))
                             .multilineTextAlignment(.center)
@@ -190,7 +190,7 @@ struct AuthenticationView: View {
                     VStack(spacing: 12) {
                         CustomSocialButton(
                             customIcon: AnyView(AppleIcon()),
-                            label: "Continue with Apple",
+                            label: String(localized: "auth.continueWithApple"),
                             variant: .apple,
                             action: {
                                 Task {
@@ -207,7 +207,7 @@ struct AuthenticationView: View {
                         
                         CustomSocialButton(
                             customIcon: AnyView(GoogleIcon()),
-                            label: "Continue with Google",
+                            label: String(localized: "auth.continueWithGoogle"),
                             variant: .google,
                             action: {
                                 Task {
@@ -224,7 +224,7 @@ struct AuthenticationView: View {
                         
                         CustomSocialButton(
                             customIcon: AnyView(FacebookIcon()),
-                            label: "Continue with Facebook",
+                            label: String(localized: "auth.continueWithFacebook"),
                             variant: .facebook,
                             action: {
                                 Task {
@@ -241,7 +241,7 @@ struct AuthenticationView: View {
                         
                         SocialButton(
                             icon: "envelope",
-                            label: "Continue with Email",
+                            label: String(localized: "auth.continueWithEmail"),
                             variant: .email,
                             action: {
                                 Task {
@@ -272,7 +272,7 @@ struct AuthenticationView: View {
                 Spacer()
             }
             
-            Text("We protect your privacy and never share your data")
+            Text(String(localized: "auth.privacyNote"))
                 .font(.body)
                 .foregroundColor(ColorPalette.white.opacity(0.6))
                 .multilineTextAlignment(.center)

@@ -112,7 +112,7 @@ struct FoundationToolCard: View {
                 }
             }
         } message: {
-            Text("Are you sure you want to deactivate your current framework? You can always reactivate it later from your framework recommendations.")
+            Text(String(localized: "foundation.deactivate.message"))
         }
     }
     
@@ -124,7 +124,7 @@ struct FoundationToolCard: View {
                 .scaleEffect(0.8)
                 .foregroundColor(ColorPalette.white)
             
-            Text("Loading framework status...")
+            Text(String(localized: "foundation.loading"))
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(ColorPalette.white)
             
@@ -141,7 +141,7 @@ struct FoundationToolCard: View {
                     .foregroundColor(ColorPalette.brightBlue)
                 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Active Framework")
+                    Text(String(localized: "foundation.active.title"))
                         .font(.system(size: 12, weight: .medium))
                         .foregroundColor(ColorPalette.brightBlue)
                     
@@ -160,7 +160,7 @@ struct FoundationToolCard: View {
                     .foregroundColor(ColorPalette.white.opacity(0.8))
                     .lineLimit(2)
             } else {
-                Text("Your personalized parenting framework is now active and guiding your approach.")
+                Text(String(localized: "foundation.active.description"))
                     .font(.system(size: 14))
                     .foregroundColor(ColorPalette.white.opacity(0.8))
                     .lineLimit(2)
@@ -169,7 +169,7 @@ struct FoundationToolCard: View {
             // Action buttons for active framework
             HStack(spacing: 12) {
                 Button(action: onViewTools) {
-                    Text("Framework Guide")
+                    Text(String(localized: "foundation.active.guide"))
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(ColorPalette.white)
                         .padding(.horizontal, 16)
@@ -181,7 +181,7 @@ struct FoundationToolCard: View {
                 Button(action: {
                     frameworkState.showingDeactivationAlert = true
                 }) {
-                    Text("Deactivate")
+                    Text(String(localized: "foundation.active.deactivate"))
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(ColorPalette.terracotta)
                         .padding(.horizontal, 16)
@@ -205,7 +205,7 @@ struct FoundationToolCard: View {
                     .font(.system(size: 20))
                     .foregroundColor(ColorPalette.white)
                 
-                Text("Foundational Framework Not Yet Established")
+                Text(String(localized: "foundation.inactive.title"))
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(ColorPalette.white)
                 
@@ -213,7 +213,7 @@ struct FoundationToolCard: View {
             }
             
             // Description
-            Text("Select situations from your library to generate a personalized parenting framework recommendation")
+            Text(String(localized: "foundation.inactive.description"))
                 .font(.system(size: 14))
                 .foregroundColor(ColorPalette.white.opacity(0.8))
                 .lineLimit(nil)
@@ -221,7 +221,7 @@ struct FoundationToolCard: View {
             // Action buttons
             HStack(spacing: 12) {
                 Button(action: onViewTools) {
-                    Text("View tools")
+                    Text(String(localized: "foundation.inactive.viewTools"))
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(ColorPalette.white)
                         .padding(.horizontal, 16)
@@ -231,7 +231,7 @@ struct FoundationToolCard: View {
                 }
                 
                 Button(action: onSetupFramework) {
-                    Text("Set Up Framework")
+                    Text(String(localized: "foundation.inactive.setup"))
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(ColorPalette.terracotta)
                         .padding(.horizontal, 16)

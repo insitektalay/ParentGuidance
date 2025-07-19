@@ -41,7 +41,7 @@ struct FrameworkRecommendationView: View {
                     // Status indicator and title
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
-                            Text(isActive ? "Active Framework" : "Framework Recommendation")
+                            Text(isActive ? String(localized: "alerts.framework.active") : String(localized: "alerts.framework.recommendation"))
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(isActive ? ColorPalette.brightBlue : ColorPalette.terracotta)
                                 .padding(.horizontal, 8)
@@ -80,7 +80,7 @@ struct FrameworkRecommendationView: View {
                     }
                     
                     // Disclaimer
-                    Text("This framework was selected based on your specific situation patterns and is designed to provide consistent strategies for your family.")
+                    Text(String(localized: "alerts.framework.disclaimer"))
                         .font(.system(size: 14))
                         .foregroundColor(ColorPalette.navy.opacity(0.6))
                         .lineSpacing(2)
@@ -91,7 +91,7 @@ struct FrameworkRecommendationView: View {
                             // Active framework buttons
                             HStack(spacing: 8) {
                                 Button(action: onLearnMore) {
-                                    Text("Framework Guide")
+                                    Text(String(localized: "alerts.framework.guide"))
                                         .font(.system(size: 14, weight: .medium))
                                         .foregroundColor(ColorPalette.white)
                                         .padding(.horizontal, 16)
@@ -101,7 +101,7 @@ struct FrameworkRecommendationView: View {
                                 }
                                 
                                 Button(action: {}) {
-                                    Text("View Progress")
+                                    Text(String(localized: "alerts.framework.progress"))
                                         .font(.system(size: 14, weight: .medium))
                                         .foregroundColor(ColorPalette.brightBlue)
                                         .padding(.horizontal, 16)
@@ -114,7 +114,7 @@ struct FrameworkRecommendationView: View {
                             // Recommendation buttons
                             HStack(spacing: 8) {
                                 Button(action: onActivate) {
-                                    Text("Activate Framework")
+                                    Text(String(localized: "alerts.framework.activate"))
                                         .font(.system(size: 14, weight: .medium))
                                         .foregroundColor(ColorPalette.white)
                                         .padding(.horizontal, 16)
@@ -124,7 +124,7 @@ struct FrameworkRecommendationView: View {
                                 }
                                 
                                 Button(action: onLearnMore) {
-                                    Text("Learn More")
+                                    Text(String(localized: "alerts.framework.learnMore"))
                                         .font(.system(size: 14, weight: .medium))
                                         .foregroundColor(ColorPalette.terracotta)
                                         .padding(.horizontal, 16)
@@ -251,7 +251,7 @@ struct FrameworkAlertContainer: View {
                 HStack {
                     ProgressView()
                         .scaleEffect(0.8)
-                    Text("Loading framework...")
+                    Text(String(localized: "alerts.framework.loading"))
                         .font(.system(size: 14))
                         .foregroundColor(ColorPalette.navy.opacity(0.6))
                 }
@@ -264,7 +264,7 @@ struct FrameworkAlertContainer: View {
             } else if let errorMessage = frameworkState.errorMessage {
                 // Error state
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Unable to load frameworks")
+                    Text(String(localized: "alerts.framework.error.title"))
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(ColorPalette.navy)
                     
@@ -272,7 +272,7 @@ struct FrameworkAlertContainer: View {
                         .font(.system(size: 14))
                         .foregroundColor(ColorPalette.navy.opacity(0.6))
                     
-                    Button("Try Again") {
+                    Button(String(localized: "common.tryAgain")) {
                         Task {
                             await frameworkState.loadFramework()
                         }
@@ -311,16 +311,16 @@ struct FrameworkAlertContainer: View {
             } else {
                 // Empty state - no frameworks
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("No Framework Recommendations Yet")
+                    Text(String(localized: "alerts.framework.empty.title"))
                         .font(.system(size: 18, weight: .medium))
                         .foregroundColor(ColorPalette.navy)
                     
-                    Text("Generate a personalized parenting framework by selecting multiple situations from your Library and tapping 'Set Up Framework'.")
+                    Text(String(localized: "alerts.framework.empty.subtitle"))
                         .font(.system(size: 14))
                         .foregroundColor(ColorPalette.navy.opacity(0.6))
                         .lineSpacing(2)
                     
-                    Button("Go to Library") {
+                    Button(String(localized: "alerts.framework.goToLibrary")) {
                         print("Navigate to Library tab")
                         // TODO: Navigate to Library tab
                     }

@@ -43,6 +43,7 @@
 		944EA1B02E2B653D00C110AF /* FamilyInvitationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1AF2E2B653D00C110AF /* FamilyInvitationService.swift */; };
 		944EA1B22E2B6BB100C110AF /* FamilyChoiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1B12E2B6BB100C110AF /* FamilyChoiceView.swift */; };
 		944EA1B42E2B6BBE00C110AF /* JoinFamilyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1B32E2B6BBE00C110AF /* JoinFamilyView.swift */; };
+		944EA1B62E2B70AC00C110AF /* TranslationQueueManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1B52E2B70AC00C110AF /* TranslationQueueManager.swift */; };
 		9481564C2E23CDC000C28273 /* ChildProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */; };
 		9481564E2E25334C00C28273 /* AudioPermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564D2E25334C00C28273 /* AudioPermissionManager.swift */; };
 		948156502E2533EE00C28273 /* VoiceRecorderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */; };
@@ -167,6 +168,7 @@
 		944EA1AF2E2B653D00C110AF /* FamilyInvitationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyInvitationService.swift; sourceTree = "<group>"; };
 		944EA1B12E2B6BB100C110AF /* FamilyChoiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyChoiceView.swift; sourceTree = "<group>"; };
 		944EA1B32E2B6BBE00C110AF /* JoinFamilyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinFamilyView.swift; sourceTree = "<group>"; };
+		944EA1B52E2B70AC00C110AF /* TranslationQueueManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationQueueManager.swift; sourceTree = "<group>"; };
 		9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildProfileEditView.swift; sourceTree = "<group>"; };
 		9481564D2E25334C00C28273 /* AudioPermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPermissionManager.swift; sourceTree = "<group>"; };
 		9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorderError.swift; sourceTree = "<group>"; };
@@ -438,6 +440,7 @@
 				944EA1AB2E2B567A00C110AF /* LanguageDetectionService.swift */,
 				944EA1AD2E2B652D00C110AF /* TranslationService.swift */,
 				944EA1AF2E2B653D00C110AF /* FamilyInvitationService.swift */,
+				944EA1B52E2B70AC00C110AF /* TranslationQueueManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -847,6 +850,7 @@
 				948156522E25370900C28273 /* VoiceRecorderService.swift in Sources */,
 				94FA11332E05CC40003EC1E9 /* RoutineCard.swift in Sources */,
 				944EA1B02E2B653D00C110AF /* FamilyInvitationService.swift in Sources */,
+				944EA1B62E2B70AC00C110AF /* TranslationQueueManager.swift in Sources */,
 				948605CE2E115CB2008D92DE /* AlertView.swift in Sources */,
 				943DFDA22E1A86A4004F8043 /* OnboardingManager.swift in Sources */,
 				943DFD7D2E182650004F8043 /* CategoryFilterChips.swift in Sources */,

@@ -170,37 +170,30 @@ class ConversationService: ObservableObject {
             }
             
             let targetLanguageName = FamilyLanguageService.shared.getLanguageName(for: targetLanguageCode)
-            print("🎯 Translating to: \(targetLanguageName) (\(targetLanguageCode))")
+            print("🎯 Translation needed for: \(targetLanguageName) (\(targetLanguageCode))")
             
-            // Step 4: Translate content using TranslationService
-            let translatedContent = try await TranslationService.shared.translateContent(
-                text: content,
-                targetLanguage: targetLanguageName,
-                apiKey: apiKey
-            )
-            
-            print("✅ Translation completed")
-            print("📝 Translated preview: \(translatedContent.prefix(100))...")
-            
-            // Step 5: Validate translation quality
-            let validation = TranslationService.shared.validateTranslation(
-                original: content,
-                translated: translatedContent
-            )
-            
-            if !validation.isValid {
-                print("⚠️ Translation validation warnings: \(validation.warnings.joined(separator: ", "))")
-                // Continue anyway but log the warnings
-            }
-            
-            // Step 6: Update guidance with translated content
-            try await updateGuidanceWithTranslation(
+            // Step 4: Update guidance with secondary language info and mark as pending translation
+            try await updateGuidanceForTranslation(
                 guidanceId: guidanceId,
-                secondaryContent: translatedContent,
                 secondaryLanguage: targetLanguageCode
             )
             
-            print("✅ Dual-language guidance generation completed successfully")
+            // Step 5: Queue translation for background processing (Phase 3)
+            let translationTask = TranslationQueueManager.TranslationTask(
+                id: UUID().uuidString,
+                guidanceId: guidanceId,
+                content: content,
+                targetLanguage: targetLanguageCode,
+                targetLanguageName: targetLanguageName,
+                familyId: familyId,
+                apiKey: apiKey,
+                priority: .high // New guidance gets high priority
+            )
+            
+            TranslationQueueManager.shared.enqueue(task: translationTask)
+            
+            print("📥 Translation queued for background processing")
+            print("✅ Guidance saved, translation will complete asynchronously")
             return guidanceId
             
         } catch {
@@ -236,6 +229,34 @@ class ConversationService: ObservableObject {
             
         } catch {
             print("❌ Failed to update guidance with translation: \(error)")
+            throw error
+        }
+    }
+    
+    /// Update guidance to prepare for translation (Phase 3)
+    private func updateGuidanceForTranslation(
+        guidanceId: String,
+        secondaryLanguage: String
+    ) async throws {
+        print("📝 Preparing guidance \(guidanceId) for translation")
+        
+        let updateData: [String: String] = [
+            "secondary_language": secondaryLanguage,
+            "translation_status": "pending",
+            "updated_at": ISO8601DateFormatter().string(from: Date())
+        ]
+        
+        do {
+            try await SupabaseManager.shared.client
+                .from("guidance")
+                .update(updateData)
+                .eq("id", value: guidanceId)
+                .execute()
+            
+            print("✅ Guidance marked for translation")
+            
+        } catch {
+            print("❌ Failed to prepare guidance for translation: \(error)")
             throw error
         }
     }

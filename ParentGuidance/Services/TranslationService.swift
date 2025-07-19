@@ -6,12 +6,21 @@
 //
 
 import Foundation
+import CryptoKit
 
 /// Service for translating content using OpenAI Prompts API
 class TranslationService {
     static let shared = TranslationService()
     
-    private init() {}
+    private init() {
+        // Start cache cleanup timer
+        startCacheCleanupTimer()
+    }
+    
+    // MARK: - Translation Cache
+    
+    private let cache = TranslationCache()
+    private var cacheCleanupTimer: Timer?
     
     // MARK: - Translation Configuration
     
@@ -45,6 +54,13 @@ class TranslationService {
         
         guard !apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             throw TranslationError.invalidAPIKey
+        }
+        
+        // Check cache first
+        let cacheKey = cache.generateKey(text: text, targetLanguage: targetLanguage)
+        if let cachedTranslation = cache.get(key: cacheKey) {
+            print("✅ Translation found in cache")
+            return cachedTranslation
         }
         
         let url = URL(string: promptsAPIURL)!
@@ -104,6 +120,9 @@ class TranslationService {
             
             print("✅ Translation completed successfully")
             print("📝 Translated preview: \(translatedText.prefix(100))...")
+            
+            // Store in cache
+            cache.set(key: cacheKey, translation: translatedText)
             
             return translatedText
             
@@ -194,6 +213,104 @@ class TranslationService {
         }
         
         return warnings
+    }
+    
+    // MARK: - Cache Management
+    
+    private func startCacheCleanupTimer() {
+        cacheCleanupTimer = Timer.scheduledTimer(withTimeInterval: 3600, repeats: true) { _ in
+            Task {
+                await self.cache.cleanup()
+            }
+        }
+    }
+    
+    deinit {
+        cacheCleanupTimer?.invalidate()
+    }
+}
+
+// MARK: - Translation Cache
+
+/// In-memory cache for translation results
+class TranslationCache {
+    private var cache: [String: CachedTranslation] = [:]
+    private let queue = DispatchQueue(label: "com.parentguidance.translationcache", attributes: .concurrent)
+    private let maxSize = 100
+    private let ttl: TimeInterval = 86400 // 24 hours
+    
+    struct CachedTranslation {
+        let translation: String
+        let timestamp: Date
+        
+        var isExpired: Bool {
+            Date().timeIntervalSince(timestamp) > 86400
+        }
+    }
+    
+    /// Generate cache key from text and target language
+    func generateKey(text: String, targetLanguage: String) -> String {
+        let input = "\(text)|\(targetLanguage)"
+        let inputData = Data(input.utf8)
+        let hashed = SHA256.hash(data: inputData)
+        return hashed.compactMap { String(format: "%02x", $0) }.joined()
+    }
+    
+    /// Get translation from cache
+    func get(key: String) -> String? {
+        queue.sync {
+            guard let cached = cache[key], !cached.isExpired else {
+                return nil
+            }
+            print("📊 Cache hit for key: \(key.prefix(8))...")
+            return cached.translation
+        }
+    }
+    
+    /// Store translation in cache
+    func set(key: String, translation: String) {
+        queue.async(flags: .barrier) {
+            // If cache is full, remove oldest entries
+            if self.cache.count >= self.maxSize {
+                self.removeOldestEntries(count: 10)
+            }
+            
+            self.cache[key] = CachedTranslation(
+                translation: translation,
+                timestamp: Date()
+            )
+            print("💾 Cached translation for key: \(key.prefix(8))...")
+        }
+    }
+    
+    /// Clean up expired entries
+    func cleanup() async {
+        await withCheckedContinuation { continuation in
+            queue.async(flags: .barrier) {
+                let before = self.cache.count
+                self.cache = self.cache.filter { !$0.value.isExpired }
+                let after = self.cache.count
+                print("🧹 Cache cleanup: removed \(before - after) expired entries")
+                continuation.resume()
+            }
+        }
+    }
+    
+    /// Get cache statistics
+    func getStats() -> (count: Int, hitRate: Double) {
+        queue.sync {
+            return (cache.count, 0.0) // Hit rate would need request tracking
+        }
+    }
+    
+    private func removeOldestEntries(count: Int) {
+        let sortedKeys = cache.sorted { $0.value.timestamp < $1.value.timestamp }
+            .prefix(count)
+            .map { $0.key }
+        
+        for key in sortedKeys {
+            cache.removeValue(forKey: key)
+        }
     }
 }
 

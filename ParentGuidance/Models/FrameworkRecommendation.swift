@@ -14,22 +14,63 @@ struct FrameworkRecommendation: Codable, Identifiable, Equatable {
     let id: String
     let frameworkName: String
     let notificationText: String
+    let originalLanguage: String
+    let secondaryFrameworkName: String?
+    let secondaryNotificationText: String?
+    let secondaryLanguage: String?
     let createdAt: String
     
     /// Initialize a new framework recommendation
-    init(frameworkName: String, notificationText: String) {
+    init(frameworkName: String, notificationText: String, originalLanguage: String = "en") {
         self.id = UUID().uuidString
         self.frameworkName = frameworkName
         self.notificationText = notificationText
+        self.originalLanguage = originalLanguage
+        self.secondaryFrameworkName = nil
+        self.secondaryNotificationText = nil
+        self.secondaryLanguage = nil
         self.createdAt = ISO8601DateFormatter().string(from: Date())
     }
     
     /// Initialize from parsed API response
-    init(id: String = UUID().uuidString, frameworkName: String, notificationText: String, createdAt: String) {
+    init(id: String = UUID().uuidString, frameworkName: String, notificationText: String, createdAt: String, originalLanguage: String = "en") {
         self.id = id
         self.frameworkName = frameworkName
         self.notificationText = notificationText
+        self.originalLanguage = originalLanguage
+        self.secondaryFrameworkName = nil
+        self.secondaryNotificationText = nil
+        self.secondaryLanguage = nil
         self.createdAt = createdAt
+    }
+    
+    // MARK: - Language Support Methods
+    
+    /// Get the framework name in the user's preferred language
+    func getFrameworkName(for userLanguage: String) -> String {
+        if userLanguage == originalLanguage {
+            return frameworkName
+        } else if userLanguage == secondaryLanguage, let secondaryName = secondaryFrameworkName {
+            return secondaryName
+        } else {
+            return frameworkName // Fallback to original
+        }
+    }
+    
+    /// Get the notification text in the user's preferred language
+    func getNotificationText(for userLanguage: String) -> String {
+        if userLanguage == originalLanguage {
+            return notificationText
+        } else if userLanguage == secondaryLanguage, let secondaryText = secondaryNotificationText {
+            return secondaryText
+        } else {
+            return notificationText // Fallback to original
+        }
+    }
+    
+    /// Check if this framework has content in the specified language
+    func hasContentInLanguage(_ language: String) -> Bool {
+        return originalLanguage == language || secondaryLanguage == language
     }
 }
 

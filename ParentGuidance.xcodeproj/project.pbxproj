@@ -37,6 +37,8 @@
 		943DFD9D2E1A863A004F8043 /* DatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD9C2E1A863A004F8043 /* DatabaseService.swift */; };
 		943DFDA22E1A86A4004F8043 /* OnboardingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFDA12E1A86A4004F8043 /* OnboardingManager.swift */; };
 		944EA1A82E2B30E000C110AF /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 944EA1A72E2B30E000C110AF /* Localizable.xcstrings */; };
+		944EA1AA2E2B566400C110AF /* FamilyLanguageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1A92E2B566400C110AF /* FamilyLanguageService.swift */; };
+		944EA1AC2E2B567A00C110AF /* LanguageDetectionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1AB2E2B567A00C110AF /* LanguageDetectionService.swift */; };
 		9481564C2E23CDC000C28273 /* ChildProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */; };
 		9481564E2E25334C00C28273 /* AudioPermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564D2E25334C00C28273 /* AudioPermissionManager.swift */; };
 		948156502E2533EE00C28273 /* VoiceRecorderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */; };
@@ -155,6 +157,8 @@
 		943DFD9C2E1A863A004F8043 /* DatabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseService.swift; sourceTree = "<group>"; };
 		943DFDA12E1A86A4004F8043 /* OnboardingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingManager.swift; sourceTree = "<group>"; };
 		944EA1A72E2B30E000C110AF /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		944EA1A92E2B566400C110AF /* FamilyLanguageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyLanguageService.swift; sourceTree = "<group>"; };
+		944EA1AB2E2B567A00C110AF /* LanguageDetectionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageDetectionService.swift; sourceTree = "<group>"; };
 		9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildProfileEditView.swift; sourceTree = "<group>"; };
 		9481564D2E25334C00C28273 /* AudioPermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPermissionManager.swift; sourceTree = "<group>"; };
 		9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorderError.swift; sourceTree = "<group>"; };
@@ -422,6 +426,8 @@
 				948156532E253D4400C28273 /* VoiceRecorderDelegate.swift */,
 				948156592E2773FC00C28273 /* DynamicGuidanceParser.swift */,
 				9481565D2E29023B00C28273 /* ContextualInsightService.swift */,
+				944EA1A92E2B566400C110AF /* FamilyLanguageService.swift */,
+				944EA1AB2E2B567A00C110AF /* LanguageDetectionService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -817,6 +823,7 @@
 				94FA11102E05C88A003EC1E9 /* TodayView.swift in Sources */,
 				94FA110B2E056D40003EC1E9 /* APIKeyView.swift in Sources */,
 				943DFD9B2E1A85EE004F8043 /* ConversationService.swift in Sources */,
+				944EA1AA2E2B566400C110AF /* FamilyLanguageService.swift in Sources */,
 				943DFD892E18269D004F8043 /* ExportSheet.swift in Sources */,
 				94FA111F2E05CBAA003EC1E9 /* SituationInputIdleView.swift in Sources */,
 				943792A32E1BE9850089F512 /* LibrarySelectionManager.swift in Sources */,
@@ -830,6 +837,7 @@
 				943DFD7D2E182650004F8043 /* CategoryFilterChips.swift in Sources */,
 				9481566C2E2A11E200C28273 /* RegulationInsightsView.swift in Sources */,
 				943792AB2E1C34520089F512 /* FrameworkGeneratingView.swift in Sources */,
+				944EA1AC2E2B567A00C110AF /* LanguageDetectionService.swift in Sources */,
 				94FA11342E05CC50003EC1E9 /* GuidanceCard.swift in Sources */,
 				943DFD7B2E182640004F8043 /* SortDropdown.swift in Sources */,
 				943DFD932E1A85A2004F8043 /* Guidance.swift in Sources */,

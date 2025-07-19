@@ -22,6 +22,10 @@ struct Situation: Codable {
     let isFavorited: Bool
     let category: String?
     let isIncident: Bool
+    let originalLanguage: String
+    let secondaryTitle: String?
+    let secondaryDescription: String?
+    let secondaryLanguage: String?
     let createdAt: String
     let updatedAt: String
     
@@ -39,6 +43,10 @@ struct Situation: Codable {
         case isFavorited = "is_favorited"
         case category
         case isIncident = "is_incident"
+        case originalLanguage = "original_language"
+        case secondaryTitle = "secondary_title"
+        case secondaryDescription = "secondary_description"
+        case secondaryLanguage = "secondary_language"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
     }
@@ -51,7 +59,8 @@ struct Situation: Codable {
         situationType: String = "one_time",
         isFavorited: Bool = false,
         category: String? = nil,
-        isIncident: Bool = false
+        isIncident: Bool = false,
+        originalLanguage: String = "en"
     ) {
         self.id = UUID().uuidString
         self.familyId = familyId
@@ -66,6 +75,10 @@ struct Situation: Codable {
         self.isFavorited = isFavorited
         self.category = category
         self.isIncident = isIncident
+        self.originalLanguage = originalLanguage
+        self.secondaryTitle = nil
+        self.secondaryDescription = nil
+        self.secondaryLanguage = nil
         self.createdAt = ISO8601DateFormatter().string(from: Date())
         self.updatedAt = ISO8601DateFormatter().string(from: Date())
     }
@@ -85,6 +98,10 @@ struct Situation: Codable {
         self.isFavorited = isFavorited // Only this changes
         self.category = situation.category // Preserve original category
         self.isIncident = situation.isIncident // Preserve original incident status
+        self.originalLanguage = situation.originalLanguage // Preserve original language
+        self.secondaryTitle = situation.secondaryTitle // Preserve secondary content
+        self.secondaryDescription = situation.secondaryDescription
+        self.secondaryLanguage = situation.secondaryLanguage
         self.createdAt = situation.createdAt // Preserve original date
         self.updatedAt = situation.updatedAt // Preserve original date
     }
@@ -107,6 +124,12 @@ struct Situation: Codable {
         // Handle analysis fields with defaults for backwards compatibility
         category = try? container.decodeIfPresent(String.self, forKey: .category)
         isIncident = (try? container.decode(Bool.self, forKey: .isIncident)) ?? false
+        
+        // Handle language fields with defaults
+        originalLanguage = (try? container.decode(String.self, forKey: .originalLanguage)) ?? "en"
+        secondaryTitle = try? container.decodeIfPresent(String.self, forKey: .secondaryTitle)
+        secondaryDescription = try? container.decodeIfPresent(String.self, forKey: .secondaryDescription)
+        secondaryLanguage = try? container.decodeIfPresent(String.self, forKey: .secondaryLanguage)
         
         // Handle JSONB fields - decode as nil for now
         followUpResponses = nil
@@ -136,5 +159,34 @@ struct Situation: Codable {
         try container.encodeIfPresent(timingContext as? [String: String], forKey: .timingContext)
         try container.encodeIfPresent(environmentalContext as? [String: String], forKey: .environmentalContext)
         try container.encodeIfPresent(emotionalContext as? [String: String], forKey: .emotionalContext)
+    }
+    
+    // MARK: - Language Support Methods
+    
+    /// Get the title in the user's preferred language
+    func getTitle(for userLanguage: String) -> String {
+        if userLanguage == originalLanguage {
+            return title
+        } else if userLanguage == secondaryLanguage, let secondaryTitle = secondaryTitle {
+            return secondaryTitle
+        } else {
+            return title // Fallback to original
+        }
+    }
+    
+    /// Get the description in the user's preferred language
+    func getDescription(for userLanguage: String) -> String {
+        if userLanguage == originalLanguage {
+            return description
+        } else if userLanguage == secondaryLanguage, let secondaryDescription = secondaryDescription {
+            return secondaryDescription
+        } else {
+            return description // Fallback to original
+        }
+    }
+    
+    /// Check if this situation has content in the specified language
+    func hasContentInLanguage(_ language: String) -> Bool {
+        return originalLanguage == language || secondaryLanguage == language
     }
 }

@@ -1041,6 +1041,16 @@
         }
       }
     },
+    "settings.account.language" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Language"
+          }
+        }
+      }
+    },
     "settings.account.manageApiKey" : {
       "localizations" : {
         "en" : {
@@ -2237,6 +2247,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Set Up Framework"
+          }
+        }
+      }
+    },
+    "settings.language.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select Language"
+          }
+        }
+      }
+    },
+    "settings.language.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose your preferred language for the app interface and AI-generated content."
+          }
+        }
+      }
+    },
+    "settings.language.familyNote.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Family Language Support"
+          }
+        }
+      }
+    },
+    "settings.language.familyNote.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If you and your partner speak different languages, ParentGuidance can automatically generate content in both languages so you can both access the guidance in your preferred language."
           }
         }
       }

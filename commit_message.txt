@@ -1,12 +1,12 @@
-feat: implement child regulation insights service integration with OpenAI and database operations
+feat: implement Phase 1 dual-language content foundation for two-parent families
 
-Add comprehensive service layer for Child_Regulation_Insights prompt integration:
-    - Extend ContextualInsightService with extractChildRegulationInsights() method
-    - Integrate OpenAI Prompts API call using prompt pmpt_6877c15da6388196a389c79feeefd4e30cccdbe5ba3909fb v5
-    - Add robust JSON response parsing with fallback text parsing for Core/ADHD/Mild Autism categories
-    - Implement complete database CRUD operations for insight_bullet_points table
-    - Add filtering capabilities by family, child, category, and situation
-    - Include insight counting and deletion functionality following existing Supabase patterns
+Add comprehensive multilingual support infrastructure to enable AI-generated content in multiple languages when parents speak different   languages. This phase establishes the foundational data models and services needed for automatic dual-language content generation.
 
-Service layer is ready for NewSituationView integration to automatically extract behavioral
-observations from parent-submitted situations in the background workflow.
+Key changes:
+- Database schema: Added language tracking columns to profiles, situations, guidance, framework_recommendations, and contextual_insights tables
+- Models: Enhanced UserProfile, Situation, Guidance, and FrameworkRecommendation with dual-language properties and helper methods
+- Services: Implemented LanguageDetectionService (50+ languages via NaturalLanguage framework) and FamilyLanguageService for family language   configuration management
+- UI: Added language selection interface in Settings with localized strings
+- Architecture: Designed LanguageAwareContent protocol for consistent language support across all content types
+
+All changes maintain backward compatibility with existing English-only content. Sets foundation for Phase 2 AI translation integration.

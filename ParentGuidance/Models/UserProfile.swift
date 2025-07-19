@@ -22,6 +22,7 @@ struct UserProfile: Codable {
     let subscriptionId: String?
     let userApiKey: String?
     let apiKeyProvider: String?
+    let preferredLanguage: String
     let createdAt: String
     let updatedAt: String
     
@@ -40,6 +41,7 @@ struct UserProfile: Codable {
         subscriptionId = try container.decodeIfPresent(String.self, forKey: .subscriptionId)
         userApiKey = try container.decodeIfPresent(String.self, forKey: .userApiKey)
         apiKeyProvider = try container.decodeIfPresent(String.self, forKey: .apiKeyProvider)
+        preferredLanguage = try container.decodeIfPresent(String.self, forKey: .preferredLanguage) ?? "en"
         createdAt = try container.decode(String.self, forKey: .createdAt)
         updatedAt = try container.decode(String.self, forKey: .updatedAt)
         
@@ -75,6 +77,7 @@ struct UserProfile: Codable {
         case subscriptionId = "subscription_id"
         case userApiKey = "user_api_key"
         case apiKeyProvider = "api_key_provider"
+        case preferredLanguage = "preferred_language"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
     }

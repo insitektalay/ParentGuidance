@@ -10,6 +10,8 @@ import SwiftUI
 enum OnboardingStep {
     case welcome
     case auth
+    case familyChoice
+    case joinFamily
     case plan
     case payment
     case apiKey
@@ -19,6 +21,8 @@ enum OnboardingStep {
 struct OnboardingCoordinator: View {
     @State private var step: OnboardingStep = .welcome
     @State private var selectedPlan: String? = nil
+    @State private var isJoiningFamily: Bool = false
+    @State private var joinedFamilyId: String? = nil
 
     var body: some View {
         switch step {
@@ -29,11 +33,33 @@ struct OnboardingCoordinator: View {
 
         case .auth:
             AuthenticationView(
-                onAppleSignIn: { step = .plan },
-                onGoogleSignIn: { step = .plan },
-                onFacebookSignIn: { step = .plan },
-                onEmailSignIn: { _, _ in step = .plan },
+                onAppleSignIn: { step = .familyChoice },
+                onGoogleSignIn: { step = .familyChoice },
+                onFacebookSignIn: { step = .familyChoice },
+                onEmailSignIn: { _, _ in step = .familyChoice },
                 onBackTapped: { step = .welcome }
+            )
+
+        case .familyChoice:
+            FamilyChoiceView(
+                onCreateFamily: {
+                    isJoiningFamily = false
+                    step = .plan
+                },
+                onJoinFamily: {
+                    isJoiningFamily = true
+                    step = .joinFamily
+                },
+                onBackTapped: { step = .auth }
+            )
+
+        case .joinFamily:
+            JoinFamilyView(
+                onSuccessfulJoin: { familyId in
+                    joinedFamilyId = familyId
+                    step = .plan
+                },
+                onBackTapped: { step = .familyChoice }
             )
 
         case .plan:
@@ -66,7 +92,11 @@ struct OnboardingCoordinator: View {
                     String(localized: "onboarding.benefit.prioritySupport")
                 ],
                 onPayment: {
-                    step = .child
+                    if isJoiningFamily {
+                        print("✅ Family joiner onboarding complete — transition to ContentView()")
+                    } else {
+                        step = .child
+                    }
                 }
             )
 
@@ -74,7 +104,11 @@ struct OnboardingCoordinator: View {
             APIKeyView(
                 onTestConnection: { _ in },
                 onSaveAndContinue: { _ in
-                    step = .child
+                    if isJoiningFamily {
+                        print("✅ Family joiner onboarding complete — transition to ContentView()")
+                    } else {
+                        step = .child
+                    }
                 },
                 onGetAPIKey: {},
                 onWhatsThis: {}

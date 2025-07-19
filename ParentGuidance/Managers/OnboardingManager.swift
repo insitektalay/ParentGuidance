@@ -53,6 +53,47 @@ struct OnboardingFlow: View {
                     }
                 }
             )
+        case .familyChoice:
+            FamilyChoiceView(
+                onCreateFamily: {
+                    Task {
+                        await MainActor.run {
+                            appCoordinator.currentState = .onboarding(.plan)
+                        }
+                    }
+                },
+                onJoinFamily: {
+                    Task {
+                        await MainActor.run {
+                            appCoordinator.currentState = .onboarding(.joinFamily)
+                        }
+                    }
+                },
+                onBackTapped: {
+                    Task {
+                        await MainActor.run {
+                            appCoordinator.currentState = .onboarding(.auth)
+                        }
+                    }
+                }
+            )
+        case .joinFamily:
+            JoinFamilyView(
+                onSuccessfulJoin: { familyId in
+                    Task {
+                        await MainActor.run {
+                            appCoordinator.currentState = .onboarding(.plan)
+                        }
+                    }
+                },
+                onBackTapped: {
+                    Task {
+                        await MainActor.run {
+                            appCoordinator.currentState = .onboarding(.familyChoice)
+                        }
+                    }
+                }
+            )
         case .plan:
             PlanSelectionView(
                 onBringOwnAPI: {

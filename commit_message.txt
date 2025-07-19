@@ -1,7 +1,11 @@
-feat: implement Phase 2 dual-language family system with invitation flow
-- Add FamilyInvitationService for second parent joining via invitation codes
-- Implement TranslationService using OpenAI Prompts API with user's template
-- Enhance FamilyLanguageService with comprehensive language name mapping
-- Add dual-language content generation to ConversationService
-- Fix Supabase type conformance issues for Encodable compliance
-- All services integrated with existing database schema and error handling
+feat: complete Phase 2 onboarding flow with family joining support
+  - Add familyChoice and joinFamily steps to onboarding flow
+  - Implement FamilyChoiceView for create/join family selection
+  - Implement JoinFamilyView with invitation code validation and usage
+  - Update OnboardingCoordinator to handle dual-path onboarding
+  - Update AppCoordinator routing to start with family choice after auth
+  - Update OnboardingManager with new view cases
+  - Modify payment and API key flows to skip child setup for family joiners
+  - Fix all switch exhaustiveness compilation errors
+  - Build successful with all Phase 2 features integrated
+  Note: Localization strings pending for new views

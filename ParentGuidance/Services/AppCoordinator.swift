@@ -94,7 +94,7 @@ class AppCoordinator: ObservableObject {
                     self.currentUserId = userId
                     // For new users without profiles, familyId equals userId
                     self.currentFamilyId = userId
-                    self.currentState = .onboarding(.plan)
+                    self.currentState = .onboarding(.familyChoice)
                 }
                 return
             }
@@ -113,8 +113,8 @@ class AppCoordinator: ObservableObject {
                     print("🎯 Routing decision: Onboarding incomplete → \(nextStep)")
                     self.currentState = .onboarding(nextStep)
                 } else {
-                    print("🎯 Routing decision: Fallback → Plan selection")
-                    self.currentState = .onboarding(.plan)
+                    print("🎯 Routing decision: Fallback → Family choice")
+                    self.currentState = .onboarding(.familyChoice)
                 }
             }
             
@@ -127,7 +127,7 @@ class AppCoordinator: ObservableObject {
                 self.currentUserId = userId
                 // For users with loading errors, familyId equals userId as fallback
                 self.currentFamilyId = userId
-                self.currentState = .onboarding(.plan)
+                self.currentState = .onboarding(.familyChoice)
             }
         }
     }
@@ -229,6 +229,17 @@ class AppCoordinator: ObservableObject {
                     print("🎯 Auth completed → Handled by handleSuccessfulAuthentication")
                     // Authentication completion is handled by handleSuccessfulAuthentication
                     break
+                    
+                case .familyChoice:
+                    print("🎯 Family choice completed → Handled by coordinator")
+                    // Family choice routing is handled by OnboardingCoordinator
+                    break
+                    
+                case .joinFamily:
+                    print("🎯 Join family completed → Plan selection")
+                    await MainActor.run {
+                        self.currentState = .onboarding(.plan)
+                    }
                     
                 case .plan:
                     print("🎯 Plan selection completed → Checking next step")

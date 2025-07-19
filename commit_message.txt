@@ -1,12 +1,15 @@
-feat: enhance SettingsView with comprehensive family language management
-
-Add advanced family language configuration and analytics interface:
-  - Enhanced SettingsView with dedicated family language section
-  - Family language overview showing members, languages, and translation needs
-  - Interactive translation strategy selection with smart recommendations
-  - Real-time usage analytics dashboard with language breakdown
-  - Cost implications display for different translation strategies
-  - Created TranslationStrategySelectionView for strategy management
-  - Integration with FamilyLanguageService and TranslationQueueManager analytics
-  - Visual language indicators and usage pattern insights
-  - Automatic strategy recommendations based on family usage patterns
+feat: complete Phase 6.2 - enhanced GuidanceCard with language toggle functionality
+  - Added comprehensive language toggle UI components to GuidanceCard including:
+    * Translation progress indicators with percentage display
+    * Language toggle button with dynamic text (Translate/Original)
+    * Prominent language toggle banner when viewing translations
+    * Translation error banner with retry functionality
+    * Enhanced language indicators with translation icons
+  - Integrated enhanced GuidanceCard with SituationGuidanceView:
+    * Added helper methods for language state detection
+    * Implemented translation retry mechanism
+    * Added support for original language detection
+    * Enhanced error handling and progress tracking
+  - Built and tested successfully with all new functionality working
+  - Provides complete user control over language display in guidance cards
+  - Enables seamless switching between original and translated content

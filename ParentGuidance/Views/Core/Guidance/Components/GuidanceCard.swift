@@ -6,15 +6,19 @@ struct GuidanceCard: View {
     let isActive: Bool
     var translationStatus: TranslationDisplayStatus? = nil
     var selectedLanguage: String? = nil
+    var originalLanguage: String? = nil
     var canSwitchLanguage: Bool = false
     var onLanguageSwitch: (() -> Void)? = nil
+    var isShowingOriginal: Bool = true
+    var translationProgress: Double? = nil
+    var onRetryTranslation: (() -> Void)? = nil
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             // Card container
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
-                    // Category title with language indicator
+                    // Category title with enhanced language controls
                     HStack {
                         Text(title)
                             .font(.system(size: 20, weight: .medium))
@@ -22,24 +26,38 @@ struct GuidanceCard: View {
                         
                         Spacer()
                         
-                        // Translation status and language indicator
+                        // Enhanced translation status and language controls
                         HStack(spacing: 8) {
+                            // Translation progress indicator
+                            if let progress = translationProgress {
+                                translationProgressIndicator(progress: progress)
+                            }
+                            
+                            // Translation status indicator
                             if let status = translationStatus {
                                 translationStatusIndicator(status: status)
                             }
                             
-                            if let language = selectedLanguage, language != "en" {
-                                languageIndicator(language: language)
+                            // Current language indicator
+                            if let language = selectedLanguage {
+                                languageIndicator(language: language, isOriginal: isShowingOriginal)
                             }
                             
+                            // Language toggle button (enhanced)
                             if canSwitchLanguage, let onLanguageSwitch = onLanguageSwitch {
-                                Button(action: onLanguageSwitch) {
-                                    Image(systemName: "globe")
-                                        .font(.system(size: 14, weight: .medium))
-                                        .foregroundColor(ColorPalette.white.opacity(0.7))
-                                }
+                                languageToggleButton(onSwitch: onLanguageSwitch)
                             }
                         }
+                    }
+                    
+                    // Language toggle banner (for prominent display)
+                    if canSwitchLanguage && !isShowingOriginal {
+                        languageToggleBanner
+                    }
+                    
+                    // Translation error banner
+                    if let status = translationStatus, status == .failed {
+                        translationErrorBanner
                     }
                     
                     // Content text
@@ -115,6 +133,100 @@ struct GuidanceCard: View {
         return attributedString
     }
     
+    // MARK: - Enhanced Translation UI Components
+    
+    @ViewBuilder
+    private func translationProgressIndicator(progress: Double) -> some View {
+        HStack(spacing: 4) {
+            ProgressView(value: progress, total: 1.0)
+                .progressViewStyle(LinearProgressViewStyle(tint: ColorPalette.brightBlue))
+                .frame(width: 30, height: 3)
+            
+            Text("\(Int(progress * 100))%")
+                .font(.system(size: 10, weight: .medium))
+                .foregroundColor(ColorPalette.white.opacity(0.7))
+        }
+    }
+    
+    @ViewBuilder
+    private func languageToggleButton(onSwitch: @escaping () -> Void) -> some View {
+        Button(action: onSwitch) {
+            HStack(spacing: 4) {
+                Image(systemName: "arrow.left.arrow.right")
+                    .font(.system(size: 12, weight: .medium))
+                
+                Text(isShowingOriginal ? "Translate" : "Original")
+                    .font(.system(size: 11, weight: .medium))
+            }
+            .foregroundColor(ColorPalette.white.opacity(0.8))
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(ColorPalette.white.opacity(0.1))
+            .cornerRadius(6)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+    
+    private var languageToggleBanner: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "translate")
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(ColorPalette.brightBlue)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(String(localized: "guidance.translation.viewingTranslated"))
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(ColorPalette.white.opacity(0.9))
+                
+                Text(String(localized: "guidance.translation.tapToViewOriginal"))
+                    .font(.system(size: 10))
+                    .foregroundColor(ColorPalette.white.opacity(0.7))
+            }
+            
+            Spacer()
+            
+            Button(String(localized: "guidance.translation.viewOriginal")) {
+                onLanguageSwitch?()
+            }
+            .font(.system(size: 11, weight: .medium))
+            .foregroundColor(ColorPalette.brightBlue)
+        }
+        .padding(12)
+        .background(ColorPalette.brightBlue.opacity(0.1))
+        .cornerRadius(8)
+    }
+    
+    private var translationErrorBanner: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(.orange)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(String(localized: "guidance.translation.error.title"))
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(ColorPalette.white.opacity(0.9))
+                
+                Text(String(localized: "guidance.translation.error.description"))
+                    .font(.system(size: 10))
+                    .foregroundColor(ColorPalette.white.opacity(0.7))
+            }
+            
+            Spacer()
+            
+            if let onRetry = onRetryTranslation {
+                Button(String(localized: "guidance.translation.retry")) {
+                    onRetry()
+                }
+                .font(.system(size: 11, weight: .medium))
+                .foregroundColor(.orange)
+            }
+        }
+        .padding(12)
+        .background(.orange.opacity(0.1))
+        .cornerRadius(8)
+    }
+
     // MARK: - Translation Status and Language Indicators
     
     @ViewBuilder
@@ -128,14 +240,22 @@ struct GuidanceCard: View {
     }
     
     @ViewBuilder
-    private func languageIndicator(language: String) -> some View {
-        Text(language.uppercased())
-            .font(.system(size: 10, weight: .semibold))
-            .foregroundColor(ColorPalette.white.opacity(0.8))
-            .padding(.horizontal, 4)
-            .padding(.vertical, 2)
-            .background(ColorPalette.terracotta.opacity(0.6))
-            .cornerRadius(4)
+    private func languageIndicator(language: String, isOriginal: Bool = true) -> some View {
+        HStack(spacing: 2) {
+            if !isOriginal {
+                Image(systemName: "translate")
+                    .font(.system(size: 8, weight: .medium))
+                    .foregroundColor(ColorPalette.white.opacity(0.8))
+            }
+            
+            Text(language.uppercased())
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundColor(ColorPalette.white.opacity(0.8))
+        }
+        .padding(.horizontal, 4)
+        .padding(.vertical, 2)
+        .background(isOriginal ? ColorPalette.terracotta.opacity(0.6) : ColorPalette.brightBlue.opacity(0.6))
+        .cornerRadius(4)
     }
     
     private func getStatusIndicator(for status: TranslationDisplayStatus) -> (String, Color) {
@@ -145,11 +265,11 @@ struct GuidanceCard: View {
         case .pending:
             return ("clock.fill", .orange)
         case .inProgress:
-            return ("arrow.clockwise", .blue)
+            return ("arrow.clockwise", ColorPalette.brightBlue)
         case .failed:
             return ("exclamationmark.triangle.fill", .red)
         case .retrying:
-            return ("arrow.clockwise", .yellow)
+            return ("arrow.2.clockwise", .yellow)
         case .notNeeded:
             return ("", .clear)
         }
@@ -158,17 +278,17 @@ struct GuidanceCard: View {
     private func getStatusDescription(for status: TranslationDisplayStatus) -> String {
         switch status {
         case .completed:
-            return "Translation completed"
+            return String(localized: "guidance.translation.status.completed")
         case .pending:
-            return "Translation pending"
+            return String(localized: "guidance.translation.status.pending")
         case .inProgress:
-            return "Translation in progress"
+            return String(localized: "guidance.translation.status.inProgress")
         case .failed:
-            return "Translation failed"
+            return String(localized: "guidance.translation.status.failed")
         case .retrying:
-            return "Translation retrying"
+            return String(localized: "guidance.translation.status.retrying")
         case .notNeeded:
-            return "Translation not needed"
+            return String(localized: "guidance.translation.status.notNeeded")
         }
     }
 }

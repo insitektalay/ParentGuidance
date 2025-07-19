@@ -169,8 +169,12 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
                         isActive: index == currentPage,
                         translationStatus: getTranslationStatus(),
                         selectedLanguage: getCurrentLanguageCode(),
+                        originalLanguage: getOriginalLanguageCode(),
                         canSwitchLanguage: canSwitchLanguage,
-                        onLanguageSwitch: canSwitchLanguage ? switchLanguage : nil
+                        onLanguageSwitch: canSwitchLanguage ? switchLanguage : nil,
+                        isShowingOriginal: isShowingOriginalLanguage(),
+                        translationProgress: getTranslationProgress(),
+                        onRetryTranslation: canRetryTranslation() ? retryTranslation : nil
                     )
                     .tag(index)
                 }
@@ -385,8 +389,63 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
         return displayResults.first?.selectedLanguage ?? "en"
     }
     
+    private func getOriginalLanguageCode() -> String {
+        return displayResults.first?.content.originalLanguage ?? "en"
+    }
+    
     private func getTranslationStatus() -> TranslationDisplayStatus? {
         return displayResults.first?.translationStatus
+    }
+    
+    private func isShowingOriginalLanguage() -> Bool {
+        let currentLang = getCurrentLanguageCode()
+        let originalLang = getOriginalLanguageCode()
+        return currentLang == originalLang
+    }
+    
+    private func getTranslationProgress() -> Double? {
+        // Check if any translations are in progress
+        if let status = getTranslationStatus(), status == .inProgress {
+            return 0.5 // Mock progress - in real implementation this would come from TranslationQueueManager
+        }
+        return nil
+    }
+    
+    private func canRetryTranslation() -> Bool {
+        return getTranslationStatus() == .failed
+    }
+    
+    private func retryTranslation() {
+        guard let situation = situation,
+              let userId = SupabaseManager.shared.client.auth.currentUser?.id.uuidString,
+              let firstResult = displayResults.first else {
+            print("⚠️ Cannot retry translation - missing context")
+            return
+        }
+        
+        print("🔄 Retrying translation for guidance content")
+        
+        Task {
+            do {
+                // Trigger on-demand translation for the failed content
+                let guidanceEntries = try await ConversationService.shared.getGuidanceForSituation(situationId: situation.id)
+                
+                // Re-process with ContentDisplayService to retry translations
+                let displayResults = try await ContentDisplayService.shared.getDisplayContentBatch(
+                    contents: guidanceEntries,
+                    for: userId,
+                    familyId: situation.familyId ?? ""
+                )
+                
+                await MainActor.run {
+                    self.displayResults = displayResults
+                    self.categories = parseMultilingualGuidanceContent(from: displayResults)
+                    print("✅ Translation retry completed")
+                }
+            } catch {
+                print("❌ Translation retry failed: \(error)")
+            }
+        }
     }
     
     private func switchLanguage() {

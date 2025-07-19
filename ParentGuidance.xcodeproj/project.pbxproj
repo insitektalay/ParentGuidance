@@ -39,6 +39,8 @@
 		944EA1A82E2B30E000C110AF /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 944EA1A72E2B30E000C110AF /* Localizable.xcstrings */; };
 		944EA1AA2E2B566400C110AF /* FamilyLanguageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1A92E2B566400C110AF /* FamilyLanguageService.swift */; };
 		944EA1AC2E2B567A00C110AF /* LanguageDetectionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1AB2E2B567A00C110AF /* LanguageDetectionService.swift */; };
+		944EA1AE2E2B652D00C110AF /* TranslationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1AD2E2B652D00C110AF /* TranslationService.swift */; };
+		944EA1B02E2B653D00C110AF /* FamilyInvitationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1AF2E2B653D00C110AF /* FamilyInvitationService.swift */; };
 		9481564C2E23CDC000C28273 /* ChildProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */; };
 		9481564E2E25334C00C28273 /* AudioPermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564D2E25334C00C28273 /* AudioPermissionManager.swift */; };
 		948156502E2533EE00C28273 /* VoiceRecorderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */; };
@@ -159,6 +161,8 @@
 		944EA1A72E2B30E000C110AF /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		944EA1A92E2B566400C110AF /* FamilyLanguageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyLanguageService.swift; sourceTree = "<group>"; };
 		944EA1AB2E2B567A00C110AF /* LanguageDetectionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageDetectionService.swift; sourceTree = "<group>"; };
+		944EA1AD2E2B652D00C110AF /* TranslationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationService.swift; sourceTree = "<group>"; };
+		944EA1AF2E2B653D00C110AF /* FamilyInvitationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyInvitationService.swift; sourceTree = "<group>"; };
 		9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildProfileEditView.swift; sourceTree = "<group>"; };
 		9481564D2E25334C00C28273 /* AudioPermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPermissionManager.swift; sourceTree = "<group>"; };
 		9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorderError.swift; sourceTree = "<group>"; };
@@ -428,6 +432,8 @@
 				9481565D2E29023B00C28273 /* ContextualInsightService.swift */,
 				944EA1A92E2B566400C110AF /* FamilyLanguageService.swift */,
 				944EA1AB2E2B567A00C110AF /* LanguageDetectionService.swift */,
+				944EA1AD2E2B652D00C110AF /* TranslationService.swift */,
+				944EA1AF2E2B653D00C110AF /* FamilyInvitationService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -825,6 +831,7 @@
 				943DFD9B2E1A85EE004F8043 /* ConversationService.swift in Sources */,
 				944EA1AA2E2B566400C110AF /* FamilyLanguageService.swift in Sources */,
 				943DFD892E18269D004F8043 /* ExportSheet.swift in Sources */,
+				944EA1AE2E2B652D00C110AF /* TranslationService.swift in Sources */,
 				94FA111F2E05CBAA003EC1E9 /* SituationInputIdleView.swift in Sources */,
 				943792A32E1BE9850089F512 /* LibrarySelectionManager.swift in Sources */,
 				94FA11322E05CC30003EC1E9 /* ChildHeader.swift in Sources */,
@@ -832,6 +839,7 @@
 				949600D52E20F2B1008EC0C0 /* AppCoordinatorView.swift in Sources */,
 				948156522E25370900C28273 /* VoiceRecorderService.swift in Sources */,
 				94FA11332E05CC40003EC1E9 /* RoutineCard.swift in Sources */,
+				944EA1B02E2B653D00C110AF /* FamilyInvitationService.swift in Sources */,
 				948605CE2E115CB2008D92DE /* AlertView.swift in Sources */,
 				943DFDA22E1A86A4004F8043 /* OnboardingManager.swift in Sources */,
 				943DFD7D2E182650004F8043 /* CategoryFilterChips.swift in Sources */,

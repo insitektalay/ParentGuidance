@@ -129,6 +129,117 @@ class ConversationService: ObservableObject {
         }
     }
     
+    // MARK: - Dual-Language Content Generation (Phase 2)
+    
+    /// Generate guidance with automatic translation for dual-language families
+    func generateGuidanceWithTranslation(
+        situationId: String,
+        content: String,
+        familyId: String,
+        apiKey: String,
+        category: String? = nil
+    ) async throws -> String {
+        print("🌐 Starting dual-language guidance generation")
+        print("📝 Content preview: \(content.prefix(100))...")
+        print("🏠 Family ID: \(familyId)")
+        
+        // Step 1: Save original guidance using existing method
+        let guidanceId = try await saveGuidance(
+            situationId: situationId,
+            content: content,
+            category: category
+        )
+        
+        print("✅ Original guidance saved with ID: \(guidanceId)")
+        
+        // Step 2: Check if family needs dual-language content
+        do {
+            let needsTranslation = try await FamilyLanguageService.shared.shouldGenerateDualLanguage(for: familyId)
+            
+            guard needsTranslation else {
+                print("ℹ️ Family uses single language, no translation needed")
+                return guidanceId
+            }
+            
+            print("🌍 Family uses multiple languages, generating translation...")
+            
+            // Step 3: Get target language for translation
+            guard let targetLanguageCode = try await FamilyLanguageService.shared.getSecondaryLanguageCode(for: familyId) else {
+                print("⚠️ Could not determine secondary language, skipping translation")
+                return guidanceId
+            }
+            
+            let targetLanguageName = FamilyLanguageService.shared.getLanguageName(for: targetLanguageCode)
+            print("🎯 Translating to: \(targetLanguageName) (\(targetLanguageCode))")
+            
+            // Step 4: Translate content using TranslationService
+            let translatedContent = try await TranslationService.shared.translateContent(
+                text: content,
+                targetLanguage: targetLanguageName,
+                apiKey: apiKey
+            )
+            
+            print("✅ Translation completed")
+            print("📝 Translated preview: \(translatedContent.prefix(100))...")
+            
+            // Step 5: Validate translation quality
+            let validation = TranslationService.shared.validateTranslation(
+                original: content,
+                translated: translatedContent
+            )
+            
+            if !validation.isValid {
+                print("⚠️ Translation validation warnings: \(validation.warnings.joined(separator: ", "))")
+                // Continue anyway but log the warnings
+            }
+            
+            // Step 6: Update guidance with translated content
+            try await updateGuidanceWithTranslation(
+                guidanceId: guidanceId,
+                secondaryContent: translatedContent,
+                secondaryLanguage: targetLanguageCode
+            )
+            
+            print("✅ Dual-language guidance generation completed successfully")
+            return guidanceId
+            
+        } catch {
+            print("❌ Error during translation process: \(error)")
+            print("⚠️ Continuing with original language only")
+            // Return the original guidance ID even if translation fails
+            return guidanceId
+        }
+    }
+    
+    /// Update existing guidance with translated content
+    private func updateGuidanceWithTranslation(
+        guidanceId: String,
+        secondaryContent: String,
+        secondaryLanguage: String
+    ) async throws {
+        print("📝 Updating guidance \(guidanceId) with translation")
+        
+        let updateData: [String: String] = [
+            "secondary_content": secondaryContent,
+            "secondary_language": secondaryLanguage,
+            "updated_at": ISO8601DateFormatter().string(from: Date())
+        ]
+        
+        do {
+            try await SupabaseManager.shared.client
+                .from("guidance")
+                .update(updateData)
+                .eq("id", value: guidanceId)
+                .execute()
+            
+            print("✅ Guidance updated with translation")
+            
+        } catch {
+            print("❌ Failed to update guidance with translation: \(error)")
+            throw error
+        }
+    }
+    
     func createFamilyForUser(userId: String) async throws -> String {
         let familyId = UUID().uuidString
         let currentDate = ISO8601DateFormatter().string(from: Date())

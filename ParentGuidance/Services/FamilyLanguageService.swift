@@ -183,6 +183,129 @@ class FamilyLanguageService {
             contentNeedingTranslation: [] // TODO: Could analyze existing situations/guidance
         )
     }
+    
+    // MARK: - Language Name Mapping for Translation API
+    
+    /// Convert language code to full language name for translation API
+    func getLanguageName(for languageCode: String) -> String {
+        switch languageCode.lowercased() {
+        case "en":
+            return "English"
+        case "es":
+            return "Spanish"
+        case "fr":
+            return "French"
+        case "de":
+            return "German"
+        case "it":
+            return "Italian"
+        case "pt":
+            return "Portuguese"
+        case "ru":
+            return "Russian"
+        case "zh":
+            return "Chinese"
+        case "ja":
+            return "Japanese"
+        case "ko":
+            return "Korean"
+        case "ar":
+            return "Arabic"
+        case "hi":
+            return "Hindi"
+        case "nl":
+            return "Dutch"
+        case "sv":
+            return "Swedish"
+        case "no":
+            return "Norwegian"
+        case "da":
+            return "Danish"
+        case "fi":
+            return "Finnish"
+        case "pl":
+            return "Polish"
+        case "cs":
+            return "Czech"
+        case "hu":
+            return "Hungarian"
+        case "tr":
+            return "Turkish"
+        case "he":
+            return "Hebrew"
+        case "th":
+            return "Thai"
+        case "vi":
+            return "Vietnamese"
+        case "uk":
+            return "Ukrainian"
+        case "bg":
+            return "Bulgarian"
+        case "hr":
+            return "Croatian"
+        case "sk":
+            return "Slovak"
+        case "sl":
+            return "Slovenian"
+        case "et":
+            return "Estonian"
+        case "lv":
+            return "Latvian"
+        case "lt":
+            return "Lithuanian"
+        case "ro":
+            return "Romanian"
+        case "el":
+            return "Greek"
+        case "is":
+            return "Icelandic"
+        case "mt":
+            return "Maltese"
+        case "ga":
+            return "Irish"
+        case "cy":
+            return "Welsh"
+        case "eu":
+            return "Basque"
+        case "ca":
+            return "Catalan"
+        case "gl":
+            return "Galician"
+        case "ur":
+            return "Urdu"
+        case "fa":
+            return "Persian"
+        case "sw":
+            return "Swahili"
+        case "ms":
+            return "Malay"
+        case "id":
+            return "Indonesian"
+        case "tl":
+            return "Filipino"
+        default:
+            // Fallback: capitalize the language code
+            return languageCode.capitalized
+        }
+    }
+    
+    /// Enhanced method for dual-language generation (Phase 2 integration)
+    func shouldGenerateDualLanguage(for familyId: String) async throws -> Bool {
+        return try await familyNeedsDualLanguageContent(familyId: familyId)
+    }
+    
+    /// Get secondary language code for a family (Phase 2 integration)
+    func getSecondaryLanguageCode(for familyId: String) async throws -> String? {
+        return try await getFamilySecondaryLanguage(familyId: familyId)
+    }
+    
+    /// Get secondary language name for translation API (Phase 2 integration)
+    func getSecondaryLanguageName(for familyId: String) async throws -> String? {
+        guard let languageCode = try await getSecondaryLanguageCode(for: familyId) else {
+            return nil
+        }
+        return getLanguageName(for: languageCode)
+    }
 }
 
 // MARK: - Supporting Models

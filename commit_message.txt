@@ -1,11 +1,12 @@
-feat: implement smart translation timing and usage pattern analytics
+feat: enhance SettingsView with comprehensive family language management
 
-Add intelligent translation optimization based on family usage patterns:
-  - Enhanced TranslationQueueManager with content access tracking and analytics
-  - Added FamilyUsageMetrics, ContentAccessRecord models for pattern analysis
-  - Integrated smart translation timing decisions in ConversationService
-  - Implemented on-demand translation triggering for low-usage families
-  - Added proactive translation for high-usage content and families
-  - Enhanced guidance retrieval with automatic usage tracking
-  - Added comprehensive analytics for translation queue and family usage
-  - Persistent storage of content access patterns with database integration
+Add advanced family language configuration and analytics interface:
+  - Enhanced SettingsView with dedicated family language section
+  - Family language overview showing members, languages, and translation needs
+  - Interactive translation strategy selection with smart recommendations
+  - Real-time usage analytics dashboard with language breakdown
+  - Cost implications display for different translation strategies
+  - Created TranslationStrategySelectionView for strategy management
+  - Integration with FamilyLanguageService and TranslationQueueManager analytics
+  - Visual language indicators and usage pattern insights
+  - Automatic strategy recommendations based on family usage patterns

@@ -24,7 +24,7 @@ struct FamilyChoiceView: View {
                 
                 Text(String(localized: "onboarding.familyChoice.subtitle"))
                     .font(.body)
-                    .foregroundColor(ColorPalette.darkGray)
+                    .foregroundColor(ColorPalette.navy)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)
             }
@@ -68,7 +68,7 @@ struct FamilyChoiceView: View {
                         Text(String(localized: "onboarding.button.back"))
                             .font(.system(size: 17, weight: .medium))
                     }
-                    .foregroundColor(ColorPalette.darkGray)
+                    .foregroundColor(ColorPalette.navy)
                 }
                 
                 Spacer()
@@ -106,7 +106,7 @@ struct FamilyChoiceCard: View {
                 
                 Text(description)
                     .font(.body)
-                    .foregroundColor(ColorPalette.darkGray)
+                    .foregroundColor(ColorPalette.navy)
                     .multilineTextAlignment(.center)
                     .lineLimit(nil)
             }

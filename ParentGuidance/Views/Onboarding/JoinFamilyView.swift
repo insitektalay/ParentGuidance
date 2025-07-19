@@ -31,7 +31,7 @@ struct JoinFamilyView: View {
                 
                 Text(String(localized: "onboarding.joinFamily.subtitle"))
                     .font(.body)
-                    .foregroundColor(ColorPalette.darkGray)
+                    .foregroundColor(ColorPalette.navy)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)
             }
@@ -51,7 +51,7 @@ struct JoinFamilyView: View {
                         
                         TextField(String(localized: "onboarding.joinFamily.codePlaceholder"), text: $invitationCode)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .font(.system(size: 17, family: .monospaced))
+                            .font(.system(size: 17, design: .monospaced))
                             .textCase(.uppercase)
                             .autocorrectionDisabled()
                             .focused($isCodeFieldFocused)
@@ -91,7 +91,7 @@ struct JoinFamilyView: View {
                     // Helper Text
                     Text(String(localized: "onboarding.joinFamily.codeHelper"))
                         .font(.caption)
-                        .foregroundColor(ColorPalette.darkGray)
+                        .foregroundColor(ColorPalette.navy)
                         .multilineTextAlignment(.center)
                 }
                 
@@ -103,7 +103,7 @@ struct JoinFamilyView: View {
                                 .scaleEffect(0.8)
                             Text(String(localized: "onboarding.joinFamily.validating"))
                                 .font(.body)
-                                .foregroundColor(ColorPalette.darkGray)
+                                .foregroundColor(ColorPalette.navy)
                         }
                         .padding()
                     } else if let error = errorMessage {
@@ -131,7 +131,7 @@ struct JoinFamilyView: View {
                             VStack(spacing: 8) {
                                 Text(String(localized: "onboarding.joinFamily.invitedBy"))
                                     .font(.caption)
-                                    .foregroundColor(ColorPalette.darkGray)
+                                    .foregroundColor(ColorPalette.navy)
                                 Text(info.inviterName)
                                     .font(.headline)
                                     .foregroundColor(ColorPalette.navy)
@@ -187,7 +187,7 @@ struct JoinFamilyView: View {
                         Text(String(localized: "onboarding.button.back"))
                             .font(.system(size: 17, weight: .medium))
                     }
-                    .foregroundColor(ColorPalette.darkGray)
+                    .foregroundColor(ColorPalette.navy)
                 }
                 
                 Spacer()

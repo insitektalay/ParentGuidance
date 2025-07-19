@@ -158,6 +158,157 @@ class FamilyLanguageService {
         }
     }
     
+    // MARK: - User-Specific Language Preferences (Phase 4)
+    
+    /// Get the optimal display language for a specific user viewing specific content
+    func getOptimalDisplayLanguage(
+        for userId: String,
+        content: any LanguageAwareContent,
+        fallbackToOriginal: Bool = true
+    ) async throws -> String {
+        print("🌍 Getting optimal display language for user: \(userId)")
+        
+        do {
+            // Get user's preferred language
+            let response: [UserProfile] = try await SupabaseManager.shared.client
+                .from("profiles")
+                .select("preferred_language")
+                .eq("id", value: userId)
+                .execute()
+                .value
+            
+            guard let userProfile = response.first else {
+                print("⚠️ User profile not found, using original language")
+                return content.originalLanguage
+            }
+            
+            let userPreferredLanguage = userProfile.preferredLanguage
+            print("👤 User prefers language: \(userPreferredLanguage)")
+            
+            // Check content availability in user's preferred language
+            if content.hasContentInLanguage(userPreferredLanguage) {
+                print("✅ Content available in user's preferred language")
+                return userPreferredLanguage
+            }
+            
+            // If content not available in preferred language, use fallback logic
+            if fallbackToOriginal {
+                print("⚠️ Content not available in preferred language, falling back to original")
+                return content.originalLanguage
+            } else {
+                // Try secondary language if available
+                if let secondaryLang = content.secondaryLanguage {
+                    print("⚠️ Using secondary language as fallback: \(secondaryLang)")
+                    return secondaryLang
+                } else {
+                    print("⚠️ No secondary language available, using original")
+                    return content.originalLanguage
+                }
+            }
+            
+        } catch {
+            print("❌ Error getting user language preference: \(error)")
+            return content.originalLanguage
+        }
+    }
+    
+    /// Get display preferences for a family member with intelligent fallbacks
+    func getDisplayPreferences(for userId: String, familyId: String) async throws -> DisplayPreferences {
+        print("🌍 Getting display preferences for user: \(userId) in family: \(familyId)")
+        
+        do {
+            // Get user profile
+            let userResponse: [UserProfile] = try await SupabaseManager.shared.client
+                .from("profiles")
+                .select("preferred_language")
+                .eq("id", value: userId)
+                .execute()
+                .value
+            
+            guard let userProfile = userResponse.first else {
+                throw DisplayError.userNotFound
+            }
+            
+            // Get family language configuration
+            let familyConfig = try await getFamilyLanguageConfiguration(familyId: familyId)
+            
+            let userLanguage = userProfile.preferredLanguage
+            let isUserLanguageSupported = familyConfig.uniqueLanguages.contains(userLanguage)
+            
+            return DisplayPreferences(
+                userId: userId,
+                preferredLanguage: userLanguage,
+                fallbackLanguage: familyConfig.primaryLanguage,
+                familyLanguages: familyConfig.uniqueLanguages,
+                showOriginalWhenTranslationPending: true,
+                isMultilingualFamily: familyConfig.needsDualLanguage,
+                canSwitchLanguages: familyConfig.needsDualLanguage && isUserLanguageSupported
+            )
+            
+        } catch {
+            print("❌ Error getting display preferences: \(error)")
+            
+            // Return default preferences on error
+            return DisplayPreferences(
+                userId: userId,
+                preferredLanguage: "en",
+                fallbackLanguage: "en",
+                familyLanguages: ["en"],
+                showOriginalWhenTranslationPending: true,
+                isMultilingualFamily: false,
+                canSwitchLanguages: false
+            )
+        }
+    }
+    
+    /// Determine the best language to display content based on user preferences and content availability
+    func selectDisplayLanguage(
+        content: any LanguageAwareContent,
+        userPreferences: DisplayPreferences,
+        translationStatus: TranslationDisplayStatus = .completed
+    ) -> LanguageDisplayDecision {
+        print("🔍 Selecting display language for content")
+        print("   - User prefers: \(userPreferences.preferredLanguage)")
+        print("   - Translation status: \(translationStatus)")
+        print("   - Content has original: \(content.originalLanguage)")
+        print("   - Content has secondary: \(content.secondaryLanguage ?? "none")")
+        
+        // If translation is pending and user prefers to show original
+        if translationStatus == .pending && userPreferences.showOriginalWhenTranslationPending {
+            print("✅ Showing original while translation pending")
+            return LanguageDisplayDecision(
+                selectedLanguage: content.originalLanguage,
+                reason: .showingOriginalWhilePending,
+                canSwitchLanguages: false,
+                alternativeLanguage: nil
+            )
+        }
+        
+        // Check if content is available in user's preferred language
+        if content.hasContentInLanguage(userPreferences.preferredLanguage) {
+            let alternativeLanguage = content.originalLanguage != userPreferences.preferredLanguage 
+                ? content.originalLanguage 
+                : content.secondaryLanguage
+            
+            print("✅ Content available in preferred language")
+            return LanguageDisplayDecision(
+                selectedLanguage: userPreferences.preferredLanguage,
+                reason: .preferredLanguageAvailable,
+                canSwitchLanguages: userPreferences.canSwitchLanguages && alternativeLanguage != nil,
+                alternativeLanguage: alternativeLanguage
+            )
+        }
+        
+        // Fallback to original language
+        print("⚠️ Falling back to original language")
+        return LanguageDisplayDecision(
+            selectedLanguage: content.originalLanguage,
+            reason: .fallbackToOriginal,
+            canSwitchLanguages: userPreferences.canSwitchLanguages && content.secondaryLanguage != nil,
+            alternativeLanguage: content.secondaryLanguage
+        )
+    }
+    
     // MARK: - Content Language Management
     
     /// Analyze existing content and suggest language updates needed
@@ -370,6 +521,79 @@ protocol LanguageAwareContent {
     var originalLanguage: String { get }
     var secondaryLanguage: String? { get }
     func hasContentInLanguage(_ language: String) -> Bool
+}
+
+// MARK: - Phase 4 Supporting Models
+
+/// User display preferences for multilingual content
+struct DisplayPreferences {
+    let userId: String
+    let preferredLanguage: String
+    let fallbackLanguage: String
+    let familyLanguages: [String]
+    let showOriginalWhenTranslationPending: Bool
+    let isMultilingualFamily: Bool
+    let canSwitchLanguages: Bool
+}
+
+/// Decision about which language to display for specific content
+struct LanguageDisplayDecision {
+    let selectedLanguage: String
+    let reason: DisplayReason
+    let canSwitchLanguages: Bool
+    let alternativeLanguage: String?
+}
+
+/// Status of translation for display purposes
+enum TranslationDisplayStatus {
+    case notNeeded
+    case pending
+    case inProgress
+    case completed
+    case failed
+    case retrying
+}
+
+/// Reasons for language display decisions
+enum DisplayReason {
+    case preferredLanguageAvailable
+    case fallbackToOriginal
+    case showingOriginalWhilePending
+    case secondaryLanguageOnly
+    case userPreferenceUnavailable
+    
+    var description: String {
+        switch self {
+        case .preferredLanguageAvailable:
+            return "Content available in user's preferred language"
+        case .fallbackToOriginal:
+            return "Preferred language unavailable, showing original"
+        case .showingOriginalWhilePending:
+            return "Showing original while translation is pending"
+        case .secondaryLanguageOnly:
+            return "Only secondary language version available"
+        case .userPreferenceUnavailable:
+            return "User preference could not be determined"
+        }
+    }
+}
+
+/// Errors related to display logic
+enum DisplayError: LocalizedError {
+    case userNotFound
+    case familyNotFound
+    case contentNotFound
+    
+    var errorDescription: String? {
+        switch self {
+        case .userNotFound:
+            return "User profile not found"
+        case .familyNotFound:
+            return "Family configuration not found"
+        case .contentNotFound:
+            return "Content not found"
+        }
+    }
 }
 
 // MARK: - Protocol Conformance

@@ -4,16 +4,43 @@ struct GuidanceCard: View {
     let title: String
     let content: String
     let isActive: Bool
+    var translationStatus: TranslationDisplayStatus? = nil
+    var selectedLanguage: String? = nil
+    var canSwitchLanguage: Bool = false
+    var onLanguageSwitch: (() -> Void)? = nil
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             // Card container
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
-                    // Category title
-                    Text(title)
-                        .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                    // Category title with language indicator
+                    HStack {
+                        Text(title)
+                            .font(.system(size: 20, weight: .medium))
+                            .foregroundColor(ColorPalette.white.opacity(0.9))
+                        
+                        Spacer()
+                        
+                        // Translation status and language indicator
+                        HStack(spacing: 8) {
+                            if let status = translationStatus {
+                                translationStatusIndicator(status: status)
+                            }
+                            
+                            if let language = selectedLanguage, language != "en" {
+                                languageIndicator(language: language)
+                            }
+                            
+                            if canSwitchLanguage, let onLanguageSwitch = onLanguageSwitch {
+                                Button(action: onLanguageSwitch) {
+                                    Image(systemName: "globe")
+                                        .font(.system(size: 14, weight: .medium))
+                                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                                }
+                            }
+                        }
+                    }
                     
                     // Content text
                     Text(createAttributedContent(from: content))
@@ -86,6 +113,63 @@ struct GuidanceCard: View {
         }
         
         return attributedString
+    }
+    
+    // MARK: - Translation Status and Language Indicators
+    
+    @ViewBuilder
+    private func translationStatusIndicator(status: TranslationDisplayStatus) -> some View {
+        let (icon, color) = getStatusIndicator(for: status)
+        
+        Image(systemName: icon)
+            .font(.system(size: 12, weight: .medium))
+            .foregroundColor(color)
+            .help(getStatusDescription(for: status))
+    }
+    
+    @ViewBuilder
+    private func languageIndicator(language: String) -> some View {
+        Text(language.uppercased())
+            .font(.system(size: 10, weight: .semibold))
+            .foregroundColor(ColorPalette.white.opacity(0.8))
+            .padding(.horizontal, 4)
+            .padding(.vertical, 2)
+            .background(ColorPalette.terracotta.opacity(0.6))
+            .cornerRadius(4)
+    }
+    
+    private func getStatusIndicator(for status: TranslationDisplayStatus) -> (String, Color) {
+        switch status {
+        case .completed:
+            return ("checkmark.circle.fill", .green)
+        case .pending:
+            return ("clock.fill", .orange)
+        case .inProgress:
+            return ("arrow.clockwise", .blue)
+        case .failed:
+            return ("exclamationmark.triangle.fill", .red)
+        case .retrying:
+            return ("arrow.clockwise", .yellow)
+        case .notNeeded:
+            return ("", .clear)
+        }
+    }
+    
+    private func getStatusDescription(for status: TranslationDisplayStatus) -> String {
+        switch status {
+        case .completed:
+            return "Translation completed"
+        case .pending:
+            return "Translation pending"
+        case .inProgress:
+            return "Translation in progress"
+        case .failed:
+            return "Translation failed"
+        case .retrying:
+            return "Translation retrying"
+        case .notNeeded:
+            return "Translation not needed"
+        }
     }
 }
 

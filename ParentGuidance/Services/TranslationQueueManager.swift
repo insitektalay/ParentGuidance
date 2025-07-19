@@ -108,7 +108,7 @@ class TranslationQueueManager: ObservableObject {
         }
         
         // Get next task
-        let nextTask = queueAccessQueue.sync {
+        let nextTask: TranslationTask? = queueAccessQueue.sync {
             guard !queue.isEmpty else { return nil }
             return queue.removeFirst()
         }
@@ -246,14 +246,14 @@ class TranslationQueueManager: ObservableObject {
         }
         
         // Load any new pending translations from database
-        await loadPendingTranslations()
+        loadPendingTranslations()
     }
     
     private func loadPendingTranslations() {
         Task {
             do {
                 // Query for pending translations
-                let pendingGuidance: [[String: Any]] = try await SupabaseManager.shared.client
+                let response = try await SupabaseManager.shared.client
                     .from("guidance")
                     .select("""
                         id,
@@ -270,7 +270,8 @@ class TranslationQueueManager: ObservableObject {
                     .eq("translation_status", value: "pending")
                     .limit(10)
                     .execute()
-                    .value
+                
+                let pendingGuidance = response.value as? [[String: Any]] ?? []
                 
                 print("📋 Found \(pendingGuidance.count) pending translations")
                 
@@ -286,7 +287,7 @@ class TranslationQueueManager: ObservableObject {
                     
                     // Get API key for family (would need to be implemented)
                     // For now, skip if no API key available
-                    guard let apiKey = await getAPIKeyForFamily(familyId: familyId) else {
+                    guard let apiKey = await self.getAPIKeyForFamily(familyId: familyId) else {
                         continue
                     }
                     
@@ -355,7 +356,7 @@ class TranslationQueueManager: ObservableObject {
             try await SupabaseManager.shared.client
                 .from("guidance")
                 .update([
-                    "translation_retry_count": retryCount,
+                    "translation_retry_count": String(retryCount),
                     "updated_at": ISO8601DateFormatter().string(from: Date())
                 ])
                 .eq("id", value: guidanceId)

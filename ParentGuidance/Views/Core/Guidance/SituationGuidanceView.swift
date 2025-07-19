@@ -7,6 +7,9 @@ struct SituationGuidanceView: View {
     @State private var isLoading = true
     @State private var errorMessage: String?
     @ObservedObject private var guidanceStructureSettings = GuidanceStructureSettings.shared
+    @State private var displayResults: [ContentDisplayResult<Guidance>] = []
+    @State private var showingLanguagePicker = false
+    @State private var canSwitchLanguage = false
     let situation: Situation?
     
     init(situation: Situation? = nil) {
@@ -121,6 +124,26 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
                 }
                 
                 Spacer()
+                
+                // Language switch button if available
+                if canSwitchLanguage {
+                    Button(action: {
+                        switchLanguage()
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "globe")
+                                .font(.system(size: 16, weight: .medium))
+                            Text(getCurrentLanguageCode())
+                                .font(.system(size: 14, weight: .medium))
+                                .textCase(.uppercase)
+                        }
+                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(ColorPalette.white.opacity(0.1))
+                        .cornerRadius(8)
+                    }
+                }
             }
             .padding(.horizontal, 16)
             .padding(.top, 12)
@@ -143,7 +166,11 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
                     GuidanceCard(
                         title: categories[index].title,
                         content: categories[index].content,
-                        isActive: index == currentPage
+                        isActive: index == currentPage,
+                        translationStatus: getTranslationStatus(),
+                        selectedLanguage: getCurrentLanguageCode(),
+                        canSwitchLanguage: canSwitchLanguage,
+                        onLanguageSwitch: canSwitchLanguage ? switchLanguage : nil
                     )
                     .tag(index)
                 }
@@ -182,20 +209,40 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
                     print("📋 Loading guidance for situation: \(situation.id)")
                     let guidanceEntries = try await ConversationService.shared.getGuidanceForSituation(situationId: situation.id)
                     
-                    await MainActor.run {
-                        if guidanceEntries.isEmpty {
-                            print("⚠️ No guidance found for situation, using fallback")
+                    // Get user and family context for language display
+                    guard let userId = SupabaseManager.shared.client.auth.currentUser?.id.uuidString else {
+                        throw NSError(domain: "Auth", code: 401, userInfo: [NSLocalizedDescriptionKey: "User not authenticated"])
+                    }
+                    
+                    if guidanceEntries.isEmpty {
+                        print("⚠️ No guidance found for situation, using fallback")
+                        await MainActor.run {
                             self.categories = fallbackCategories
-                        } else {
-                            print("✅ Parsing \(guidanceEntries.count) guidance entries")
-                            self.categories = parseGuidanceContent(from: guidanceEntries)
+                            self.canSwitchLanguage = false
+                            self.isLoading = false
                         }
-                        self.isLoading = false
+                    } else {
+                        print("✅ Processing \(guidanceEntries.count) guidance entries with multilingual support")
+                        
+                        // Process guidance with ContentDisplayService for language support
+                        let displayResults = try await ContentDisplayService.shared.getDisplayContentBatch(
+                            contents: guidanceEntries,
+                            for: userId,
+                            familyId: situation.familyId ?? ""
+                        )
+                        
+                        await MainActor.run {
+                            self.displayResults = displayResults
+                            self.categories = parseMultilingualGuidanceContent(from: displayResults)
+                            self.canSwitchLanguage = displayResults.first?.canSwitchLanguage ?? false
+                            self.isLoading = false
+                        }
                     }
                 } else {
                     print("ℹ️ No situation provided, using fallback categories")
                     await MainActor.run {
                         self.categories = fallbackCategories
+                        self.canSwitchLanguage = false
                         self.isLoading = false
                     }
                 }
@@ -204,6 +251,7 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
                 await MainActor.run {
                     self.errorMessage = error.localizedDescription
                     self.categories = fallbackCategories // Fallback on error
+                    self.canSwitchLanguage = false
                     self.isLoading = false
                 }
             }
@@ -302,6 +350,65 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
         }
         
         return nil
+    }
+    
+    // MARK: - Multilingual Support
+    
+    private func parseMultilingualGuidanceContent(from displayResults: [ContentDisplayResult<Guidance>]) -> [GuidanceCategory] {
+        // Combine all guidance content using the selected language display text
+        let fullContent = displayResults.map { $0.displayText }.joined(separator: "\n\n")
+        
+        print("🌐 [DEBUG] SituationGuidanceView: Parsing multilingual guidance content")
+        print("   - Language: \(displayResults.first?.selectedLanguage ?? "unknown")")
+        print("   - Can switch: \(displayResults.first?.canSwitchLanguage ?? false)")
+        print("   - Content length: \(fullContent.count) characters")
+        
+        // Parse based on user preference (same logic as original method)
+        if guidanceStructureSettings.isUsingDynamicStructure {
+            print("🔄 [DEBUG] SituationGuidanceView: Using DYNAMIC parsing for multilingual content")
+            if let dynamicResponse = DynamicGuidanceParser.shared.parseWithFallback(fullContent) {
+                print("✅ [DEBUG] Dynamic parsing SUCCESS - \(dynamicResponse.displaySections.count) sections")
+                return dynamicResponse.displaySections.map { section in
+                    GuidanceCategory(title: section.title, content: section.content)
+                }
+            } else {
+                print("❌ [DEBUG] Dynamic parsing FAILED, falling back to fixed")
+                return parseFixedGuidanceContent(from: fullContent)
+            }
+        } else {
+            print("🔄 [DEBUG] SituationGuidanceView: Using FIXED parsing for multilingual content")
+            return parseFixedGuidanceContent(from: fullContent)
+        }
+    }
+    
+    private func getCurrentLanguageCode() -> String {
+        return displayResults.first?.selectedLanguage ?? "en"
+    }
+    
+    private func getTranslationStatus() -> TranslationDisplayStatus? {
+        return displayResults.first?.translationStatus
+    }
+    
+    private func switchLanguage() {
+        guard !displayResults.isEmpty,
+              let firstResult = displayResults.first,
+              ContentDisplayService.shared.switchContentLanguage(result: firstResult) != nil else {
+            print("⚠️ Cannot switch language for current content")
+            return
+        }
+        
+        Task {
+            // Switch language for all guidance entries
+            let switchedResults = displayResults.compactMap { result in
+                ContentDisplayService.shared.switchContentLanguage(result: result)
+            }
+            
+            await MainActor.run {
+                self.displayResults = switchedResults
+                self.categories = parseMultilingualGuidanceContent(from: switchedResults)
+                print("🌐 Switched guidance display to language: \(switchedResults.first?.selectedLanguage ?? "unknown")")
+            }
+        }
     }
 }
 

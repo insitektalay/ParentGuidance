@@ -44,6 +44,7 @@
 		944EA1B22E2B6BB100C110AF /* FamilyChoiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1B12E2B6BB100C110AF /* FamilyChoiceView.swift */; };
 		944EA1B42E2B6BBE00C110AF /* JoinFamilyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1B32E2B6BBE00C110AF /* JoinFamilyView.swift */; };
 		944EA1B62E2B70AC00C110AF /* TranslationQueueManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1B52E2B70AC00C110AF /* TranslationQueueManager.swift */; };
+		944EA1B82E2B77C400C110AF /* ContentDisplayService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1B72E2B77C400C110AF /* ContentDisplayService.swift */; };
 		9481564C2E23CDC000C28273 /* ChildProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */; };
 		9481564E2E25334C00C28273 /* AudioPermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564D2E25334C00C28273 /* AudioPermissionManager.swift */; };
 		948156502E2533EE00C28273 /* VoiceRecorderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */; };
@@ -169,6 +170,7 @@
 		944EA1B12E2B6BB100C110AF /* FamilyChoiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyChoiceView.swift; sourceTree = "<group>"; };
 		944EA1B32E2B6BBE00C110AF /* JoinFamilyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinFamilyView.swift; sourceTree = "<group>"; };
 		944EA1B52E2B70AC00C110AF /* TranslationQueueManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationQueueManager.swift; sourceTree = "<group>"; };
+		944EA1B72E2B77C400C110AF /* ContentDisplayService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentDisplayService.swift; sourceTree = "<group>"; };
 		9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildProfileEditView.swift; sourceTree = "<group>"; };
 		9481564D2E25334C00C28273 /* AudioPermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPermissionManager.swift; sourceTree = "<group>"; };
 		9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorderError.swift; sourceTree = "<group>"; };
@@ -441,6 +443,7 @@
 				944EA1AD2E2B652D00C110AF /* TranslationService.swift */,
 				944EA1AF2E2B653D00C110AF /* FamilyInvitationService.swift */,
 				944EA1B52E2B70AC00C110AF /* TranslationQueueManager.swift */,
+				944EA1B72E2B77C400C110AF /* ContentDisplayService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -787,6 +790,7 @@
 				943DFD792E182630004F8043 /* SearchFilterView.swift in Sources */,
 				94FA10C62E056247003EC1E9 /* ContentView.swift in Sources */,
 				94FA11092E056D30003EC1E9 /* PaymentView.swift in Sources */,
+				944EA1B82E2B77C400C110AF /* ContentDisplayService.swift in Sources */,
 				9481564E2E25334C00C28273 /* AudioPermissionManager.swift in Sources */,
 				94FA10C42E056247003EC1E9 /* ParentGuidanceApp.swift in Sources */,
 				94FA11272E05CBDF003EC1E9 /* SituationOrganizingView.swift in Sources */,

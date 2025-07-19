@@ -36,6 +36,7 @@
 		943DFD9B2E1A85EE004F8043 /* ConversationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD9A2E1A85EE004F8043 /* ConversationService.swift */; };
 		943DFD9D2E1A863A004F8043 /* DatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD9C2E1A863A004F8043 /* DatabaseService.swift */; };
 		943DFDA22E1A86A4004F8043 /* OnboardingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFDA12E1A86A4004F8043 /* OnboardingManager.swift */; };
+		944EA1A82E2B30E000C110AF /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 944EA1A72E2B30E000C110AF /* Localizable.xcstrings */; };
 		9481564C2E23CDC000C28273 /* ChildProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */; };
 		9481564E2E25334C00C28273 /* AudioPermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564D2E25334C00C28273 /* AudioPermissionManager.swift */; };
 		948156502E2533EE00C28273 /* VoiceRecorderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */; };
@@ -153,6 +154,7 @@
 		943DFD9A2E1A85EE004F8043 /* ConversationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationService.swift; sourceTree = "<group>"; };
 		943DFD9C2E1A863A004F8043 /* DatabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseService.swift; sourceTree = "<group>"; };
 		943DFDA12E1A86A4004F8043 /* OnboardingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingManager.swift; sourceTree = "<group>"; };
+		944EA1A72E2B30E000C110AF /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildProfileEditView.swift; sourceTree = "<group>"; };
 		9481564D2E25334C00C28273 /* AudioPermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPermissionManager.swift; sourceTree = "<group>"; };
 		9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorderError.swift; sourceTree = "<group>"; };
@@ -303,6 +305,7 @@
 		94FA10B72E056247003EC1E9 = {
 			isa = PBXGroup;
 			children = (
+				944EA1A72E2B30E000C110AF /* Localizable.xcstrings */,
 				94CBD5142E20F80C0014C22A /* FakeFile.swift */,
 				94FA10C22E056247003EC1E9 /* ParentGuidance */,
 				94FA10D32E056249003EC1E9 /* ParentGuidanceTests */,
@@ -732,6 +735,7 @@
 			files = (
 				94FA10CB2E056249003EC1E9 /* Preview Assets.xcassets in Resources */,
 				94FA10C82E056249003EC1E9 /* Assets.xcassets in Resources */,
+				944EA1A82E2B30E000C110AF /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -16,16 +16,15 @@ struct GuidanceCard: View {
                         .foregroundColor(ColorPalette.white.opacity(0.9))
                     
                     // Content text
-                    Text(content)
+                    Text(createAttributedContent(from: content))
                         .font(.system(size: 16))
                         .foregroundColor(ColorPalette.white.opacity(0.7))
-                        .lineSpacing(4)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                .padding(24)
+                .padding(3)
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .frame(height: 400)
+            .frame(height: 580)
             .background(Color.clear)
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
@@ -38,6 +37,55 @@ struct GuidanceCard: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 8)
+    }
+    
+    // MARK: - Helper Functions
+    
+    private func createAttributedContent(from content: String) -> AttributedString {
+        var attributedString = AttributedString(content)
+        
+        // Split content into lines
+        let lines = content.components(separatedBy: .newlines)
+        var currentPosition = 0
+        
+        for (lineIndex, line) in lines.enumerated() {
+            // Check if this line is a bullet point
+            let trimmedLine = line.trimmingCharacters(in: .whitespaces)
+            let isBulletPoint = trimmedLine.hasPrefix("•") || 
+                              trimmedLine.hasPrefix("-") ||
+                              (trimmedLine.count > 0 && trimmedLine.first?.isNumber == true && trimmedLine.contains("."))
+            
+            // Calculate the line content and its length
+            let lineContent = lineIndex < lines.count - 1 ? line + "\n" : line
+            let lineLength = lineContent.utf16.count
+            
+            // Create the range for this line
+            let startIndex = attributedString.index(attributedString.startIndex, offsetByCharacters: currentPosition)
+            let endIndex = attributedString.index(startIndex, offsetByCharacters: lineLength)
+            let lineRange = startIndex..<endIndex
+            
+            if isBulletPoint && lineIndex < lines.count - 1 {
+                // Create paragraph style with extra spacing after bullet points
+                var paragraphStyle = NSMutableParagraphStyle()
+                paragraphStyle.paragraphSpacing = 12.0 // Extra space after bullet points
+                paragraphStyle.lineSpacing = 4.0 // Normal line spacing within bullet points
+                
+                // Apply the paragraph style to this line
+                attributedString[lineRange].paragraphStyle = paragraphStyle
+            } else {
+                // For non-bullet lines, apply normal spacing
+                var paragraphStyle = NSMutableParagraphStyle()
+                paragraphStyle.lineSpacing = 4.0 // Normal line spacing
+                paragraphStyle.paragraphSpacing = 0.0 // No extra spacing for regular text
+                
+                attributedString[lineRange].paragraphStyle = paragraphStyle
+            }
+            
+            // Move to the next line
+            currentPosition += lineLength
+        }
+        
+        return attributedString
     }
 }
 

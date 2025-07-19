@@ -161,7 +161,7 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
                 }
             }
             .padding(.top, 16)
-            .padding(.bottom, 100) // Space for tab bar
+            .padding(.bottom, 10) // Space for tab bar
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(ColorPalette.navy)

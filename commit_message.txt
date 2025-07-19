@@ -1,9 +1,11 @@
-feat: enhance guidance display components with multilingual support
-- Added ContentDisplayService integration to SituationGuidanceView for intelligent language selection
-- Enhanced GuidanceCard component with translation status indicators and language switching capabilities
-- Added real-time language switching functionality with globe icon UI
-- Integrated translation status badges (pending, completed, failed, in-progress) with color-coded indicators
-- Added language code display for non-English content with visual badges
-- Implemented batch processing for multiple guidance entries with optimized language selection
-- Added comprehensive multilingual parsing for both dynamic and fixed guidance structures
-- Enhanced error handling for optional familyId fields and authentication requirements
+feat: implement smart translation timing and usage pattern analytics
+
+Add intelligent translation optimization based on family usage patterns:
+  - Enhanced TranslationQueueManager with content access tracking and analytics
+  - Added FamilyUsageMetrics, ContentAccessRecord models for pattern analysis
+  - Integrated smart translation timing decisions in ConversationService
+  - Implemented on-demand translation triggering for low-usage families
+  - Added proactive translation for high-usage content and families
+  - Enhanced guidance retrieval with automatic usage tracking
+  - Added comprehensive analytics for translation queue and family usage
+  - Persistent storage of content access patterns with database integration

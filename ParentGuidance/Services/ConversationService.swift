@@ -136,12 +136,14 @@ class ConversationService: ObservableObject {
         situationId: String,
         content: String,
         familyId: String,
+        userId: String,
         apiKey: String,
         category: String? = nil
     ) async throws -> String {
-        print("🌐 Starting dual-language guidance generation")
+        print("🌐 Starting smart dual-language guidance generation")
         print("📝 Content preview: \(content.prefix(100))...")
         print("🏠 Family ID: \(familyId)")
+        print("👤 User ID: \(userId)")
         
         // Step 1: Save original guidance using existing method
         let guidanceId = try await saveGuidance(
@@ -152,7 +154,15 @@ class ConversationService: ObservableObject {
         
         print("✅ Original guidance saved with ID: \(guidanceId)")
         
-        // Step 2: Check if family needs dual-language content
+        // Step 2: Track content access for usage pattern analysis
+        TranslationQueueManager.shared.trackContentAccess(
+            contentId: guidanceId,
+            familyId: familyId,
+            userId: userId,
+            language: "en" // Original language is English
+        )
+        
+        // Step 3: Check if family needs dual-language content
         do {
             let needsTranslation = try await FamilyLanguageService.shared.shouldGenerateDualLanguage(for: familyId)
             
@@ -163,7 +173,7 @@ class ConversationService: ObservableObject {
             
             print("🌍 Family uses multiple languages, generating translation...")
             
-            // Step 3: Get target language for translation
+            // Step 4: Get target language for translation
             guard let targetLanguageCode = try await FamilyLanguageService.shared.getSecondaryLanguageCode(for: familyId) else {
                 print("⚠️ Could not determine secondary language, skipping translation")
                 return guidanceId
@@ -172,28 +182,50 @@ class ConversationService: ObservableObject {
             let targetLanguageName = FamilyLanguageService.shared.getLanguageName(for: targetLanguageCode)
             print("🎯 Translation needed for: \(targetLanguageName) (\(targetLanguageCode))")
             
-            // Step 4: Update guidance with secondary language info and mark as pending translation
-            try await updateGuidanceForTranslation(
-                guidanceId: guidanceId,
-                secondaryLanguage: targetLanguageCode
+            // Step 5: Get smart translation recommendation based on usage patterns
+            let recommendation = try await FamilyLanguageService.shared.getSmartTranslationRecommendation(
+                for: familyId,
+                contentType: "guidance",
+                priority: .high // New content starts with high priority
             )
             
-            // Step 5: Queue translation for background processing (Phase 3)
-            let translationTask = TranslationQueueManager.TranslationTask(
-                id: UUID().uuidString,
-                guidanceId: guidanceId,
-                content: content,
-                targetLanguage: targetLanguageCode,
-                targetLanguageName: targetLanguageName,
-                familyId: familyId,
-                apiKey: apiKey,
-                priority: .high // New guidance gets high priority
-            )
+            print("🧠 Smart recommendation: \(recommendation.shouldTranslateNow ? "immediate" : "on-demand")")
+            print("   Reason: \(recommendation.reason)")
+            print("   Estimated delay: \(recommendation.estimatedDelay)s")
             
-            TranslationQueueManager.shared.enqueue(task: translationTask)
+            // Step 6: Update guidance with secondary language info and translation status
+            if recommendation.shouldTranslateNow {
+                // Immediate translation - mark as pending for high priority processing
+                try await updateGuidanceForTranslation(
+                    guidanceId: guidanceId,
+                    secondaryLanguage: targetLanguageCode
+                )
+                
+                // Step 7: Queue translation with smart priority
+                let translationTask = TranslationQueueManager.TranslationTask(
+                    id: UUID().uuidString,
+                    guidanceId: guidanceId,
+                    content: content,
+                    targetLanguage: targetLanguageCode,
+                    targetLanguageName: targetLanguageName,
+                    familyId: familyId,
+                    apiKey: apiKey,
+                    priority: recommendation.priority == .high ? .high : .medium
+                )
+                
+                TranslationQueueManager.shared.enqueue(task: translationTask)
+                print("📥 Translation queued for immediate processing (high usage family)")
+                
+            } else {
+                // On-demand translation - just set up the secondary language, don't queue yet
+                try await updateGuidanceForOnDemandTranslation(
+                    guidanceId: guidanceId,
+                    secondaryLanguage: targetLanguageCode
+                )
+                print("⏰ Translation prepared for on-demand processing (low usage family)")
+            }
             
-            print("📥 Translation queued for background processing")
-            print("✅ Guidance saved, translation will complete asynchronously")
+            print("✅ Smart guidance generation completed")
             return guidanceId
             
         } catch {
@@ -257,6 +289,34 @@ class ConversationService: ObservableObject {
             
         } catch {
             print("❌ Failed to prepare guidance for translation: \(error)")
+            throw error
+        }
+    }
+    
+    /// Update guidance for on-demand translation (Phase 5.2)
+    private func updateGuidanceForOnDemandTranslation(
+        guidanceId: String,
+        secondaryLanguage: String
+    ) async throws {
+        print("📝 Preparing guidance \(guidanceId) for on-demand translation")
+        
+        let updateData: [String: String] = [
+            "secondary_language": secondaryLanguage,
+            "translation_status": "not_needed",
+            "updated_at": ISO8601DateFormatter().string(from: Date())
+        ]
+        
+        do {
+            try await SupabaseManager.shared.client
+                .from("guidance")
+                .update(updateData)
+                .eq("id", value: guidanceId)
+                .execute()
+            
+            print("✅ Guidance prepared for on-demand translation")
+            
+        } catch {
+            print("❌ Failed to prepare guidance for on-demand translation: \(error)")
             throw error
         }
     }
@@ -334,6 +394,148 @@ class ConversationService: ObservableObject {
             print("❌ Error getting guidance for situation: \(error)")
             throw error
         }
+    }
+    
+    // MARK: - Smart Translation Access Tracking (Phase 5.2)
+    
+    /// Enhanced guidance retrieval with smart translation triggering
+    func getGuidanceForSituationWithSmartTranslation(
+        situationId: String,
+        userId: String,
+        familyId: String,
+        preferredLanguage: String,
+        apiKey: String? = nil
+    ) async throws -> [Guidance] {
+        print("🧠 Getting guidance with smart translation for situation: \(situationId)")
+        print("👤 User: \(userId), Family: \(familyId), Language: \(preferredLanguage)")
+        
+        // Get the guidance first
+        let guidanceEntries = try await getGuidanceForSituation(situationId: situationId)
+        
+        // Track content access for each guidance entry
+        for guidance in guidanceEntries {
+            TranslationQueueManager.shared.trackContentAccess(
+                contentId: guidance.id,
+                familyId: familyId,
+                userId: userId,
+                language: preferredLanguage
+            )
+            
+            // Check if on-demand translation should be triggered
+            if preferredLanguage != "en" && 
+               guidance.secondaryLanguage == preferredLanguage &&
+               guidance.secondaryContent == nil {
+                
+                print("🔄 On-demand translation needed for guidance \(guidance.id)")
+                
+                // Check if we should proactively translate based on usage patterns
+                let shouldTranslate = await TranslationQueueManager.shared.shouldProactivelyTranslate(
+                    contentId: guidance.id,
+                    familyId: familyId
+                )
+                
+                if shouldTranslate, let apiKey = apiKey {
+                    print("⚡ Triggering on-demand translation for high-value content")
+                    await triggerOnDemandTranslation(
+                        guidanceId: guidance.id,
+                        content: guidance.content,
+                        targetLanguage: guidance.secondaryLanguage ?? preferredLanguage,
+                        familyId: familyId,
+                        apiKey: apiKey
+                    )
+                }
+            }
+        }
+        
+        return guidanceEntries
+    }
+    
+    /// Trigger on-demand translation for specific content
+    private func triggerOnDemandTranslation(
+        guidanceId: String,
+        content: String,
+        targetLanguage: String,
+        familyId: String,
+        apiKey: String
+    ) async {
+        print("⚡ Triggering on-demand translation for guidance: \(guidanceId)")
+        
+        let targetLanguageName = FamilyLanguageService.shared.getLanguageName(for: targetLanguage)
+        
+        // Update status to pending
+        do {
+            try await updateGuidanceForTranslation(
+                guidanceId: guidanceId,
+                secondaryLanguage: targetLanguage
+            )
+            
+            // Create high-priority translation task
+            let translationTask = TranslationQueueManager.TranslationTask(
+                id: UUID().uuidString,
+                guidanceId: guidanceId,
+                content: content,
+                targetLanguage: targetLanguage,
+                targetLanguageName: targetLanguageName,
+                familyId: familyId,
+                apiKey: apiKey,
+                priority: .high // On-demand requests get high priority
+            )
+            
+            TranslationQueueManager.shared.enqueue(task: translationTask)
+            print("📥 On-demand translation queued with high priority")
+            
+        } catch {
+            print("❌ Failed to trigger on-demand translation: \(error)")
+        }
+    }
+    
+    /// Implement proactive translation for high-usage content
+    func implementProactiveTranslation(familyId: String, apiKey: String) async {
+        print("🚀 Implementing proactive translation for family: \(familyId)")
+        
+        // Get high-priority content for translation
+        let highPriorityContent = TranslationQueueManager.shared.getHighPriorityContentForTranslation(
+            familyId: familyId,
+            limit: 10
+        )
+        
+        print("📊 Found \(highPriorityContent.count) high-priority content items")
+        
+        for contentRecord in highPriorityContent {
+            // Get the guidance to check if translation is needed
+            do {
+                let guidance: [Guidance] = try await SupabaseManager.shared.client
+                    .from("guidance")
+                    .select("*")
+                    .eq("id", value: contentRecord.contentId)
+                    .execute()
+                    .value
+                
+                guard let guidance = guidance.first,
+                      let secondaryLanguage = guidance.secondaryLanguage,
+                      guidance.secondaryContent == nil else {
+                    continue
+                }
+                
+                print("🔄 Proactively translating high-usage content: \(guidance.id)")
+                
+                await triggerOnDemandTranslation(
+                    guidanceId: guidance.id,
+                    content: guidance.content,
+                    targetLanguage: secondaryLanguage,
+                    familyId: familyId,
+                    apiKey: apiKey
+                )
+                
+                // Add delay to avoid overwhelming the queue
+                try await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
+                
+            } catch {
+                print("❌ Error during proactive translation: \(error)")
+            }
+        }
+        
+        print("✅ Proactive translation implementation completed")
     }
     
     // MARK: - New Methods for Step 4.6

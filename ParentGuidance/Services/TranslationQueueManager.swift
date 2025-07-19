@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import Supabase
 
 /// Manages background translation queue with priority and retry logic
 class TranslationQueueManager: ObservableObject {
@@ -27,6 +28,11 @@ class TranslationQueueManager: ObservableObject {
     private let queueAccessQueue = DispatchQueue(label: "com.parentguidance.translationqueue.access", attributes: .concurrent)
     private var processingTimer: Timer?
     private var cancellables = Set<AnyCancellable>()
+    
+    // MARK: - Usage Pattern Tracking
+    
+    private var contentAccessTracker: [String: ContentAccessRecord] = [:]
+    private let usageTrackingQueue = DispatchQueue(label: "com.parentguidance.usagetracking", attributes: .concurrent)
     
     // MARK: - Models
     
@@ -61,11 +67,54 @@ class TranslationQueueManager: ObservableObject {
         case notNeeded = "not_needed"
     }
     
+    // MARK: - Usage Pattern Models
+    
+    struct ContentAccessRecord {
+        let contentId: String
+        let familyId: String
+        var accessCount: Int = 0
+        var lastAccessed: Date = Date()
+        var languageAccesses: [String: Int] = [:]
+        var userAccesses: [String: Int] = [:]
+        let createdAt: Date = Date()
+        
+        var accessFrequency: Double {
+            let daysSinceCreation = Date().timeIntervalSince(createdAt) / (24 * 60 * 60)
+            return daysSinceCreation > 0 ? Double(accessCount) / daysSinceCreation : 0
+        }
+        
+        var preferredLanguage: String? {
+            return languageAccesses.max { $0.value < $1.value }?.key
+        }
+    }
+    
+    struct FamilyUsageMetrics {
+        let familyId: String
+        let totalContentAccesses: Int
+        let uniqueContentAccessed: Int
+        let averageAccessesPerContent: Double
+        let languageBreakdown: [String: Int]
+        let lastAnalyzed: Date = Date()
+        
+        var isHighUsageFamily: Bool {
+            return averageAccessesPerContent > 5.0
+        }
+        
+        var isDualLanguageActive: Bool {
+            return languageBreakdown.count > 1 && languageBreakdown.values.min() ?? 0 > 2
+        }
+    }
+    
     // MARK: - Initialization
     
     private init() {
         startProcessingTimer()
         loadPendingTranslations()
+        
+        // Load usage patterns from database
+        Task {
+            await loadUsagePatternsFromDatabase()
+        }
     }
     
     deinit {
@@ -227,6 +276,111 @@ class TranslationQueueManager: ObservableObject {
         return (queue.count, activeTranslations.count, completedCount, failedCount)
     }
     
+    // MARK: - Usage Pattern Tracking Methods
+    
+    /// Track content access for usage pattern analysis
+    func trackContentAccess(contentId: String, familyId: String, userId: String, language: String) {
+        usageTrackingQueue.async(flags: .barrier) {
+            var record = self.contentAccessTracker[contentId] ?? ContentAccessRecord(
+                contentId: contentId,
+                familyId: familyId
+            )
+            
+            record.accessCount += 1
+            record.lastAccessed = Date()
+            record.languageAccesses[language, default: 0] += 1
+            record.userAccesses[userId, default: 0] += 1
+            
+            self.contentAccessTracker[contentId] = record
+            
+            print("📊 Tracked access for content \(contentId): language=\(language), total=\(record.accessCount)")
+        }
+        
+        // Persist to database asynchronously
+        Task {
+            await self.persistContentAccess(contentId: contentId, familyId: familyId, userId: userId, language: language)
+        }
+    }
+    
+    /// Get usage metrics for a specific family
+    func getFamilyUsageMetrics(familyId: String) -> FamilyUsageMetrics {
+        return usageTrackingQueue.sync {
+            let familyRecords = contentAccessTracker.values.filter { $0.familyId == familyId }
+            
+            let totalAccesses = familyRecords.reduce(0) { $0 + $1.accessCount }
+            let uniqueContent = familyRecords.count
+            let averageAccesses = uniqueContent > 0 ? Double(totalAccesses) / Double(uniqueContent) : 0.0
+            
+            var languageBreakdown: [String: Int] = [:]
+            for record in familyRecords {
+                for (language, count) in record.languageAccesses {
+                    languageBreakdown[language, default: 0] += count
+                }
+            }
+            
+            return FamilyUsageMetrics(
+                familyId: familyId,
+                totalContentAccesses: totalAccesses,
+                uniqueContentAccessed: uniqueContent,
+                averageAccessesPerContent: averageAccesses,
+                languageBreakdown: languageBreakdown
+            )
+        }
+    }
+    
+    /// Get content access record for specific content
+    func getContentAccessRecord(contentId: String) -> ContentAccessRecord? {
+        return usageTrackingQueue.sync {
+            return contentAccessTracker[contentId]
+        }
+    }
+    
+    /// Analyze if content should be proactively translated based on usage patterns
+    func shouldProactivelyTranslate(contentId: String, familyId: String) async -> Bool {
+        // Get current usage metrics
+        let metrics = getFamilyUsageMetrics(familyId: familyId)
+        
+        // Check if this is a high-usage family
+        guard metrics.isHighUsageFamily else {
+            print("📊 Family \(familyId) is low usage - no proactive translation needed")
+            return false
+        }
+        
+        // Get family's translation strategy
+        do {
+            let strategy = try await FamilyLanguageService.shared.getTranslationStrategy(for: familyId)
+            
+            switch strategy {
+            case .immediate:
+                return true
+            case .onDemand:
+                return false
+            case .hybrid:
+                // For hybrid, check if family actively uses dual languages
+                if metrics.isDualLanguageActive {
+                    print("📊 Family \(familyId) actively uses dual languages - proactive translation recommended")
+                    return true
+                } else {
+                    return false
+                }
+            }
+        } catch {
+            print("❌ Error getting translation strategy: \(error)")
+            return false
+        }
+    }
+    
+    /// Get high-priority content for proactive translation
+    func getHighPriorityContentForTranslation(familyId: String, limit: Int = 5) -> [ContentAccessRecord] {
+        return usageTrackingQueue.sync {
+            let familyRecords = contentAccessTracker.values.filter { 
+                $0.familyId == familyId && $0.accessFrequency > 2.0 
+            }
+            
+            return Array(familyRecords.sorted { $0.accessFrequency > $1.accessFrequency }.prefix(limit))
+        }
+    }
+    
     // MARK: - Private Methods
     
     private func startProcessingTimer() {
@@ -386,6 +540,72 @@ class TranslationQueueManager: ObservableObject {
         // TODO: Implement API key retrieval logic
         return nil
     }
+    
+    /// Persist content access tracking to database
+    private func persistContentAccess(contentId: String, familyId: String, userId: String, language: String) async {
+        do {
+            // Insert content access record
+            try await SupabaseManager.shared.client
+                .from("content_access_logs")
+                .insert([
+                    "content_id": contentId,
+                    "family_id": familyId,
+                    "user_id": userId,
+                    "language": language,
+                    "accessed_at": ISO8601DateFormatter().string(from: Date())
+                ])
+                .execute()
+            
+        } catch {
+            print("❌ Failed to persist content access: \(error)")
+        }
+    }
+    
+    /// Load usage patterns from database on startup
+    private func loadUsagePatternsFromDatabase() async {
+        do {
+            // Get content access data from last 30 days
+            let thirtyDaysAgo = Calendar.current.date(byAdding: .day, value: -30, to: Date()) ?? Date()
+            let dateFormatter = ISO8601DateFormatter()
+            
+            let response = try await SupabaseManager.shared.client
+                .from("content_access_logs")
+                .select("content_id, family_id, user_id, language, accessed_at")
+                .gte("accessed_at", value: dateFormatter.string(from: thirtyDaysAgo))
+                .execute()
+            
+            let accessLogs = response.value as? [[String: Any]] ?? []
+            
+            print("📊 Loading \(accessLogs.count) content access records from database")
+            
+            usageTrackingQueue.async(flags: .barrier) {
+                for log in accessLogs {
+                    guard let contentId = log["content_id"] as? String,
+                          let familyId = log["family_id"] as? String,
+                          let userId = log["user_id"] as? String,
+                          let language = log["language"] as? String else {
+                        continue
+                    }
+                    
+                    var record = self.contentAccessTracker[contentId] ?? ContentAccessRecord(
+                        contentId: contentId,
+                        familyId: familyId
+                    )
+                    
+                    record.accessCount += 1
+                    record.languageAccesses[language, default: 0] += 1
+                    record.userAccesses[userId, default: 0] += 1
+                    
+                    self.contentAccessTracker[contentId] = record
+                }
+                
+                print("✅ Loaded usage patterns for \(self.contentAccessTracker.count) unique content items")
+            }
+            
+        } catch {
+            print("❌ Error loading usage patterns from database: \(error)")
+        }
+    }
 }
 
 // MARK: - Queue Analytics
@@ -396,15 +616,76 @@ extension TranslationQueueManager {
         let successRate: Double
         let cacheHitRate: Double
         let dailyTranslationCount: Int
+        let totalContentTracked: Int
+        let familiesWithUsageData: Int
+        let averageContentAccessesPerFamily: Double
+        let topLanguages: [(String, Int)]
     }
     
     func getAnalytics() -> QueueAnalytics {
-        // Placeholder implementation
+        let usageAnalytics = usageTrackingQueue.sync {
+            let totalContent = contentAccessTracker.count
+            let familyGroups = Dictionary(grouping: contentAccessTracker.values) { $0.familyId }
+            let familiesCount = familyGroups.count
+            
+            let totalAccesses = contentAccessTracker.values.reduce(0) { $0 + $1.accessCount }
+            let avgAccessesPerFamily = familiesCount > 0 ? Double(totalAccesses) / Double(familiesCount) : 0.0
+            
+            var languageCounts: [String: Int] = [:]
+            for record in contentAccessTracker.values {
+                for (language, count) in record.languageAccesses {
+                    languageCounts[language, default: 0] += count
+                }
+            }
+            
+            let topLanguages = languageCounts.sorted { $0.value > $1.value }.prefix(5).map { ($0.key, $0.value) }
+            
+            return (totalContent, familiesCount, avgAccessesPerFamily, Array(topLanguages))
+        }
+        
         return QueueAnalytics(
             averageProcessingTime: 5.0,
-            successRate: Double(completedCount) / Double(completedCount + failedCount),
+            successRate: Double(completedCount) / Double(max(completedCount + failedCount, 1)),
             cacheHitRate: 0.0, // Would need to track from TranslationService
-            dailyTranslationCount: completedCount
+            dailyTranslationCount: completedCount,
+            totalContentTracked: usageAnalytics.0,
+            familiesWithUsageData: usageAnalytics.1,
+            averageContentAccessesPerFamily: usageAnalytics.2,
+            topLanguages: usageAnalytics.3
         )
+    }
+    
+    /// Get comprehensive analytics for a specific family
+    func getFamilyAnalytics(familyId: String) -> FamilyAnalytics {
+        let usageMetrics = getFamilyUsageMetrics(familyId: familyId)
+        let familyRecords = usageTrackingQueue.sync {
+            contentAccessTracker.values.filter { $0.familyId == familyId }
+        }
+        
+        let recentlyAccessedContent = familyRecords
+            .sorted { $0.lastAccessed > $1.lastAccessed }
+            .prefix(10)
+            .map { $0.contentId }
+        
+        let mostAccessedContent = familyRecords
+            .sorted { $0.accessCount > $1.accessCount }
+            .prefix(5)
+            .map { ($0.contentId, $0.accessCount) }
+        
+        return FamilyAnalytics(
+            familyId: familyId,
+            usageMetrics: usageMetrics,
+            recentlyAccessedContent: Array(recentlyAccessedContent),
+            mostAccessedContent: Array(mostAccessedContent),
+            recommendedStrategy: usageMetrics.isHighUsageFamily ? "immediate" : "on_demand"
+        )
+    }
+    
+    struct FamilyAnalytics {
+        let familyId: String
+        let usageMetrics: FamilyUsageMetrics
+        let recentlyAccessedContent: [String]
+        let mostAccessedContent: [(String, Int)]
+        let recommendedStrategy: String
     }
 }

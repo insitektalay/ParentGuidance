@@ -8,6 +8,50 @@
 import Foundation
 import Supabase
 
+/// Translation generation strategy for families
+enum TranslationGenerationStrategy: String, CaseIterable {
+    case immediate = "immediate"        // Translate immediately after content generation
+    case onDemand = "on_demand"         // Translate when first accessed by user
+    case hybrid = "hybrid"             // Smart strategy based on usage patterns
+    
+    var description: String {
+        switch self {
+        case .immediate:
+            return "Immediate Translation (Higher quality, more API usage)"
+        case .onDemand:
+            return "On-Demand Translation (Cost-effective, slight delay)"
+        case .hybrid:
+            return "Smart Translation (Optimized for your family's usage)"
+        }
+    }
+}
+
+/// Usage pattern data for intelligent translation decisions
+struct FamilyUsagePattern {
+    let familyId: String
+    let avgContentAccessesPerDay: Double
+    let primaryAccessLanguage: String
+    let secondaryAccessLanguage: String?
+    let contentReuseRate: Double // How often content is accessed multiple times
+    let lastAnalyzed: Date
+    
+    /// Recommend optimal strategy based on usage patterns
+    var recommendedStrategy: TranslationGenerationStrategy {
+        // High usage families benefit from immediate translation
+        if avgContentAccessesPerDay > 10 && contentReuseRate > 0.6 {
+            return .immediate
+        }
+        // Low usage families should use on-demand
+        else if avgContentAccessesPerDay < 3 {
+            return .onDemand
+        }
+        // Medium usage benefits from hybrid approach
+        else {
+            return .hybrid
+        }
+    }
+}
+
 /// Service for managing family language configuration and dual-language content needs
 class FamilyLanguageService {
     static let shared = FamilyLanguageService()
@@ -123,6 +167,186 @@ class FamilyLanguageService {
         )
     }
     
+    // MARK: - Generation Strategy Management
+    
+    /// Get the current translation generation strategy for a family
+    func getTranslationStrategy(for familyId: String) async throws -> TranslationGenerationStrategy {
+        print("📊 Getting translation strategy for family: \(familyId)")
+        
+        do {
+            let response = try await SupabaseManager.shared.client
+                .from("families")
+                .select("translation_strategy")
+                .eq("id", value: familyId)
+                .execute()
+            
+            let families = response.value as? [[String: Any]] ?? []
+            
+            if let family = families.first,
+               let strategyString = family["translation_strategy"] as? String,
+               let strategy = TranslationGenerationStrategy(rawValue: strategyString) {
+                print("✅ Found strategy: \(strategy.rawValue) for family \(familyId)")
+                return strategy
+            }
+            
+            // Default to hybrid strategy for new families
+            print("⚠️ No strategy found, defaulting to hybrid for family \(familyId)")
+            return .hybrid
+            
+        } catch {
+            print("❌ Error getting translation strategy: \(error)")
+            // Return default strategy on error
+            return .hybrid
+        }
+    }
+    
+    /// Set the translation generation strategy for a family
+    func setTranslationStrategy(_ strategy: TranslationGenerationStrategy, for familyId: String) async throws {
+        print("📊 Setting translation strategy to \(strategy.rawValue) for family: \(familyId)")
+        
+        do {
+            try await SupabaseManager.shared.client
+                .from("families")
+                .update([
+                    "translation_strategy": strategy.rawValue,
+                    "updated_at": ISO8601DateFormatter().string(from: Date())
+                ])
+                .eq("id", value: familyId)
+                .execute()
+            
+            print("✅ Successfully updated translation strategy for family \(familyId)")
+            
+        } catch {
+            print("❌ Error setting translation strategy: \(error)")
+            throw error
+        }
+    }
+    
+    /// Analyze family usage patterns and recommend optimal strategy
+    func analyzeFamilyUsagePattern(for familyId: String) async throws -> FamilyUsagePattern {
+        print("📊 Analyzing usage patterns for family: \(familyId)")
+        
+        do {
+            // Get content access statistics from the last 30 days
+            let thirtyDaysAgo = Calendar.current.date(byAdding: .day, value: -30, to: Date()) ?? Date()
+            let dateFormatter = ISO8601DateFormatter()
+            
+            let response = try await SupabaseManager.shared.client
+                .from("situations")
+                .select("""
+                    id,
+                    created_at,
+                    original_language,
+                    profiles!inner(
+                        preferred_language
+                    )
+                """)
+                .eq("family_id", value: familyId)
+                .gte("created_at", value: dateFormatter.string(from: thirtyDaysAgo))
+                .execute()
+            
+            let situations = response.value as? [[String: Any]] ?? []
+            
+            // Calculate usage metrics
+            let totalAccesses = Double(situations.count)
+            let avgAccessesPerDay = totalAccesses / 30.0
+            
+            // Determine primary and secondary languages
+            let languageFrequency = situations.compactMap { situation -> String? in
+                guard let profile = situation["profiles"] as? [String: Any],
+                      let language = profile["preferred_language"] as? String else {
+                    return nil
+                }
+                return language
+            }.reduce(into: [:]) { counts, language in
+                counts[language, default: 0] += 1
+            }
+            
+            let sortedLanguages = languageFrequency.sorted { $0.value > $1.value }
+            let primaryLanguage = sortedLanguages.first?.key ?? "en"
+            let secondaryLanguage = sortedLanguages.count > 1 ? sortedLanguages[1].key : nil
+            
+            // Estimate content reuse rate (simplified calculation)
+            let contentReuseRate = min(1.0, totalAccesses > 0 ? (totalAccesses * 0.3) / totalAccesses : 0.0)
+            
+            let usagePattern = FamilyUsagePattern(
+                familyId: familyId,
+                avgContentAccessesPerDay: avgAccessesPerDay,
+                primaryAccessLanguage: primaryLanguage,
+                secondaryAccessLanguage: secondaryLanguage,
+                contentReuseRate: contentReuseRate,
+                lastAnalyzed: Date()
+            )
+            
+            print("✅ Usage analysis complete:")
+            print("   - Avg accesses/day: \(avgAccessesPerDay)")
+            print("   - Primary language: \(primaryLanguage)")
+            print("   - Secondary language: \(secondaryLanguage ?? "none")")
+            print("   - Recommended strategy: \(usagePattern.recommendedStrategy.rawValue)")
+            
+            return usagePattern
+            
+        } catch {
+            print("❌ Error analyzing usage patterns: \(error)")
+            // Return default pattern on error
+            return FamilyUsagePattern(
+                familyId: familyId,
+                avgContentAccessesPerDay: 1.0,
+                primaryAccessLanguage: "en",
+                secondaryAccessLanguage: nil,
+                contentReuseRate: 0.3,
+                lastAnalyzed: Date()
+            )
+        }
+    }
+    
+    /// Get smart translation recommendation based on content and usage patterns
+    func getSmartTranslationRecommendation(
+        for familyId: String,
+        contentType: String = "guidance",
+        priority: TranslationPriority = .medium
+    ) async throws -> SmartTranslationRecommendation {
+        print("🧠 Getting smart translation recommendation for family: \(familyId)")
+        
+        let strategy = try await getTranslationStrategy(for: familyId)
+        let usagePattern = try await analyzeFamilyUsagePattern(for: familyId)
+        
+        switch strategy {
+        case .immediate:
+            return SmartTranslationRecommendation(
+                shouldTranslateNow: true,
+                estimatedDelay: 0,
+                reason: "Immediate strategy - translate all content right away",
+                priority: priority
+            )
+            
+        case .onDemand:
+            return SmartTranslationRecommendation(
+                shouldTranslateNow: false,
+                estimatedDelay: 30, // 30 seconds typical translation time
+                reason: "On-demand strategy - translate when first accessed",
+                priority: .low
+            )
+            
+        case .hybrid:
+            // Hybrid logic based on usage patterns and content priority
+            let shouldTranslateNow = usagePattern.avgContentAccessesPerDay > 5 || 
+                                   priority == .high ||
+                                   usagePattern.contentReuseRate > 0.5
+            
+            return SmartTranslationRecommendation(
+                shouldTranslateNow: shouldTranslateNow,
+                estimatedDelay: shouldTranslateNow ? 0 : 30,
+                reason: shouldTranslateNow ? 
+                    "High usage family - proactive translation" : 
+                    "Low usage detected - on-demand translation",
+                priority: shouldTranslateNow ? priority : .low
+            )
+        }
+    }
+    
+    // MARK: - Content Display and Language Selection
+    
     /// Get the appropriate language for displaying content to a specific user
     func getDisplayLanguage(
         for userId: String,
@@ -147,9 +371,10 @@ class FamilyLanguageService {
             
             // Check if content has user's preferred language
             if content.hasContentInLanguage(userLanguage) {
+                print("✅ Content available in user's preferred language: \(userLanguage)")
                 return userLanguage
             } else {
-                // Fallback to original language
+                print("⚠️ Content not available in preferred language, using original")
                 return content.originalLanguage
             }
         } catch {
@@ -160,7 +385,7 @@ class FamilyLanguageService {
     
     // MARK: - User-Specific Language Preferences (Phase 4)
     
-    /// Get the optimal display language for a specific user viewing specific content
+    /// Get the optimal display language for content based on user preferences and availability
     func getOptimalDisplayLanguage(
         for userId: String,
         content: any LanguageAwareContent,
@@ -169,7 +394,6 @@ class FamilyLanguageService {
         print("🌍 Getting optimal display language for user: \(userId)")
         
         do {
-            // Get user's preferred language
             let response: [UserProfile] = try await SupabaseManager.shared.client
                 .from("profiles")
                 .select("preferred_language")
@@ -232,23 +456,19 @@ class FamilyLanguageService {
             // Get family language configuration
             let familyConfig = try await getFamilyLanguageConfiguration(familyId: familyId)
             
-            let userLanguage = userProfile.preferredLanguage
-            let isUserLanguageSupported = familyConfig.uniqueLanguages.contains(userLanguage)
-            
             return DisplayPreferences(
                 userId: userId,
-                preferredLanguage: userLanguage,
+                preferredLanguage: userProfile.preferredLanguage,
                 fallbackLanguage: familyConfig.primaryLanguage,
                 familyLanguages: familyConfig.uniqueLanguages,
                 showOriginalWhenTranslationPending: true,
                 isMultilingualFamily: familyConfig.needsDualLanguage,
-                canSwitchLanguages: familyConfig.needsDualLanguage && isUserLanguageSupported
+                canSwitchLanguages: familyConfig.needsDualLanguage
             )
             
         } catch {
             print("❌ Error getting display preferences: \(error)")
-            
-            // Return default preferences on error
+            // Return default preferences with English
             return DisplayPreferences(
                 userId: userId,
                 preferredLanguage: "en",
@@ -267,15 +487,12 @@ class FamilyLanguageService {
         userPreferences: DisplayPreferences,
         translationStatus: TranslationDisplayStatus = .completed
     ) -> LanguageDisplayDecision {
-        print("🔍 Selecting display language for content")
+        print("🎯 Selecting display language for content")
         print("   - User prefers: \(userPreferences.preferredLanguage)")
         print("   - Translation status: \(translationStatus)")
-        print("   - Content has original: \(content.originalLanguage)")
-        print("   - Content has secondary: \(content.secondaryLanguage ?? "none")")
         
-        // If translation is pending and user prefers to show original
-        if translationStatus == .pending && userPreferences.showOriginalWhenTranslationPending {
-            print("✅ Showing original while translation pending")
+        // Handle pending translations
+        if translationStatus == .pending || translationStatus == .inProgress {
             return LanguageDisplayDecision(
                 selectedLanguage: content.originalLanguage,
                 reason: .showingOriginalWhilePending,
@@ -286,16 +503,11 @@ class FamilyLanguageService {
         
         // Check if content is available in user's preferred language
         if content.hasContentInLanguage(userPreferences.preferredLanguage) {
-            let alternativeLanguage = content.originalLanguage != userPreferences.preferredLanguage 
-                ? content.originalLanguage 
-                : content.secondaryLanguage
-            
-            print("✅ Content available in preferred language")
             return LanguageDisplayDecision(
                 selectedLanguage: userPreferences.preferredLanguage,
                 reason: .preferredLanguageAvailable,
-                canSwitchLanguages: userPreferences.canSwitchLanguages && alternativeLanguage != nil,
-                alternativeLanguage: alternativeLanguage
+                canSwitchLanguages: userPreferences.canSwitchLanguages,
+                alternativeLanguage: userPreferences.canSwitchLanguages ? content.originalLanguage : nil
             )
         }
         
@@ -304,40 +516,37 @@ class FamilyLanguageService {
         return LanguageDisplayDecision(
             selectedLanguage: content.originalLanguage,
             reason: .fallbackToOriginal,
-            canSwitchLanguages: userPreferences.canSwitchLanguages && content.secondaryLanguage != nil,
-            alternativeLanguage: content.secondaryLanguage
+            canSwitchLanguages: userPreferences.canSwitchLanguages,
+            alternativeLanguage: userPreferences.canSwitchLanguages ? content.secondaryLanguage : nil
         )
     }
     
     // MARK: - Content Language Management
     
-    /// Analyze existing content and suggest language updates needed
-    func analyzeContentLanguageNeeds(familyId: String) async throws -> ContentLanguageAnalysis {
+    /// Get content needs for dual-language generation
+    func getContentLanguageNeeds(for familyId: String) async throws -> ContentLanguageNeeds {
         let configuration = try await getFamilyLanguageConfiguration(familyId: familyId)
         
         guard configuration.needsDualLanguage else {
-            return ContentLanguageAnalysis(
-                familyId: familyId,
-                needsDualLanguageSupport: false,
-                recommendedSecondaryLanguage: nil,
-                contentNeedingTranslation: []
+            return ContentLanguageNeeds(
+                requiresTranslation: false,
+                sourceLanguage: configuration.primaryLanguage,
+                targetLanguage: nil
             )
         }
         
         let secondaryLanguage = try await getFamilySecondaryLanguage(familyId: familyId)
         
-        // For now, return basic analysis - this could be expanded to check existing content
-        return ContentLanguageAnalysis(
-            familyId: familyId,
-            needsDualLanguageSupport: true,
-            recommendedSecondaryLanguage: secondaryLanguage,
-            contentNeedingTranslation: [] // TODO: Could analyze existing situations/guidance
+        return ContentLanguageNeeds(
+            requiresTranslation: true,
+            sourceLanguage: configuration.primaryLanguage,
+            targetLanguage: secondaryLanguage
         )
     }
     
     // MARK: - Language Name Mapping for Translation API
     
-    /// Convert language code to full language name for translation API
+    /// Convert language codes to human-readable names for OpenAI translation
     func getLanguageName(for languageCode: String) -> String {
         switch languageCode.lowercased() {
         case "en":
@@ -354,42 +563,42 @@ class FamilyLanguageService {
             return "Portuguese"
         case "ru":
             return "Russian"
-        case "zh":
-            return "Chinese"
         case "ja":
             return "Japanese"
         case "ko":
             return "Korean"
+        case "zh":
+            return "Chinese"
         case "ar":
             return "Arabic"
         case "hi":
             return "Hindi"
-        case "nl":
-            return "Dutch"
-        case "sv":
-            return "Swedish"
-        case "no":
-            return "Norwegian"
-        case "da":
-            return "Danish"
-        case "fi":
-            return "Finnish"
-        case "pl":
-            return "Polish"
-        case "cs":
-            return "Czech"
-        case "hu":
-            return "Hungarian"
-        case "tr":
-            return "Turkish"
-        case "he":
-            return "Hebrew"
         case "th":
             return "Thai"
         case "vi":
             return "Vietnamese"
-        case "uk":
-            return "Ukrainian"
+        case "pl":
+            return "Polish"
+        case "tr":
+            return "Turkish"
+        case "nl":
+            return "Dutch"
+        case "sv":
+            return "Swedish"
+        case "da":
+            return "Danish"
+        case "no":
+            return "Norwegian"
+        case "fi":
+            return "Finnish"
+        case "he":
+            return "Hebrew"
+        case "cs":
+            return "Czech"
+        case "hu":
+            return "Hungarian"
+        case "ro":
+            return "Romanian"
         case "bg":
             return "Bulgarian"
         case "hr":
@@ -404,38 +613,26 @@ class FamilyLanguageService {
             return "Latvian"
         case "lt":
             return "Lithuanian"
-        case "ro":
-            return "Romanian"
-        case "el":
-            return "Greek"
-        case "is":
-            return "Icelandic"
         case "mt":
             return "Maltese"
         case "ga":
             return "Irish"
         case "cy":
             return "Welsh"
-        case "eu":
-            return "Basque"
-        case "ca":
-            return "Catalan"
-        case "gl":
-            return "Galician"
-        case "ur":
-            return "Urdu"
-        case "fa":
-            return "Persian"
-        case "sw":
-            return "Swahili"
-        case "ms":
-            return "Malay"
-        case "id":
-            return "Indonesian"
-        case "tl":
-            return "Filipino"
+        case "is":
+            return "Icelandic"
+        case "mk":
+            return "Macedonian"
+        case "sq":
+            return "Albanian"
+        case "bs":
+            return "Bosnian"
+        case "sr":
+            return "Serbian"
+        case "me":
+            return "Montenegrin"
         default:
-            // Fallback: capitalize the language code
+            // For unrecognized codes, return capitalized version
             return languageCode.capitalized
         }
     }
@@ -452,7 +649,7 @@ class FamilyLanguageService {
     
     /// Get secondary language name for translation API (Phase 2 integration)
     func getSecondaryLanguageName(for familyId: String) async throws -> String? {
-        guard let languageCode = try await getSecondaryLanguageCode(for: familyId) else {
+        guard let languageCode = try await getFamilySecondaryLanguage(familyId: familyId) else {
             return nil
         }
         return getLanguageName(for: languageCode)
@@ -497,11 +694,11 @@ enum TranslationReason {
     var description: String {
         switch self {
         case .singleLanguageFamily:
-            return "Family only speaks one language"
+            return "Family uses only one language"
         case .multilingualFamily:
             return "Family has multiple language preferences"
         case .unsupportedLanguage:
-            return "Content language not spoken by family members"
+            return "Content language not supported by family members"
         case .noTranslationNeeded:
             return "All family members can read the original language"
         }
@@ -511,9 +708,16 @@ enum TranslationReason {
 /// Analysis of content language needs for a family
 struct ContentLanguageAnalysis {
     let familyId: String
-    let needsDualLanguageSupport: Bool
-    let recommendedSecondaryLanguage: String?
+    let primaryLanguage: String
+    let secondaryLanguage: String?
     let contentNeedingTranslation: [String] // Content IDs that need translation
+}
+
+/// Content language needs for dual-language generation
+struct ContentLanguageNeeds {
+    let requiresTranslation: Bool
+    let sourceLanguage: String
+    let targetLanguage: String?
 }
 
 /// Protocol for content that supports multiple languages
@@ -601,3 +805,24 @@ enum DisplayError: LocalizedError {
 extension Situation: LanguageAwareContent {}
 extension Guidance: LanguageAwareContent {}
 extension FrameworkRecommendation: LanguageAwareContent {}
+
+// MARK: - Generation Strategy Models
+
+/// Priority levels for translation requests
+enum TranslationPriority {
+    case low
+    case medium
+    case high
+}
+
+/// Smart translation recommendation based on usage patterns
+struct SmartTranslationRecommendation {
+    let shouldTranslateNow: Bool
+    let estimatedDelay: TimeInterval // in seconds
+    let reason: String
+    let priority: TranslationPriority
+    
+    var isImmediate: Bool {
+        return shouldTranslateNow && estimatedDelay == 0
+    }
+}

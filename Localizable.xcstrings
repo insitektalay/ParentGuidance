@@ -1219,6 +1219,9 @@
     "Continue anyway" : {
 
     },
+    "Create a new situation to test the enabled services. Check console logs to verify which code path is used." : {
+
+    },
     "Date filters" : {
 
     },
@@ -1238,6 +1241,12 @@
 
     },
     "Describe what's happening with %@..." : {
+
+    },
+    "Developer Tools" : {
+
+    },
+    "Direct API" : {
 
     },
     "disclaimer.guidance.description" : {
@@ -1261,6 +1270,12 @@
 
     },
     "Double tap to toggle voice recording" : {
+
+    },
+    "Edge Function" : {
+
+    },
+    "EdgeFunction Migration Testing" : {
 
     },
     "Enter text to enable sending" : {
@@ -3863,6 +3878,9 @@
 
     },
     "Start recording" : {
+
+    },
+    "Status" : {
 
     },
     "status.active" : {

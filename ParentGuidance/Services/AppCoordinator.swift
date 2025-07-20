@@ -2,6 +2,10 @@ import Foundation
 import SwiftUI
 import Combine
 
+
+
+
+
 enum AppState {
     case loading
     case onboarding(OnboardingStep)
@@ -19,6 +23,15 @@ class AppCoordinator: ObservableObject {
     
     init() {
         checkAuthenticationState()
+
+        Task {
+            do {
+                let token = try await SupabaseManager.shared.client.auth.session.accessToken
+                print("🔑 Session Token: \(token)")
+            } catch {
+                print("❌ Failed to get token: \(error)")
+            }
+        }
     }
     
     // MARK: - Authentication State Management

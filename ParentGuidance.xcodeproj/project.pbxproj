@@ -59,6 +59,7 @@
 		944EA1D92E2CC63900C110AF /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 944EA1CD2E2CC63900C110AF /* .gitignore */; };
 		944EA1DA2E2CC63900C110AF /* config.toml in Resources */ = {isa = PBXBuildFile; fileRef = 944EA1CE2E2CC63900C110AF /* config.toml */; };
 		944EA1E22E2CD35400C110AF /* EdgeFunctionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1E12E2CD35400C110AF /* EdgeFunctionService.swift */; };
+		944EA1E42E2CDCE100C110AF /* GuidanceGenerationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1E32E2CDCE100C110AF /* GuidanceGenerationService.swift */; };
 		9481564C2E23CDC000C28273 /* ChildProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */; };
 		9481564E2E25334C00C28273 /* AudioPermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564D2E25334C00C28273 /* AudioPermissionManager.swift */; };
 		948156502E2533EE00C28273 /* VoiceRecorderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */; };
@@ -207,6 +208,7 @@
 		944EA1DF2E2CCFBC00C110AF /* contextExtractionPrompt.ts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.typescript; path = contextExtractionPrompt.ts; sourceTree = "<group>"; };
 		944EA1E02E2CCFBC00C110AF /* frameworkPrompt.ts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.typescript; path = frameworkPrompt.ts; sourceTree = "<group>"; };
 		944EA1E12E2CD35400C110AF /* EdgeFunctionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeFunctionService.swift; sourceTree = "<group>"; };
+		944EA1E32E2CDCE100C110AF /* GuidanceGenerationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidanceGenerationService.swift; sourceTree = "<group>"; };
 		9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildProfileEditView.swift; sourceTree = "<group>"; };
 		9481564D2E25334C00C28273 /* AudioPermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPermissionManager.swift; sourceTree = "<group>"; };
 		9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorderError.swift; sourceTree = "<group>"; };
@@ -548,6 +550,7 @@
 				944EA1B52E2B70AC00C110AF /* TranslationQueueManager.swift */,
 				944EA1B72E2B77C400C110AF /* ContentDisplayService.swift */,
 				944EA1E12E2CD35400C110AF /* EdgeFunctionService.swift */,
+				944EA1E32E2CDCE100C110AF /* GuidanceGenerationService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -942,6 +945,7 @@
 				94FA11252E05CBD4003EC1E9 /* SituationFollowUpView.swift in Sources */,
 				94B3D79C2E16C45B000F1D65 /* TodayViewController.swift in Sources */,
 				948156622E2904B100C28273 /* YourChildsWorldCard.swift in Sources */,
+				944EA1E42E2CDCE100C110AF /* GuidanceGenerationService.swift in Sources */,
 				948605C82E111824008D92DE /* TodayEmptyView.swift in Sources */,
 				948156562E2762BA00C28273 /* DynamicGuidanceModels.swift in Sources */,
 				948156722E2A1D9800C28273 /* SearchSituationsCard.swift in Sources */,

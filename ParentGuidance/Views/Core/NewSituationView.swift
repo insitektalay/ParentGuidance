@@ -83,12 +83,13 @@ struct NewSituationView: View {
             // Step 2.5: Check for active framework
             let activeFramework = try? await FrameworkStorageService.shared.getActiveFramework(familyId: familyId!)
             
-            // Step 3: Call OpenAI API to get guidance and title
-            let (guidance, rawContent) = try await generateGuidance(
+            // Step 3: Generate guidance using GuidanceGenerationService
+            let (guidance, rawContent) = try await GuidanceGenerationService.shared.generateGuidance(
                 situation: inputText,
                 familyContext: "none",
                 apiKey: apiKey,
-                activeFramework: activeFramework
+                activeFramework: activeFramework,
+                useStreaming: false // Start with non-streaming for compatibility
             )
             
             // Step 4: Analyze situation for category and incident classification
@@ -256,6 +257,8 @@ struct NewSituationView: View {
         return "\(name): \(description)"
     }
     
+    /*
+    // LEGACY METHOD: Now handled by GuidanceGenerationService
     private func generateGuidance(
         situation: String,
         familyContext: String = "none",
@@ -516,6 +519,7 @@ struct NewSituationView: View {
         
         return nil
     }
+    */
 }
 
 struct SituationGuidanceViewWithData: View {

@@ -741,6 +741,9 @@ struct SettingsView: View {
                 // Family Language Section
                 familyLanguageSection
                 
+                // Developer Section (for testing EdgeFunction migration)
+                developerSection
+                
                 // Privacy & Data Section
                 privacyDataSection
                 
@@ -1392,6 +1395,93 @@ struct SettingsView: View {
             return String(localized: "settings.familyLanguage.strategy.onDemand.description")
         case .hybrid:
             return String(localized: "settings.familyLanguage.strategy.hybrid.description")
+        }
+    }
+
+    private var developerSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Developer Tools")
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundColor(ColorPalette.white)
+                .padding(.horizontal, 16)
+            
+            VStack(alignment: .leading, spacing: 16) {
+                Text("EdgeFunction Migration Testing")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(ColorPalette.white)
+                
+                // Feature flag toggles
+                featureFlagToggles
+                
+                // Status indicators
+                featureFlagStatus
+            }
+            .padding(16)
+            .background(ColorPalette.white.opacity(0.05))
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .padding(.horizontal, 16)
+        }
+    }
+    
+    private var featureFlagToggles: some View {
+        VStack(spacing: 12) {
+            featureFlagToggle("Translation", isEnabled: TranslationService.isUsingEdgeFunction()) {
+                TranslationService.setUseEdgeFunction(!TranslationService.isUsingEdgeFunction())
+            }
+            
+            featureFlagToggle("Conversation", isEnabled: ConversationService.isUsingEdgeFunction()) {
+                ConversationService.setUseEdgeFunction(!ConversationService.isUsingEdgeFunction())
+            }
+            
+            featureFlagToggle("Framework", isEnabled: FrameworkGenerationService.isUsingEdgeFunction()) {
+                FrameworkGenerationService.setUseEdgeFunction(!FrameworkGenerationService.isUsingEdgeFunction())
+            }
+            
+            featureFlagToggle("Context", isEnabled: ContextualInsightService.isUsingEdgeFunction()) {
+                ContextualInsightService.setUseEdgeFunction(!ContextualInsightService.isUsingEdgeFunction())
+            }
+            
+            featureFlagToggle("Guidance", isEnabled: GuidanceGenerationService.isUsingEdgeFunction()) {
+                GuidanceGenerationService.setUseEdgeFunction(!GuidanceGenerationService.isUsingEdgeFunction())
+            }
+        }
+    }
+    
+    private func featureFlagToggle(_ name: String, isEnabled: Bool, action: @escaping () -> Void) -> some View {
+        HStack {
+            Text(name)
+                .font(.system(size: 14))
+                .foregroundColor(ColorPalette.white.opacity(0.9))
+            
+            Spacer()
+            
+            Button(action: action) {
+                HStack(spacing: 4) {
+                    Circle()
+                        .fill(isEnabled ? Color.green : Color.red)
+                        .frame(width: 8, height: 8)
+                    Text(isEnabled ? "Edge Function" : "Direct API")
+                        .font(.system(size: 12))
+                        .foregroundColor(ColorPalette.white.opacity(0.8))
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(ColorPalette.white.opacity(0.1))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+            }
+        }
+    }
+    
+    private var featureFlagStatus: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Status")
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(ColorPalette.white.opacity(0.9))
+            
+            Text("Create a new situation to test the enabled services. Check console logs to verify which code path is used.")
+                .font(.system(size: 12))
+                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .lineLimit(nil)
         }
     }
 

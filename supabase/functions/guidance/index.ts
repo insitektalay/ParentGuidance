@@ -66,8 +66,7 @@ serve(async (req) => {
     const body: RequestBody = await req.json()
     const { operation, variables, apiKey } = body
     
-    console.log(`[DEBUG] Parsed request - operation: "${operation}", variables keys: [${Object.keys(variables || {}).join(', ')}]`)
-    console.log(`[DEBUG] Variables content: ${JSON.stringify(variables, null, 2)}`)
+    console.log(`[DEBUG] Operation: ${operation}, variables: [${Object.keys(variables || {}).join(', ')}]`)
 
     if (!apiKey) {
       return new Response(
@@ -227,8 +226,7 @@ async function handleGuidanceOperation(apiKey: string, variables: any) {
 // Handle situation analysis (non-streaming)
 async function handleAnalyzeOperation(apiKey: string, variables: any) {
   const { situation_text } = variables
-  console.log(`[DEBUG] Analyze operation - situation_text: "${situation_text?.substring(0, 100)}..."`)
-  console.log(`[DEBUG] Analyze - promptTemplates.analyze exists: ${!!promptTemplates.analyze}`)
+  console.log(`[DEBUG] Analyze operation - text length: ${situation_text?.length || 0}`)
 
   try {
     // Prepare variables for interpolation (map situation_text to situation_inputted)
@@ -259,7 +257,7 @@ async function handleAnalyzeOperation(apiKey: string, variables: any) {
 
     if (!response.ok) {
       const errorText = await response.text()
-      console.error(`[DEBUG] Analyze operation OpenAI API error: Status ${response.status}, Body: ${errorText}`)
+      console.error(`[ERROR] Analyze OpenAI API error: ${response.status}`)
       throw new Error(`OpenAI API error: ${response.status} - ${errorText}`)
     }
 
@@ -272,43 +270,29 @@ async function handleAnalyzeOperation(apiKey: string, variables: any) {
 
     // Parse the analysis response (custom format from prompt template)
     console.log(`[DEBUG] Analyze response content: ${content}`)
-    console.log(`[DEBUG] Content length: ${content.length}`)
-    console.log(`[DEBUG] Content type: ${typeof content}`)
     
     let analysisResult
     try {
       // First try JSON parsing
-      console.log(`[DEBUG] Attempting JSON.parse...`)
       const parsed = JSON.parse(content)
-      console.log(`[DEBUG] JSON parsing successful. Parsed object:`, JSON.stringify(parsed, null, 2))
-      
       // Convert field names to match iOS expectations
       analysisResult = {
         category: parsed.category || "general",
         isIncident: parsed.incident !== undefined ? parsed.incident : false
       }
-      console.log(`[DEBUG] Field conversion completed. Final result:`, JSON.stringify(analysisResult, null, 2))
     } catch (parseError) {
-      console.log(`[DEBUG] JSON parsing failed with error:`, parseError.message)
-      console.log(`[DEBUG] Falling back to regex parsing...`)
-      
+      console.log(`[DEBUG] JSON parsing failed, using regex fallback`)
       // Fallback: parse the specific format from prompt template
-      // Expected format: "category": "Label", "incident": true/false
       const categoryMatch = content.match(/"category":\s*"([^"]+)"/i)
       const incidentMatch = content.match(/"incident":\s*(true|false)/i)
-      
-      console.log(`[DEBUG] Category match:`, categoryMatch ? categoryMatch[1] : 'not found')
-      console.log(`[DEBUG] Incident match:`, incidentMatch ? incidentMatch[1] : 'not found')
       
       analysisResult = {
         category: categoryMatch ? categoryMatch[1] : "general",
         isIncident: incidentMatch ? incidentMatch[1] === 'true' : false
       }
-      console.log(`[DEBUG] Regex parsing result:`, JSON.stringify(analysisResult, null, 2))
     }
     
-    console.log(`[DEBUG] Final analysis result that will be returned: ${JSON.stringify(analysisResult)}`)
-    console.log(`[DEBUG] About to return HTTP response with this data...`)
+    console.log(`[DEBUG] Analysis result: ${JSON.stringify(analysisResult)}`)
 
     return new Response(
       JSON.stringify({ success: true, data: JSON.stringify(analysisResult) }),
@@ -382,7 +366,7 @@ async function handleFrameworkOperation(apiKey: string, variables: any) {
 // Handle context extraction (non-streaming)
 async function handleContextOperation(apiKey: string, variables: any) {
   const { situation_text, extraction_type } = variables
-  console.log(`[DEBUG] Context operation - extraction_type: "${extraction_type}", situation_text: "${situation_text?.substring(0, 100)}..."`)
+  console.log(`[DEBUG] Context operation - type: ${extraction_type}, text length: ${situation_text?.length || 0}`)
 
   try {
     // Prepare variables for interpolation (map situation_text to long_prompt)
@@ -395,10 +379,6 @@ async function handleContextOperation(apiKey: string, variables: any) {
     const systemPromptTemplate = isRegulation
       ? promptTemplates.context.systemPromptText_regulation
       : promptTemplates.context.systemPromptText_general
-    
-    console.log(`[DEBUG] Context - isRegulation: ${isRegulation}`)
-    console.log(`[DEBUG] Context - template exists: ${!!systemPromptTemplate}`)
-    console.log(`[DEBUG] Context - template length: ${systemPromptTemplate?.length || 0}`)
 
     // Interpolate the system prompt with variables
     const systemPrompt = interpolatePrompt(systemPromptTemplate, promptVariables)
@@ -423,7 +403,7 @@ async function handleContextOperation(apiKey: string, variables: any) {
 
     if (!response.ok) {
       const errorText = await response.text()
-      console.error(`[DEBUG] Context operation OpenAI API error: Status ${response.status}, Body: ${errorText}`)
+      console.error(`[ERROR] Context OpenAI API error: ${response.status}`)
       throw new Error(`OpenAI API error: ${response.status} - ${errorText}`)
     }
 

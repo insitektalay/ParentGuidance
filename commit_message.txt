@@ -1,8 +1,8 @@
-feat: complete EdgeFunction migration with all operations working
-
-Successfully migrated all OpenAI API operations to Supabase Edge Functions:
-  - Fixed analyze operation response format to match iOS jsonRequest expectations
-  - Added comprehensive debug logging for troubleshooting
-  - Verified all 4 operations working: guidance, analyze, context general, context regulation
-  - Maintained complete compatibility with existing iOS parsing and data flow
-  - Edge Functions now handle all AI operations with identical behavior to direct API
+feat: complete EdgeFunction migration with documentation and cleanup
+  - Clean up excessive debug logging from Edge Function for production readiness
+  - Update CLAUDE.md with comprehensive EdgeFunction migration documentation
+  - Document unified Edge Function architecture and feature flag system
+  - All 4 AI operations verified working via Supabase Edge Functions
+  - Maintain compatibility with existing response formats and data persistence
+  EdgeFunction migration fully complete: iOS app successfully transitioned from direct OpenAI API calls to Supabase Edge Function infrastructure
+  with preserved functionality.

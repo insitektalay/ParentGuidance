@@ -72,25 +72,28 @@ The project includes automation hooks in `settings.json` for Claude Code:
 - **AppCoordinator**: Central application state management, authentication flow, and user profile loading with sophisticated error handling
 - **SupabaseManager**: Singleton managing database connections and authentication
 - **TabNavigationManager**: Singleton service for programmatic tab navigation using Combine
-- **ConversationService**: Active OpenAI integration with multiple prompt templates and data persistence
-- **FrameworkGenerationService**: AI-powered generation of parenting frameworks with dedicated prompt templates
+- **ConversationService**: AI-powered conversation management with feature flag for EdgeFunction vs direct API
+- **FrameworkGenerationService**: AI-powered generation of parenting frameworks with EdgeFunction integration
 - **FrameworkStorageService**: Persistence and management of framework recommendations
-- **ContextualInsightService**: Automatic context extraction and categorization from user situations using OpenAI integration
+- **ContextualInsightService**: Automatic context extraction and categorization with EdgeFunction support
+- **EdgeFunctionService**: Unified service for all AI operations via Supabase Edge Functions
+- **TranslationService**: Content translation with EdgeFunction vs direct API feature flag
 - **OnboardingManager**: Coordinates multi-step onboarding process
 - **AuthService**: Authentication flow management
 - **OpenAIService**: Legacy GPT-4 integration (not currently used)
 
-#### Active OpenAI Integration
-- **Primary Integration**: OpenAI Prompts API (`/v1/responses`) with multiple prompt templates
-- **Prompt Templates**:
-  - Main guidance: `pmpt_68515280423c8193aaa00a07235b7cf206c51d869f9526ba` (version 12)
-  - Situation analysis: `pmpt_686b988bf0ac8196a69e972f08842b9a05893c8e8a5153c7` (version 1)
-  - Framework generation: `pmpt_68511f82ba448193a1af0dc01215706f0d3d3fe75d5db0f1` (version 3)
-  - Context extraction: `pmpt_68778827e310819792876a9f5a844c050059609da32e4637` (version 4)
-- **ConversationService**: Handles situation-guidance conversation pairs and multiple OpenAI operations
-- **Response Parsing**: Custom regex parsing for bracket-delimited structured guidance format
-- **Framework Generation**: Separate AI workflow for analyzing situations and generating parenting frameworks
-- **Contextual Insights**: Background extraction of insights from situations with 11 categories and 5 regulation tool subcategories
+#### AI Integration Architecture
+- **Primary Integration**: Supabase Edge Functions (`/functions/v1/guidance`) with fallback to direct OpenAI API
+- **Feature Flag System**: All AI services support EdgeFunction vs Direct API modes via UserDefaults
+- **Unified Edge Function**: Single function handling 4 operations: guidance, analyze, context, framework
+- **Prompt Templates**: Centralized in `supabase/prompts/promptTemplates.ts` with variable interpolation
+  - Main guidance: 4 style/mode combinations (Warm Practical, Analytical Scientific × Fixed, Dynamic)
+  - Situation analysis: Category classification and incident detection
+  - Framework generation: AI-powered parenting framework recommendations
+  - Context extraction: General (11 categories) and regulation-specific insights
+- **Response Parsing**: Maintained bracket-delimited format compatibility with existing parsers
+- **Streaming Support**: EdgeFunction provides streaming for guidance and translation operations
+- **Legacy Support**: Direct OpenAI Prompts API maintained as fallback option
 
 #### Data Models
 - **Core Models** (defined in `ParentGuidanceApp.swift`):
@@ -145,11 +148,13 @@ The app uses Supabase with these core tables:
 ### Current Implementation Status
 - ✅ Complete UI/UX implementation for all core flows
 - ✅ Supabase integration and data models
-- ✅ OpenAI GPT-4 integration with structured response parsing
+- ✅ Supabase Edge Functions integration with OpenAI GPT-4 API
+- ✅ Feature flag system for EdgeFunction vs Direct API switching
 - ✅ Multi-step onboarding with plan selection
 - ✅ Tab-based navigation with situation input states
 - ✅ Contextual knowledge base with automatic insight extraction and categorization
 - ✅ Framework generation and recommendation system
+- ✅ EdgeFunction migration completed for all AI operations
 - ⚠️ Testing implementation is minimal (placeholder tests only)
 - ⚠️ Error handling and edge cases need enhancement
 
@@ -163,18 +168,20 @@ The app uses Supabase with these core tables:
 - **Preview Providers**: Include for all major views for design iteration
 
 ### API Integration Patterns
-- **OpenAI Integration**: 
-  - **Active**: Prompts API (`/v1/responses`) in `NewSituationView.swift` with template-based requests
-  - **Legacy**: Chat Completions API (`/v1/chat/completions`) in `OpenAIService.swift` (unused)
-  - **Prompt Structure**: Uses bracket-delimited sections `[TITLE]`, `[SITUATION]`, etc.
-  - **Response Format**: Structured guidance with 7 sections: Title, Situation, Analysis, Action Steps, Phrases to Try, Quick Comebacks, Support
-- **Supabase**: Singleton manager pattern with centralized client configuration
-- **Database Operations**: `ConversationService` handles all data persistence for situations and guidance
-- **Framework Generation Workflow**: 
-  1. Situation analysis using dedicated prompt template
-  2. AI-powered framework generation with structured parsing
-  3. Persistent storage through `FrameworkStorageService`
-  4. Integration with alerts and recommendation system
+- **EdgeFunction Integration** (Primary):
+  - **Unified Endpoint**: `/functions/v1/guidance` handles all AI operations
+  - **Operations**: guidance, analyze, context (general/regulation), framework, translate
+  - **Authentication**: Uses Supabase session tokens for secure access
+  - **Prompt Templates**: Server-side interpolation from `promptTemplates.ts`
+  - **Streaming**: SSE format for real-time guidance and translation
+- **Direct OpenAI Integration** (Fallback):
+  - **Prompts API**: `ConversationService`, `FrameworkGenerationService`, `ContextualInsightService`
+  - **Chat Completions API**: `TranslationService` (legacy mode)
+  - **Template-based**: Uses OpenAI prompt template IDs with variable interpolation
+- **Feature Flag System**: UserDefaults-based switching between EdgeFunction and Direct API
+- **Response Format Compatibility**: Maintained bracket-delimited structure across both modes
+- **Database Operations**: All services persist data identically regardless of API mode
+- **Error Handling**: Graceful fallback and consistent error messaging
 
 ### Testing Structure
 - **Unit Tests**: `ParentGuidanceTests/` (currently minimal)

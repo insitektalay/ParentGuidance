@@ -43,11 +43,27 @@ enum FrameworkGenerationError: Error, LocalizedError {
 class FrameworkGenerationService {
     static let shared = FrameworkGenerationService()
     
+    /// Feature flag to use Edge Function instead of direct OpenAI API
+    private let useEdgeFunction = UserDefaults.standard.bool(forKey: "framework_use_edge_function")
+    
     // OpenAI API Configuration
     private let openAIBaseURL = "https://api.openai.com"
     private let promptID = "pmpt_68511f82ba448193a1af0dc01215706f0d3d3fe75d5db0f1" // Version 3
     
     private init() {}
+    
+    // MARK: - Configuration Methods
+    
+    /// Enable or disable Edge Function usage for framework generation
+    static func setUseEdgeFunction(_ enabled: Bool) {
+        UserDefaults.standard.set(enabled, forKey: "framework_use_edge_function")
+        print("🔧 FrameworkGenerationService Edge Function usage set to: \(enabled)")
+    }
+    
+    /// Check if Edge Function is currently enabled
+    static func isUsingEdgeFunction() -> Bool {
+        return UserDefaults.standard.bool(forKey: "framework_use_edge_function")
+    }
     
     // MARK: - Main Generation Method
     
@@ -73,12 +89,21 @@ class FrameworkGenerationService {
         
         print("✅ Extracted \(situationSummary.count) characters of situation data")
         
-        // Step 3: Call OpenAI API
-        print("📡 Calling OpenAI API with prompt ID: \(promptID)")
-        let rawResponse = try await callOpenAIAPI(
-            situationSummary: situationSummary,
-            apiKey: apiKey
-        )
+        // Step 3: Choose implementation based on feature flag
+        print("📡 Generating framework using \(useEdgeFunction ? "Edge Function" : "direct API")")
+        let rawResponse: String
+        
+        if useEdgeFunction {
+            rawResponse = try await generateFrameworkViaEdgeFunction(
+                situationSummary: situationSummary,
+                apiKey: apiKey
+            )
+        } else {
+            rawResponse = try await generateFrameworkViaDirectAPI(
+                situationSummary: situationSummary,
+                apiKey: apiKey
+            )
+        }
         
         // Step 4: Parse and validate response
         print("🔍 Parsing framework recommendation from response...")
@@ -168,7 +193,40 @@ class FrameworkGenerationService {
         return situations.count >= 2 && situations.count <= 10
     }
     
-    // MARK: - OpenAI API Integration
+    // MARK: - Framework Generation Methods
+    
+    /// Generate framework using the new Edge Function approach
+    private func generateFrameworkViaEdgeFunction(
+        situationSummary: String,
+        apiKey: String
+    ) async throws -> String {
+        print("🔄 Using Edge Function for framework generation")
+        
+        do {
+            let response = try await EdgeFunctionService.shared.generateFramework(
+                recentSituations: situationSummary,
+                apiKey: apiKey
+            )
+            
+            print("✅ Framework generated via Edge Function")
+            return response
+            
+        } catch {
+            print("❌ Edge Function framework generation failed: \(error)")
+            throw FrameworkGenerationError.apiError("Edge Function error: \(error.localizedDescription)")
+        }
+    }
+    
+    /// Generate framework using the legacy direct API approach
+    private func generateFrameworkViaDirectAPI(
+        situationSummary: String,
+        apiKey: String
+    ) async throws -> String {
+        print("🔄 Using direct API for framework generation (legacy)")
+        return try await callOpenAIAPI(situationSummary: situationSummary, apiKey: apiKey)
+    }
+    
+    // MARK: - OpenAI API Integration (Legacy)
     
     /// Call OpenAI Prompts API with situation summary
     private func callOpenAIAPI(

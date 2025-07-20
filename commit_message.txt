@@ -1,5 +1,8 @@
-fix: resolve OpenAI 400 errors by removing invalid JSON response format
-- Remove response_format: { type: "json_object" } from analyze and context operations
-- Add detailed error logging for OpenAI API responses with status and body
-- Rely on existing JSON parsing with fallback logic instead of strict JSON mode
-- Fixes 400 Bad Request errors causing analyze and regulation context extraction failures
+feat: complete EdgeFunction migration with all operations working
+
+Successfully migrated all OpenAI API operations to Supabase Edge Functions:
+  - Fixed analyze operation response format to match iOS jsonRequest expectations
+  - Added comprehensive debug logging for troubleshooting
+  - Verified all 4 operations working: guidance, analyze, context general, context regulation
+  - Maintained complete compatibility with existing iOS parsing and data flow
+  - Edge Functions now handle all AI operations with identical behavior to direct API

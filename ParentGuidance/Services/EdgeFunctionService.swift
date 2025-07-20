@@ -68,14 +68,34 @@ class EdgeFunctionService {
             apiKey: apiKey
         )
         
+        print("🔍 [DEBUG] Analyze response received: '\(response)'")
+        print("🔍 [DEBUG] Response length: \(response.count)")
+        
         // Parse the JSON response
-        if let data = response.data(using: .utf8),
-           let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-           let category = json["category"] as? String,
-           let isIncident = json["isIncident"] as? Bool {
-            return (category, isIncident)
+        if let data = response.data(using: .utf8) {
+            print("🔍 [DEBUG] Data conversion successful")
+            if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                print("🔍 [DEBUG] JSON parsing successful: \(json)")
+                if let category = json["category"] as? String {
+                    print("🔍 [DEBUG] Category found: '\(category)'")
+                    if let isIncident = json["isIncident"] as? Bool {
+                        print("🔍 [DEBUG] isIncident found: \(isIncident)")
+                        print("✅ [DEBUG] Analyze parsing successful")
+                        return (category, isIncident)
+                    } else {
+                        print("❌ [DEBUG] isIncident not found or wrong type")
+                    }
+                } else {
+                    print("❌ [DEBUG] Category not found or wrong type")
+                }
+            } else {
+                print("❌ [DEBUG] JSON parsing failed")
+            }
+        } else {
+            print("❌ [DEBUG] Data conversion failed")
         }
         
+        print("❌ [DEBUG] Throwing invalidResponse")
         throw EdgeFunctionError.invalidResponse
     }
     

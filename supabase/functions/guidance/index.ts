@@ -270,20 +270,48 @@ async function handleAnalyzeOperation(apiKey: string, variables: any) {
       throw new Error('No content received from OpenAI')
     }
 
-    // Parse the analysis response (expecting JSON format)
+    // Parse the analysis response (custom format from prompt template)
+    console.log(`[DEBUG] Analyze response content: ${content}`)
+    console.log(`[DEBUG] Content length: ${content.length}`)
+    console.log(`[DEBUG] Content type: ${typeof content}`)
+    
     let analysisResult
     try {
-      analysisResult = JSON.parse(content)
-    } catch {
-      // Fallback parsing if not valid JSON
+      // First try JSON parsing
+      console.log(`[DEBUG] Attempting JSON.parse...`)
+      const parsed = JSON.parse(content)
+      console.log(`[DEBUG] JSON parsing successful. Parsed object:`, JSON.stringify(parsed, null, 2))
+      
+      // Convert field names to match iOS expectations
       analysisResult = {
-        category: "general",
-        isIncident: false
+        category: parsed.category || "general",
+        isIncident: parsed.incident !== undefined ? parsed.incident : false
       }
+      console.log(`[DEBUG] Field conversion completed. Final result:`, JSON.stringify(analysisResult, null, 2))
+    } catch (parseError) {
+      console.log(`[DEBUG] JSON parsing failed with error:`, parseError.message)
+      console.log(`[DEBUG] Falling back to regex parsing...`)
+      
+      // Fallback: parse the specific format from prompt template
+      // Expected format: "category": "Label", "incident": true/false
+      const categoryMatch = content.match(/"category":\s*"([^"]+)"/i)
+      const incidentMatch = content.match(/"incident":\s*(true|false)/i)
+      
+      console.log(`[DEBUG] Category match:`, categoryMatch ? categoryMatch[1] : 'not found')
+      console.log(`[DEBUG] Incident match:`, incidentMatch ? incidentMatch[1] : 'not found')
+      
+      analysisResult = {
+        category: categoryMatch ? categoryMatch[1] : "general",
+        isIncident: incidentMatch ? incidentMatch[1] === 'true' : false
+      }
+      console.log(`[DEBUG] Regex parsing result:`, JSON.stringify(analysisResult, null, 2))
     }
+    
+    console.log(`[DEBUG] Final analysis result that will be returned: ${JSON.stringify(analysisResult)}`)
+    console.log(`[DEBUG] About to return HTTP response with this data...`)
 
     return new Response(
-      JSON.stringify(analysisResult),
+      JSON.stringify({ success: true, data: JSON.stringify(analysisResult) }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
 

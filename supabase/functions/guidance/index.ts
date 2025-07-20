@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { streamText } from 'https://esm.sh/ai@3.4.7'
 import { openai } from 'https://esm.sh/ai@3.4.7/openai'
+import { promptTemplates } from '../prompts/promptTemplates.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -13,6 +14,16 @@ interface RequestBody {
   operation: 'guidance' | 'analyze' | 'framework' | 'context' | 'translate'
   variables: Record<string, any>
   apiKey: string
+}
+
+// Helper function to interpolate variables in prompt templates
+function interpolatePrompt(template: string, variables: Record<string, any>): string {
+  let interpolated = template
+  for (const [key, value] of Object.entries(variables)) {
+    const placeholder = `{{${key}}}`
+    interpolated = interpolated.replace(new RegExp(placeholder, 'g'), value || '')
+  }
+  return interpolated
 }
 
 serve(async (req) => {
@@ -102,78 +113,66 @@ serve(async (req) => {
 
 // Handle guidance generation with streaming
 async function handleGuidanceOperation(openaiClient: any, variables: any) {
-  const { current_situation, family_context, active_foundation_tools, structure_mode } = variables
+  const { current_situation, family_context, active_foundation_tools, structure_mode, guidance_style } = variables
 
-  // Determine prompt template based on framework presence
+  // Determine which prompt template to use
   const hasFramework = !!active_foundation_tools
-  const promptId = hasFramework 
-    ? "pmpt_68516f961dc08190aceb4f591ee010050a454989b0581453"
-    : "pmpt_68515280423c8193aaa00a07235b7cf206c51d869f9526ba"
-
-  // Build prompt variables
-  let promptVariables: any = {
-    current_situation: current_situation
-  }
-
-  // Add framework if present
-  if (hasFramework) {
-    promptVariables.active_foundation_tools = active_foundation_tools
-  }
-
-  // Add family context for fixed structure mode
-  if (structure_mode === "fixed") {
-    promptVariables.family_context = family_context || "none"
-  }
+  
+  // Default to "Warm Practical + Fixed" if not specified
+  const style = guidance_style || "Warm Practical"
+  const mode = structure_mode || "Fixed"
+  const configKey = `${style} + ${mode}`
 
   try {
-    // Use OpenAI Prompts API for streaming
-    const response = await fetch('https://api.openai.com/v1/responses', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openaiClient.apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        prompt: {
-          id: promptId,
-          version: "12", // Latest version
-          variables: promptVariables
-        }
-      })
+    // Select the appropriate prompt template
+    let promptTemplate: any
+    let promptVariables: Record<string, any> = {
+      current_situation: current_situation
+    }
+
+    if (hasFramework) {
+      // With framework
+      promptTemplate = promptTemplates.guidance.versions_with_framework[configKey]
+      if (!promptTemplate) {
+        throw new Error(`Unknown guidance configuration: ${configKey}`)
+      }
+      promptVariables.active_foundation_tools = active_foundation_tools
+    } else {
+      // Without framework
+      promptTemplate = promptTemplates.guidance.versions_no_framework[configKey]
+      if (!promptTemplate) {
+        throw new Error(`Unknown guidance configuration: ${configKey}`)
+      }
+      // Only add family_context for Fixed mode
+      if (mode === "Fixed" && promptTemplate.variables.includes("family_context")) {
+        promptVariables.family_context = family_context || "none"
+      }
+    }
+
+    // Interpolate the system prompt with variables
+    const systemPrompt = interpolatePrompt(promptTemplate.systemPromptText, promptVariables)
+
+    // Use Vercel AI SDK for streaming
+    const result = await streamText({
+      model: openaiClient('gpt-4'),
+      prompt: systemPrompt,
+      maxTokens: 2000,
+      temperature: 0.7,
     })
 
-    if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.status}`)
-    }
-
-    const data = await response.json()
-    const content = data.output?.[0]?.content?.[0]?.text
-
-    if (!content) {
-      throw new Error('No content received from OpenAI')
-    }
-
-    // Stream the content using Vercel AI SDK format
+    // Convert AI SDK stream to SSE format
     const stream = new ReadableStream({
-      start(controller) {
-        // Split content into chunks for streaming simulation
-        const chunks = content.split(' ')
-        let index = 0
-
-        const sendChunk = () => {
-          if (index < chunks.length) {
-            const chunk = chunks[index] + ' '
+      async start(controller) {
+        try {
+          for await (const chunk of result.textStream) {
             const sseData = `data: ${JSON.stringify([{ type: 'text', value: chunk }])}\n\n`
             controller.enqueue(new TextEncoder().encode(sseData))
-            index++
-            setTimeout(sendChunk, 50) // Simulate streaming delay
-          } else {
-            controller.enqueue(new TextEncoder().encode('data: [DONE]\n\n'))
-            controller.close()
           }
+          controller.enqueue(new TextEncoder().encode('data: [DONE]\n\n'))
+          controller.close()
+        } catch (error) {
+          controller.error(error)
         }
-
-        sendChunk()
       }
     })
 
@@ -200,39 +199,32 @@ async function handleAnalyzeOperation(openaiClient: any, variables: any) {
   const { situation_text } = variables
 
   try {
-    // Use OpenAI Prompts API for situation analysis
-    const response = await fetch('https://api.openai.com/v1/responses', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openaiClient.apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        prompt: {
-          id: "pmpt_686b988bf0ac8196a69e972f08842b9a05893c8e8a5153c7",
-          version: "1",
-          variables: {
-            long_prompt: situation_text
-          }
-        }
-      })
-    })
-
-    if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.status}`)
+    // Prepare variables for interpolation (map situation_text to situation_inputted)
+    const promptVariables = {
+      situation_inputted: situation_text
     }
 
-    const data = await response.json()
-    const content = data.output?.[0]?.content?.[0]?.text
+    // Get the system prompt and interpolate variables
+    const systemPrompt = interpolatePrompt(promptTemplates.analyze.systemPromptText, promptVariables)
 
-    if (!content) {
-      throw new Error('No content received from OpenAI')
+    // Use Vercel AI SDK for the analysis
+    const result = await streamText({
+      model: openaiClient('gpt-4'),
+      prompt: systemPrompt,
+      maxTokens: 500,
+      temperature: 0.3, // Lower temperature for more consistent categorization
+    })
+
+    // Collect the full response
+    let fullText = ''
+    for await (const chunk of result.textStream) {
+      fullText += chunk
     }
 
     // Parse the analysis response (expecting JSON format)
     let analysisResult
     try {
-      analysisResult = JSON.parse(content)
+      analysisResult = JSON.parse(fullText)
     } catch {
       // Fallback parsing if not valid JSON
       analysisResult = {
@@ -260,37 +252,30 @@ async function handleFrameworkOperation(openaiClient: any, variables: any) {
   const { recent_situations } = variables
 
   try {
-    // Use OpenAI Prompts API for framework generation
-    const response = await fetch('https://api.openai.com/v1/responses', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openaiClient.apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        prompt: {
-          id: "pmpt_68511f82ba448193a1af0dc01215706f0d3d3fe75d5db0f1",
-          version: "3",
-          variables: {
-            recent_situations: recent_situations
-          }
-        }
-      })
-    })
-
-    if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.status}`)
+    // Prepare variables for interpolation (map recent_situations to situation_summary)
+    const promptVariables = {
+      situation_summary: recent_situations
     }
 
-    const data = await response.json()
-    const content = data.output?.[0]?.content?.[0]?.text
+    // Get the system prompt and interpolate variables
+    const systemPrompt = interpolatePrompt(promptTemplates.framework.systemPromptText, promptVariables)
 
-    if (!content) {
-      throw new Error('No content received from OpenAI')
+    // Use Vercel AI SDK for framework generation
+    const result = await streamText({
+      model: openaiClient('gpt-4'),
+      prompt: systemPrompt,
+      maxTokens: 1000,
+      temperature: 0.7,
+    })
+
+    // Collect the full response
+    let fullText = ''
+    for await (const chunk of result.textStream) {
+      fullText += chunk
     }
 
     return new Response(
-      JSON.stringify({ success: true, data: content }),
+      JSON.stringify({ success: true, data: fullText }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
 
@@ -307,45 +292,37 @@ async function handleFrameworkOperation(openaiClient: any, variables: any) {
 async function handleContextOperation(openaiClient: any, variables: any) {
   const { situation_text, extraction_type } = variables
 
-  // Choose prompt based on extraction type
-  const promptId = extraction_type === "regulation" 
-    ? "pmpt_6877c15da6388196a389c79feeefd4e30cccdbe5ba3909fb"
-    : "pmpt_68778827e310819792876a9f5a844c050059609da32e4637"
-
-  const version = extraction_type === "regulation" ? "5" : "4"
-
   try {
-    // Use OpenAI Prompts API for context extraction
-    const response = await fetch('https://api.openai.com/v1/responses', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openaiClient.apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        prompt: {
-          id: promptId,
-          version: version,
-          variables: {
-            long_prompt: situation_text
-          }
-        }
-      })
-    })
-
-    if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.status}`)
+    // Prepare variables for interpolation (map situation_text to long_prompt)
+    const promptVariables = {
+      long_prompt: situation_text
     }
 
-    const data = await response.json()
-    const content = data.output?.[0]?.content?.[0]?.text
+    // Select the appropriate prompt template based on extraction type
+    const isRegulation = extraction_type === "regulation"
+    const systemPromptTemplate = isRegulation
+      ? promptTemplates.context.systemPromptText_regulation
+      : promptTemplates.context.systemPromptText_general
 
-    if (!content) {
-      throw new Error('No content received from OpenAI')
+    // Interpolate the system prompt with variables
+    const systemPrompt = interpolatePrompt(systemPromptTemplate, promptVariables)
+
+    // Use Vercel AI SDK for context extraction
+    const result = await streamText({
+      model: openaiClient('gpt-4'),
+      prompt: systemPrompt,
+      maxTokens: 1500,
+      temperature: 0.5,
+    })
+
+    // Collect the full response
+    let fullText = ''
+    for await (const chunk of result.textStream) {
+      fullText += chunk
     }
 
     return new Response(
-      JSON.stringify({ success: true, data: content }),
+      JSON.stringify({ success: true, data: fullText }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
 
@@ -363,11 +340,21 @@ async function handleTranslateOperation(openaiClient: any, variables: any) {
   const { guidance_content, target_language } = variables
 
   try {
+    // Prepare variables for interpolation
+    const promptVariables = {
+      input_text: guidance_content,
+      lang: target_language
+    }
+
+    // Get the system prompt and interpolate variables
+    const systemPrompt = interpolatePrompt(promptTemplates.translate.systemPromptText, promptVariables)
+
     // Use Vercel AI SDK for streaming translation
     const result = await streamText({
       model: openaiClient('gpt-4'),
-      prompt: `Translate the following parenting guidance content to ${target_language}. Maintain the same structure and formatting, especially any bracket-delimited sections like [TITLE], [SITUATION], etc.:\n\n${guidance_content}`,
+      prompt: systemPrompt,
       maxTokens: 2000,
+      temperature: 0.3, // Lower temperature for more accurate translation
     })
 
     // Convert AI SDK stream to SSE format

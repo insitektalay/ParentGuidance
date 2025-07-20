@@ -60,6 +60,7 @@
 		944EA1DA2E2CC63900C110AF /* config.toml in Resources */ = {isa = PBXBuildFile; fileRef = 944EA1CE2E2CC63900C110AF /* config.toml */; };
 		944EA1E22E2CD35400C110AF /* EdgeFunctionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1E12E2CD35400C110AF /* EdgeFunctionService.swift */; };
 		944EA1E42E2CDCE100C110AF /* GuidanceGenerationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1E32E2CDCE100C110AF /* GuidanceGenerationService.swift */; };
+		944EA1E62E2CF75100C110AF /* promptTemplates.json in Resources */ = {isa = PBXBuildFile; fileRef = 944EA1E52E2CF75000C110AF /* promptTemplates.json */; };
 		9481564C2E23CDC000C28273 /* ChildProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */; };
 		9481564E2E25334C00C28273 /* AudioPermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564D2E25334C00C28273 /* AudioPermissionManager.swift */; };
 		948156502E2533EE00C28273 /* VoiceRecorderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */; };
@@ -209,6 +210,8 @@
 		944EA1E02E2CCFBC00C110AF /* frameworkPrompt.ts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.typescript; path = frameworkPrompt.ts; sourceTree = "<group>"; };
 		944EA1E12E2CD35400C110AF /* EdgeFunctionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeFunctionService.swift; sourceTree = "<group>"; };
 		944EA1E32E2CDCE100C110AF /* GuidanceGenerationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidanceGenerationService.swift; sourceTree = "<group>"; };
+		944EA1E52E2CF75000C110AF /* promptTemplates.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = promptTemplates.json; sourceTree = "<group>"; };
+		944EA1E72E2CF8DC00C110AF /* promptTemplates.ts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.typescript; path = promptTemplates.ts; sourceTree = "<group>"; };
 		9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildProfileEditView.swift; sourceTree = "<group>"; };
 		9481564D2E25334C00C28273 /* AudioPermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPermissionManager.swift; sourceTree = "<group>"; };
 		9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorderError.swift; sourceTree = "<group>"; };
@@ -387,6 +390,8 @@
 		944EA1DB2E2CCF3700C110AF /* prompts */ = {
 			isa = PBXGroup;
 			children = (
+				944EA1E72E2CF8DC00C110AF /* promptTemplates.ts */,
+				944EA1E52E2CF75000C110AF /* promptTemplates.json */,
 				944EA1DF2E2CCFBC00C110AF /* contextExtractionPrompt.ts */,
 				944EA1E02E2CCFBC00C110AF /* frameworkPrompt.ts */,
 				944EA1DE2E2CCFBC00C110AF /* guidancePrompt.ts */,
@@ -880,6 +885,7 @@
 				944EA1D92E2CC63900C110AF /* .gitignore in Resources */,
 				944EA1D72E2CC63900C110AF /* .npmrc in Resources */,
 				944EA1DA2E2CC63900C110AF /* config.toml in Resources */,
+				944EA1E62E2CF75100C110AF /* promptTemplates.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,33 +1,8 @@
-feat: complete Phase 6.3 - comprehensive family management system
-    - Created FamilyManagementView as central family coordination dashboard:
-        * Family overview card with member count, languages, and strategy display
-        * Complete family member management with individual language preferences
-        * Pending invitation tracking with resend/cancel functionality
-        * Family-wide translation settings coordination and strategy selection
-        * Usage analytics and cost transparency for informed decision making
-    - Implemented comprehensive family member interface:
-        * FamilyMemberCard with role badges (admin/member) and language indicators
-        * Individual member editing capabilities with language preference management
-        * Member removal functionality with appropriate permission checks
-        * Visual conflict indicators for language coordination issues
-    - Added family invitation management system:
-        * PendingInvitationCard with timestamp display and action buttons
-        * Integration with existing FamilyInviteView for streamlined onboarding
-        * Invitation lifecycle management (send, resend, cancel)
-    - Created family analytics and insights:
-        * Real-time usage metrics display with family type classification
-        * Language breakdown with conflict detection and resolution guidance
-        * Translation strategy recommendations based on family usage patterns
-        * Export functionality for family data and settings backup
-    - Enhanced family coordination features:
-        * Centralized translation strategy management with cost implications
-        * Family-wide settings synchronization and conflict resolution
-        * Role-based permissions for admin vs member capabilities
-        * Leave family functionality for non-admin members
-    - Built with placeholder integration points:
-        * FamilyInviteView and FamilyMemberEditView prepared for future implementation
-        * Database integration patterns established for real family data
-        * Seamless integration with existing TranslationStrategySelectionView
-    - Successfully tested and building without errors
-    - Provides complete family management foundation for multilingual coordination
+refactor: update Edge Function to use promptTemplates.ts as source of truth
 
+- Replace all OpenAI Prompts API calls with Vercel AI SDK using actual system prompts
+- Add interpolatePrompt helper for {{variable}} placeholder replacement
+- Implement dynamic guidance prompt selection based on framework presence and style settings
+- Fix variable name mappings to match promptTemplates definitions
+- Ensure all operations use consistent prompt templates from centralized source
+- Remove hardcoded prompt IDs and versions in favor of template-based approach

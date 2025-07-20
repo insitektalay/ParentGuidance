@@ -25,6 +25,8 @@ function interpolatePrompt(template: string, variables: Record<string, any>): st
 }
 
 serve(async (req) => {
+  console.log(`[DEBUG] Request received: ${req.method} ${req.url}`)
+  
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -63,6 +65,9 @@ serve(async (req) => {
     // Parse request body
     const body: RequestBody = await req.json()
     const { operation, variables, apiKey } = body
+    
+    console.log(`[DEBUG] Parsed request - operation: "${operation}", variables keys: [${Object.keys(variables || {}).join(', ')}]`)
+    console.log(`[DEBUG] Variables content: ${JSON.stringify(variables, null, 2)}`)
 
     if (!apiKey) {
       return new Response(
@@ -72,6 +77,7 @@ serve(async (req) => {
     }
 
     // Route to appropriate operation handler
+    console.log(`[DEBUG] Routing to operation: "${operation}"`)
     switch (operation) {
       case 'guidance':
         return await handleGuidanceOperation(apiKey, variables)
@@ -221,6 +227,8 @@ async function handleGuidanceOperation(apiKey: string, variables: any) {
 // Handle situation analysis (non-streaming)
 async function handleAnalyzeOperation(apiKey: string, variables: any) {
   const { situation_text } = variables
+  console.log(`[DEBUG] Analyze operation - situation_text: "${situation_text?.substring(0, 100)}..."`)
+  console.log(`[DEBUG] Analyze - promptTemplates.analyze exists: ${!!promptTemplates.analyze}`)
 
   try {
     // Prepare variables for interpolation (map situation_text to situation_inputted)
@@ -244,13 +252,15 @@ async function handleAnalyzeOperation(apiKey: string, variables: any) {
           { role: 'system', content: systemPrompt }
         ],
         temperature: 0.3, // Lower temperature for more consistent categorization
-        max_tokens: 500,
-        response_format: { type: "json_object" } // Request JSON response
+        max_tokens: 500
+        // Removed JSON response format - causing 400 errors
       })
     })
 
     if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.status}`)
+      const errorText = await response.text()
+      console.error(`[DEBUG] Analyze operation OpenAI API error: Status ${response.status}, Body: ${errorText}`)
+      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`)
     }
 
     const data = await response.json()
@@ -344,6 +354,7 @@ async function handleFrameworkOperation(apiKey: string, variables: any) {
 // Handle context extraction (non-streaming)
 async function handleContextOperation(apiKey: string, variables: any) {
   const { situation_text, extraction_type } = variables
+  console.log(`[DEBUG] Context operation - extraction_type: "${extraction_type}", situation_text: "${situation_text?.substring(0, 100)}..."`)
 
   try {
     // Prepare variables for interpolation (map situation_text to long_prompt)
@@ -356,6 +367,10 @@ async function handleContextOperation(apiKey: string, variables: any) {
     const systemPromptTemplate = isRegulation
       ? promptTemplates.context.systemPromptText_regulation
       : promptTemplates.context.systemPromptText_general
+    
+    console.log(`[DEBUG] Context - isRegulation: ${isRegulation}`)
+    console.log(`[DEBUG] Context - template exists: ${!!systemPromptTemplate}`)
+    console.log(`[DEBUG] Context - template length: ${systemPromptTemplate?.length || 0}`)
 
     // Interpolate the system prompt with variables
     const systemPrompt = interpolatePrompt(systemPromptTemplate, promptVariables)
@@ -373,14 +388,15 @@ async function handleContextOperation(apiKey: string, variables: any) {
           { role: 'system', content: systemPrompt }
         ],
         temperature: 0.5,
-        max_tokens: 1500,
-        // For regulation insights, request JSON format
-        ...(isRegulation && { response_format: { type: "json_object" } })
+        max_tokens: 1500
+        // Removed JSON response format - causing 400 errors
       })
     })
 
     if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.status}`)
+      const errorText = await response.text()
+      console.error(`[DEBUG] Context operation OpenAI API error: Status ${response.status}, Body: ${errorText}`)
+      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`)
     }
 
     const data = await response.json()

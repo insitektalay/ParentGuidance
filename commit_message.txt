@@ -1,5 +1,5 @@
-fix: resolve Edge Function 500 error due to case sensitivity in guidance configuration
-  - Fix case mismatch between iOS structure_mode parameter (lowercase) and prompt template keys (capitalized)
-  - Add proper capitalization handling for structure_mode values
-  - Add debug logging for guidance configuration parameters
-  - Resolves "Unknown guidance configuration: Warm Practical + fixed" error
+fix: resolve OpenAI 400 errors by removing invalid JSON response format
+- Remove response_format: { type: "json_object" } from analyze and context operations
+- Add detailed error logging for OpenAI API responses with status and body
+- Rely on existing JSON parsing with fallback logic instead of strict JSON mode
+- Fixes 400 Bad Request errors causing analyze and regulation context extraction failures

@@ -47,6 +47,17 @@
 		944EA1B82E2B77C400C110AF /* ContentDisplayService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1B72E2B77C400C110AF /* ContentDisplayService.swift */; };
 		944EA1BA2E2B822C00C110AF /* TranslationStrategySelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1B92E2B822C00C110AF /* TranslationStrategySelectionView.swift */; };
 		944EA1BC2E2B865900C110AF /* FamilyManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1BB2E2B865900C110AF /* FamilyManagementView.swift */; };
+		944EA1D02E2CC63900C110AF /* cli-latest in Resources */ = {isa = PBXBuildFile; fileRef = 944EA1C02E2CC63900C110AF /* cli-latest */; };
+		944EA1D12E2CC63900C110AF /* gotrue-version in Resources */ = {isa = PBXBuildFile; fileRef = 944EA1C12E2CC63900C110AF /* gotrue-version */; };
+		944EA1D22E2CC63900C110AF /* pooler-url in Resources */ = {isa = PBXBuildFile; fileRef = 944EA1C22E2CC63900C110AF /* pooler-url */; };
+		944EA1D32E2CC63900C110AF /* postgres-version in Resources */ = {isa = PBXBuildFile; fileRef = 944EA1C32E2CC63900C110AF /* postgres-version */; };
+		944EA1D42E2CC63900C110AF /* project-ref in Resources */ = {isa = PBXBuildFile; fileRef = 944EA1C42E2CC63900C110AF /* project-ref */; };
+		944EA1D52E2CC63900C110AF /* rest-version in Resources */ = {isa = PBXBuildFile; fileRef = 944EA1C52E2CC63900C110AF /* rest-version */; };
+		944EA1D62E2CC63900C110AF /* storage-version in Resources */ = {isa = PBXBuildFile; fileRef = 944EA1C62E2CC63900C110AF /* storage-version */; };
+		944EA1D72E2CC63900C110AF /* .npmrc in Resources */ = {isa = PBXBuildFile; fileRef = 944EA1C82E2CC63900C110AF /* .npmrc */; };
+		944EA1D82E2CC63900C110AF /* deno.json in Resources */ = {isa = PBXBuildFile; fileRef = 944EA1C92E2CC63900C110AF /* deno.json */; };
+		944EA1D92E2CC63900C110AF /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 944EA1CD2E2CC63900C110AF /* .gitignore */; };
+		944EA1DA2E2CC63900C110AF /* config.toml in Resources */ = {isa = PBXBuildFile; fileRef = 944EA1CE2E2CC63900C110AF /* config.toml */; };
 		9481564C2E23CDC000C28273 /* ChildProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */; };
 		9481564E2E25334C00C28273 /* AudioPermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564D2E25334C00C28273 /* AudioPermissionManager.swift */; };
 		948156502E2533EE00C28273 /* VoiceRecorderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */; };
@@ -177,6 +188,23 @@
 		944EA1BB2E2B865900C110AF /* FamilyManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyManagementView.swift; sourceTree = "<group>"; };
 		944EA1BD2E2BE6EA00C110AF /* extracted_english_strings.geojson */ = {isa = PBXFileReference; lastKnownFileType = text; path = extracted_english_strings.geojson; sourceTree = "<group>"; };
 		944EA1BF2E2CB5E400C110AF /* vercel-ai-sdk.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "vercel-ai-sdk.md"; sourceTree = "<group>"; };
+		944EA1C02E2CC63900C110AF /* cli-latest */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "cli-latest"; sourceTree = "<group>"; };
+		944EA1C12E2CC63900C110AF /* gotrue-version */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "gotrue-version"; sourceTree = "<group>"; };
+		944EA1C22E2CC63900C110AF /* pooler-url */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "pooler-url"; sourceTree = "<group>"; };
+		944EA1C32E2CC63900C110AF /* postgres-version */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "postgres-version"; sourceTree = "<group>"; };
+		944EA1C42E2CC63900C110AF /* project-ref */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "project-ref"; sourceTree = "<group>"; };
+		944EA1C52E2CC63900C110AF /* rest-version */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "rest-version"; sourceTree = "<group>"; };
+		944EA1C62E2CC63900C110AF /* storage-version */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "storage-version"; sourceTree = "<group>"; };
+		944EA1C82E2CC63900C110AF /* .npmrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .npmrc; sourceTree = "<group>"; };
+		944EA1C92E2CC63900C110AF /* deno.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = deno.json; sourceTree = "<group>"; };
+		944EA1CA2E2CC63900C110AF /* index.ts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.typescript; path = index.ts; sourceTree = "<group>"; };
+		944EA1CD2E2CC63900C110AF /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		944EA1CE2E2CC63900C110AF /* config.toml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.toml; sourceTree = "<group>"; };
+		944EA1DC2E2CCFBC00C110AF /* translationPrompt.ts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.typescript; path = translationPrompt.ts; sourceTree = "<group>"; };
+		944EA1DD2E2CCFBC00C110AF /* situationAnalysisPrompt.ts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.typescript; path = situationAnalysisPrompt.ts; sourceTree = "<group>"; };
+		944EA1DE2E2CCFBC00C110AF /* guidancePrompt.ts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.typescript; path = guidancePrompt.ts; sourceTree = "<group>"; };
+		944EA1DF2E2CCFBC00C110AF /* contextExtractionPrompt.ts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.typescript; path = contextExtractionPrompt.ts; sourceTree = "<group>"; };
+		944EA1E02E2CCFBC00C110AF /* frameworkPrompt.ts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.typescript; path = frameworkPrompt.ts; sourceTree = "<group>"; };
 		9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildProfileEditView.swift; sourceTree = "<group>"; };
 		9481564D2E25334C00C28273 /* AudioPermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPermissionManager.swift; sourceTree = "<group>"; };
 		9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorderError.swift; sourceTree = "<group>"; };
@@ -308,6 +336,62 @@
 			path = Docs;
 			sourceTree = "<group>";
 		};
+		944EA1C72E2CC63900C110AF /* .temp */ = {
+			isa = PBXGroup;
+			children = (
+				944EA1C02E2CC63900C110AF /* cli-latest */,
+				944EA1C12E2CC63900C110AF /* gotrue-version */,
+				944EA1C22E2CC63900C110AF /* pooler-url */,
+				944EA1C32E2CC63900C110AF /* postgres-version */,
+				944EA1C42E2CC63900C110AF /* project-ref */,
+				944EA1C52E2CC63900C110AF /* rest-version */,
+				944EA1C62E2CC63900C110AF /* storage-version */,
+			);
+			path = .temp;
+			sourceTree = "<group>";
+		};
+		944EA1CB2E2CC63900C110AF /* guidance */ = {
+			isa = PBXGroup;
+			children = (
+				944EA1C82E2CC63900C110AF /* .npmrc */,
+				944EA1C92E2CC63900C110AF /* deno.json */,
+				944EA1CA2E2CC63900C110AF /* index.ts */,
+			);
+			path = guidance;
+			sourceTree = "<group>";
+		};
+		944EA1CC2E2CC63900C110AF /* functions */ = {
+			isa = PBXGroup;
+			children = (
+				944EA1CB2E2CC63900C110AF /* guidance */,
+			);
+			path = functions;
+			sourceTree = "<group>";
+		};
+		944EA1CF2E2CC63900C110AF /* supabase */ = {
+			isa = PBXGroup;
+			children = (
+				944EA1DB2E2CCF3700C110AF /* prompts */,
+				944EA1C72E2CC63900C110AF /* .temp */,
+				944EA1CC2E2CC63900C110AF /* functions */,
+				944EA1CD2E2CC63900C110AF /* .gitignore */,
+				944EA1CE2E2CC63900C110AF /* config.toml */,
+			);
+			path = supabase;
+			sourceTree = "<group>";
+		};
+		944EA1DB2E2CCF3700C110AF /* prompts */ = {
+			isa = PBXGroup;
+			children = (
+				944EA1DF2E2CCFBC00C110AF /* contextExtractionPrompt.ts */,
+				944EA1E02E2CCFBC00C110AF /* frameworkPrompt.ts */,
+				944EA1DE2E2CCFBC00C110AF /* guidancePrompt.ts */,
+				944EA1DD2E2CCFBC00C110AF /* situationAnalysisPrompt.ts */,
+				944EA1DC2E2CCFBC00C110AF /* translationPrompt.ts */,
+			);
+			path = prompts;
+			sourceTree = "<group>";
+		};
 		948605C92E111832008D92DE /* Components */ = {
 			isa = PBXGroup;
 			children = (
@@ -335,6 +419,7 @@
 		94FA10B72E056247003EC1E9 = {
 			isa = PBXGroup;
 			children = (
+				944EA1CF2E2CC63900C110AF /* supabase */,
 				944EA1BE2E2CB16B00C110AF /* Docs */,
 				944EA1BD2E2BE6EA00C110AF /* extracted_english_strings.geojson */,
 				944EA1A72E2B30E000C110AF /* Localizable.xcstrings */,
@@ -775,9 +860,20 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				944EA1D12E2CC63900C110AF /* gotrue-version in Resources */,
+				944EA1D02E2CC63900C110AF /* cli-latest in Resources */,
+				944EA1D52E2CC63900C110AF /* rest-version in Resources */,
+				944EA1D62E2CC63900C110AF /* storage-version in Resources */,
 				94FA10CB2E056249003EC1E9 /* Preview Assets.xcassets in Resources */,
 				94FA10C82E056249003EC1E9 /* Assets.xcassets in Resources */,
+				944EA1D42E2CC63900C110AF /* project-ref in Resources */,
+				944EA1D82E2CC63900C110AF /* deno.json in Resources */,
+				944EA1D32E2CC63900C110AF /* postgres-version in Resources */,
 				944EA1A82E2B30E000C110AF /* Localizable.xcstrings in Resources */,
+				944EA1D22E2CC63900C110AF /* pooler-url in Resources */,
+				944EA1D92E2CC63900C110AF /* .gitignore in Resources */,
+				944EA1D72E2CC63900C110AF /* .npmrc in Resources */,
+				944EA1DA2E2CC63900C110AF /* config.toml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

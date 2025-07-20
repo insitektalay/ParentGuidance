@@ -28,13 +28,6 @@ struct SituationInputIdleView: View {
         let available = screenHeight - usedSpace
         let finalHeight = max(available, minimumHeight)
         
-        // Debug logging
-        print("📐 Screen height: \(screenHeight)")
-        print("📐 Keyboard height: \(keyboardHeight)")
-        print("📐 Used space: \(usedSpace) (controls: \(bottomControlsHeight), padding: \(bottomPadding), top: \(topPadding), keyboard: \(keyboardHeight))")
-        print("📐 Available height calculated: \(available)")
-        print("📐 Final height (with minimum): \(finalHeight)")
-        print("📐 Mode: \(isKeyboardVisible ? "keyboard" : "full-screen")")
         
         return finalHeight
     }
@@ -137,8 +130,7 @@ struct SituationInputIdleView: View {
                     handleTranscriptionComplete(result.transcription)
                 }
             } catch {
-                print("❌ Recording failed: \(error)")
-            }
+                }
         } else {
             // Start recording
             await voiceRecorderViewModel.startRecording()
@@ -147,7 +139,6 @@ struct SituationInputIdleView: View {
     
     private func handleTranscriptionComplete(_ transcription: String) {
         // Integrate transcription with text input
-        print("🎤 Transcription received: \(transcription)")
         
         // If input is empty, set the transcription as the new text
         if inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -162,7 +153,6 @@ struct SituationInputIdleView: View {
     // MARK: - Keyboard Detection Methods
     
     private func setupKeyboardObservers() {
-        print("🎹 Setting up keyboard observers")
         
         NotificationCenter.default.addObserver(
             forName: UIResponder.keyboardWillShowNotification,
@@ -182,35 +172,29 @@ struct SituationInputIdleView: View {
     }
     
     private func removeKeyboardObservers() {
-        print("🎹 Removing keyboard observers")
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     private func handleKeyboardWillShow(_ notification: Notification) {
         guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else {
-            print("⚠️ Could not get keyboard frame from notification")
             return
         }
         
         let newKeyboardHeight = keyboardFrame.height
-        print("🎹 Keyboard will show - height: \(newKeyboardHeight)")
         
         withAnimation(.easeInOut(duration: 0.3)) {
             isKeyboardVisible = true
             keyboardHeight = newKeyboardHeight
         }
-        print("🎹 Updated state with animation - isVisible: \(isKeyboardVisible), height: \(keyboardHeight)")
     }
     
     private func handleKeyboardWillHide(_ notification: Notification) {
-        print("🎹 Keyboard will hide")
         
         withAnimation(.easeInOut(duration: 0.3)) {
             isKeyboardVisible = false
             keyboardHeight = 0
         }
-        print("🎹 Updated state with animation - isVisible: \(isKeyboardVisible), height: \(keyboardHeight)")
     }
 }
 

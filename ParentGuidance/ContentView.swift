@@ -3,12 +3,12 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         VStack {
-            Text("ParentGuidance")
+            Text(String(localized: "app.name"))
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .foregroundColor(ColorPalette.terracotta)
             
-            Text("Your parenting co-pilot")
+            Text(String(localized: "app.tagline"))
                 .font(.headline)
                 .foregroundColor(ColorPalette.navy)
         }

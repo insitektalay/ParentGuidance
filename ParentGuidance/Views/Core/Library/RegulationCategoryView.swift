@@ -88,16 +88,16 @@ struct RegulationCategoryView: View {
     
     private var errorView: some View {
         VStack(spacing: 16) {
-            Text("Unable to load insights")
+            Text(String(localized: "error.loading.insights"))
                 .font(.system(size: 18, weight: .medium))
                 .foregroundColor(ColorPalette.white.opacity(0.9))
             
-            Text(errorMessage.isEmpty ? "Please try again later" : errorMessage)
+            Text(errorMessage.isEmpty ? String(localized: "error.tryAgainLater") : errorMessage)
                 .font(.system(size: 14))
                 .foregroundColor(ColorPalette.white.opacity(0.7))
                 .multilineTextAlignment(.center)
             
-            Button("Retry") {
+            Button(String(localized: "common.button.retry")) {
                 Task {
                     await loadInsights()
                 }
@@ -115,11 +115,11 @@ struct RegulationCategoryView: View {
                 .font(.system(size: 48, weight: .light))
                 .foregroundColor(ColorPalette.white.opacity(0.4))
             
-            Text("No patterns identified yet")
+            Text(String(localized: "regulation.empty.title"))
                 .font(.system(size: 18, weight: .medium))
                 .foregroundColor(ColorPalette.white.opacity(0.9))
             
-            Text("Insights for \(category.parentFriendlyName.lowercased()) will appear here as you add more situations.")
+            Text(String(localized: "regulation.empty.description", defaultValue: "Insights for \(category.parentFriendlyName.lowercased()) will appear here as you add more situations."))
                 .font(.system(size: 14))
                 .foregroundColor(ColorPalette.white.opacity(0.7))
                 .multilineTextAlignment(.center)

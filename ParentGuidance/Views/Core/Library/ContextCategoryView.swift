@@ -101,15 +101,15 @@ struct ContextCategoryView: View {
     
     private var errorView: some View {
         VStack(spacing: 16) {
-            Text("Unable to load insights")
+            Text(String(localized: "error.loading.insights"))
                 .font(.system(size: 18, weight: .medium))
                 .foregroundColor(ColorPalette.white.opacity(0.9))
             
-            Text("Please try again later")
+            Text(String(localized: "error.tryAgainLater"))
                 .font(.system(size: 14))
                 .foregroundColor(ColorPalette.white.opacity(0.7))
             
-            Button("Retry") {
+            Button(String(localized: "common.button.retry")) {
                 Task {
                     await loadInsights()
                 }
@@ -126,11 +126,11 @@ struct ContextCategoryView: View {
                 .font(.system(size: 48, weight: .medium))
                 .foregroundColor(ColorPalette.white.opacity(0.3))
             
-            Text("No insights yet")
+            Text(String(localized: "context.empty.title"))
                 .font(.system(size: 18, weight: .medium))
                 .foregroundColor(ColorPalette.white.opacity(0.9))
             
-            Text("Insights will appear here as you add situations that relate to \(category.displayName.lowercased())")
+            Text(String(localized: "context.empty.description", defaultValue: "Insights will appear here as you add situations that relate to \(category.displayName.lowercased())"))
                 .font(.system(size: 14))
                 .foregroundColor(ColorPalette.white.opacity(0.7))
                 .multilineTextAlignment(.center)

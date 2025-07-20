@@ -775,7 +775,7 @@ struct FamilyInviteView: View {
     let onComplete: (Bool) -> Void
     
     var body: some View {
-        Text("Family Invite View - To be implemented")
+        Text(String(localized: "familyManagement.inviteView.placeholder"))
             .foregroundColor(ColorPalette.white)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(ColorPalette.navy)
@@ -788,7 +788,7 @@ struct FamilyMemberEditView: View {
     let onComplete: (FamilyMember) -> Void
     
     var body: some View {
-        Text("Family Member Edit View - To be implemented")
+        Text(String(localized: "familyManagement.editView.placeholder"))
             .foregroundColor(ColorPalette.white)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(ColorPalette.navy)

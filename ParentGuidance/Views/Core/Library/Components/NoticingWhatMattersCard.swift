@@ -23,7 +23,7 @@ struct NoticingWhatMattersCard: View {
                     .font(.system(size: 20))
                     .foregroundColor(ColorPalette.brightBlue)
                 
-                Text("Noticing What Matters")
+                Text(String(localized: "library.noticingWhatMatters.title"))
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(ColorPalette.white)
                 
@@ -32,7 +32,7 @@ struct NoticingWhatMattersCard: View {
             
             // Description and insight count
             VStack(alignment: .leading, spacing: 8) {
-                Text("Child regulation insights")
+                Text(String(localized: "library.noticingWhatMatters.subtitle"))
                     .font(.system(size: 14))
                     .foregroundColor(ColorPalette.white.opacity(0.8))
                 
@@ -42,18 +42,18 @@ struct NoticingWhatMattersCard: View {
                             .scaleEffect(0.6)
                             .foregroundColor(ColorPalette.white.opacity(0.6))
                         
-                        Text("Loading insights...")
+                        Text(String(localized: "library.noticingWhatMatters.loading"))
                             .font(.system(size: 12))
                             .foregroundColor(ColorPalette.white.opacity(0.6))
                     }
                 } else if hasError {
-                    Text("Unable to load insights")
+                    Text(String(localized: "error.loading.insights"))
                         .font(.system(size: 12))
                         .foregroundColor(ColorPalette.white.opacity(0.6))
                 } else {
                     let totalInsights = insightCounts.values.reduce(0, +)
                     if totalInsights > 0 {
-                        Text("\(totalInsights) insights across \(insightCounts.count) categories")
+                        Text(String(localized: "library.noticingWhatMatters.insightCount", defaultValue: "\(totalInsights) insights across \(insightCounts.count) categories"))
                             .font(.system(size: 12))
                             .foregroundColor(ColorPalette.white.opacity(0.6))
                     } else {

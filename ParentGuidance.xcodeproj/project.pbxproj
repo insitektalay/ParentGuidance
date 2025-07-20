@@ -175,6 +175,8 @@
 		944EA1B72E2B77C400C110AF /* ContentDisplayService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentDisplayService.swift; sourceTree = "<group>"; };
 		944EA1B92E2B822C00C110AF /* TranslationStrategySelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationStrategySelectionView.swift; sourceTree = "<group>"; };
 		944EA1BB2E2B865900C110AF /* FamilyManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyManagementView.swift; sourceTree = "<group>"; };
+		944EA1BD2E2BE6EA00C110AF /* extracted_english_strings.geojson */ = {isa = PBXFileReference; lastKnownFileType = text; path = extracted_english_strings.geojson; sourceTree = "<group>"; };
+		944EA1BF2E2CB5E400C110AF /* vercel-ai-sdk.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "vercel-ai-sdk.md"; sourceTree = "<group>"; };
 		9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildProfileEditView.swift; sourceTree = "<group>"; };
 		9481564D2E25334C00C28273 /* AudioPermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPermissionManager.swift; sourceTree = "<group>"; };
 		9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorderError.swift; sourceTree = "<group>"; };
@@ -298,6 +300,14 @@
 			path = Managers;
 			sourceTree = "<group>";
 		};
+		944EA1BE2E2CB16B00C110AF /* Docs */ = {
+			isa = PBXGroup;
+			children = (
+				944EA1BF2E2CB5E400C110AF /* vercel-ai-sdk.md */,
+			);
+			path = Docs;
+			sourceTree = "<group>";
+		};
 		948605C92E111832008D92DE /* Components */ = {
 			isa = PBXGroup;
 			children = (
@@ -325,6 +335,8 @@
 		94FA10B72E056247003EC1E9 = {
 			isa = PBXGroup;
 			children = (
+				944EA1BE2E2CB16B00C110AF /* Docs */,
+				944EA1BD2E2BE6EA00C110AF /* extracted_english_strings.geojson */,
 				944EA1A72E2B30E000C110AF /* Localizable.xcstrings */,
 				94CBD5142E20F80C0014C22A /* FakeFile.swift */,
 				94FA10C22E056247003EC1E9 /* ParentGuidance */,

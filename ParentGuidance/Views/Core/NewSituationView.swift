@@ -32,15 +32,10 @@ struct NewSituationView: View {
         NavigationStack {
             Group {
                 if isLoading {
-                    let _ = print("🔄 Rendering: Loading view")
                     SituationOrganizingView()
                 } else if let guidance = guidanceResponse {
-                    let _ = print("✅ Rendering: Guidance view with content")
-                    let _ = print("   Title: \(guidance.title)")
-                    let _ = print("   Sections: \(guidance.sectionCount)")
                     SituationGuidanceViewWithData(guidance: guidance)
                 } else {
-                    let _ = print("📝 Rendering: Input view (no guidance yet)")
                     SituationInputIdleView(
                         childName: "Alex",
                         apiKey: userApiKey,
@@ -65,64 +60,45 @@ struct NewSituationView: View {
     }
     
     private func handleSendMessage(_ inputText: String) async {
-        print("🚀 Starting message handling for: \(inputText)")
         isLoading = true
         
         do {
             // Step 1: Get user's family_id first
-            print("💾 Step 1: Getting user's family context...")
             guard let userId = appCoordinator.currentUserId else {
                 print("❌ No current user ID available")
                 isLoading = false
                 return
             }
             let userProfile = try await AuthService.shared.loadUserProfile(userId: userId)
-            print("👥 User family_id: \(userProfile.familyId ?? "nil")")
             
             // If no family_id, create a family for this user
             var familyId = userProfile.familyId
             if familyId == nil {
-                print("🏠 No family found, creating family for user...")
                 familyId = try await ConversationService.shared.createFamilyForUser(userId: userId)
-                print("✅ Created family with ID: \(familyId!)")
             }
             
             // Step 2: Get user's API key
-            print("🔑 Step 2: Getting API key for user: \(userId)")
             let apiKey = try await getUserApiKey(userId: userId)
-            print("✅ Retrieved API key: \(apiKey.prefix(10))...")
             
             // Step 2.5: Check for active framework
-            print("🔍 Step 2.5: Checking for active framework...")
             let activeFramework = try? await FrameworkStorageService.shared.getActiveFramework(familyId: familyId!)
-            if let framework = activeFramework {
-                print("✅ Found active framework: \(framework.frameworkName)")
-            } else {
-                print("📭 No active framework found")
-            }
             
             // Step 3: Call OpenAI API to get guidance and title
-            print("📡 Step 3: Calling OpenAI API...")
             let (guidance, rawContent) = try await generateGuidance(
                 situation: inputText,
                 familyContext: "none",
                 apiKey: apiKey,
                 activeFramework: activeFramework
             )
-            print("✅ OpenAI response received successfully")
-            print("🏷️ AI-generated title: \(guidance.title)")
             
             // Step 4: Analyze situation for category and incident classification
-            print("🔍 Step 4: Analyzing situation...")
             let (category, isIncident) = try await ConversationService.shared.analyzeSituation(
                 situationText: inputText,
                 apiKey: apiKey,
                 activeFramework: activeFramework
             )
-            print("✅ Analysis completed - Category: \(category ?? "nil"), Incident: \(isIncident)")
             
             // Step 5: Save the situation to database with AI-generated title and analysis
-            print("💾 Step 5: Saving situation to database with AI title and analysis...")
             let situationId = try await ConversationService.shared.saveSituation(
                 familyId: familyId,
                 childId: nil, // TODO: Get from current child context if needed
@@ -131,14 +107,8 @@ struct NewSituationView: View {
                 category: category,
                 isIncident: isIncident
             )
-            print("✅ Situation saved with ID: \(situationId)")
             
             // Step 6: Save the guidance response linked to the situation using raw content
-            print("💾 Step 6: Saving guidance response to database...")
-            print("🔍 [DEBUG] About to call saveGuidance with:")
-            print("   - situationId: \(situationId)")
-            print("   - rawContent length: \(rawContent.count)")
-            print("   - rawContent sample: \(rawContent.prefix(200))...")
             
             do {
                 let guidanceId = try await ConversationService.shared.saveGuidance(
@@ -146,8 +116,6 @@ struct NewSituationView: View {
                     content: rawContent, // Use raw bracket-delimited content
                     category: "parenting_guidance"
                 )
-                print("✅ Guidance saved with ID: \(guidanceId)")
-                print("🔗 Successfully linked situation \(situationId) → guidance \(guidanceId)")
             } catch {
                 print("❌ [CRITICAL] Failed to save guidance in handleSendMessage!")
                 print("❌ [CRITICAL] Error: \(error)")
@@ -157,7 +125,6 @@ struct NewSituationView: View {
             }
             
             // Step 7: Extract contextual insights (background task)
-            print("🔍 Step 7: Extracting contextual insights...")
             Task {
                 do {
                     let insights = try await ContextualInsightService.shared.extractContextFromSituation(
@@ -167,11 +134,9 @@ struct NewSituationView: View {
                         childId: nil, // TODO: Get from current child context if needed
                         situationId: situationId
                     )
-                    print("✅ Extracted \(insights.count) contextual insights")
                     
                     // Save insights to database
                     try await ContextualInsightService.shared.saveContextInsights(insights)
-                    print("✅ Contextual insights saved to database")
                 } catch {
                     print("⚠️ Context extraction failed (non-critical): \(error)")
                     print("⚠️ This won't affect the main guidance flow")
@@ -179,7 +144,6 @@ struct NewSituationView: View {
             }
             
             // Step 7.5: Extract child regulation insights (background task)
-            print("🧠 Step 7.5: Extracting child regulation insights...")
             Task {
                 do {
                     let regulationInsights = try await ContextualInsightService.shared.extractChildRegulationInsights(
@@ -189,11 +153,9 @@ struct NewSituationView: View {
                         childId: nil, // TODO: Get from current child context if needed
                         situationId: situationId
                     )
-                    print("✅ Extracted \(regulationInsights.count) child regulation insights")
                     
                     // Save regulation insights to database
                     try await ContextualInsightService.shared.saveChildRegulationInsights(regulationInsights)
-                    print("✅ Child regulation insights saved to database")
                 } catch {
                     print("⚠️ Child regulation insights extraction failed (non-critical): \(error)")
                     print("⚠️ This won't affect the main guidance flow")
@@ -204,16 +166,7 @@ struct NewSituationView: View {
             await MainActor.run {
                 guidanceResponse = guidance
                 isLoading = false
-                print("📱 State updated on main thread:")
-                print("   isLoading: \(isLoading)")
-                print("   guidanceResponse is nil: \(guidanceResponse == nil)")
-                if let gr = guidanceResponse {
-                    print("   Guidance title: \(gr.title)")
-                    print("   Section count: \(gr.sectionCount)")
-                    print("   Sections: \(gr.displaySections.map { $0.title }.joined(separator: ", "))")
-                }
             }
-            print("📱 Guidance response set, UI should update")
             
         } catch {
             print("❌ Error in message handling: \(error)")
@@ -222,8 +175,6 @@ struct NewSituationView: View {
                 isLoading = false
             }
         }
-        
-        print("🏁 Message handling completed")
     }
     
     
@@ -237,7 +188,6 @@ struct NewSituationView: View {
             let apiKey = try await getUserApiKey(userId: userId)
             await MainActor.run {
                 userApiKey = apiKey
-                print("✅ API key loaded successfully")
             }
         } catch {
             print("❌ Failed to load API key: \(error)")
@@ -319,37 +269,40 @@ struct NewSituationView: View {
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        // Debug: Log current settings state
-        print("🔍 [DEBUG] Current guidance structure settings:")
-        print("   - Current mode: \(guidanceStructureSettings.currentMode.displayName)")
-        print("   - Current style: \(guidanceStructureSettings.currentStyle.displayName)")
-        print("   - Is using dynamic: \(guidanceStructureSettings.isUsingDynamicStructure)")
-        print("   - Has active framework: \(activeFramework != nil)")
         
         let (promptId, version, variables): (String, String, [String: Any]) = {
             if let framework = activeFramework {
                 // With Framework - Choose version based on style and structure mode
                 let version = guidanceStructureSettings.getPromptVersion(hasFramework: true)
-                print("🔍 [DEBUG] Framework path - Selected version: \(version) (style: \(guidanceStructureSettings.currentStyle.displayName), structure: \(guidanceStructureSettings.currentMode.displayName))")
+                
+                // Only include family_context for Fixed Structure mode
+                var variables: [String: Any] = [
+                    "current_situation": situation,
+                    "active_foundation_tools": formatFrameworkForPrompt(framework)
+                ]
+                if guidanceStructureSettings.currentMode == .fixed {
+                    variables["family_context"] = familyContext
+                }
+                
                 return (
                     "pmpt_68516f961dc08190aceb4f591ee010050a454989b0581453",
                     version,
-                    [
-                        "current_situation": situation,
-                        "active_foundation_tools": formatFrameworkForPrompt(framework)
-                    ]
+                    variables
                 )
             } else {
                 // No Framework - Choose version based on style and structure mode
                 let version = guidanceStructureSettings.getPromptVersion(hasFramework: false)
-                print("🔍 [DEBUG] No framework path - Selected version: \(version) (style: \(guidanceStructureSettings.currentStyle.displayName), structure: \(guidanceStructureSettings.currentMode.displayName))")
+                
+                // Only include family_context for Fixed Structure mode
+                var variables: [String: Any] = ["current_situation": situation]
+                if guidanceStructureSettings.currentMode == .fixed {
+                    variables["family_context"] = familyContext
+                }
+                
                 return (
                     "pmpt_68515280423c8193aaa00a07235b7cf206c51d869f9526ba",
                     version,
-                    [
-                        "current_situation": situation,
-                        "family_context": familyContext
-                    ]
+                    variables
                 )
             }
         }()
@@ -362,86 +315,50 @@ struct NewSituationView: View {
             ]
         ]
         
-        print("🔗 API URL: \(url)")
-        print("📦 [DEBUG] Full request body:")
-        print("   - Prompt ID: \(promptId)")
-        print("   - Version: \(version)")
-        print("   - Variables: \(variables)")
-        print("📦 Complete request: \(requestBody)")
         
         request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
         
-        print("📡 Making API request...")
         let (data, response) = try await URLSession.shared.data(for: request)
         
-        print("📊 Response received. Status code: \((response as? HTTPURLResponse)?.statusCode ?? 0)")
-        
         guard let httpResponse = response as? HTTPURLResponse else {
-            print("❌ Invalid HTTP response")
             throw OpenAIError.invalidResponse
         }
         
         if httpResponse.statusCode != 200 {
-            print("❌ HTTP error: \(httpResponse.statusCode)")
             if let responseString = String(data: data, encoding: .utf8) {
-                print("❌ Error response: \(responseString)")
+                print("❌ HTTP \(httpResponse.statusCode) error: \(responseString)")
             }
             throw OpenAIError.invalidResponse
         }
         
-        print("✅ HTTP 200 response received")
-        
-        // Let's see what the actual response looks like
-        if let responseString = String(data: data, encoding: .utf8) {
-            print("🔍 Raw response: \(responseString)")
-        }
         
         // The prompts API has a different response structure
         let promptResponse = try JSONDecoder().decode(PromptResponse.self, from: data)
-        print("✅ JSON decoded successfully")
-        print("🔍 Prompt response id: \(promptResponse.id)")
-        print("🔍 Output count: \(promptResponse.output.count)")
         
         guard let firstOutput = promptResponse.output.first,
               let firstContent = firstOutput.content.first else {
-            print("❌ No content in response")
             throw OpenAIError.noContent
         }
         
         let content = firstContent.text
         
-        print("📝 [DEBUG] Raw OpenAI response content:")
-        print("   - Length: \(content.count) characters")
-        print("   - First 200 chars: \(content.prefix(200))...")
-        print("   - Contains brackets: \(content.contains("[") && content.contains("]"))")
-        
         // Parse the response into structured guidance based on user preference
-        print("🔍 [DEBUG] Parsing decision:")
-        print("   - Settings says use dynamic: \(guidanceStructureSettings.isUsingDynamicStructure)")
-        print("   - About to enter \(guidanceStructureSettings.isUsingDynamicStructure ? "DYNAMIC" : "FIXED") parsing path")
         
         let guidance: GuidanceResponseProtocol
         if guidanceStructureSettings.isUsingDynamicStructure {
-            print("🔄 [DEBUG] ENTERING DYNAMIC PARSING PATH")
             // Use dynamic parser for flexible sections with enhanced fallback
             if let dynamicResponse = DynamicGuidanceParser.shared.parseWithFallback(content) {
                 guidance = dynamicResponse
-                print("✅ [DEBUG] Dynamic parsing SUCCESS - \(dynamicResponse.displaySections.count) sections")
-                print("   - Section titles: \(dynamicResponse.displaySections.map { $0.title }.joined(separator: ", "))")
             } else {
                 // Ultimate fallback: create basic response with error content
-                print("❌ [DEBUG] All dynamic parsing methods FAILED, creating fallback response")
                 guidance = createFallbackResponse(content: content)
             }
         } else {
-            print("🔄 [DEBUG] ENTERING FIXED PARSING PATH")
             // Use fixed parser for traditional 7-section structure with enhanced validation
             let fixedResponse = parseGuidanceResponse(content)
             if validateGuidanceResponse(fixedResponse) {
                 guidance = fixedResponse
-                print("✅ [DEBUG] Fixed parsing SUCCESS with validation")
             } else {
-                print("⚠️ [DEBUG] Fixed parsing validation FAILED, creating enhanced fallback")
                 guidance = createFallbackResponse(content: content)
             }
         }
@@ -706,20 +623,16 @@ class VoiceRecorderViewModel: ObservableObject {
     }
     
     func startRecording() async {
-        print("🎙️ ViewModel: Starting recording...")
         clearError()
         
         do {
             let _ = try await voiceRecorder.startRecording()
-            print("✅ ViewModel: Recording started successfully")
         } catch {
-            print("❌ ViewModel: Recording failed - \(error)")
             await handleError(error)
         }
     }
     
     func stopRecordingAndTranscribe(apiKey: String) async throws -> (recordingURL: URL, transcription: String) {
-        print("🛑 ViewModel: Stopping recording and transcribing...")
         
         do {
             // Set transcribing state first to avoid timing gap
@@ -730,10 +643,8 @@ class VoiceRecorderViewModel: ObservableObject {
             
             // Only reset transcribing state after everything is complete
             isTranscribing = false
-            print("✅ ViewModel: Transcription completed: \(result.transcription)")
             return result
         } catch {
-            print("❌ ViewModel: Stop and transcribe failed - \(error)")
             isTranscribing = false
             await handleError(error)
             throw error
@@ -741,7 +652,6 @@ class VoiceRecorderViewModel: ObservableObject {
     }
     
     func cancelRecording() async {
-        print("❌ ViewModel: Canceling recording...")
         await voiceRecorder.cancelRecording()
         clearError()
     }
@@ -759,7 +669,6 @@ class VoiceRecorderViewModel: ObservableObject {
         let voiceError = error as? VoiceRecorderError ?? VoiceRecorderError.unknown(error)
         errorMessage = voiceError.userFriendlyMessage
         showError = true
-        print("❌ ViewModel: Error set - \(errorMessage ?? "nil")")
     }
     
     // MARK: - Formatted Duration
@@ -789,31 +698,24 @@ class VoiceRecorderViewModel: ObservableObject {
 
 extension VoiceRecorderViewModel: VoiceRecorderDelegate {
     nonisolated func voiceRecorderWillStartRecording(_ recorder: VoiceRecorderService) {
-        print("🎙️ ViewModel Delegate: Will start recording")
     }
     
     nonisolated func voiceRecorderDidStartRecording(_ recorder: VoiceRecorderService, fileURL: URL) {
-        print("🎙️ ViewModel Delegate: Did start recording at \(fileURL.lastPathComponent)")
     }
     
     nonisolated func voiceRecorderDidStopRecording(_ recorder: VoiceRecorderService, fileURL: URL, duration: TimeInterval) {
-        print("🛑 ViewModel Delegate: Did stop recording - duration: \(duration)s")
     }
     
     nonisolated func voiceRecorderDidCancelRecording(_ recorder: VoiceRecorderService) {
-        print("❌ ViewModel Delegate: Did cancel recording")
     }
     
     nonisolated func voiceRecorderWillStartTranscription(_ recorder: VoiceRecorderService, fileURL: URL) {
-        print("🎤 ViewModel Delegate: Will start transcription")
     }
     
     nonisolated func voiceRecorderDidCompleteTranscription(_ recorder: VoiceRecorderService, transcription: String, fileURL: URL) {
-        print("✅ ViewModel Delegate: Transcription completed")
     }
     
     nonisolated func voiceRecorderDidCompleteRecordingAndTranscription(_ recorder: VoiceRecorderService, transcription: String, fileURL: URL, duration: TimeInterval) {
-        print("✅ ViewModel Delegate: Complete flow finished - transcription: \(transcription.prefix(50))...")
     }
     
     nonisolated func voiceRecorderDidEncounterError(_ recorder: VoiceRecorderService, error: VoiceRecorderError) {

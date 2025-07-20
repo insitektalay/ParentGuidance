@@ -5,8 +5,6 @@ struct MicButton: View {
     let action: () -> Void
     
     var body: some View {
-        // Debug the isRecording state
-        let _ = print("🔍 MicButton: isRecording = \(isRecording)")
         
         Button(action: action) {
             ZStack {

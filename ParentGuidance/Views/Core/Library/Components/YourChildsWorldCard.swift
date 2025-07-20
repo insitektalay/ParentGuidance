@@ -53,7 +53,7 @@ struct YourChildsWorldCard: View {
                 } else {
                     let totalInsights = insightCounts.values.reduce(0, +)
                     if totalInsights > 0 {
-                        Text(String(localized: "library.childsWorld.count \(totalInsights) \(insightCounts.count)"))
+                        Text(String.localizedStringWithFormat(String(localized: "library.childsWorld.count %lld %lld"), totalInsights, insightCounts.count))
                             .font(.system(size: 12))
                             .foregroundColor(ColorPalette.white.opacity(0.6))
                     } else {

@@ -166,7 +166,7 @@ struct CategoryCardContent: View {
                     .lineLimit(2)
                 
                 if insightCount > 0 {
-                    Text(String(localized: "library.insights.category.count \(insightCount)"))
+                    Text(String.localizedStringWithFormat(String(localized: "library.insights.category.count %lld"), insightCount))
                         .font(.system(size: 14))
                         .foregroundColor(ColorPalette.white.opacity(0.7))
                 } else {

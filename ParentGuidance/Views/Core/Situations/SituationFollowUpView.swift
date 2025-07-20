@@ -93,7 +93,7 @@ struct SituationFollowUpView: View {
                 // Action buttons
                 HStack(spacing: 12) {
                     Button(action: onAddDetails) {
-                        Text("Add Details")
+                        Text(String(localized: "button.addDetails"))
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(ColorPalette.white)
                             .frame(maxWidth: .infinity)

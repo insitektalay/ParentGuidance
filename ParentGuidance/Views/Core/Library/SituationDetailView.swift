@@ -36,7 +36,7 @@ struct SituationDetailView: View {
                 
                 // Breadcrumb
                 HStack {
-                    Text("Library")
+                    Text(String(localized: "tab.library"))
                         .font(.system(size: 14))
                         .foregroundColor(ColorPalette.white.opacity(0.5))
                     
@@ -44,7 +44,7 @@ struct SituationDetailView: View {
                         .font(.system(size: 12))
                         .foregroundColor(ColorPalette.white.opacity(0.3))
                     
-                    Text("Situation Details")
+                    Text(String(localized: "library.situationDetail.title"))
                         .font(.system(size: 14))
                         .foregroundColor(ColorPalette.white.opacity(0.9))
                     
@@ -79,7 +79,7 @@ struct SituationDetailView: View {
                     // Guidance Section (moved above situation)
                     VStack(alignment: .leading, spacing: 16) {
                         HStack {
-                            Text("AI Guidance")
+                            Text(String(localized: "library.situationDetail.aiGuidance"))
                                 .font(.system(size: 18, weight: .medium))
                                 .foregroundColor(ColorPalette.white.opacity(0.9))
                             
@@ -93,7 +93,7 @@ struct SituationDetailView: View {
                                     .scaleEffect(1.5)
                                     .foregroundColor(ColorPalette.white.opacity(0.8))
                                 
-                                Text("Loading guidance...")
+                                Text(String(localized: "library.situationDetail.loadingGuidance"))
                                     .font(.system(size: 16))
                                     .foregroundColor(ColorPalette.white.opacity(0.7))
                             }
@@ -102,7 +102,7 @@ struct SituationDetailView: View {
                             
                         } else if let error = guidanceError {
                             VStack(spacing: 16) {
-                                Text("No guidance available")
+                                Text(String(localized: "library.situationDetail.noGuidance"))
                                     .font(.system(size: 16, weight: .medium))
                                     .foregroundColor(ColorPalette.white.opacity(0.9))
                                 
@@ -116,11 +116,11 @@ struct SituationDetailView: View {
                             
                         } else if guidance.isEmpty {
                             VStack(spacing: 16) {
-                                Text("No guidance generated yet")
+                                Text(String(localized: "library.situationDetail.noGuidanceYet"))
                                     .font(.system(size: 16, weight: .medium))
                                     .foregroundColor(ColorPalette.white.opacity(0.9))
                                 
-                                Text("This situation hasn't been processed for guidance yet.")
+                                Text(String(localized: "library.situationDetail.notProcessed"))
                                     .font(.system(size: 14))
                                     .foregroundColor(ColorPalette.white.opacity(0.7))
                                     .multilineTextAlignment(.center)
@@ -180,7 +180,7 @@ struct SituationDetailView: View {
                     // Original Situation Section (moved below guidance)
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {
-                            Text("Original Situation")
+                            Text(String(localized: "library.situationDetail.originalSituation"))
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(ColorPalette.white.opacity(0.8))
                             
@@ -192,7 +192,7 @@ struct SituationDetailView: View {
                                 HStack(spacing: 4) {
                                     Image(systemName: "doc.on.doc")
                                         .font(.system(size: 12))
-                                    Text("Copy")
+                                    Text(String(localized: "common.button.copy"))
                                         .font(.system(size: 12))
                                 }
                                 .foregroundColor(ColorPalette.terracotta)
@@ -234,7 +234,7 @@ struct SituationDetailView: View {
                             .font(.system(size: 24))
                             .foregroundColor(.green)
                         
-                        Text("Copied to clipboard")
+                        Text(String(localized: "common.copiedToClipboard"))
                             .font(.system(size: 14))
                             .foregroundColor(ColorPalette.white)
                     }

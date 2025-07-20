@@ -17,32 +17,153 @@
         }
       }
     },
-    "%lld insights across %lld categories" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld insights across %2$lld categories"
-          }
-        }
-      }
-    },
     "%lld members" : {
 
     },
     "%lld%%" : {
 
     },
+    "accessibility.cancelAction" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancels the action"
+          }
+        }
+      }
+    },
+    "accessibility.changeSortOrder" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double tap to change how situations are sorted"
+          }
+        }
+      }
+    },
+    "accessibility.confirmDestructive" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirms the destructive action"
+          }
+        }
+      }
+    },
+    "accessibility.favorite.toggle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toggles favorite status for this situation"
+          }
+        }
+      }
+    },
+    "accessibility.filterByDateRange" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filter situations by date range"
+          }
+        }
+      }
+    },
+    "accessibility.sendMessage" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double tap to send your message"
+          }
+        }
+      }
+    },
+    "accessibility.toggleVoiceRecording" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double tap to toggle voice recording"
+          }
+        }
+      }
+    },
+    "action.addToFavorites" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add to favorites"
+          }
+        }
+      }
+    },
+    "action.deactivateFramework" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deactivate Framework"
+          }
+        }
+      }
+    },
+    "action.deleteAccount" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DELETE ACCOUNT"
+          }
+        }
+      }
+    },
+    "action.deleteInsight" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Insight"
+          }
+        }
+      }
+    },
+    "action.exportData" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export My Data"
+          }
+        }
+      }
+    },
+    "action.removeFromFavorites" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove from favorites"
+          }
+        }
+      }
+    },
     "Active" : {
-
-    },
-    "Add Details" : {
-
-    },
-    "Add to favorites" : {
-
-    },
-    "AI Guidance" : {
 
     },
     "alerts.category.previous" : {
@@ -442,6 +563,26 @@
         }
       }
     },
+    "app.name" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ParentGuidance"
+          }
+        }
+      }
+    },
+    "app.tagline" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your parenting co-pilot"
+          }
+        }
+      }
+    },
     "Are you sure you want to delete this insight? This action cannot be undone." : {
 
     },
@@ -515,13 +656,185 @@
         }
       }
     },
+    "button.addDetails" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add Details"
+          }
+        }
+      }
+    },
+    "button.cancel" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        }
+      }
+    },
+    "button.continue" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue"
+          }
+        }
+      }
+    },
+    "button.continueAnyway" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue anyway"
+          }
+        }
+      }
+    },
+    "button.deactivate" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deactivate"
+          }
+        }
+      }
+    },
+    "button.delete" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete"
+          }
+        }
+      }
+    },
+    "button.done" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        }
+      }
+    },
+    "button.goBack" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go Back"
+          }
+        }
+      }
+    },
+    "button.helpUnderstand" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Help me understand better"
+          }
+        }
+      }
+    },
+    "button.learnMore" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Learn More"
+          }
+        }
+      }
+    },
+    "button.no" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No"
+          }
+        }
+      }
+    },
+    "button.notRightNow" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not Right Now"
+          }
+        }
+      }
+    },
+    "button.translate" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Translate"
+          }
+        }
+      }
+    },
+    "button.understand" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I Understand"
+          }
+        }
+      }
+    },
+    "button.viewInsights" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View Insights"
+          }
+        }
+      }
+    },
+    "button.yes" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yes"
+          }
+        }
+      }
+    },
     "Cancel" : {
 
     },
     "Cancels the action" : {
-
-    },
-    "Child regulation insights" : {
 
     },
     "childBasics.addAnother" : {
@@ -684,6 +997,36 @@
         }
       }
     },
+    "common.back" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back"
+          }
+        }
+      }
+    },
+    "common.button.copy" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy"
+          }
+        }
+      }
+    },
+    "common.button.retry" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retry"
+          }
+        }
+      }
+    },
     "common.cancel" : {
       "localizations" : {
         "en" : {
@@ -705,7 +1048,14 @@
       }
     },
     "common.confirm" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirm"
+          }
+        }
+      }
     },
     "common.continue" : {
       "extractionState" : "stale",
@@ -714,6 +1064,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Continue"
+          }
+        }
+      }
+    },
+    "common.copiedToClipboard" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copied to clipboard"
+          }
+        }
+      }
+    },
+    "common.edit" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit"
           }
         }
       }
@@ -758,6 +1128,16 @@
         }
       }
     },
+    "common.remove" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove"
+          }
+        }
+      }
+    },
     "common.retry" : {
       "localizations" : {
         "en" : {
@@ -788,19 +1168,55 @@
         }
       }
     },
+    "confirmation.delete.instruction" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type DELETE"
+          }
+        }
+      }
+    },
+    "confirmation.deleteInsight" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Are you sure you want to delete this insight? This action cannot be undone."
+          }
+        }
+      }
+    },
     "Confirms the destructive action" : {
 
+    },
+    "context.empty.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Insights will appear here as you add situations that relate to %@"
+          }
+        }
+      }
+    },
+    "context.empty.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No insights yet"
+          }
+        }
+      }
     },
     "Continue" : {
 
     },
     "Continue anyway" : {
-
-    },
-    "Copied to clipboard" : {
-
-    },
-    "Copy" : {
 
     },
     "Date filters" : {
@@ -824,6 +1240,17 @@
     "Describe what's happening with %@..." : {
 
     },
+    "disclaimer.guidance.description" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This isn't a diagnosis — just a way to understand what might be happening and try some ideas that have worked for other families."
+          }
+        }
+      }
+    },
     "Done" : {
 
     },
@@ -839,6 +1266,37 @@
     "Enter text to enable sending" : {
 
     },
+    "error.loading.insights" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to load insights"
+          }
+        }
+      }
+    },
+    "error.tryAgainLater" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please try again later"
+          }
+        }
+      }
+    },
+    "example.situation" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alex had a meltdown when asked to put on shoes..."
+          }
+        }
+      }
+    },
     "Export My Data" : {
 
     },
@@ -851,8 +1309,72 @@
     "f" : {
 
     },
+    "familyManagement.editView.placeholder" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Family Member Edit View - To be implemented"
+          }
+        }
+      }
+    },
+    "familyManagement.inviteView.placeholder" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Family Invite View - To be implemented"
+          }
+        }
+      }
+    },
     "Filter situations by date range" : {
 
+    },
+    "format.insightCount" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld insight%2$@"
+          }
+        }
+      }
+    },
+    "format.memberCount" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld members"
+          }
+        }
+      }
+    },
+    "format.number" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld"
+          }
+        }
+      }
+    },
+    "format.percentage" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld%%"
+          }
+        }
+      }
     },
     "foundation.active.deactivate" : {
       "localizations" : {
@@ -957,6 +1479,17 @@
     "Framework Guide" : {
 
     },
+    "framework.guide.title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Framework Guide"
+          }
+        }
+      }
+    },
     "G" : {
 
     },
@@ -1008,16 +1541,44 @@
 
     },
     "guidance.translation.status.retrying" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retrying translation..."
+          }
+        }
+      }
     },
     "guidance.translation.tapToViewOriginal" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap to view original"
+          }
+        }
+      }
     },
     "guidance.translation.viewingTranslated" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Viewing translated"
+          }
+        }
+      }
     },
     "guidance.translation.viewOriginal" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View original"
+          }
+        }
+      }
     },
     "Help me understand better" : {
 
@@ -1025,23 +1586,80 @@
     "High Usage" : {
 
     },
+    "hint.enterTextToSend" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter text to enable sending"
+          }
+        }
+      }
+    },
     "I Understand" : {
 
     },
     "Inactive" : {
 
     },
-    "Insights for %@ will appear here as you add more situations." : {
-
+    "label.dateFilters" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date filters"
+          }
+        }
+      }
     },
-    "Insights will appear here as you add situations that relate to %@" : {
-
+    "label.exportStatus" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export Status"
+          }
+        }
+      }
+    },
+    "label.original" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Original"
+          }
+        }
+      }
     },
     "Learn More" : {
 
     },
-    "Library" : {
-
+    "letter.f" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "f"
+          }
+        }
+      }
+    },
+    "letter.g" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "G"
+          }
+        }
+      }
     },
     "Library search and filters" : {
 
@@ -1071,8 +1689,8 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "library.childsWorld.count %1$lld %2$lld"
+            "state" : "translated",
+            "value" : "%1$lld insights across %2$lld categories"
           }
         }
       }
@@ -1159,7 +1777,14 @@
       }
     },
     "library.insights.category.count %lld" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld insights"
+          }
+        }
+      }
     },
     "library.insights.category.empty" : {
       "localizations" : {
@@ -1207,6 +1832,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "contextual knowledge base"
+          }
+        }
+      }
+    },
+    "library.noticingWhatMatters.insightCount" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld insights across %2$lld categories"
+          }
+        }
+      }
+    },
+    "library.noticingWhatMatters.loading" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading insights..."
+          }
+        }
+      }
+    },
+    "library.noticingWhatMatters.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Child regulation insights"
+          }
+        }
+      }
+    },
+    "library.noticingWhatMatters.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noticing What Matters"
           }
         }
       }
@@ -1305,6 +1970,17 @@
         }
       }
     },
+    "library.searchAndFilters" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Library search and filters"
+          }
+        }
+      }
+    },
     "library.searchCard.button" : {
       "localizations" : {
         "en" : {
@@ -1327,7 +2003,14 @@
       }
     },
     "library.searchCard.count %lld" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld results"
+          }
+        }
+      }
     },
     "library.searchCard.empty" : {
       "localizations" : {
@@ -1389,8 +2072,75 @@
         }
       }
     },
-    "Loading guidance..." : {
-
+    "library.situationDetail.aiGuidance" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI Guidance"
+          }
+        }
+      }
+    },
+    "library.situationDetail.loadingGuidance" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading guidance..."
+          }
+        }
+      }
+    },
+    "library.situationDetail.noGuidance" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No guidance available"
+          }
+        }
+      }
+    },
+    "library.situationDetail.noGuidanceYet" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No guidance generated yet"
+          }
+        }
+      }
+    },
+    "library.situationDetail.notProcessed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This situation hasn't been processed for guidance yet."
+          }
+        }
+      }
+    },
+    "library.situationDetail.originalSituation" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Original Situation"
+          }
+        }
+      }
+    },
+    "library.situationDetail.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Situation Details"
+          }
+        }
+      }
     },
     "Loading insights..." : {
 
@@ -1407,25 +2157,10 @@
     "No" : {
 
     },
-    "No guidance available" : {
-
-    },
-    "No guidance generated yet" : {
-
-    },
     "No insights collected yet" : {
 
     },
-    "No insights yet" : {
-
-    },
-    "No patterns identified yet" : {
-
-    },
     "Not Right Now" : {
-
-    },
-    "Noticing What Matters" : {
 
     },
     "onboarding.benefit.familyMembers" : {
@@ -1459,19 +2194,54 @@
       }
     },
     "onboarding.button.back" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back"
+          }
+        }
+      }
     },
     "onboarding.familyChoice.createFamily.button" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create New Family"
+          }
+        }
+      }
     },
     "onboarding.familyChoice.createFamily.description" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start fresh with your own family account"
+          }
+        }
+      }
     },
     "onboarding.familyChoice.createFamily.title" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create Family"
+          }
+        }
+      }
     },
     "onboarding.familyChoice.joinFamily.button" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Join Existing Family"
+          }
+        }
+      }
     },
     "onboarding.familyChoice.joinFamily.description" : {
 
@@ -1531,12 +2301,6 @@
     "Original" : {
 
     },
-    "Original Situation" : {
-
-    },
-    "ParentGuidance" : {
-
-    },
     "payment.cancelAnytime" : {
       "localizations" : {
         "en" : {
@@ -1573,6 +2337,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Total: %@/month"
+          }
+        }
+      }
+    },
+    "placeholder.describeSituation" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Describe what's happening with %@..."
           }
         }
       }
@@ -1747,8 +2522,25 @@
         }
       }
     },
-    "Please try again later" : {
-
+    "regulation.empty.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Insights for %@ will appear here as you add more situations."
+          }
+        }
+      }
+    },
+    "regulation.empty.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No patterns identified yet"
+          }
+        }
+      }
     },
     "regulation.insights.count %d" : {
       "extractionState" : "stale",
@@ -1762,7 +2554,14 @@
       }
     },
     "regulation.insights.count %lld" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld regulation insights"
+          }
+        }
+      }
     },
     "regulation.insights.empty" : {
       "localizations" : {
@@ -1817,12 +2616,6 @@
     "Remove" : {
 
     },
-    "Remove from favorites" : {
-
-    },
-    "Retry" : {
-
-    },
     "screen.alerts.title" : {
       "localizations" : {
         "en" : {
@@ -1867,6 +2660,9 @@
 
     },
     "Send message" : {
+
+    },
+    "Sent %@" : {
 
     },
     "settings.account.apiKey" : {
@@ -2170,91 +2966,564 @@
       }
     },
     "settings.familyLanguage.analytics.averageAccess" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Average Access"
+          }
+        }
+      }
     },
     "settings.familyLanguage.analytics.languageUsage" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Language Usage"
+          }
+        }
+      }
     },
     "settings.familyLanguage.analytics.title" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usage Analytics"
+          }
+        }
+      }
     },
     "settings.familyLanguage.analytics.totalContent" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total Content"
+          }
+        }
+      }
     },
     "settings.familyLanguage.overview.languages" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Languages"
+          }
+        }
+      }
     },
     "settings.familyLanguage.overview.members" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Family Members"
+          }
+        }
+      }
     },
     "settings.familyLanguage.overview.needsTranslation" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Translation Required"
+          }
+        }
+      }
     },
     "settings.familyLanguage.overview.notAvailable" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not Available"
+          }
+        }
+      }
     },
     "settings.familyLanguage.overview.title" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Family Language Overview"
+          }
+        }
+      }
     },
     "settings.familyLanguage.strategy.change" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change Strategy"
+          }
+        }
+      }
     },
     "settings.familyLanguage.strategy.confirmation.message" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This will change how translations are handled for your family. Are you sure?"
+          }
+        }
+      }
     },
     "settings.familyLanguage.strategy.confirmation.title" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change Translation Strategy"
+          }
+        }
+      }
     },
     "settings.familyLanguage.strategy.costImplications.title" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cost Implications"
+          }
+        }
+      }
     },
     "settings.familyLanguage.strategy.current" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current Strategy"
+          }
+        }
+      }
     },
     "settings.familyLanguage.strategy.currentUsage.avgAccess" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Average Content Access"
+          }
+        }
+      }
     },
     "settings.familyLanguage.strategy.currentUsage.dualLanguageActive" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dual Language Active"
+          }
+        }
+      }
     },
     "settings.familyLanguage.strategy.currentUsage.familyType" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Family Usage Type"
+          }
+        }
+      }
     },
     "settings.familyLanguage.strategy.currentUsage.title" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current Usage"
+          }
+        }
+      }
     },
     "settings.familyLanguage.strategy.hybrid.description" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Smart hybrid approach"
+          }
+        }
+      }
     },
     "settings.familyLanguage.strategy.hybrid.detail" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Combines immediate translation for high-usage content with on-demand for occasional access"
+          }
+        }
+      }
     },
     "settings.familyLanguage.strategy.immediate.description" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Translate everything immediately"
+          }
+        }
+      }
     },
     "settings.familyLanguage.strategy.immediate.detail" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All content is translated immediately when created. Higher cost but instant access."
+          }
+        }
+      }
     },
     "settings.familyLanguage.strategy.onDemand.description" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Translate only when requested"
+          }
+        }
+      }
     },
     "settings.familyLanguage.strategy.onDemand.detail" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Content is translated only when you specifically request it. Lower cost but may have delays."
+          }
+        }
+      }
     },
     "settings.familyLanguage.strategy.recommended" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recommended"
+          }
+        }
+      }
     },
     "settings.familyLanguage.strategy.selection.description" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose how content should be translated for your family's needs"
+          }
+        }
+      }
     },
     "settings.familyLanguage.strategy.selection.title" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select Translation Strategy"
+          }
+        }
+      }
     },
     "settings.familyLanguage.strategy.title" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Translation Strategy"
+          }
+        }
+      }
     },
     "settings.familyLanguage.title" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Family Languages"
+          }
+        }
+      }
+    },
+    "settings.familyManagement.actions.exportData" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export Family Data"
+          }
+        }
+      }
+    },
+    "settings.familyManagement.actions.leaveFamily" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leave Family"
+          }
+        }
+      }
+    },
+    "settings.familyManagement.actions.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Family Actions"
+          }
+        }
+      }
+    },
+    "settings.familyManagement.analytics.avgAccess" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Average Access"
+          }
+        }
+      }
+    },
+    "settings.familyManagement.analytics.familyType" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Family Type"
+          }
+        }
+      }
+    },
+    "settings.familyManagement.analytics.totalContent" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total Content"
+          }
+        }
+      }
+    },
+    "settings.familyManagement.error.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error Loading Family"
+          }
+        }
+      }
+    },
+    "settings.familyManagement.invitation.resend" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resend"
+          }
+        }
+      }
+    },
+    "settings.familyManagement.invitations.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pending Invitations"
+          }
+        }
+      }
+    },
+    "settings.familyManagement.inviteFamily" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invite Family"
+          }
+        }
+      }
+    },
+    "settings.familyManagement.loading" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading family data..."
+          }
+        }
+      }
+    },
+    "settings.familyManagement.members.addMember" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add Member"
+          }
+        }
+      }
+    },
+    "settings.familyManagement.members.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Family Members"
+          }
+        }
+      }
+    },
+    "settings.familyManagement.overview.languages" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Languages"
+          }
+        }
+      }
+    },
+    "settings.familyManagement.overview.members" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Members"
+          }
+        }
+      }
+    },
+    "settings.familyManagement.overview.pendingInvites" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pending Invites"
+          }
+        }
+      }
+    },
+    "settings.familyManagement.overview.strategy" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Translation Strategy"
+          }
+        }
+      }
+    },
+    "settings.familyManagement.overview.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Family Overview"
+          }
+        }
+      }
+    },
+    "settings.familyManagement.role.admin" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Admin"
+          }
+        }
+      }
+    },
+    "settings.familyManagement.role.member" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Member"
+          }
+        }
+      }
+    },
+    "settings.familyManagement.settings.languageConflictWarning" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Language preferences conflict - consider adjusting family translation strategy"
+          }
+        }
+      }
+    },
+    "settings.familyManagement.settings.languageCoordination" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Language Coordination"
+          }
+        }
+      }
+    },
+    "settings.familyManagement.settings.membersCount" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld members"
+          }
+        }
+      }
+    },
+    "settings.familyManagement.settings.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Family Settings"
+          }
+        }
+      }
+    },
+    "settings.familyManagement.settings.translationStrategy" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Translation Strategy"
+          }
+        }
+      }
+    },
+    "settings.familyManagement.settings.usageAnalytics" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usage Analytics"
+          }
+        }
+      }
+    },
+    "settings.familyManagement.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manage Family"
+          }
+        }
+      }
     },
     "settings.foundationTools.error" : {
       "localizations" : {
@@ -2550,9 +3819,6 @@
         }
       }
     },
-    "Situation Details" : {
-
-    },
     "situation.input.placeholder %@" : {
       "localizations" : {
         "en" : {
@@ -2598,6 +3864,50 @@
     },
     "Start recording" : {
 
+    },
+    "status.active" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active"
+          }
+        }
+      }
+    },
+    "status.exporting" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exporting..."
+          }
+        }
+      }
+    },
+    "status.inactive" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inactive"
+          }
+        }
+      }
+    },
+    "status.noInsights" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No insights collected yet"
+          }
+        }
+      }
     },
     "Stop recording" : {
 
@@ -2653,9 +3963,6 @@
       }
     },
     "This isn't a diagnosis — just a way to understand what might be happening and try some ideas that have worked for other families." : {
-
-    },
-    "This situation hasn't been processed for guidance yet." : {
 
     },
     "today.empty.createButton" : {
@@ -2738,17 +4045,22 @@
         }
       }
     },
-    "Toggles favorite status for this situation" : {
-
-    },
     "Translate" : {
 
     },
     "Type DELETE" : {
 
     },
-    "Unable to load insights" : {
-
+    "usage.high" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "High Usage"
+          }
+        }
+      }
     },
     "View Insights" : {
 
@@ -2793,9 +4105,6 @@
 
     },
     "You might find this helpful" : {
-
-    },
-    "Your parenting co-pilot" : {
 
     },
     "Your situation:" : {

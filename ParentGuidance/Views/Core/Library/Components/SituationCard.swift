@@ -152,8 +152,8 @@ struct SituationCard: View {
                         .foregroundColor(isFavorited ? ColorPalette.terracotta : ColorPalette.white.opacity(0.7))
                         .animation(.easeInOut(duration: 0.2), value: isFavorited)
                 }
-                .accessibilityLabel(isFavorited ? "Remove from favorites" : "Add to favorites")
-                .accessibilityHint("Toggles favorite status for this situation")
+                .accessibilityLabel(isFavorited ? String(localized: "action.removeFromFavorites") : String(localized: "action.addToFavorites"))
+                .accessibilityHint(String(localized: "accessibility.favorite.toggle"))
             }
             .padding(12)
             .background(

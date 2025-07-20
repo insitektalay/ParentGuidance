@@ -41,6 +41,7 @@ class GuidanceGenerationService {
     ) async throws -> (GuidanceResponseProtocol, String) {
         
         if useEdgeFunction && useStreaming {
+            print("🚀 [GuidanceGenerationService] Using EdgeFunction with streaming")
             return try await generateGuidanceViaEdgeFunctionStreaming(
                 situation: situation,
                 familyContext: familyContext,
@@ -48,6 +49,7 @@ class GuidanceGenerationService {
                 activeFramework: activeFramework
             )
         } else if useEdgeFunction {
+            print("🚀 [GuidanceGenerationService] Using EdgeFunction (non-streaming)")
             return try await generateGuidanceViaEdgeFunctionNonStreaming(
                 situation: situation,
                 familyContext: familyContext,
@@ -55,6 +57,7 @@ class GuidanceGenerationService {
                 activeFramework: activeFramework
             )
         } else {
+            print("🔗 [GuidanceGenerationService] Using Direct API (legacy)")
             return try await generateGuidanceViaDirectAPI(
                 situation: situation,
                 familyContext: familyContext,

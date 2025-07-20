@@ -44,11 +44,13 @@ class ContextualInsightService {
         // Choose implementation based on feature flag
         let content: String
         if useEdgeFunction {
+            print("🚀 [ContextualInsightService] Using EdgeFunction for child regulation insights")
             content = try await extractChildRegulationInsightsViaEdgeFunction(
                 situationText: situationText,
                 apiKey: apiKey
             )
         } else {
+            print("🔗 [ContextualInsightService] Using Direct API for child regulation insights")
             content = try await extractChildRegulationInsightsViaDirectAPI(
                 situationText: situationText,
                 apiKey: apiKey
@@ -167,11 +169,13 @@ class ContextualInsightService {
         // Choose implementation based on feature flag
         let content: String
         if useEdgeFunction {
+            print("🚀 [ContextualInsightService] Using EdgeFunction for context extraction")
             content = try await extractContextFromSituationViaEdgeFunction(
                 situationText: situationText,
                 apiKey: apiKey
             )
         } else {
+            print("🔗 [ContextualInsightService] Using Direct API for context extraction")
             content = try await extractContextFromSituationViaDirectAPI(
                 situationText: situationText,
                 apiKey: apiKey

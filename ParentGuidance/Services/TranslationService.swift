@@ -82,12 +82,14 @@ class TranslationService {
         // Choose implementation based on feature flag
         let translatedText: String
         if useEdgeFunction {
+            print("🚀 [TranslationService] Using EdgeFunction for translation")
             translatedText = try await translateContentViaEdgeFunction(
                 text: text,
                 targetLanguage: targetLanguage,
                 apiKey: apiKey
             )
         } else {
+            print("🔗 [TranslationService] Using Direct API for translation")
             translatedText = try await translateContentViaDirectAPI(
                 text: text,
                 targetLanguage: targetLanguage,

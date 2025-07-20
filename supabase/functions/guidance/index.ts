@@ -113,8 +113,10 @@ async function handleGuidanceOperation(apiKey: string, variables: any) {
   
   // Default to "Warm Practical + Fixed" if not specified
   const style = guidance_style || "Warm Practical"
-  const mode = structure_mode || "Fixed"
+  const mode = (structure_mode || "Fixed").charAt(0).toUpperCase() + (structure_mode || "Fixed").slice(1).toLowerCase()
   const configKey = `${style} + ${mode}`
+  
+  console.log(`[DEBUG] Guidance configuration: style="${style}", mode="${mode}", configKey="${configKey}", hasFramework=${hasFramework}`)
 
   try {
     // Select the appropriate prompt template

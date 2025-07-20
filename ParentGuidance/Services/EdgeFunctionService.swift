@@ -29,6 +29,11 @@ class EdgeFunctionService {
         structureMode: String = "fixed",
         apiKey: String
     ) async throws -> AsyncThrowingStream<String, Error> {
+        print("🔄 [EdgeFunction] Streaming guidance via Edge Function")
+        print("   → Operation: guidance")
+        print("   → Has Framework: \(activeFramework != nil)")
+        print("   → Structure Mode: \(structureMode)")
+        
         var variables: [String: Any] = [
             "current_situation": situation,
             "structure_mode": structureMode
@@ -54,6 +59,9 @@ class EdgeFunctionService {
         situationText: String,
         apiKey: String
     ) async throws -> (category: String, isIncident: Bool) {
+        print("🔄 [EdgeFunction] Analyzing situation via Edge Function")
+        print("   → Operation: analyze")
+        
         let response = try await jsonRequest(
             operation: "analyze",
             variables: ["situation_text": situationText],
@@ -76,6 +84,9 @@ class EdgeFunctionService {
         recentSituations: String,
         apiKey: String
     ) async throws -> String {
+        print("🔄 [EdgeFunction] Generating framework via Edge Function")
+        print("   → Operation: framework")
+        
         return try await jsonRequest(
             operation: "framework",
             variables: ["recent_situations": recentSituations],
@@ -89,6 +100,10 @@ class EdgeFunctionService {
         extractionType: String = "general",
         apiKey: String
     ) async throws -> String {
+        print("🔄 [EdgeFunction] Extracting context via Edge Function")
+        print("   → Operation: context")
+        print("   → Extraction Type: \(extractionType)")
+        
         return try await jsonRequest(
             operation: "context",
             variables: [
@@ -105,6 +120,10 @@ class EdgeFunctionService {
         targetLanguage: String,
         apiKey: String
     ) async throws -> AsyncThrowingStream<String, Error> {
+        print("🔄 [EdgeFunction] Streaming translation via Edge Function")
+        print("   → Operation: translate")
+        print("   → Target Language: \(targetLanguage)")
+        
         return try await streamRequest(
             operation: "translate",
             variables: [

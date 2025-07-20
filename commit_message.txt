@@ -1,7 +1,5 @@
-fix: refactor Edge Function to use native fetch API for Deno compatibility
-  - Remove Vercel AI SDK dependencies that are incompatible with Deno runtime
-  - Replace all streamText calls with native fetch to OpenAI Chat Completions API
-  - Maintain prompt template usage and variable interpolation
-  - Simulate streaming responses for iOS EdgeFunctionService compatibility
-  - Add JSON response format for operations expecting structured output
-  - Ensure all code is Deno-compatible for successful Supabase deployment
+fix: resolve Edge Function 500 error due to case sensitivity in guidance configuration
+  - Fix case mismatch between iOS structure_mode parameter (lowercase) and prompt template keys (capitalized)
+  - Add proper capitalization handling for structure_mode values
+  - Add debug logging for guidance configuration parameters
+  - Resolves "Unknown guidance configuration: Warm Practical + fixed" error

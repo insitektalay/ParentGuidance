@@ -142,6 +142,14 @@ struct SettingsView: View {
     @State private var currentTranslationStrategy: TranslationGenerationStrategy = .hybrid
     @State private var showingStrategySelection: Bool = false
     
+    // MARK: - EdgeFunction Feature Flag State
+    
+    @State private var translationUseEdgeFunction: Bool = false
+    @State private var conversationUseEdgeFunction: Bool = false
+    @State private var frameworkUseEdgeFunction: Bool = false
+    @State private var contextUseEdgeFunction: Bool = false
+    @State private var guidanceUseEdgeFunction: Bool = false
+    
     // MARK: - Privacy & Data State
     
     @State private var isExportingData: Bool = false
@@ -281,6 +289,26 @@ struct SettingsView: View {
                 self.isLoadingFamilyLanguage = false
             }
             print("❌ Error loading family language data: \(error)")
+        }
+    }
+    
+    // MARK: - Feature Flag State Loading
+    
+    private func loadFeatureFlagStates() async {
+        await MainActor.run {
+            // Load current feature flag states from UserDefaults
+            self.translationUseEdgeFunction = TranslationService.isUsingEdgeFunction()
+            self.conversationUseEdgeFunction = ConversationService.isUsingEdgeFunction()
+            self.frameworkUseEdgeFunction = FrameworkGenerationService.isUsingEdgeFunction()
+            self.contextUseEdgeFunction = ContextualInsightService.isUsingEdgeFunction()
+            self.guidanceUseEdgeFunction = GuidanceGenerationService.isUsingEdgeFunction()
+            
+            print("🔧 Feature flag states loaded:")
+            print("   Translation: \(translationUseEdgeFunction ? "Edge Function" : "Direct API")")
+            print("   Conversation: \(conversationUseEdgeFunction ? "Edge Function" : "Direct API")")
+            print("   Framework: \(frameworkUseEdgeFunction ? "Edge Function" : "Direct API")")
+            print("   Context: \(contextUseEdgeFunction ? "Edge Function" : "Direct API")")
+            print("   Guidance: \(guidanceUseEdgeFunction ? "Edge Function" : "Direct API")")
         }
     }
     
@@ -869,6 +897,7 @@ struct SettingsView: View {
                 await frameworkState.loadFrameworks(familyId: appCoordinator.currentUserId)
                 await loadUserProfile()
                 await loadFamilyLanguageData()
+                await loadFeatureFlagStates()
             }
         }
     }
@@ -1425,24 +1454,29 @@ struct SettingsView: View {
     
     private var featureFlagToggles: some View {
         VStack(spacing: 12) {
-            featureFlagToggle("Translation", isEnabled: TranslationService.isUsingEdgeFunction()) {
-                TranslationService.setUseEdgeFunction(!TranslationService.isUsingEdgeFunction())
+            featureFlagToggle("Translation", isEnabled: translationUseEdgeFunction) {
+                translationUseEdgeFunction.toggle()
+                TranslationService.setUseEdgeFunction(translationUseEdgeFunction)
             }
             
-            featureFlagToggle("Conversation", isEnabled: ConversationService.isUsingEdgeFunction()) {
-                ConversationService.setUseEdgeFunction(!ConversationService.isUsingEdgeFunction())
+            featureFlagToggle("Conversation", isEnabled: conversationUseEdgeFunction) {
+                conversationUseEdgeFunction.toggle()
+                ConversationService.setUseEdgeFunction(conversationUseEdgeFunction)
             }
             
-            featureFlagToggle("Framework", isEnabled: FrameworkGenerationService.isUsingEdgeFunction()) {
-                FrameworkGenerationService.setUseEdgeFunction(!FrameworkGenerationService.isUsingEdgeFunction())
+            featureFlagToggle("Framework", isEnabled: frameworkUseEdgeFunction) {
+                frameworkUseEdgeFunction.toggle()
+                FrameworkGenerationService.setUseEdgeFunction(frameworkUseEdgeFunction)
             }
             
-            featureFlagToggle("Context", isEnabled: ContextualInsightService.isUsingEdgeFunction()) {
-                ContextualInsightService.setUseEdgeFunction(!ContextualInsightService.isUsingEdgeFunction())
+            featureFlagToggle("Context", isEnabled: contextUseEdgeFunction) {
+                contextUseEdgeFunction.toggle()
+                ContextualInsightService.setUseEdgeFunction(contextUseEdgeFunction)
             }
             
-            featureFlagToggle("Guidance", isEnabled: GuidanceGenerationService.isUsingEdgeFunction()) {
-                GuidanceGenerationService.setUseEdgeFunction(!GuidanceGenerationService.isUsingEdgeFunction())
+            featureFlagToggle("Guidance", isEnabled: guidanceUseEdgeFunction) {
+                guidanceUseEdgeFunction.toggle()
+                GuidanceGenerationService.setUseEdgeFunction(guidanceUseEdgeFunction)
             }
         }
     }
@@ -1455,20 +1489,32 @@ struct SettingsView: View {
             
             Spacer()
             
-            Button(action: action) {
-                HStack(spacing: 4) {
+            Button(action: {
+                // Add haptic feedback
+                let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                impactFeedback.impactOccurred()
+                
+                // Execute the action
+                action()
+            }) {
+                HStack(spacing: 6) {
                     Circle()
                         .fill(isEnabled ? Color.green : Color.red)
-                        .frame(width: 8, height: 8)
+                        .frame(width: 10, height: 10)
                     Text(isEnabled ? "Edge Function" : "Direct API")
-                        .font(.system(size: 12))
-                        .foregroundColor(ColorPalette.white.opacity(0.8))
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(ColorPalette.white.opacity(0.9))
                 }
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(ColorPalette.white.opacity(0.1))
-                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(ColorPalette.white.opacity(isEnabled ? 0.15 : 0.1))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(isEnabled ? Color.green.opacity(0.3) : Color.red.opacity(0.3), lineWidth: 1)
+                )
             }
+            .buttonStyle(PlainButtonStyle())
         }
     }
     

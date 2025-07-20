@@ -90,15 +90,16 @@ class FrameworkGenerationService {
         print("✅ Extracted \(situationSummary.count) characters of situation data")
         
         // Step 3: Choose implementation based on feature flag
-        print("📡 Generating framework using \(useEdgeFunction ? "Edge Function" : "direct API")")
         let rawResponse: String
         
         if useEdgeFunction {
+            print("🚀 [FrameworkGenerationService] Using EdgeFunction for framework generation")
             rawResponse = try await generateFrameworkViaEdgeFunction(
                 situationSummary: situationSummary,
                 apiKey: apiKey
             )
         } else {
+            print("🔗 [FrameworkGenerationService] Using Direct API for framework generation")
             rawResponse = try await generateFrameworkViaDirectAPI(
                 situationSummary: situationSummary,
                 apiKey: apiKey

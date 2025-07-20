@@ -24,14 +24,30 @@ class TranslationService {
     
     // MARK: - Translation Configuration
     
-    /// OpenAI Prompts API endpoint
+    /// Feature flag to use Edge Function instead of direct OpenAI API
+    private let useEdgeFunction = UserDefaults.standard.bool(forKey: "translation_use_edge_function")
+    
+    /// OpenAI Prompts API endpoint (legacy)
     private let promptsAPIURL = "https://api.openai.com/v1/responses"
     
-    /// Translation prompt template ID
+    /// Translation prompt template ID (legacy)
     private let translationPromptID = "pmpt_687b28fd26208195b7bc8864d8d484090e772c7ac2176688"
     
-    /// Prompt template version
+    /// Prompt template version (legacy)
     private let promptVersion = "1"
+    
+    // MARK: - Configuration Methods
+    
+    /// Enable or disable Edge Function usage for translation
+    static func setUseEdgeFunction(_ enabled: Bool) {
+        UserDefaults.standard.set(enabled, forKey: "translation_use_edge_function")
+        print("🔧 Translation Edge Function usage set to: \(enabled)")
+    }
+    
+    /// Check if Edge Function is currently enabled
+    static func isUsingEdgeFunction() -> Bool {
+        return UserDefaults.standard.bool(forKey: "translation_use_edge_function")
+    }
     
     // MARK: - Translation Methods
     
@@ -62,6 +78,64 @@ class TranslationService {
             print("✅ Translation found in cache")
             return cachedTranslation
         }
+        
+        // Choose implementation based on feature flag
+        let translatedText: String
+        if useEdgeFunction {
+            translatedText = try await translateContentViaEdgeFunction(
+                text: text,
+                targetLanguage: targetLanguage,
+                apiKey: apiKey
+            )
+        } else {
+            translatedText = try await translateContentViaDirectAPI(
+                text: text,
+                targetLanguage: targetLanguage,
+                apiKey: apiKey
+            )
+        }
+        
+        // Cache the result
+        cache.set(key: cacheKey, translation: translatedText)
+        print("✅ Translation completed and cached")
+        
+        return translatedText
+    }
+    
+    /// Translate content using the new Edge Function approach
+    private func translateContentViaEdgeFunction(
+        text: String,
+        targetLanguage: String,
+        apiKey: String
+    ) async throws -> String {
+        print("🔄 Using Edge Function for translation")
+        
+        // Collect the streamed response
+        var fullTranslation = ""
+        let stream = try await EdgeFunctionService.shared.streamTranslation(
+            guidanceContent: text,
+            targetLanguage: targetLanguage,
+            apiKey: apiKey
+        )
+        
+        for try await chunk in stream {
+            fullTranslation += chunk
+        }
+        
+        guard !fullTranslation.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            throw TranslationError.emptyResult
+        }
+        
+        return fullTranslation
+    }
+    
+    /// Translate content using the legacy direct API approach
+    private func translateContentViaDirectAPI(
+        text: String,
+        targetLanguage: String,
+        apiKey: String
+    ) async throws -> String {
+        print("🔄 Using direct API for translation (legacy)")
         
         let url = URL(string: promptsAPIURL)!
         var request = URLRequest(url: url)
@@ -120,9 +194,6 @@ class TranslationService {
             
             print("✅ Translation completed successfully")
             print("📝 Translated preview: \(translatedText.prefix(100))...")
-            
-            // Store in cache
-            cache.set(key: cacheKey, translation: translatedText)
             
             return translatedText
             

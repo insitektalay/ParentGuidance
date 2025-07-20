@@ -12,7 +12,24 @@ import Supabase
 // MARK: - ConversationService
 class ConversationService: ObservableObject {
     static let shared = ConversationService()
+    
+    /// Feature flag to use Edge Function instead of direct OpenAI API
+    private let useEdgeFunction = UserDefaults.standard.bool(forKey: "conversation_use_edge_function")
+    
     private init() {}
+    
+    // MARK: - Configuration Methods
+    
+    /// Enable or disable Edge Function usage for situation analysis
+    static func setUseEdgeFunction(_ enabled: Bool) {
+        UserDefaults.standard.set(enabled, forKey: "conversation_use_edge_function")
+        print("🔧 ConversationService Edge Function usage set to: \(enabled)")
+    }
+    
+    /// Check if Edge Function is currently enabled
+    static func isUsingEdgeFunction() -> Bool {
+        return UserDefaults.standard.bool(forKey: "conversation_use_edge_function")
+    }
     
     func getTodaysSituations(familyId: String) async throws -> [Situation] {
         print("📊 Getting today's situations for family: \(familyId)")
@@ -628,6 +645,54 @@ class ConversationService: ObservableObject {
         if let framework = activeFramework {
             print("📋 Framework context: \(framework.frameworkName)")
         }
+        
+        // Choose implementation based on feature flag
+        if useEdgeFunction {
+            return try await analyzeSituationViaEdgeFunction(
+                situationText: situationText,
+                apiKey: apiKey,
+                activeFramework: activeFramework
+            )
+        } else {
+            return try await analyzeSituationViaDirectAPI(
+                situationText: situationText,
+                apiKey: apiKey,
+                activeFramework: activeFramework
+            )
+        }
+    }
+    
+    /// Analyze situation using the new Edge Function approach
+    private func analyzeSituationViaEdgeFunction(
+        situationText: String,
+        apiKey: String,
+        activeFramework: FrameworkRecommendation? = nil
+    ) async throws -> (category: String?, isIncident: Bool) {
+        print("🔄 Using Edge Function for situation analysis")
+        
+        do {
+            let (category, isIncident) = try await EdgeFunctionService.shared.analyzeSituation(
+                situationText: situationText,
+                apiKey: apiKey
+            )
+            
+            print("✅ Analysis completed via Edge Function - Category: \(category), Incident: \(isIncident)")
+            return (category: category, isIncident: isIncident)
+            
+        } catch {
+            print("❌ Edge Function analysis failed: \(error)")
+            // Fallback to defaults on error
+            return (category: nil, isIncident: false)
+        }
+    }
+    
+    /// Analyze situation using the legacy direct API approach
+    private func analyzeSituationViaDirectAPI(
+        situationText: String,
+        apiKey: String,
+        activeFramework: FrameworkRecommendation? = nil
+    ) async throws -> (category: String?, isIncident: Bool) {
+        print("🔄 Using direct API for situation analysis (legacy)")
         
         let url = URL(string: "https://api.openai.com/v1/responses")!
         var request = URLRequest(url: url)

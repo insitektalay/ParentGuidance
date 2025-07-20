@@ -127,7 +127,7 @@ class EdgeFunctionService {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(SupabaseManager.shared.client.auth.session.accessToken)", 
+        request.setValue("Bearer \(try await SupabaseManager.shared.client.auth.session.accessToken)", 
                         forHTTPHeaderField: "Authorization")
         
         let body: [String: Any] = [
@@ -148,8 +148,6 @@ class EdgeFunctionService {
         return AsyncThrowingStream { continuation in
             Task {
                 do {
-                    var buffer = ""
-                    
                     for try await line in bytes.lines {
                         // Handle SSE format
                         if line.hasPrefix("data: ") {
@@ -193,7 +191,7 @@ class EdgeFunctionService {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(SupabaseManager.shared.client.auth.session.accessToken)", 
+        request.setValue("Bearer \(try await SupabaseManager.shared.client.auth.session.accessToken)", 
                         forHTTPHeaderField: "Authorization")
         
         let body: [String: Any] = [

@@ -1,8 +1,7 @@
-refactor: update Edge Function to use promptTemplates.ts as source of truth
-
-- Replace all OpenAI Prompts API calls with Vercel AI SDK using actual system prompts
-- Add interpolatePrompt helper for {{variable}} placeholder replacement
-- Implement dynamic guidance prompt selection based on framework presence and style settings
-- Fix variable name mappings to match promptTemplates definitions
-- Ensure all operations use consistent prompt templates from centralized source
-- Remove hardcoded prompt IDs and versions in favor of template-based approach
+fix: refactor Edge Function to use native fetch API for Deno compatibility
+  - Remove Vercel AI SDK dependencies that are incompatible with Deno runtime
+  - Replace all streamText calls with native fetch to OpenAI Chat Completions API
+  - Maintain prompt template usage and variable interpolation
+  - Simulate streaming responses for iOS EdgeFunctionService compatibility
+  - Add JSON response format for operations expecting structured output
+  - Ensure all code is Deno-compatible for successful Supabase deployment

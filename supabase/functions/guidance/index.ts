@@ -1,8 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { streamText } from 'https://esm.sh/ai@3.4.7'
-import { openai } from 'https://esm.sh/ai@3.4.7/openai'
-import { promptTemplates } from '../prompts/promptTemplates.ts'
+import { promptTemplates } from '../../prompts/promptTemplates.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -73,27 +71,22 @@ serve(async (req) => {
       )
     }
 
-    // Initialize OpenAI client
-    const openaiClient = openai({
-      apiKey: apiKey,
-    })
-
     // Route to appropriate operation handler
     switch (operation) {
       case 'guidance':
-        return await handleGuidanceOperation(openaiClient, variables)
+        return await handleGuidanceOperation(apiKey, variables)
       
       case 'analyze':
-        return await handleAnalyzeOperation(openaiClient, variables)
+        return await handleAnalyzeOperation(apiKey, variables)
       
       case 'framework':
-        return await handleFrameworkOperation(openaiClient, variables)
+        return await handleFrameworkOperation(apiKey, variables)
       
       case 'context':
-        return await handleContextOperation(openaiClient, variables)
+        return await handleContextOperation(apiKey, variables)
       
       case 'translate':
-        return await handleTranslateOperation(openaiClient, variables)
+        return await handleTranslateOperation(apiKey, variables)
       
       default:
         return new Response(
@@ -111,8 +104,8 @@ serve(async (req) => {
   }
 })
 
-// Handle guidance generation with streaming
-async function handleGuidanceOperation(openaiClient: any, variables: any) {
+// Handle guidance generation (non-streaming for now)
+async function handleGuidanceOperation(apiKey: string, variables: any) {
   const { current_situation, family_context, active_foundation_tools, structure_mode, guidance_style } = variables
 
   // Determine which prompt template to use
@@ -152,27 +145,56 @@ async function handleGuidanceOperation(openaiClient: any, variables: any) {
     // Interpolate the system prompt with variables
     const systemPrompt = interpolatePrompt(promptTemplate.systemPromptText, promptVariables)
 
-    // Use Vercel AI SDK for streaming
-    const result = await streamText({
-      model: openaiClient('gpt-4'),
-      prompt: systemPrompt,
-      maxTokens: 2000,
-      temperature: 0.7,
+    // Use native fetch to call OpenAI API
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4',
+        messages: [
+          { role: 'system', content: systemPrompt }
+        ],
+        temperature: 0.7,
+        max_tokens: 2000
+      })
     })
 
-    // Convert AI SDK stream to SSE format
+    if (!response.ok) {
+      throw new Error(`OpenAI API error: ${response.status}`)
+    }
+
+    const data = await response.json()
+    const content = data.choices?.[0]?.message?.content
+
+    if (!content) {
+      throw new Error('No content received from OpenAI')
+    }
+
+    // For now, return the full response as JSON (we can add streaming later)
+    // The iOS EdgeFunctionService expects streaming format, so we'll simulate it
     const stream = new ReadableStream({
-      async start(controller) {
-        try {
-          for await (const chunk of result.textStream) {
+      start(controller) {
+        // Send the content as chunks to match expected format
+        const words = content.split(' ')
+        let index = 0
+        
+        const sendChunk = () => {
+          if (index < words.length) {
+            const chunk = words[index] + (index < words.length - 1 ? ' ' : '')
             const sseData = `data: ${JSON.stringify([{ type: 'text', value: chunk }])}\n\n`
             controller.enqueue(new TextEncoder().encode(sseData))
+            index++
+            setTimeout(sendChunk, 10) // Small delay to simulate streaming
+          } else {
+            controller.enqueue(new TextEncoder().encode('data: [DONE]\n\n'))
+            controller.close()
           }
-          controller.enqueue(new TextEncoder().encode('data: [DONE]\n\n'))
-          controller.close()
-        } catch (error) {
-          controller.error(error)
         }
+        
+        sendChunk()
       }
     })
 
@@ -195,7 +217,7 @@ async function handleGuidanceOperation(openaiClient: any, variables: any) {
 }
 
 // Handle situation analysis (non-streaming)
-async function handleAnalyzeOperation(openaiClient: any, variables: any) {
+async function handleAnalyzeOperation(apiKey: string, variables: any) {
   const { situation_text } = variables
 
   try {
@@ -207,24 +229,39 @@ async function handleAnalyzeOperation(openaiClient: any, variables: any) {
     // Get the system prompt and interpolate variables
     const systemPrompt = interpolatePrompt(promptTemplates.analyze.systemPromptText, promptVariables)
 
-    // Use Vercel AI SDK for the analysis
-    const result = await streamText({
-      model: openaiClient('gpt-4'),
-      prompt: systemPrompt,
-      maxTokens: 500,
-      temperature: 0.3, // Lower temperature for more consistent categorization
+    // Use native fetch to call OpenAI API
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4',
+        messages: [
+          { role: 'system', content: systemPrompt }
+        ],
+        temperature: 0.3, // Lower temperature for more consistent categorization
+        max_tokens: 500,
+        response_format: { type: "json_object" } // Request JSON response
+      })
     })
 
-    // Collect the full response
-    let fullText = ''
-    for await (const chunk of result.textStream) {
-      fullText += chunk
+    if (!response.ok) {
+      throw new Error(`OpenAI API error: ${response.status}`)
+    }
+
+    const data = await response.json()
+    const content = data.choices?.[0]?.message?.content
+
+    if (!content) {
+      throw new Error('No content received from OpenAI')
     }
 
     // Parse the analysis response (expecting JSON format)
     let analysisResult
     try {
-      analysisResult = JSON.parse(fullText)
+      analysisResult = JSON.parse(content)
     } catch {
       // Fallback parsing if not valid JSON
       analysisResult = {
@@ -248,7 +285,7 @@ async function handleAnalyzeOperation(openaiClient: any, variables: any) {
 }
 
 // Handle framework generation (non-streaming)
-async function handleFrameworkOperation(openaiClient: any, variables: any) {
+async function handleFrameworkOperation(apiKey: string, variables: any) {
   const { recent_situations } = variables
 
   try {
@@ -260,22 +297,36 @@ async function handleFrameworkOperation(openaiClient: any, variables: any) {
     // Get the system prompt and interpolate variables
     const systemPrompt = interpolatePrompt(promptTemplates.framework.systemPromptText, promptVariables)
 
-    // Use Vercel AI SDK for framework generation
-    const result = await streamText({
-      model: openaiClient('gpt-4'),
-      prompt: systemPrompt,
-      maxTokens: 1000,
-      temperature: 0.7,
+    // Use native fetch to call OpenAI API
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4',
+        messages: [
+          { role: 'system', content: systemPrompt }
+        ],
+        temperature: 0.7,
+        max_tokens: 1000
+      })
     })
 
-    // Collect the full response
-    let fullText = ''
-    for await (const chunk of result.textStream) {
-      fullText += chunk
+    if (!response.ok) {
+      throw new Error(`OpenAI API error: ${response.status}`)
+    }
+
+    const data = await response.json()
+    const content = data.choices?.[0]?.message?.content
+
+    if (!content) {
+      throw new Error('No content received from OpenAI')
     }
 
     return new Response(
-      JSON.stringify({ success: true, data: fullText }),
+      JSON.stringify({ success: true, data: content }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
 
@@ -289,7 +340,7 @@ async function handleFrameworkOperation(openaiClient: any, variables: any) {
 }
 
 // Handle context extraction (non-streaming)
-async function handleContextOperation(openaiClient: any, variables: any) {
+async function handleContextOperation(apiKey: string, variables: any) {
   const { situation_text, extraction_type } = variables
 
   try {
@@ -307,22 +358,38 @@ async function handleContextOperation(openaiClient: any, variables: any) {
     // Interpolate the system prompt with variables
     const systemPrompt = interpolatePrompt(systemPromptTemplate, promptVariables)
 
-    // Use Vercel AI SDK for context extraction
-    const result = await streamText({
-      model: openaiClient('gpt-4'),
-      prompt: systemPrompt,
-      maxTokens: 1500,
-      temperature: 0.5,
+    // Use native fetch to call OpenAI API
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4',
+        messages: [
+          { role: 'system', content: systemPrompt }
+        ],
+        temperature: 0.5,
+        max_tokens: 1500,
+        // For regulation insights, request JSON format
+        ...(isRegulation && { response_format: { type: "json_object" } })
+      })
     })
 
-    // Collect the full response
-    let fullText = ''
-    for await (const chunk of result.textStream) {
-      fullText += chunk
+    if (!response.ok) {
+      throw new Error(`OpenAI API error: ${response.status}`)
+    }
+
+    const data = await response.json()
+    const content = data.choices?.[0]?.message?.content
+
+    if (!content) {
+      throw new Error('No content received from OpenAI')
     }
 
     return new Response(
-      JSON.stringify({ success: true, data: fullText }),
+      JSON.stringify({ success: true, data: content }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
 
@@ -335,8 +402,8 @@ async function handleContextOperation(openaiClient: any, variables: any) {
   }
 }
 
-// Handle translation with streaming
-async function handleTranslateOperation(openaiClient: any, variables: any) {
+// Handle translation (simulated streaming for compatibility)
+async function handleTranslateOperation(apiKey: string, variables: any) {
   const { guidance_content, target_language } = variables
 
   try {
@@ -349,27 +416,55 @@ async function handleTranslateOperation(openaiClient: any, variables: any) {
     // Get the system prompt and interpolate variables
     const systemPrompt = interpolatePrompt(promptTemplates.translate.systemPromptText, promptVariables)
 
-    // Use Vercel AI SDK for streaming translation
-    const result = await streamText({
-      model: openaiClient('gpt-4'),
-      prompt: systemPrompt,
-      maxTokens: 2000,
-      temperature: 0.3, // Lower temperature for more accurate translation
+    // Use native fetch to call OpenAI API
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4',
+        messages: [
+          { role: 'system', content: systemPrompt }
+        ],
+        temperature: 0.3, // Lower temperature for more accurate translation
+        max_tokens: 2000
+      })
     })
 
-    // Convert AI SDK stream to SSE format
+    if (!response.ok) {
+      throw new Error(`OpenAI API error: ${response.status}`)
+    }
+
+    const data = await response.json()
+    const content = data.choices?.[0]?.message?.content
+
+    if (!content) {
+      throw new Error('No content received from OpenAI')
+    }
+
+    // Simulate streaming for iOS compatibility
     const stream = new ReadableStream({
-      async start(controller) {
-        try {
-          for await (const chunk of result.textStream) {
+      start(controller) {
+        // Send the content as chunks to match expected format
+        const words = content.split(' ')
+        let index = 0
+        
+        const sendChunk = () => {
+          if (index < words.length) {
+            const chunk = words[index] + (index < words.length - 1 ? ' ' : '')
             const sseData = `data: ${JSON.stringify([{ type: 'text', value: chunk }])}\n\n`
             controller.enqueue(new TextEncoder().encode(sseData))
+            index++
+            setTimeout(sendChunk, 10) // Small delay to simulate streaming
+          } else {
+            controller.enqueue(new TextEncoder().encode('data: [DONE]\n\n'))
+            controller.close()
           }
-          controller.enqueue(new TextEncoder().encode('data: [DONE]\n\n'))
-          controller.close()
-        } catch (error) {
-          controller.error(error)
         }
+        
+        sendChunk()
       }
     })
 

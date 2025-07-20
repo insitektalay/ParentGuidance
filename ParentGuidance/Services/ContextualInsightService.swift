@@ -11,7 +11,23 @@ import Supabase
 class ContextualInsightService {
     static let shared = ContextualInsightService()
     
+    /// Feature flag to use Edge Function instead of direct OpenAI API
+    private let useEdgeFunction = UserDefaults.standard.bool(forKey: "context_use_edge_function")
+    
     private init() {}
+    
+    // MARK: - Configuration Methods
+    
+    /// Enable or disable Edge Function usage for contextual insight extraction
+    static func setUseEdgeFunction(_ enabled: Bool) {
+        UserDefaults.standard.set(enabled, forKey: "context_use_edge_function")
+        print("🔧 ContextualInsightService Edge Function usage set to: \(enabled)")
+    }
+    
+    /// Check if Edge Function is currently enabled
+    static func isUsingEdgeFunction() -> Bool {
+        return UserDefaults.standard.bool(forKey: "context_use_edge_function")
+    }
     
     // MARK: - Context Extraction
     
@@ -24,6 +40,62 @@ class ContextualInsightService {
     ) async throws -> [ChildRegulationInsight] {
         print("🧠 Starting child regulation insights extraction for situation: \(situationId)")
         print("📝 Situation text: \(situationText.prefix(100))...")
+        
+        // Choose implementation based on feature flag
+        let content: String
+        if useEdgeFunction {
+            content = try await extractChildRegulationInsightsViaEdgeFunction(
+                situationText: situationText,
+                apiKey: apiKey
+            )
+        } else {
+            content = try await extractChildRegulationInsightsViaDirectAPI(
+                situationText: situationText,
+                apiKey: apiKey
+            )
+        }
+        
+        // Parse the response using existing logic
+        let insights = try parseRegulationInsightsResponse(
+            content: content,
+            familyId: familyId,
+            childId: childId,
+            situationId: situationId
+        )
+        
+        print("✅ Parsed \(insights.count) child regulation insights")
+        return insights
+    }
+    
+    /// Extract child regulation insights using Edge Function approach
+    private func extractChildRegulationInsightsViaEdgeFunction(
+        situationText: String,
+        apiKey: String
+    ) async throws -> String {
+        print("🔄 Using Edge Function for child regulation insights extraction")
+        
+        do {
+            let response = try await EdgeFunctionService.shared.extractContext(
+                situationText: situationText,
+                extractionType: "regulation",
+                apiKey: apiKey
+            )
+            
+            print("✅ Child regulation insights extracted via Edge Function")
+            return response
+            
+        } catch {
+            print("❌ Edge Function regulation insights extraction failed: \(error)")
+            throw ContextualInsightError.apiError(0)
+        }
+    }
+    
+    /// Extract child regulation insights using legacy direct API approach
+    private func extractChildRegulationInsightsViaDirectAPI(
+        situationText: String,
+        apiKey: String
+    ) async throws -> String {
+        print("🔄 Using direct API for child regulation insights extraction (legacy)")
         
         let url = URL(string: "https://api.openai.com/v1/responses")!
         var request = URLRequest(url: url)
@@ -74,16 +146,7 @@ class ContextualInsightService {
             let content = firstContent.text
             print("📝 Child regulation insights content received: \(content.prefix(200))...")
             
-            // Parse JSON response into regulation insights
-            let insights = try parseRegulationInsightsResponse(
-                content: content,
-                familyId: familyId,
-                childId: childId,
-                situationId: situationId
-            )
-            
-            print("✅ Parsed \(insights.count) child regulation insights")
-            return insights
+            return content
             
         } catch {
             print("❌ Error parsing child regulation insights response: \(error)")
@@ -100,6 +163,62 @@ class ContextualInsightService {
     ) async throws -> [ContextualInsight] {
         print("🔍 Starting context extraction for situation: \(situationId)")
         print("📝 Situation text: \(situationText.prefix(100))...")
+        
+        // Choose implementation based on feature flag
+        let content: String
+        if useEdgeFunction {
+            content = try await extractContextFromSituationViaEdgeFunction(
+                situationText: situationText,
+                apiKey: apiKey
+            )
+        } else {
+            content = try await extractContextFromSituationViaDirectAPI(
+                situationText: situationText,
+                apiKey: apiKey
+            )
+        }
+        
+        // Parse the 14-section response into contextual insights using existing logic
+        let insights = parseContextResponse(
+            content: content,
+            familyId: familyId,
+            childId: childId,
+            situationId: situationId
+        )
+        
+        print("✅ Parsed \(insights.count) contextual insights")
+        return insights
+    }
+    
+    /// Extract context using Edge Function approach
+    private func extractContextFromSituationViaEdgeFunction(
+        situationText: String,
+        apiKey: String
+    ) async throws -> String {
+        print("🔄 Using Edge Function for context extraction")
+        
+        do {
+            let response = try await EdgeFunctionService.shared.extractContext(
+                situationText: situationText,
+                extractionType: "general",
+                apiKey: apiKey
+            )
+            
+            print("✅ Context extracted via Edge Function")
+            return response
+            
+        } catch {
+            print("❌ Edge Function context extraction failed: \(error)")
+            throw ContextualInsightError.apiError(0)
+        }
+    }
+    
+    /// Extract context using legacy direct API approach
+    private func extractContextFromSituationViaDirectAPI(
+        situationText: String,
+        apiKey: String
+    ) async throws -> String {
+        print("🔄 Using direct API for context extraction (legacy)")
         
         let url = URL(string: "https://api.openai.com/v1/responses")!
         var request = URLRequest(url: url)
@@ -150,16 +269,7 @@ class ContextualInsightService {
             let content = firstContent.text
             print("📝 Context extraction content received: \(content.prefix(200))...")
             
-            // Parse the 14-section response into contextual insights
-            let insights = parseContextResponse(
-                content: content,
-                familyId: familyId,
-                childId: childId,
-                situationId: situationId
-            )
-            
-            print("✅ Parsed \(insights.count) contextual insights")
-            return insights
+            return content
             
         } catch {
             print("❌ Error parsing context extraction response: \(error)")

@@ -11,48 +11,8 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject var appCoordinator: AppCoordinator
     @StateObject private var frameworkState = SettingsFrameworkState()
+    @StateObject private var viewState = SettingsViewState()
     @ObservedObject private var guidanceStructureSettings = GuidanceStructureSettings.shared
-    
-    // MARK: - Child Profile Edit State
-    
-    @State private var showingChildEdit: Bool = false
-    
-    // MARK: - Account Data State
-    
-    @State private var userProfile: UserProfile?
-    @State private var isLoadingProfile: Bool = false
-    @State private var showingApiKeyManagement: Bool = false
-    @State private var showingSignOutConfirmation: Bool = false
-    @State private var showingLanguageSelection: Bool = false
-    @State private var selectedLanguage: String = "en"
-    
-    // MARK: - Family Language State
-    
-    @State private var familyLanguageConfig: FamilyLanguageConfiguration?
-    @State private var isLoadingFamilyLanguage: Bool = false
-    @State private var familyUsageMetrics: TranslationQueueManager.FamilyUsageMetrics?
-    @State private var currentTranslationStrategy: TranslationGenerationStrategy = .hybrid
-    @State private var showingStrategySelection: Bool = false
-    
-    // MARK: - EdgeFunction Feature Flag State
-    
-    @State private var translationUseEdgeFunction: Bool = false
-    @State private var conversationUseEdgeFunction: Bool = false
-    @State private var frameworkUseEdgeFunction: Bool = false
-    @State private var contextUseEdgeFunction: Bool = false
-    @State private var guidanceUseEdgeFunction: Bool = false
-    
-    // MARK: - Privacy & Data State
-    
-    @State private var isExportingData: Bool = false
-    @State private var exportSuccessMessage: String?
-    @State private var showingExportSuccess: Bool = false
-    @State private var showingDeleteConfirmation: Bool = false
-    @State private var deleteConfirmationStep: Int = 0
-    @State private var isDeletingAccount: Bool = false
-    @State private var showingPrivacyPolicy: Bool = false
-    @State private var showingDocumentation: Bool = false
-    @State private var showDebugInfo: Bool = false
     
     // MARK: - Formatting Helpers
     
@@ -75,18 +35,18 @@ struct SettingsView: View {
     }
     
     private func formatEmailText() -> String {
-        if isLoadingProfile {
+        if viewState.isLoadingProfile {
             return "Loading..."
         }
-        return userProfile?.email ?? "Not available"
+        return viewState.userProfile?.email ?? "Not available"
     }
     
     private func formatPlanText() -> String {
-        if isLoadingProfile {
+        if viewState.isLoadingProfile {
             return "Loading..."
         }
         
-        guard let plan = userProfile?.selectedPlan else {
+        guard let plan = viewState.userProfile?.selectedPlan else {
             return "No plan selected"
         }
         
@@ -105,11 +65,11 @@ struct SettingsView: View {
     }
     
     private func formatApiKeyStatus() -> String {
-        if isLoadingProfile {
+        if viewState.isLoadingProfile {
             return "Loading..."
         }
         
-        guard let profile = userProfile else {
+        guard let profile = viewState.userProfile else {
             return "Unknown"
         }
         
@@ -123,23 +83,23 @@ struct SettingsView: View {
     }
     
     private func formatLanguageText() -> String {
-        if isLoadingProfile {
+        if viewState.isLoadingProfile {
             return "Loading..."
         }
         
-        let languageCode = userProfile?.preferredLanguage ?? "en"
+        let languageCode = viewState.userProfile?.preferredLanguage ?? "en"
         return LanguageDetectionService.shared.getLanguageName(for: languageCode)
     }
     
     private func shouldShowApiKeyManagement() -> Bool {
-        guard let profile = userProfile else { return false }
+        guard let profile = viewState.userProfile else { return false }
         return profile.selectedPlan == "api"
     }
     
     // MARK: - Sign Out Handler
     
     private func handleSignOut() {
-        showingSignOutConfirmation = false
+        viewState.showingSignOutConfirmation = false
         appCoordinator.signOut()
     }
     
@@ -154,7 +114,7 @@ struct SettingsView: View {
         }
         
         await MainActor.run {
-            isLoadingFamilyLanguage = true
+            viewState.isLoadingFamilyLanguage = true
         }
         
         do {
@@ -168,17 +128,17 @@ struct SettingsView: View {
             let metrics = TranslationQueueManager.shared.getFamilyUsageMetrics(familyId: familyId)
             
             await MainActor.run {
-                self.familyLanguageConfig = config
-                self.currentTranslationStrategy = strategy
-                self.familyUsageMetrics = metrics.totalContentAccesses > 0 ? metrics : nil
-                self.isLoadingFamilyLanguage = false
+                self.viewState.familyLanguageConfig = config
+                self.viewState.currentTranslationStrategy = strategy
+                self.viewState.familyUsageMetrics = metrics.totalContentAccesses > 0 ? metrics : nil
+                self.viewState.isLoadingFamilyLanguage = false
             }
             
             print("✅ Family language data loaded successfully")
             
         } catch {
             await MainActor.run {
-                self.isLoadingFamilyLanguage = false
+                self.viewState.isLoadingFamilyLanguage = false
             }
             print("❌ Error loading family language data: \(error)")
         }
@@ -189,18 +149,18 @@ struct SettingsView: View {
     private func loadFeatureFlagStates() async {
         await MainActor.run {
             // Load current feature flag states from UserDefaults
-            self.translationUseEdgeFunction = TranslationService.isUsingEdgeFunction()
-            self.conversationUseEdgeFunction = ConversationService.isUsingEdgeFunction()
-            self.frameworkUseEdgeFunction = FrameworkGenerationService.isUsingEdgeFunction()
-            self.contextUseEdgeFunction = ContextualInsightService.isUsingEdgeFunction()
-            self.guidanceUseEdgeFunction = GuidanceGenerationService.isUsingEdgeFunction()
+            self.viewState.translationUseEdgeFunction = TranslationService.isUsingEdgeFunction()
+            self.viewState.conversationUseEdgeFunction = ConversationService.isUsingEdgeFunction()
+            self.viewState.frameworkUseEdgeFunction = FrameworkGenerationService.isUsingEdgeFunction()
+            self.viewState.contextUseEdgeFunction = ContextualInsightService.isUsingEdgeFunction()
+            self.viewState.guidanceUseEdgeFunction = GuidanceGenerationService.isUsingEdgeFunction()
             
             print("🔧 Feature flag states loaded:")
-            print("   Translation: \(translationUseEdgeFunction ? "Edge Function" : "Direct API")")
-            print("   Conversation: \(conversationUseEdgeFunction ? "Edge Function" : "Direct API")")
-            print("   Framework: \(frameworkUseEdgeFunction ? "Edge Function" : "Direct API")")
-            print("   Context: \(contextUseEdgeFunction ? "Edge Function" : "Direct API")")
-            print("   Guidance: \(guidanceUseEdgeFunction ? "Edge Function" : "Direct API")")
+            print("   Translation: \(viewState.translationUseEdgeFunction ? "Edge Function" : "Direct API")")
+            print("   Conversation: \(viewState.conversationUseEdgeFunction ? "Edge Function" : "Direct API")")
+            print("   Framework: \(viewState.frameworkUseEdgeFunction ? "Edge Function" : "Direct API")")
+            print("   Context: \(viewState.contextUseEdgeFunction ? "Edge Function" : "Direct API")")
+            print("   Guidance: \(viewState.guidanceUseEdgeFunction ? "Edge Function" : "Direct API")")
         }
     }
     
@@ -214,8 +174,8 @@ struct SettingsView: View {
             try await FamilyLanguageService.shared.setTranslationStrategy(strategy, for: familyId)
             
             await MainActor.run {
-                self.currentTranslationStrategy = strategy
-                self.showingStrategySelection = false
+                self.viewState.currentTranslationStrategy = strategy
+                self.viewState.showingStrategySelection = false
             }
             
             print("✅ Translation strategy updated to: \(strategy.rawValue)")
@@ -227,13 +187,13 @@ struct SettingsView: View {
 
     private func handleDataExport() async {
         guard let userId = appCoordinator.currentUserId,
-              let userEmail = userProfile?.email else {
+              let userEmail = viewState.userProfile?.email else {
             print("❌ No user ID or email available for data export")
             return
         }
         
         await MainActor.run {
-            isExportingData = true
+            viewState.isExportingData = true
         }
         
         do {
@@ -244,18 +204,18 @@ struct SettingsView: View {
             try await sendDataExportEmail(data: exportData, email: userEmail)
             
             await MainActor.run {
-                isExportingData = false
-                exportSuccessMessage = "Your data export has been sent to \(userEmail)"
-                showingExportSuccess = true
+                viewState.isExportingData = false
+                viewState.exportSuccessMessage = "Your data export has been sent to \(userEmail)"
+                viewState.showingExportSuccess = true
             }
             
             print("✅ Data export sent successfully to \(userEmail)")
             
         } catch {
             await MainActor.run {
-                isExportingData = false
-                exportSuccessMessage = "Failed to export data: \(error.localizedDescription)"
-                showingExportSuccess = true
+                viewState.isExportingData = false
+                viewState.exportSuccessMessage = "Failed to export data: \(error.localizedDescription)"
+                viewState.showingExportSuccess = true
             }
             print("❌ Data export failed: \(error)")
         }
@@ -383,7 +343,7 @@ struct SettingsView: View {
         }
         
         await MainActor.run {
-            isDeletingAccount = true
+            viewState.isDeletingAccount = true
         }
         
         do {
@@ -391,9 +351,9 @@ struct SettingsView: View {
             try await deleteAllUserData(userId: userId)
             
             await MainActor.run {
-                isDeletingAccount = false
-                showingDeleteConfirmation = false
-                deleteConfirmationStep = 0
+                viewState.isDeletingAccount = false
+                viewState.showingDeleteConfirmation = false
+                viewState.deleteConfirmationStep = 0
             }
             
             // Sign out the user after successful deletion
@@ -403,9 +363,9 @@ struct SettingsView: View {
             
         } catch {
             await MainActor.run {
-                isDeletingAccount = false
-                exportSuccessMessage = "Failed to delete account: \(error.localizedDescription)"
-                showingExportSuccess = true
+                viewState.isDeletingAccount = false
+                viewState.exportSuccessMessage = "Failed to delete account: \(error.localizedDescription)"
+                viewState.showingExportSuccess = true
             }
             print("❌ Account deletion failed: \(error)")
         }
@@ -503,8 +463,8 @@ struct SettingsView: View {
     }
     
     private func showSupportEmailFallback() {
-        exportSuccessMessage = "Please email us at support@parentguidance.ai for assistance."
-        showingExportSuccess = true
+        viewState.exportSuccessMessage = "Please email us at support@parentguidance.ai for assistance."
+        viewState.showingExportSuccess = true
     }
     
     // MARK: - App Info Helpers
@@ -568,21 +528,21 @@ struct SettingsView: View {
         }
         
         await MainActor.run {
-            isLoadingProfile = true
+            viewState.isLoadingProfile = true
         }
         
         do {
             let profile = try await AuthService.shared.loadUserProfile(userId: userId)
             await MainActor.run {
-                self.userProfile = profile
-                self.selectedLanguage = profile.preferredLanguage
-                self.isLoadingProfile = false
+                self.viewState.userProfile = profile
+                self.viewState.selectedLanguage = profile.preferredLanguage
+                self.viewState.isLoadingProfile = false
             }
             print("✅ Settings: User profile loaded successfully")
         } catch {
             print("❌ Settings: Failed to load user profile: \(error.localizedDescription)")
             await MainActor.run {
-                self.isLoadingProfile = false
+                self.viewState.isLoadingProfile = false
             }
         }
     }
@@ -591,7 +551,7 @@ struct SettingsView: View {
     
     private func handleLanguageUpdate(_ newLanguage: String) async {
         guard let userId = appCoordinator.currentUserId,
-              newLanguage != userProfile?.preferredLanguage else {
+              newLanguage != viewState.userProfile?.preferredLanguage else {
             return
         }
         
@@ -605,7 +565,7 @@ struct SettingsView: View {
             
             // Update local state
             await MainActor.run {
-                selectedLanguage = newLanguage
+                viewState.selectedLanguage = newLanguage
             }
             
             // Reload the user profile to get the updated data
@@ -678,7 +638,7 @@ struct SettingsView: View {
         .overlay(frameworkRemovalConfirmationOverlay)
         .overlay(signOutConfirmationOverlay)
         .overlay(deleteAccountConfirmationOverlay)
-        .sheet(isPresented: $showingChildEdit) {
+        .sheet(isPresented: $viewState.showingChildEdit) {
             if let firstChild = appCoordinator.children.first {
                 ChildProfileEditView(
                     child: firstChild,
@@ -692,8 +652,8 @@ struct SettingsView: View {
                     .padding()
             }
         }
-        .sheet(isPresented: $showingApiKeyManagement) {
-            if let profile = userProfile {
+        .sheet(isPresented: $viewState.showingApiKeyManagement) {
+            if let profile = viewState.userProfile {
                 NavigationView {
                     VStack {
                         Text(String(localized: "settings.apiKey.title"))
@@ -713,7 +673,7 @@ struct SettingsView: View {
                     .toolbar {
                         ToolbarItem(placement: .navigationBarLeading) {
                             Button(String(localized: "common.close")) {
-                                showingApiKeyManagement = false
+                                viewState.showingApiKeyManagement = false
                             }
                             .foregroundColor(ColorPalette.white)
                         }
@@ -721,35 +681,35 @@ struct SettingsView: View {
                 }
             }
         }
-        .alert(String(localized: "settings.export.alert.title"), isPresented: $showingExportSuccess) {
+        .alert(String(localized: "settings.export.alert.title"), isPresented: $viewState.showingExportSuccess) {
             Button(String(localized: "common.ok")) {
-                showingExportSuccess = false
-                exportSuccessMessage = nil
+                viewState.showingExportSuccess = false
+                viewState.exportSuccessMessage = nil
             }
         } message: {
-            Text(exportSuccessMessage ?? "")
+            Text(viewState.exportSuccessMessage ?? "")
         }
-        .sheet(isPresented: $showingPrivacyPolicy) {
+        .sheet(isPresented: $viewState.showingPrivacyPolicy) {
             PrivacyPolicyView()
         }
-        .sheet(isPresented: $showingDocumentation) {
+        .sheet(isPresented: $viewState.showingDocumentation) {
             DocumentationView()
         }
-        .sheet(isPresented: $showingLanguageSelection) {
+        .sheet(isPresented: $viewState.showingLanguageSelection) {
             LanguageSelectionView(
-                selectedLanguage: $selectedLanguage,
+                viewState.selectedLanguage: $viewState.selectedLanguage,
                 onLanguageSelected: { language in
                     Task {
                         await handleLanguageUpdate(language)
                     }
-                    showingLanguageSelection = false
+                    viewState.showingLanguageSelection = false
                 }
             )
         }
-        .sheet(isPresented: $showingStrategySelection) {
+        .sheet(isPresented: $viewState.showingStrategySelection) {
             TranslationStrategySelectionView(
-                currentStrategy: currentTranslationStrategy,
-                familyUsageMetrics: familyUsageMetrics,
+                currentStrategy: viewState.currentTranslationStrategy,
+                viewState.familyUsageMetrics: viewState.familyUsageMetrics,
                 onStrategySelected: { strategy in
                     Task {
                         await updateTranslationStrategy(strategy)
@@ -928,7 +888,7 @@ struct SettingsView: View {
                 // Action buttons
                 HStack(spacing: 12) {
                     Button(String(localized: "settings.guidanceStructure.learnMore")) {
-                        showingDocumentation = true
+                        viewState.showingDocumentation = true
                     }
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(ColorPalette.white)
@@ -994,7 +954,7 @@ struct SettingsView: View {
                 
                 Button(String(localized: "settings.childProfile.editProfile")) {
                     if appCoordinator.children.first != nil {
-                        showingChildEdit = true
+                        viewState.showingChildEdit = true
                     }
                 }
                 .font(.system(size: 14, weight: .medium))
@@ -1059,7 +1019,7 @@ struct SettingsView: View {
                     Spacer()
                     
                     Button(formatLanguageText()) {
-                        showingLanguageSelection = true
+                        viewState.showingLanguageSelection = true
                     }
                     .font(.system(size: 14))
                     .foregroundColor(ColorPalette.brightBlue)
@@ -1067,7 +1027,7 @@ struct SettingsView: View {
                 
                 if shouldShowApiKeyManagement() {
                     Button(String(localized: "settings.account.manageApiKey")) {
-                        showingApiKeyManagement = true
+                        viewState.showingApiKeyManagement = true
                     }
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(ColorPalette.terracotta)
@@ -1101,7 +1061,7 @@ struct SettingsView: View {
                 translationStrategyCard
                 
                 // Usage Analytics (if data available)
-                if let metrics = familyUsageMetrics {
+                if let metrics = viewState.familyUsageMetrics {
                     usageAnalyticsCard(metrics: metrics)
                 }
             }
@@ -1122,14 +1082,14 @@ struct SettingsView: View {
                 
                 Spacer()
                 
-                if isLoadingFamilyLanguage {
+                if viewState.isLoadingFamilyLanguage {
                     ProgressView()
                         .scaleEffect(0.8)
                         .tint(ColorPalette.white)
                 }
             }
             
-            if let config = familyLanguageConfig {
+            if let config = viewState.familyLanguageConfig {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Text(String(localized: "settings.familyLanguage.overview.members"))
@@ -1206,7 +1166,7 @@ struct SettingsView: View {
                 Spacer()
                 
                 Button(String(localized: "settings.familyLanguage.strategy.change")) {
-                    showingStrategySelection = true
+                    viewState.showingStrategySelection = true
                 }
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(ColorPalette.brightBlue)
@@ -1220,13 +1180,13 @@ struct SettingsView: View {
                     
                     Spacer()
                     
-                    Text(currentTranslationStrategy.description)
+                    Text(viewState.currentTranslationStrategy.description)
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(ColorPalette.white)
                         .lineLimit(1)
                 }
                 
-                Text(getStrategyDescription(currentTranslationStrategy))
+                Text(getStrategyDescription(viewState.currentTranslationStrategy))
                     .font(.system(size: 12))
                     .foregroundColor(ColorPalette.white.opacity(0.7))
                     .lineLimit(2)
@@ -1346,29 +1306,29 @@ struct SettingsView: View {
     
     private var featureFlagToggles: some View {
         VStack(spacing: 12) {
-            featureFlagToggle("Translation", isEnabled: translationUseEdgeFunction) {
-                translationUseEdgeFunction.toggle()
-                TranslationService.setUseEdgeFunction(translationUseEdgeFunction)
+            featureFlagToggle("Translation", isEnabled: viewState.translationUseEdgeFunction) {
+                viewState.translationUseEdgeFunction.toggle()
+                TranslationService.setUseEdgeFunction(viewState.translationUseEdgeFunction)
             }
             
-            featureFlagToggle("Conversation", isEnabled: conversationUseEdgeFunction) {
-                conversationUseEdgeFunction.toggle()
-                ConversationService.setUseEdgeFunction(conversationUseEdgeFunction)
+            featureFlagToggle("Conversation", isEnabled: viewState.conversationUseEdgeFunction) {
+                viewState.conversationUseEdgeFunction.toggle()
+                ConversationService.setUseEdgeFunction(viewState.conversationUseEdgeFunction)
             }
             
-            featureFlagToggle("Framework", isEnabled: frameworkUseEdgeFunction) {
-                frameworkUseEdgeFunction.toggle()
-                FrameworkGenerationService.setUseEdgeFunction(frameworkUseEdgeFunction)
+            featureFlagToggle("Framework", isEnabled: viewState.frameworkUseEdgeFunction) {
+                viewState.frameworkUseEdgeFunction.toggle()
+                FrameworkGenerationService.setUseEdgeFunction(viewState.frameworkUseEdgeFunction)
             }
             
-            featureFlagToggle("Context", isEnabled: contextUseEdgeFunction) {
-                contextUseEdgeFunction.toggle()
-                ContextualInsightService.setUseEdgeFunction(contextUseEdgeFunction)
+            featureFlagToggle("Context", isEnabled: viewState.contextUseEdgeFunction) {
+                viewState.contextUseEdgeFunction.toggle()
+                ContextualInsightService.setUseEdgeFunction(viewState.contextUseEdgeFunction)
             }
             
-            featureFlagToggle("Guidance", isEnabled: guidanceUseEdgeFunction) {
-                guidanceUseEdgeFunction.toggle()
-                GuidanceGenerationService.setUseEdgeFunction(guidanceUseEdgeFunction)
+            featureFlagToggle("Guidance", isEnabled: viewState.guidanceUseEdgeFunction) {
+                viewState.guidanceUseEdgeFunction.toggle()
+                GuidanceGenerationService.setUseEdgeFunction(viewState.guidanceUseEdgeFunction)
             }
         }
     }
@@ -1431,26 +1391,26 @@ struct SettingsView: View {
                 .padding(.horizontal, 16)
             
             VStack(alignment: .leading, spacing: 16) {
-                Button(isExportingData ? String(localized: "settings.export.progress") : String(localized: "settings.export.button")) {
+                Button(viewState.isExportingData ? String(localized: "settings.export.progress") : String(localized: "settings.export.button")) {
                     Task {
                         await handleDataExport()
                     }
                 }
-                .disabled(isExportingData)
+                .disabled(viewState.isExportingData)
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(ColorPalette.white.opacity(0.9))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
                 Button(String(localized: "settings.privacyData.privacyPolicy")) {
-                    showingPrivacyPolicy = true
+                    viewState.showingPrivacyPolicy = true
                 }
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(ColorPalette.white.opacity(0.9))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
                 Button(String(localized: "settings.account.deleteAccount")) {
-                    deleteConfirmationStep = 0
-                    showingDeleteConfirmation = true
+                    viewState.deleteConfirmationStep = 0
+                    viewState.showingDeleteConfirmation = true
                 }
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(ColorPalette.terracotta)
@@ -1472,7 +1432,7 @@ struct SettingsView: View {
             
             VStack(alignment: .leading, spacing: 16) {
                 Button(String(localized: "settings.helpSupport.documentation")) {
-                    showingDocumentation = true
+                    viewState.showingDocumentation = true
                 }
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(ColorPalette.white.opacity(0.9))
@@ -1498,7 +1458,7 @@ struct SettingsView: View {
                             .foregroundColor(ColorPalette.white.opacity(0.7))
                     }
                     .onTapGesture {
-                        showDebugInfo.toggle()
+                        viewState.showDebugInfo.toggle()
                     }
                     
                     HStack {
@@ -1513,9 +1473,9 @@ struct SettingsView: View {
                             .foregroundColor(ColorPalette.white.opacity(0.6))
                     }
                     
-                    if showDebugInfo {
+                    if viewState.showDebugInfo {
                         debugInfoSection
-                            .animation(.easeInOut(duration: 0.2), value: showDebugInfo)
+                            .animation(.easeInOut(duration: 0.2), value: viewState.showDebugInfo)
                     }
                 }
             }
@@ -1618,7 +1578,7 @@ struct SettingsView: View {
                     Color.black.opacity(0.5)
                         .ignoresSafeArea()
                         .onTapGesture {
-                            showingSignOutConfirmation = false
+                            viewState.showingSignOutConfirmation = false
                         }
                     
                     // Confirmation dialog
@@ -1630,7 +1590,7 @@ struct SettingsView: View {
                             handleSignOut()
                         },
                         onCancel: {
-                            showingSignOutConfirmation = false
+                            viewState.showingSignOutConfirmation = false
                         }
                     )
                 }
@@ -1643,22 +1603,22 @@ struct SettingsView: View {
     
     private var deleteAccountConfirmationOverlay: some View {
         Group {
-            if showingDeleteConfirmation {
+            if viewState.showingDeleteConfirmation {
                 ZStack {
                     // Semi-transparent background
                     Color.black.opacity(0.6)
                         .ignoresSafeArea()
                         .onTapGesture {
-                            showingDeleteConfirmation = false
-                            deleteConfirmationStep = 0
+                            viewState.showingDeleteConfirmation = false
+                            viewState.deleteConfirmationStep = 0
                         }
                     
                     // Multi-step confirmation dialog
                     DeleteAccountConfirmationDialog(
-                        step: deleteConfirmationStep,
-                        isDeleting: isDeletingAccount,
+                        step: viewState.deleteConfirmationStep,
+                        isDeleting: viewState.isDeletingAccount,
                         onNextStep: {
-                            deleteConfirmationStep += 1
+                            viewState.deleteConfirmationStep += 1
                         },
                         onDelete: {
                             Task {
@@ -1666,8 +1626,8 @@ struct SettingsView: View {
                             }
                         },
                         onCancel: {
-                            showingDeleteConfirmation = false
-                            deleteConfirmationStep = 0
+                            viewState.showingDeleteConfirmation = false
+                            viewState.deleteConfirmationStep = 0
                         }
                     )
                 }
@@ -2292,7 +2252,7 @@ struct LanguageSelectionView: View {
                             LanguageOptionRow(
                                 languageCode: languageCode,
                                 languageName: LanguageDetectionService.shared.getLanguageName(for: languageCode),
-                                isSelected: selectedLanguage == languageCode,
+                                isSelected: viewState.selectedLanguage == languageCode,
                                 onTap: {
                                     onLanguageSelected(languageCode)
                                 }

@@ -1,7 +1,8 @@
-refactor: extract SettingsFrameworkState to separate service file
+refactor: extract all @State variables to SettingsViewState service class
 
-- Move SettingsFrameworkState class from SettingsView.swift to Services/SettingsFrameworkState.swift
-- Reduce SettingsView.swift from 2512 lines by extracting 107-line state management class
-- Maintain all existing functionality and published properties
-- Improve separation of concerns and maintainability
-- No functional changes, pure code organization improvement
+- Create SettingsViewState.swift with 20 @Published properties from SettingsView
+- Replace all individual @State declarations with single @StateObject reference
+- Update all state variable references to use viewState prefix
+- Maintain all existing functionality and localization keys
+- Reduce SettingsView complexity by centralizing state management
+- Build verified successful with no compilation errors

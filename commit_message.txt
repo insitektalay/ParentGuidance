@@ -1,5 +1,1 @@
-refactor: extract PrivacyDataSection from SettingsView to complete Phase 2 modularization
-
-Extracted privacy and data management functionality from SettingsView into a dedicated PrivacyDataSection component, completing the Phase 2   section view extraction. The new component handles data export, privacy policy access, and account deletion with proper dependency injection   via callback parameters.
-
-This completes the extraction of all 4 major section views (FoundationToolsSection, FamilyLanguageSection, DeveloperSection,   PrivacyDataSection) from the original 2512-line SettingsView file. Each section maintains full functionality while improving code   maintainability and testability through clean modular architecture.
+cleaned up localization issue

@@ -85,6 +85,9 @@
 		944EA2132E2E128100C110AF /* SettingsUtilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA2122E2E128100C110AF /* SettingsUtilityService.swift */; };
 		944EA2152E2E302D00C110AF /* PsychologistNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA2142E2E302D00C110AF /* PsychologistNote.swift */; };
 		944EA2172E2E303A00C110AF /* PsychologistNoteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA2162E2E303A00C110AF /* PsychologistNoteService.swift */; };
+		944EA2192E2E324700C110AF /* PsychologistNoteCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA2182E2E324700C110AF /* PsychologistNoteCard.swift */; };
+		944EA21B2E2E325800C110AF /* PsychologistNoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA21A2E2E325800C110AF /* PsychologistNoteView.swift */; };
+		944EA21D2E2E326700C110AF /* PsychologistNoteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA21C2E2E326700C110AF /* PsychologistNoteDetailView.swift */; };
 		9481564C2E23CDC000C28273 /* ChildProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */; };
 		9481564E2E25334C00C28273 /* AudioPermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564D2E25334C00C28273 /* AudioPermissionManager.swift */; };
 		948156502E2533EE00C28273 /* VoiceRecorderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */; };
@@ -260,6 +263,9 @@
 		944EA2122E2E128100C110AF /* SettingsUtilityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsUtilityService.swift; sourceTree = "<group>"; };
 		944EA2142E2E302D00C110AF /* PsychologistNote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PsychologistNote.swift; sourceTree = "<group>"; };
 		944EA2162E2E303A00C110AF /* PsychologistNoteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PsychologistNoteService.swift; sourceTree = "<group>"; };
+		944EA2182E2E324700C110AF /* PsychologistNoteCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PsychologistNoteCard.swift; sourceTree = "<group>"; };
+		944EA21A2E2E325800C110AF /* PsychologistNoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PsychologistNoteView.swift; sourceTree = "<group>"; };
+		944EA21C2E2E326700C110AF /* PsychologistNoteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PsychologistNoteDetailView.swift; sourceTree = "<group>"; };
 		9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildProfileEditView.swift; sourceTree = "<group>"; };
 		9481564D2E25334C00C28273 /* AudioPermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPermissionManager.swift; sourceTree = "<group>"; };
 		9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorderError.swift; sourceTree = "<group>"; };
@@ -761,6 +767,8 @@
 				9481566B2E2A11E200C28273 /* RegulationInsightsView.swift */,
 				9481566D2E2A12B600C28273 /* RegulationCategoryView.swift */,
 				948156732E2A1E6800C28273 /* SearchSituationsView.swift */,
+				944EA21A2E2E325800C110AF /* PsychologistNoteView.swift */,
+				944EA21C2E2E326700C110AF /* PsychologistNoteDetailView.swift */,
 			);
 			path = Library;
 			sourceTree = "<group>";
@@ -845,6 +853,7 @@
 				948156692E2A108900C28273 /* NoticingWhatMattersCard.swift */,
 				9481566F2E2A12C700C28273 /* RegulationInsightCard.swift */,
 				948156712E2A1D9800C28273 /* SearchSituationsCard.swift */,
+				944EA2182E2E324700C110AF /* PsychologistNoteCard.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -1011,6 +1020,7 @@
 				94FA10C42E056247003EC1E9 /* ParentGuidanceApp.swift in Sources */,
 				94FA11272E05CBDF003EC1E9 /* SituationOrganizingView.swift in Sources */,
 				94FA11302E05CC23003EC1E9 /* InputGuidanceFooter.swift in Sources */,
+				944EA2192E2E324700C110AF /* PsychologistNoteCard.swift in Sources */,
 				94FA10FB2E05666F003EC1E9 /* ColorPalette.swift in Sources */,
 				943DFD812E18266B004F8043 /* LibraryHeaderView.swift in Sources */,
 				94FA10FD2E056C6C003EC1E9 /* WelcomeView.swift in Sources */,
@@ -1110,6 +1120,7 @@
 				94CBD5152E20F80C0014C22A /* FakeFile.swift in Sources */,
 				943792A92E1C2B610089F512 /* TabNavigationManager.swift in Sources */,
 				94FA113E2E05CCA0003EC1E9 /* FoundationToolCard.swift in Sources */,
+				944EA21B2E2E325800C110AF /* PsychologistNoteView.swift in Sources */,
 				943DFD852E182684004F8043 /* SearchHistoryView.swift in Sources */,
 				944EA1F22E2DEE1E00C110AF /* DeveloperSection.swift in Sources */,
 				944EA1F32E2DEE1F00C110AF /* PrivacyDataSection.swift in Sources */,
@@ -1118,6 +1129,7 @@
 				948156642E2904D200C28273 /* ContextCategoryView.swift in Sources */,
 				944EA1F42E2DF62C00C110AF /* GuidanceStructureSection.swift in Sources */,
 				943792A02E1BE94A0089F512 /* FrameworkStorageService.swift in Sources */,
+				944EA21D2E2E326700C110AF /* PsychologistNoteDetailView.swift in Sources */,
 				944EA1B22E2B6BB100C110AF /* FamilyChoiceView.swift in Sources */,
 				9481564C2E23CDC000C28273 /* ChildProfileEditView.swift in Sources */,
 				943DFD9D2E1A863A004F8043 /* DatabaseService.swift in Sources */,

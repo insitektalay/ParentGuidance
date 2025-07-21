@@ -180,17 +180,22 @@ class PsychologistNoteService {
         print("📋 Aggregating contextual insights")
         
         do {
-            var query = SupabaseManager.shared.client
-                .from("contextual_insights")
-                .select("content, category, subcategory, created_at")
-                .eq("family_id", value: familyId)
-                .order("created_at", ascending: true)
-            
-            if let childId = childId {
-                query = query.eq("child_id", value: childId)
+            let response = if let childId = childId {
+                try await SupabaseManager.shared.client
+                    .from("contextual_insights")
+                    .select("content, category, subcategory, created_at")
+                    .eq("family_id", value: familyId)
+                    .eq("child_id", value: childId)
+                    .order("created_at", ascending: true)
+                    .execute()
+            } else {
+                try await SupabaseManager.shared.client
+                    .from("contextual_insights")
+                    .select("content, category, subcategory, created_at")
+                    .eq("family_id", value: familyId)
+                    .order("created_at", ascending: true)
+                    .execute()
             }
-            
-            let response = try await query.execute()
             
             struct InsightRow: Codable {
                 let content: String
@@ -235,17 +240,22 @@ class PsychologistNoteService {
         print("🎯 Aggregating insight bullet points")
         
         do {
-            var query = SupabaseManager.shared.client
-                .from("insight_bullet_points")
-                .select("content, category, created_at")
-                .eq("family_id", value: familyId)
-                .order("created_at", ascending: true)
-            
-            if let childId = childId {
-                query = query.eq("child_id", value: childId)
+            let response = if let childId = childId {
+                try await SupabaseManager.shared.client
+                    .from("insight_bullet_points")
+                    .select("content, category, created_at")
+                    .eq("family_id", value: familyId)
+                    .eq("child_id", value: childId)
+                    .order("created_at", ascending: true)
+                    .execute()
+            } else {
+                try await SupabaseManager.shared.client
+                    .from("insight_bullet_points")
+                    .select("content, category, created_at")
+                    .eq("family_id", value: familyId)
+                    .order("created_at", ascending: true)
+                    .execute()
             }
-            
-            let response = try await query.execute()
             
             struct BulletPointRow: Codable {
                 let content: String

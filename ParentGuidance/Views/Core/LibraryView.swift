@@ -14,6 +14,7 @@ struct LibraryView: View {
     @State private var showingContextualKnowledgeBase = false
     @State private var showingRegulationInsights = false
     @State private var showingSearchSituations = false
+    @State private var showingPsychologistNote = false
     
     init() {
         let controller = LibraryViewController()
@@ -64,6 +65,12 @@ struct LibraryView: View {
                 )
             }
         }
+        .sheet(isPresented: $showingPsychologistNote) {
+            if let familyId = appCoordinator.currentUserId {
+                PsychologistNoteView(familyId: familyId)
+                    .environmentObject(appCoordinator)
+            }
+        }
     }
     
     private var libraryListView: some View {
@@ -80,6 +87,9 @@ struct LibraryView: View {
                 
                 // Your Child's World card
                 yourChildsWorldSection
+                
+                // Psychologist's Note card
+                psychologistNoteSection
                 
                 // Selection header (when in selection mode)
                 if selectionManager.isInSelectionMode {
@@ -139,6 +149,17 @@ struct LibraryView: View {
             onSearchSituations: {
                 print("Search situations tapped")
                 showingSearchSituations = true
+            }
+        )
+        .padding(.horizontal, 16)
+    }
+    
+    private var psychologistNoteSection: some View {
+        PsychologistNoteCard(
+            familyId: appCoordinator.currentUserId,
+            onViewNotes: {
+                print("Psychologist's note tapped")
+                showingPsychologistNote = true
             }
         )
         .padding(.horizontal, 16)

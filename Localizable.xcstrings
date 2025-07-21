@@ -2230,6 +2230,86 @@
         }
       }
     },
+    "library.psychologistNote.button.generate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generate Note"
+          }
+        }
+      }
+    },
+    "library.psychologistNote.button.view" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View Notes"
+          }
+        }
+      }
+    },
+    "library.psychologistNote.count" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d professional summaries generated"
+          }
+        }
+      }
+    },
+    "library.psychologistNote.empty" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No notes generated yet"
+          }
+        }
+      }
+    },
+    "library.psychologistNote.error" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to load notes"
+          }
+        }
+      }
+    },
+    "library.psychologistNote.loading" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading notes..."
+          }
+        }
+      }
+    },
+    "library.psychologistNote.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI-generated clinical summaries of your child's development patterns"
+          }
+        }
+      }
+    },
+    "library.psychologistNote.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Psychologist's Note"
+          }
+        }
+      }
+    },
     "library.search.empty.subtitle" : {
       "localizations" : {
         "en" : {
@@ -4695,6 +4775,216 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ParentPal"
+          }
+        }
+      }
+    },
+    "psychologistNote.delete.confirm.action" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Note"
+          }
+        }
+      }
+    },
+    "psychologistNote.delete.confirm.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This action cannot be undone."
+          }
+        }
+      }
+    },
+    "psychologistNote.delete.confirm.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete this note?"
+          }
+        }
+      }
+    },
+    "psychologistNote.detail.content" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Professional Summary"
+          }
+        }
+      }
+    },
+    "psychologistNote.detail.created" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Created"
+          }
+        }
+      }
+    },
+    "psychologistNote.detail.metadata" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note Information"
+          }
+        }
+      }
+    },
+    "psychologistNote.detail.sources" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Based on"
+          }
+        }
+      }
+    },
+    "psychologistNote.detail.type" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type"
+          }
+        }
+      }
+    },
+    "psychologistNote.empty.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generate professional summaries from your collected insights to get a comprehensive view of your child's development patterns."
+          }
+        }
+      }
+    },
+    "psychologistNote.empty.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No notes yet"
+          }
+        }
+      }
+    },
+    "psychologistNote.error.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to load notes"
+          }
+        }
+      }
+    },
+    "psychologistNote.existing.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your Notes"
+          }
+        }
+      }
+    },
+    "psychologistNote.generate.context" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generate Child Context"
+          }
+        }
+      }
+    },
+    "psychologistNote.generate.context.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Professional summary of your child's environment and context"
+          }
+        }
+      }
+    },
+    "psychologistNote.generate.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generate AI-powered clinical summaries from your collected insights"
+          }
+        }
+      }
+    },
+    "psychologistNote.generate.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generate New Notes"
+          }
+        }
+      }
+    },
+    "psychologistNote.generate.traits" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generate Key Insights"
+          }
+        }
+      }
+    },
+    "psychologistNote.generate.traits.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Professional analysis of behavioral patterns and traits"
+          }
+        }
+      }
+    },
+    "psychologistNote.loading" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading notes..."
+          }
+        }
+      }
+    },
+    "psychologistNote.share.footer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generated with ParentGuidance"
+          }
+        }
+      }
+    },
+    "psychologistNote.view.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Psychologist's Note"
           }
         }
       }

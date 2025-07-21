@@ -128,12 +128,15 @@ class GuidanceGenerationService {
         var accumulatedContent = ""
         
         do {
+            let guidanceStructureSettings = GuidanceStructureSettings.shared
+            let structureMode = guidanceStructureSettings.currentMode == .fixed ? "fixed" : "dynamic"
+            
             let stream = try await EdgeFunctionService.shared.streamGuidance(
                 situation: situation,
                 childContext: childContext,
                 keyInsights: keyInsights,
                 activeFramework: activeFramework,
-                structureMode: "fixed", // Using fixed structure mode
+                structureMode: structureMode,
                 apiKey: apiKey
             )
             
@@ -173,12 +176,15 @@ class GuidanceGenerationService {
         var accumulatedContent = ""
         
         do {
+            let guidanceStructureSettings = GuidanceStructureSettings.shared
+            let structureMode = guidanceStructureSettings.currentMode == .fixed ? "fixed" : "dynamic"
+            
             let stream = try await EdgeFunctionService.shared.streamGuidance(
                 situation: situation,
                 childContext: childContext,
                 keyInsights: keyInsights,
                 activeFramework: activeFramework,
-                structureMode: "fixed",
+                structureMode: structureMode,
                 apiKey: apiKey
             )
             

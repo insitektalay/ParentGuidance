@@ -1,24 +1,6 @@
-feat: implement complete Psychologist's Note feature with AI generation
-
-Adds comprehensive clinical summary generation from accumulated family insights:
-
-Backend Infrastructure:
-  - PsychologistNote model with enum-driven categorization and database mappings
-  - PsychologistNoteService with EdgeFunction integration and data aggregation
-  - Extended EdgeFunctionService with new AI operations for both note types
-  - Database schema with RLS policies for family-scoped access
-
-UI Components:
-  - PsychologistNoteCard with dynamic states and count display
-  - PsychologistNoteView with generation controls and note management
-  - PsychologistNoteDetailView with sharing, deletion, and content display
-  - Complete integration with LibraryView sheet navigation
-
-Features:
-  - AI-powered generation using existing prompt templates
-  - Automatic data aggregation from contextual insights and regulation patterns
-  - Full localization with 24 semantic keys
-  - Comprehensive error handling and loading states
-  - Professional content formatting and sharing capabilities
-
-All components follow established patterns and build successfully.
+feat: add child context and key insights toggles to GuidanceStructureSettings
+    - Added enableChildContext and enableKeyInsights @AppStorage properties with default false
+    - Added computed properties with proper objectWillChange notifications for SwiftUI reactivity
+    - Added toggleChildContext() and toggleKeyInsights() convenience methods for UI interaction
+    - Added hasEnabledPsychologistNotes computed property to check if either toggle is enabled
+    - Maintains backward compatibility and follows existing patterns in the settings cla

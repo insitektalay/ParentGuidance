@@ -81,6 +81,8 @@ class GuidanceStructureSettings: ObservableObject {
     
     @AppStorage("guidanceStructureMode") private var storedMode: String = GuidanceStructureMode.fixed.rawValue
     @AppStorage("guidanceStyle") private var storedStyle: String = GuidanceStyle.warmPractical.rawValue
+    @AppStorage("enableChildContext") private var storedChildContext: Bool = false
+    @AppStorage("enableKeyInsights") private var storedKeyInsights: Bool = false
     
     private init() {
         // Private initializer to enforce singleton pattern
@@ -106,8 +108,32 @@ class GuidanceStructureSettings: ObservableObject {
         }
     }
     
+    var enableChildContext: Bool {
+        get {
+            return storedChildContext
+        }
+        set {
+            storedChildContext = newValue
+            objectWillChange.send()
+        }
+    }
+    
+    var enableKeyInsights: Bool {
+        get {
+            return storedKeyInsights
+        }
+        set {
+            storedKeyInsights = newValue
+            objectWillChange.send()
+        }
+    }
+    
     var isUsingDynamicStructure: Bool {
         return currentMode == .dynamic
+    }
+    
+    var hasEnabledPsychologistNotes: Bool {
+        return enableChildContext || enableKeyInsights
     }
     
     func toggleMode() {
@@ -116,6 +142,14 @@ class GuidanceStructureSettings: ObservableObject {
     
     func toggleStyle() {
         currentStyle = currentStyle == .warmPractical ? .analyticalScientific : .warmPractical
+    }
+    
+    func toggleChildContext() {
+        enableChildContext.toggle()
+    }
+    
+    func toggleKeyInsights() {
+        enableKeyInsights.toggle()
     }
     
     // MARK: - Version Mapping

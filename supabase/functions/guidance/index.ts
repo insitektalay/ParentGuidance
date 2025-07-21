@@ -9,7 +9,7 @@ const corsHeaders = {
 }
 
 interface RequestBody {
-  operation: 'guidance' | 'analyze' | 'framework' | 'context' | 'translate'
+  operation: 'guidance' | 'analyze' | 'framework' | 'context' | 'translate' | 'psychologists_note_context' | 'psychologists_note_traits'
   variables: Record<string, any>
   apiKey: string
 }
@@ -92,6 +92,12 @@ serve(async (req) => {
       
       case 'translate':
         return await handleTranslateOperation(apiKey, variables)
+      
+      case 'psychologists_note_context':
+        return await handlePsychologistNoteContextOperation(apiKey, variables)
+      
+      case 'psychologists_note_traits':
+        return await handlePsychologistNoteTraitsOperation(apiKey, variables)
       
       default:
         return new Response(
@@ -507,6 +513,126 @@ async function handleTranslateOperation(apiKey: string, variables: any) {
     console.error('Translate operation error:', error)
     return new Response(
       JSON.stringify({ error: 'Failed to translate content', details: error.message }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  }
+}
+
+// Handle psychologist note context generation (non-streaming)
+async function handlePsychologistNoteContextOperation(apiKey: string, variables: any) {
+  const { structured_context_data_over_time } = variables
+  console.log(`[DEBUG] Psychologist note context operation - data length: ${structured_context_data_over_time?.length || 0}`)
+
+  try {
+    // Prepare variables for interpolation
+    const promptVariables = {
+      structured_context_data_over_time: structured_context_data_over_time
+    }
+
+    // Get the system prompt and interpolate variables
+    const systemPrompt = interpolatePrompt(promptTemplates.psychologists_note_context.systemPromptText, promptVariables)
+
+    // Use native fetch to call OpenAI API
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4',
+        messages: [
+          { role: 'system', content: systemPrompt }
+        ],
+        temperature: 0.6, // Balanced temperature for clinical insights
+        max_tokens: 2000
+      })
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error(`[ERROR] Psychologist note context OpenAI API error: ${response.status}`)
+      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`)
+    }
+
+    const data = await response.json()
+    const content = data.choices?.[0]?.message?.content
+
+    if (!content) {
+      throw new Error('No content received from OpenAI')
+    }
+
+    console.log(`[DEBUG] Psychologist note context response: ${content.substring(0, 100)}...`)
+
+    return new Response(
+      JSON.stringify({ success: true, data: content }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+
+  } catch (error) {
+    console.error('Psychologist note context operation error:', error)
+    return new Response(
+      JSON.stringify({ error: 'Failed to generate psychologist note context', details: error.message }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  }
+}
+
+// Handle psychologist note traits generation (non-streaming)
+async function handlePsychologistNoteTraitsOperation(apiKey: string, variables: any) {
+  const { bullet_point_pattern_data_over_time } = variables
+  console.log(`[DEBUG] Psychologist note traits operation - data length: ${bullet_point_pattern_data_over_time?.length || 0}`)
+
+  try {
+    // Prepare variables for interpolation
+    const promptVariables = {
+      bullet_point_pattern_data_over_time: bullet_point_pattern_data_over_time
+    }
+
+    // Get the system prompt and interpolate variables
+    const systemPrompt = interpolatePrompt(promptTemplates.psychologists_note_traits.systemPromptText, promptVariables)
+
+    // Use native fetch to call OpenAI API
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4',
+        messages: [
+          { role: 'system', content: systemPrompt }
+        ],
+        temperature: 0.6, // Balanced temperature for clinical insights
+        max_tokens: 2000
+      })
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error(`[ERROR] Psychologist note traits OpenAI API error: ${response.status}`)
+      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`)
+    }
+
+    const data = await response.json()
+    const content = data.choices?.[0]?.message?.content
+
+    if (!content) {
+      throw new Error('No content received from OpenAI')
+    }
+
+    console.log(`[DEBUG] Psychologist note traits response: ${content.substring(0, 100)}...`)
+
+    return new Response(
+      JSON.stringify({ success: true, data: content }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+
+  } catch (error) {
+    console.error('Psychologist note traits operation error:', error)
+    return new Response(
+      JSON.stringify({ error: 'Failed to generate psychologist note traits', details: error.message }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }

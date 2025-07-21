@@ -5,11 +5,16 @@ export const promptTemplates = {
       versions_no_framework: {
         "Warm Practical + Fixed": {
           version: "12",
-          variables: ["current_situation", "family_context"],
+          variables: ["current_situation", "child_context", "key_insights"],
           systemPromptText: `
-Family Context:{{family_context}}
+Child Context:
+{{child_context}}
 
-Situation:{{current_situation}}
+Key Observations:
+{{key_insights}}
+
+Situation:
+{{current_situation}}
 
 GUIDANCE GENERATION PROMPT:
 
@@ -112,11 +117,16 @@ Generate a Title for the situation (maximum 24 characters including spaces) that
         },
         "Analytical Scientific + Fixed": {
           version: "19",
-          variables: ["current_situation", "family_context"],
+          variables: ["current_situation", "child_context", "key_insights"],
           systemPromptText: `
-Family Context:{{family_context}}
+Child Context:
+{{child_context}}
 
-Situation:{{current_situation}}
+Key Observations:
+{{key_insights}}
+
+Situation:
+{{current_situation}}
 
 GUIDANCE GENERATION PROMPT:
 

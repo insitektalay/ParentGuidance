@@ -1,8 +1,19 @@
-feat: add psychologist notes toggles to guidance structure settings UI
-  - Added "Psychologist's Notes" section to GuidanceStructureSection with two independent toggles
-  - Added "Include Child Context" toggle for comprehensive family context integration
-  - Added "Include Key Insights" toggle for behavioral patterns and traits observations
-  - Added localized strings following semantic key format (settings.guidanceStructure.*)
-  - Both toggles work independently and persist via @AppStorage in GuidanceStructureSettings
-  - Follows existing UI patterns with proper toggle animations and spacing
-  - Build successful with all UI components properly integrated
+feat: integrate psychologist notes into guidance generation system
+
+Backend Integration Changes:
+- Updated promptTemplates.ts: Removed family_context, added child_context and key_insights variables
+- Updated EdgeFunction handler: Process new psychologist notes variables instead of family_context
+- Updated EdgeFunctionService.swift: Modified streamGuidance() method signature to accept optional childContext and keyInsights
+- Updated GuidanceGenerationService.swift: Complete method signature overhaul to remove familyContext and add psychologist notes support
+- Updated NewSituationView.swift: Added psychologist notes fetching with settings-based conditional logic
+
+Key Implementation Details:
+- Psychologist notes only fetched when toggles are enabled in GuidanceStructureSettings
+- Graceful fallback when notes don't exist (non-blocking errors)
+- Maintains backward compatibility for Dynamic structure mode
+- Complete removal of family_context system across all services
+- Build successful with full integration working end-to-end
+
+The feature now supports dynamic inclusion of child context and key insights from stored psychologist notes in guidance responses based on user
+toggle preferences.
+

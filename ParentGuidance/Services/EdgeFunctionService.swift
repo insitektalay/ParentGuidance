@@ -24,7 +24,8 @@ class EdgeFunctionService {
     /// Stream guidance generation with optional framework
     func streamGuidance(
         situation: String,
-        familyContext: String = "none",
+        childContext: String? = nil,
+        keyInsights: String? = nil,
         activeFramework: FrameworkRecommendation? = nil,
         structureMode: String = "fixed",
         apiKey: String
@@ -39,8 +40,12 @@ class EdgeFunctionService {
             "structure_mode": structureMode
         ]
         
-        if structureMode == "fixed" {
-            variables["family_context"] = familyContext
+        if let childContext = childContext, !childContext.isEmpty {
+            variables["child_context"] = childContext
+        }
+        
+        if let keyInsights = keyInsights, !keyInsights.isEmpty {
+            variables["key_insights"] = keyInsights
         }
         
         if let framework = activeFramework {

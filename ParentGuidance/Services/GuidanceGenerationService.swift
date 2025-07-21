@@ -34,7 +34,8 @@ class GuidanceGenerationService {
     /// Generate guidance with optional streaming support
     func generateGuidance(
         situation: String,
-        familyContext: String = "none",
+        childContext: String? = nil,
+        keyInsights: String? = nil,
         apiKey: String,
         activeFramework: FrameworkRecommendation? = nil,
         useStreaming: Bool = false
@@ -44,7 +45,8 @@ class GuidanceGenerationService {
             print("🚀 [GuidanceGenerationService] Using EdgeFunction with streaming")
             return try await generateGuidanceViaEdgeFunctionStreaming(
                 situation: situation,
-                familyContext: familyContext,
+                childContext: childContext,
+                keyInsights: keyInsights,
                 apiKey: apiKey,
                 activeFramework: activeFramework
             )
@@ -52,7 +54,8 @@ class GuidanceGenerationService {
             print("🚀 [GuidanceGenerationService] Using EdgeFunction (non-streaming)")
             return try await generateGuidanceViaEdgeFunctionNonStreaming(
                 situation: situation,
-                familyContext: familyContext,
+                childContext: childContext,
+                keyInsights: keyInsights,
                 apiKey: apiKey,
                 activeFramework: activeFramework
             )
@@ -60,7 +63,8 @@ class GuidanceGenerationService {
             print("🔗 [GuidanceGenerationService] Using Direct API (legacy)")
             return try await generateGuidanceViaDirectAPI(
                 situation: situation,
-                familyContext: familyContext,
+                childContext: childContext,
+                keyInsights: keyInsights,
                 apiKey: apiKey,
                 activeFramework: activeFramework
             )
@@ -70,7 +74,8 @@ class GuidanceGenerationService {
     /// Generate guidance with streaming updates via callback
     func generateGuidanceWithStreaming(
         situation: String,
-        familyContext: String = "none",
+        childContext: String? = nil,
+        keyInsights: String? = nil,
         apiKey: String,
         activeFramework: FrameworkRecommendation? = nil,
         onUpdate: @escaping (String) -> Void,
@@ -82,7 +87,8 @@ class GuidanceGenerationService {
                 if useEdgeFunction {
                     try await streamGuidanceViaEdgeFunction(
                         situation: situation,
-                        familyContext: familyContext,
+                        childContext: childContext,
+                        keyInsights: keyInsights,
                         apiKey: apiKey,
                         activeFramework: activeFramework,
                         onUpdate: onUpdate,
@@ -92,7 +98,8 @@ class GuidanceGenerationService {
                     // Fallback to non-streaming for direct API
                     let (guidance, rawContent) = try await generateGuidanceViaDirectAPI(
                         situation: situation,
-                        familyContext: familyContext,
+                        childContext: childContext,
+                        keyInsights: keyInsights,
                         apiKey: apiKey,
                         activeFramework: activeFramework
                     )
@@ -109,7 +116,8 @@ class GuidanceGenerationService {
     /// Generate guidance using EdgeFunction with streaming
     private func streamGuidanceViaEdgeFunction(
         situation: String,
-        familyContext: String,
+        childContext: String?,
+        keyInsights: String?,
         apiKey: String,
         activeFramework: FrameworkRecommendation?,
         onUpdate: @escaping (String) -> Void,
@@ -122,7 +130,8 @@ class GuidanceGenerationService {
         do {
             let stream = try await EdgeFunctionService.shared.streamGuidance(
                 situation: situation,
-                familyContext: familyContext,
+                childContext: childContext,
+                keyInsights: keyInsights,
                 activeFramework: activeFramework,
                 structureMode: "fixed", // Using fixed structure mode
                 apiKey: apiKey
@@ -154,7 +163,8 @@ class GuidanceGenerationService {
     /// Generate guidance using EdgeFunction without streaming (for compatibility)
     private func generateGuidanceViaEdgeFunctionStreaming(
         situation: String,
-        familyContext: String,
+        childContext: String?,
+        keyInsights: String?,
         apiKey: String,
         activeFramework: FrameworkRecommendation?
     ) async throws -> (GuidanceResponseProtocol, String) {
@@ -165,7 +175,8 @@ class GuidanceGenerationService {
         do {
             let stream = try await EdgeFunctionService.shared.streamGuidance(
                 situation: situation,
-                familyContext: familyContext,
+                childContext: childContext,
+                keyInsights: keyInsights,
                 activeFramework: activeFramework,
                 structureMode: "fixed",
                 apiKey: apiKey
@@ -189,14 +200,16 @@ class GuidanceGenerationService {
     /// Generate guidance using EdgeFunction (non-streaming, for future use)
     private func generateGuidanceViaEdgeFunctionNonStreaming(
         situation: String,
-        familyContext: String,
+        childContext: String?,
+        keyInsights: String?,
         apiKey: String,
         activeFramework: FrameworkRecommendation?
     ) async throws -> (GuidanceResponseProtocol, String) {
         // For now, use the streaming approach and collect all content
         return try await generateGuidanceViaEdgeFunctionStreaming(
             situation: situation,
-            familyContext: familyContext,
+            childContext: childContext,
+            keyInsights: keyInsights,
             apiKey: apiKey,
             activeFramework: activeFramework
         )
@@ -207,7 +220,8 @@ class GuidanceGenerationService {
     /// Generate guidance using legacy direct API approach
     private func generateGuidanceViaDirectAPI(
         situation: String,
-        familyContext: String,
+        childContext: String?,
+        keyInsights: String?,
         apiKey: String,
         activeFramework: FrameworkRecommendation?
     ) async throws -> (GuidanceResponseProtocol, String) {
@@ -226,13 +240,16 @@ class GuidanceGenerationService {
                 // With Framework - Choose version based on style and structure mode
                 let version = guidanceStructureSettings.getPromptVersion(hasFramework: true)
                 
-                // Only include family_context for Fixed Structure mode
+                // Include psychologist notes if provided
                 var variables: [String: Any] = [
                     "current_situation": situation,
                     "active_foundation_tools": formatFrameworkForPrompt(framework)
                 ]
-                if guidanceStructureSettings.currentMode == .fixed {
-                    variables["family_context"] = familyContext
+                if let childContext = childContext, !childContext.isEmpty {
+                    variables["child_context"] = childContext
+                }
+                if let keyInsights = keyInsights, !keyInsights.isEmpty {
+                    variables["key_insights"] = keyInsights
                 }
                 
                 return (
@@ -244,12 +261,15 @@ class GuidanceGenerationService {
                 // Without Framework - Choose version based on style and structure mode
                 let version = guidanceStructureSettings.getPromptVersion(hasFramework: false)
                 
-                // Only include family_context for Fixed Structure mode
+                // Include psychologist notes if provided
                 var variables: [String: Any] = [
                     "current_situation": situation
                 ]
-                if guidanceStructureSettings.currentMode == .fixed {
-                    variables["family_context"] = familyContext
+                if let childContext = childContext, !childContext.isEmpty {
+                    variables["child_context"] = childContext
+                }
+                if let keyInsights = keyInsights, !keyInsights.isEmpty {
+                    variables["key_insights"] = keyInsights
                 }
                 
                 return (

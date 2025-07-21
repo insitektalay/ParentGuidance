@@ -117,7 +117,7 @@ serve(async (req) => {
 
 // Handle guidance generation (non-streaming for now)
 async function handleGuidanceOperation(apiKey: string, variables: any) {
-  const { current_situation, family_context, active_foundation_tools, structure_mode, guidance_style } = variables
+  const { current_situation, child_context, key_insights, active_foundation_tools, structure_mode, guidance_style } = variables
 
   // Determine which prompt template to use
   const hasFramework = !!active_foundation_tools
@@ -149,9 +149,12 @@ async function handleGuidanceOperation(apiKey: string, variables: any) {
       if (!promptTemplate) {
         throw new Error(`Unknown guidance configuration: ${configKey}`)
       }
-      // Only add family_context for Fixed mode
-      if (mode === "Fixed" && promptTemplate.variables.includes("family_context")) {
-        promptVariables.family_context = family_context || "none"
+      // Add psychologist notes variables if present
+      if (child_context && promptTemplate.variables.includes("child_context")) {
+        promptVariables.child_context = child_context
+      }
+      if (key_insights && promptTemplate.variables.includes("key_insights")) {
+        promptVariables.key_insights = key_insights
       }
     }
 

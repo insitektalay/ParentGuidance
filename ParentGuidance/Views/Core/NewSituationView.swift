@@ -83,10 +83,35 @@ struct NewSituationView: View {
             // Step 2.5: Check for active framework
             let activeFramework = try? await FrameworkStorageService.shared.getActiveFramework(familyId: familyId!)
             
+            // Step 2.6: Fetch psychologist notes if toggles are enabled
+            let settings = GuidanceStructureSettings.shared
+            var childContext: String? = nil
+            var keyInsights: String? = nil
+            
+            if settings.enableChildContext || settings.enableKeyInsights {
+                do {
+                    let notes = try await PsychologistNoteService.shared.fetchPsychologistNotes(familyId: familyId!)
+                    if let latestContextNote = notes.first(where: { $0.noteType == .context }) {
+                        if settings.enableChildContext {
+                            childContext = latestContextNote.content
+                        }
+                    }
+                    if let latestTraitsNote = notes.first(where: { $0.noteType == .traits }) {
+                        if settings.enableKeyInsights {
+                            keyInsights = latestTraitsNote.content
+                        }
+                    }
+                } catch {
+                    print("⚠️ Failed to fetch psychologist notes: \(error)")
+                    // Continue with empty notes - non-blocking
+                }
+            }
+            
             // Step 3: Generate guidance using GuidanceGenerationService
             let (guidance, rawContent) = try await GuidanceGenerationService.shared.generateGuidance(
                 situation: inputText,
-                familyContext: "none",
+                childContext: childContext,
+                keyInsights: keyInsights,
                 apiKey: apiKey,
                 activeFramework: activeFramework,
                 useStreaming: false // Start with non-streaming for compatibility

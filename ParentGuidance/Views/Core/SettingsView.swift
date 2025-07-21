@@ -14,177 +14,46 @@ struct SettingsView: View {
     @StateObject private var viewState = SettingsViewState()
     @ObservedObject private var guidanceStructureSettings = GuidanceStructureSettings.shared
     
-    // MARK: - Formatting Helpers
+    // Services
+    private let dataService = SettingsDataService.shared
+    private let accountService = SettingsAccountService.shared
+    private let formatterService = SettingsFormatterService.shared
+    private let utilityService = SettingsUtilityService.shared
+    
+    // MARK: - Formatting Helpers (delegated to service)
     
     private func formatChildAge(_ child: Child?) -> String {
-        guard let child = child, let age = child.age else {
-            return "Not set"
-        }
-        
-        // Handle edge cases
-        if age <= 0 {
-            return "Not set"
-        }
-        
-        // Format age consistently with onboarding pattern
-        if age == 1 {
-            return "1 year old"
-        } else {
-            return "\(age) years old"
-        }
+        formatterService.formatChildAge(child)
     }
     
     private func formatEmailText() -> String {
-        if viewState.isLoadingProfile {
-            return "Loading..."
-        }
-        return viewState.userProfile?.email ?? "Not available"
+        formatterService.formatEmailText(userProfile: viewState.userProfile, isLoading: viewState.isLoadingProfile)
     }
     
     private func formatPlanText() -> String {
-        if viewState.isLoadingProfile {
-            return "Loading..."
-        }
-        
-        guard let plan = viewState.userProfile?.selectedPlan else {
-            return "No plan selected"
-        }
-        
-        switch plan.lowercased() {
-        case "api":
-            return "Bring Your Own API"
-        case "basic":
-            return "Basic Plan"
-        case "premium":
-            return "Premium Plan"
-        case "family":
-            return "Family Plan"
-        default:
-            return plan.capitalized
-        }
+        formatterService.formatPlanText(userProfile: viewState.userProfile, isLoading: viewState.isLoadingProfile)
     }
     
     private func formatApiKeyStatus() -> String {
-        if viewState.isLoadingProfile {
-            return "Loading..."
-        }
-        
-        guard let profile = viewState.userProfile else {
-            return "Unknown"
-        }
-        
-        if let apiKey = profile.userApiKey, !apiKey.isEmpty {
-            return "Connected (\(profile.apiKeyProvider?.capitalized ?? "OpenAI"))"
-        } else if profile.selectedPlan == "api" {
-            return "Not configured"
-        } else {
-            return "Not required"
-        }
+        formatterService.formatApiKeyStatus(userProfile: viewState.userProfile, isLoading: viewState.isLoadingProfile)
     }
     
     private func formatLanguageText() -> String {
-        if viewState.isLoadingProfile {
-            return "Loading..."
-        }
-        
-        let languageCode = viewState.userProfile?.preferredLanguage ?? "en"
-        return LanguageDetectionService.shared.getLanguageName(for: languageCode)
+        formatterService.formatLanguageText(userProfile: viewState.userProfile, isLoading: viewState.isLoadingProfile)
     }
     
     private func shouldShowApiKeyManagement() -> Bool {
-        guard let profile = viewState.userProfile else { return false }
-        return profile.selectedPlan == "api"
+        utilityService.shouldShowApiKeyManagement(userProfile: viewState.userProfile)
     }
     
     // MARK: - Sign Out Handler
     
     private func handleSignOut() {
-        viewState.showingSignOutConfirmation = false
-        appCoordinator.signOut()
+        utilityService.handleSignOut(viewState: viewState, appCoordinator: appCoordinator)
     }
     
     // MARK: - Data Export Handler
     
-    // MARK: - Family Language Data Loading
-    
-    private func loadFamilyLanguageData() async {
-        guard let familyId = appCoordinator.currentFamilyId else {
-            print("❌ No family ID available for language data loading")
-            return
-        }
-        
-        await MainActor.run {
-            viewState.isLoadingFamilyLanguage = true
-        }
-        
-        do {
-            // Load family language configuration
-            let config = try await FamilyLanguageService.shared.getFamilyLanguageConfiguration(familyId: familyId)
-            
-            // Load current translation strategy
-            let strategy = try await FamilyLanguageService.shared.getTranslationStrategy(for: familyId)
-            
-            // Load usage metrics if available
-            let metrics = TranslationQueueManager.shared.getFamilyUsageMetrics(familyId: familyId)
-            
-            await MainActor.run {
-                self.viewState.familyLanguageConfig = config
-                self.viewState.currentTranslationStrategy = strategy
-                self.viewState.familyUsageMetrics = metrics.totalContentAccesses > 0 ? metrics : nil
-                self.viewState.isLoadingFamilyLanguage = false
-            }
-            
-            print("✅ Family language data loaded successfully")
-            
-        } catch {
-            await MainActor.run {
-                self.viewState.isLoadingFamilyLanguage = false
-            }
-            print("❌ Error loading family language data: \(error)")
-        }
-    }
-    
-    // MARK: - Feature Flag State Loading
-    
-    private func loadFeatureFlagStates() async {
-        await MainActor.run {
-            // Load current feature flag states from UserDefaults
-            self.viewState.translationUseEdgeFunction = TranslationService.isUsingEdgeFunction()
-            self.viewState.conversationUseEdgeFunction = ConversationService.isUsingEdgeFunction()
-            self.viewState.frameworkUseEdgeFunction = FrameworkGenerationService.isUsingEdgeFunction()
-            self.viewState.contextUseEdgeFunction = ContextualInsightService.isUsingEdgeFunction()
-            self.viewState.guidanceUseEdgeFunction = GuidanceGenerationService.isUsingEdgeFunction()
-            
-            print("🔧 Feature flag states loaded:")
-            print("   Translation: \(viewState.translationUseEdgeFunction ? "Edge Function" : "Direct API")")
-            print("   Conversation: \(viewState.conversationUseEdgeFunction ? "Edge Function" : "Direct API")")
-            print("   Framework: \(viewState.frameworkUseEdgeFunction ? "Edge Function" : "Direct API")")
-            print("   Context: \(viewState.contextUseEdgeFunction ? "Edge Function" : "Direct API")")
-            print("   Guidance: \(viewState.guidanceUseEdgeFunction ? "Edge Function" : "Direct API")")
-        }
-    }
-    
-    private func updateTranslationStrategy(_ strategy: TranslationGenerationStrategy) async {
-        guard let familyId = appCoordinator.currentFamilyId else {
-            print("❌ No family ID available for strategy update")
-            return
-        }
-        
-        do {
-            try await FamilyLanguageService.shared.setTranslationStrategy(strategy, for: familyId)
-            
-            await MainActor.run {
-                self.viewState.currentTranslationStrategy = strategy
-                self.viewState.showingStrategySelection = false
-            }
-            
-            print("✅ Translation strategy updated to: \(strategy.rawValue)")
-            
-        } catch {
-            print("❌ Error updating translation strategy: \(error)")
-        }
-    }
-
     private func handleDataExport() async {
         guard let userId = appCoordinator.currentUserId,
               let userEmail = viewState.userProfile?.email else {
@@ -192,146 +61,7 @@ struct SettingsView: View {
             return
         }
         
-        await MainActor.run {
-            viewState.isExportingData = true
-        }
-        
-        do {
-            // Collect all user data
-            let exportData = try await collectUserDataForExport(userId: userId)
-            
-            // Send data via email
-            try await sendDataExportEmail(data: exportData, email: userEmail)
-            
-            await MainActor.run {
-                viewState.isExportingData = false
-                viewState.exportSuccessMessage = "Your data export has been sent to \(userEmail)"
-                viewState.showingExportSuccess = true
-            }
-            
-            print("✅ Data export sent successfully to \(userEmail)")
-            
-        } catch {
-            await MainActor.run {
-                viewState.isExportingData = false
-                viewState.exportSuccessMessage = "Failed to export data: \(error.localizedDescription)"
-                viewState.showingExportSuccess = true
-            }
-            print("❌ Data export failed: \(error)")
-        }
-    }
-    
-    private func collectUserDataForExport(userId: String) async throws -> [String: Any] {
-        let supabase = SupabaseManager.shared.client
-        
-        // Collect user profile
-        let profile = try await AuthService.shared.loadUserProfile(userId: userId)
-        
-        // Collect children data
-        let children: [Child] = try await supabase
-            .from("children")
-            .select("*")
-            .eq("family_id", value: userId)
-            .execute()
-            .value
-        
-        // Collect situations
-        let situations: [Situation] = try await supabase
-            .from("situations")
-            .select("*")
-            .eq("user_id", value: userId)
-            .execute()
-            .value
-        
-        // Collect guidance
-        let guidance: [Guidance] = try await supabase
-            .from("guidance")
-            .select("*")
-            .eq("user_id", value: userId)
-            .execute()
-            .value
-        
-        // Collect frameworks
-        let frameworks: [FrameworkRecommendation] = try await FrameworkStorageService.shared.getFrameworkHistory(familyId: userId)
-        
-        // Create export structure
-        let exportData: [String: Any] = [
-            "export_info": [
-                "user_id": userId,
-                "export_date": ISO8601DateFormatter().string(from: Date()),
-                "app_version": "1.0.0"
-            ],
-            "profile": [
-                "email": profile.email ?? "",
-                "selected_plan": profile.selectedPlan ?? "",
-                "created_at": profile.createdAt,
-                "updated_at": profile.updatedAt
-            ],
-            "children": children.map { child in
-                [
-                    "id": child.id,
-                    "name": child.name ?? "",
-                    "age": child.age ?? 0,
-                    "pronouns": child.pronouns ?? "",
-                    "created_at": child.createdAt,
-                    "updated_at": child.updatedAt
-                ]
-            },
-            "situations": situations.map { situation in
-                [
-                    "id": situation.id,
-                    "title": situation.title,
-                    "description": situation.description,
-                    "situation_type": situation.situationType,
-                    "category": situation.category ?? "",
-                    "is_favorited": situation.isFavorited,
-                    "is_incident": situation.isIncident,
-                    "created_at": situation.createdAt,
-                    "updated_at": situation.updatedAt
-                ]
-            },
-            "guidance": guidance.map { guide in
-                [
-                    "id": guide.id,
-                    "situation_id": guide.situationId,
-                    "content": guide.content ?? "",
-                    "created_at": guide.createdAt,
-                    "updated_at": guide.updatedAt
-                ]
-            },
-            "frameworks": frameworks.map { framework in
-                [
-                    "id": framework.id,
-                    "framework_name": framework.frameworkName,
-                    "notification_text": framework.notificationText,
-                    "created_at": framework.createdAt
-                ]
-            }
-        ]
-        
-        return exportData
-    }
-    
-    private func sendDataExportEmail(data: [String: Any], email: String) async throws {
-        // Convert data to JSON
-        let jsonData = try JSONSerialization.data(withJSONObject: data, options: .prettyPrinted)
-        _ = String(data: jsonData, encoding: .utf8) ?? ""
-        
-        // For now, we'll simulate sending an email
-        // In a real implementation, you would integrate with an email service like:
-        // - Supabase Edge Functions
-        // - SendGrid, Mailgun, or similar email API
-        // - Backend email service
-        
-        print("📧 Simulating email send to: \(email)")
-        print("📧 Email would contain JSON export of \(data.keys.count) data categories")
-        
-        // Simulate network delay
-        try await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
-        
-        // For now, we'll just log success
-        // In production, this would make an actual API call to send the email
-        print("✅ Email simulation completed")
+        await dataService.handleDataExport(userId: userId, userEmail: userEmail, viewState: viewState)
     }
     
     // MARK: - Account Deletion Handler
@@ -342,139 +72,49 @@ struct SettingsView: View {
             return
         }
         
-        await MainActor.run {
-            viewState.isDeletingAccount = true
-        }
-        
-        do {
-            // Delete all user data from database
-            try await deleteAllUserData(userId: userId)
-            
-            await MainActor.run {
-                viewState.isDeletingAccount = false
-                viewState.showingDeleteConfirmation = false
-                viewState.deleteConfirmationStep = 0
-            }
-            
-            // Sign out the user after successful deletion
-            appCoordinator.signOut()
-            
-            print("✅ Account deletion completed successfully")
-            
-        } catch {
-            await MainActor.run {
-                viewState.isDeletingAccount = false
-                viewState.exportSuccessMessage = "Failed to delete account: \(error.localizedDescription)"
-                viewState.showingExportSuccess = true
-            }
-            print("❌ Account deletion failed: \(error)")
-        }
+        await dataService.handleAccountDeletion(userId: userId, viewState: viewState, appCoordinator: appCoordinator)
     }
     
-    private func deleteAllUserData(userId: String) async throws {
-        let supabase = SupabaseManager.shared.client
-        
-        print("🗑️ Starting complete account deletion for user: \(userId)")
-        
-        // Delete frameworks
-        do {
-            let frameworks = try await FrameworkStorageService.shared.getFrameworkHistory(familyId: userId)
-            for framework in frameworks {
-                try await FrameworkStorageService.shared.deleteFrameworkRecommendation(id: framework.id)
-            }
-            print("✅ Deleted \(frameworks.count) frameworks")
-        } catch {
-            print("⚠️ Error deleting frameworks: \(error)")
+    // MARK: - Family Language Data Loading
+    
+    private func loadFamilyLanguageData() async {
+        guard let familyId = appCoordinator.currentFamilyId else {
+            print("❌ No family ID available for language data loading")
+            return
         }
         
-        // Delete guidance
-        try await supabase
-            .from("guidance")
-            .delete()
-            .eq("user_id", value: userId)
-            .execute()
-        print("✅ Deleted guidance records")
-        
-        // Delete situations
-        try await supabase
-            .from("situations")
-            .delete()
-            .eq("user_id", value: userId)
-            .execute()
-        print("✅ Deleted situation records")
-        
-        // Delete children
-        try await supabase
-            .from("children")
-            .delete()
-            .eq("family_id", value: userId)
-            .execute()
-        print("✅ Deleted child records")
-        
-        // Delete user profile
-        try await supabase
-            .from("profiles")
-            .delete()
-            .eq("id", value: userId)
-            .execute()
-        print("✅ Deleted user profile")
-        
-        print("🗑️ Complete account deletion finished")
+        await accountService.loadFamilyLanguageData(familyId: familyId, viewState: viewState)
     }
     
-    // MARK: - Support Email Handler
+    // MARK: - Feature Flag State Loading
+    
+    private func loadFeatureFlagStates() async {
+        await accountService.loadFeatureFlagStates(viewState: viewState)
+    }
+    
+    private func updateTranslationStrategy(_ strategy: TranslationGenerationStrategy) async {
+        guard let familyId = appCoordinator.currentFamilyId else {
+            print("❌ No family ID available for strategy update")
+            return
+        }
+        
+        await accountService.updateTranslationStrategy(strategy, familyId: familyId, viewState: viewState)
+    }
+
+    // MARK: - Support Email Handler (delegated to service)
     
     private func openSupportEmail() {
-        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
-        let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
-        let iOSVersion = UIDevice.current.systemVersion
-        let deviceModel = UIDevice.current.model
-        let userId = appCoordinator.currentUserId ?? "Not signed in"
-        
-        let subject = "ParentGuidance Support Request"
-        let body = """
-        
-        
-        ---
-        Please describe your issue above this line.
-        
-        App Information (please keep for support):
-        • App Version: \(appVersion) (Build \(buildNumber))
-        • iOS Version: \(iOSVersion)
-        • Device: \(deviceModel)
-        • User ID: \(userId)
-        """
-        
-        let encodedSubject = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        let encodedBody = body.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        
-        let mailtoURL = "mailto:support@parentguidance.ai?subject=\(encodedSubject)&body=\(encodedBody)"
-        
-        if let url = URL(string: mailtoURL) {
-            if UIApplication.shared.canOpenURL(url) {
-                UIApplication.shared.open(url)
-                print("✅ Opened support email with context")
-            } else {
-                print("❌ Cannot open mail app")
-                // Fallback: show alert with email address
-                showSupportEmailFallback()
-            }
-        }
+        utilityService.openSupportEmail(appCoordinator: appCoordinator, viewState: viewState)
     }
     
-    private func showSupportEmailFallback() {
-        viewState.exportSuccessMessage = "Please email us at support@parentguidance.ai for assistance."
-        viewState.showingExportSuccess = true
-    }
-    
-    // MARK: - App Info Helpers
+    // MARK: - App Info Helpers (delegated to service)
     
     private func getAppVersion() -> String {
-        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
+        utilityService.getAppVersion()
     }
     
     private func getBuildNumber() -> String {
-        Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
+        utilityService.getBuildNumber()
     }
     
     private var debugInfoSection: some View {
@@ -519,7 +159,7 @@ struct SettingsView: View {
         }
     }
     
-    // MARK: - Account Data Loading
+    // MARK: - Account Data Loading (delegated to service)
     
     private func loadUserProfile() async {
         guard let userId = appCoordinator.currentUserId else {
@@ -527,74 +167,23 @@ struct SettingsView: View {
             return
         }
         
-        await MainActor.run {
-            viewState.isLoadingProfile = true
-        }
-        
-        do {
-            let profile = try await AuthService.shared.loadUserProfile(userId: userId)
-            await MainActor.run {
-                self.viewState.userProfile = profile
-                self.viewState.selectedLanguage = profile.preferredLanguage
-                self.viewState.isLoadingProfile = false
-            }
-            print("✅ Settings: User profile loaded successfully")
-        } catch {
-            print("❌ Settings: Failed to load user profile: \(error.localizedDescription)")
-            await MainActor.run {
-                self.viewState.isLoadingProfile = false
-            }
-        }
+        await accountService.loadUserProfile(userId: userId, viewState: viewState)
     }
     
-    // MARK: - Language Selection Handler
+    // MARK: - Language Selection Handler (delegated to service)
     
     private func handleLanguageUpdate(_ newLanguage: String) async {
-        guard let userId = appCoordinator.currentUserId,
-              newLanguage != viewState.userProfile?.preferredLanguage else {
+        guard let userId = appCoordinator.currentUserId else {
             return
         }
         
-        do {
-            // Update language preference in database
-            try await SupabaseManager.shared.client
-                .from("profiles")
-                .update(["preferred_language": newLanguage])
-                .eq("id", value: userId)
-                .execute()
-            
-            // Update local state
-            await MainActor.run {
-                viewState.selectedLanguage = newLanguage
-            }
-            
-            // Reload the user profile to get the updated data
-            await loadUserProfile()
-            
-            print("✅ Language preference updated to: \(newLanguage)")
-            
-        } catch {
-            print("❌ Failed to update language preference: \(error)")
-        }
+        await accountService.handleLanguageUpdate(newLanguage, userId: userId, viewState: viewState)
     }
     
-    // MARK: - Child Profile Save Handler
+    // MARK: - Child Profile Save Handler (delegated to service)
     
     private func handleChildSave(childId: String, name: String, age: Int?, pronouns: String?) async -> Bool {
-        do {
-            // Update child in database
-            try await AuthService.shared.updateChild(childId: childId, name: name, age: age, pronouns: pronouns)
-            
-            // Refresh children data in AppCoordinator
-            await appCoordinator.refreshChildren()
-            
-            print("✅ Child profile updated successfully")
-            return true
-            
-        } catch {
-            print("❌ Failed to save child profile: \(error.localizedDescription)")
-            return false
-        }
+        return await accountService.handleChildSave(childId: childId, name: name, age: age, pronouns: pronouns, appCoordinator: appCoordinator)
     }
     
     var body: some View {

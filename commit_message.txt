@@ -1,25 +1,7 @@
-refactor: complete SettingsView.swift modularization reducing file size by 78%\
-\
-Completes Phase 3 & 4 of comprehensive SettingsView refactoring, transforming a monolithic 2512-line file into a clean, modular architecture of \
-542 lines.\
-\
-Phase 3 extractions:\
-- Created 4 focused section views (GuidanceStructureSection, ChildProfileSection, AccountSection, HelpSupportSection)\
-- Extracted 6 reusable components (GuidanceModeCard, FrameworkCard, LanguageSelectionView, etc.)\
-- Modularized 3 confirmation dialog components for account management\
-\
-Phase 4 service architecture:\
-- SettingsDataService: Handles data export and account deletion operations\
-- SettingsAccountService: Manages profile loading, language updates, and child profiles\
-- SettingsFormatterService: Centralizes display text formatting logic\
-- SettingsUtilityService: Provides utility functions for email support and app info\
-\
-Key improvements:\
-- Enhanced maintainability through focused component responsibilities\
-- Improved testability with independently testable service classes\
-- Better code reusability across the application\
-- Reduced compilation overhead and improved development experience\
-- Proper dependency injection and loose coupling throughout\
-\
-All functionality preserved with clean build verification. Maintains existing localization patterns and follows established SwiftUI \
-conventions.
+feat: implement psychologist note backend infrastructure
+- Add PsychologistNote model with enum types and database mappings
+- Create PsychologistNoteService with EdgeFunction integration
+- Extend EdgeFunctionService with psychologist note generation operations
+- Add comprehensive data aggregation for contextual insights and bullet points
+- Include error handling and database operations following established patterns
+- Prepare database schema for psychologist_notes table with RLS policies

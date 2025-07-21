@@ -154,6 +154,27 @@ class EdgeFunctionService {
         )
     }
     
+    /// Generate psychologist note content (non-streaming)
+    func generatePsychologistNote(
+        noteType: PsychologistNoteType,
+        sourceData: String,
+        apiKey: String
+    ) async throws -> String {
+        print("🔄 [EdgeFunction] Generating psychologist note via Edge Function")
+        print("   → Operation: \(noteType.promptOperation)")
+        print("   → Source data length: \(sourceData.count) characters")
+        
+        let variableKey = noteType == .context ? 
+            "structured_context_data_over_time" : 
+            "bullet_point_pattern_data_over_time"
+        
+        return try await jsonRequest(
+            operation: noteType.promptOperation,
+            variables: [variableKey: sourceData],
+            apiKey: apiKey
+        )
+    }
+    
     // MARK: - Private Methods
     
     /// Make a streaming request to the edge function

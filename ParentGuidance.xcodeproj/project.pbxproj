@@ -83,6 +83,8 @@
 		944EA20F2E2E126B00C110AF /* SettingsAccountService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA20E2E2E126B00C110AF /* SettingsAccountService.swift */; };
 		944EA2112E2E127600C110AF /* SettingsFormatterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA2102E2E127600C110AF /* SettingsFormatterService.swift */; };
 		944EA2132E2E128100C110AF /* SettingsUtilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA2122E2E128100C110AF /* SettingsUtilityService.swift */; };
+		944EA2152E2E302D00C110AF /* PsychologistNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA2142E2E302D00C110AF /* PsychologistNote.swift */; };
+		944EA2172E2E303A00C110AF /* PsychologistNoteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA2162E2E303A00C110AF /* PsychologistNoteService.swift */; };
 		9481564C2E23CDC000C28273 /* ChildProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */; };
 		9481564E2E25334C00C28273 /* AudioPermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564D2E25334C00C28273 /* AudioPermissionManager.swift */; };
 		948156502E2533EE00C28273 /* VoiceRecorderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */; };
@@ -256,6 +258,8 @@
 		944EA20E2E2E126B00C110AF /* SettingsAccountService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAccountService.swift; sourceTree = "<group>"; };
 		944EA2102E2E127600C110AF /* SettingsFormatterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsFormatterService.swift; sourceTree = "<group>"; };
 		944EA2122E2E128100C110AF /* SettingsUtilityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsUtilityService.swift; sourceTree = "<group>"; };
+		944EA2142E2E302D00C110AF /* PsychologistNote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PsychologistNote.swift; sourceTree = "<group>"; };
+		944EA2162E2E303A00C110AF /* PsychologistNoteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PsychologistNoteService.swift; sourceTree = "<group>"; };
 		9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildProfileEditView.swift; sourceTree = "<group>"; };
 		9481564D2E25334C00C28273 /* AudioPermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPermissionManager.swift; sourceTree = "<group>"; };
 		9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorderError.swift; sourceTree = "<group>"; };
@@ -601,6 +605,7 @@
 				948156572E2762C700C28273 /* GuidanceStructureSettings.swift */,
 				9481565B2E29019600C28273 /* ContextualInsight.swift */,
 				948156672E2A02FC00C28273 /* ChildRegulationInsight.swift */,
+				944EA2142E2E302D00C110AF /* PsychologistNote.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -636,6 +641,7 @@
 				944EA20E2E2E126B00C110AF /* SettingsAccountService.swift */,
 				944EA2102E2E127600C110AF /* SettingsFormatterService.swift */,
 				944EA2122E2E128100C110AF /* SettingsUtilityService.swift */,
+				944EA2162E2E303A00C110AF /* PsychologistNoteService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -1013,6 +1019,7 @@
 				948605CB2E111D1D008D92DE /* TodayTimelineView.swift in Sources */,
 				944EA2032E2E04BD00C110AF /* LanguageOptionRow.swift in Sources */,
 				94FA11052E056CCA003EC1E9 /* PlanSelectionView.swift in Sources */,
+				944EA2152E2E302D00C110AF /* PsychologistNote.swift in Sources */,
 				943792A52E1BE9970089F512 /* FrameworkRecommendationView.swift in Sources */,
 				944EA1B42E2B6BBE00C110AF /* JoinFamilyView.swift in Sources */,
 				943DFD7F2E18265C004F8043 /* SearchStatesView.swift in Sources */,
@@ -1052,6 +1059,7 @@
 				94FA10FF2E056C7A003EC1E9 /* AuthenticationView.swift in Sources */,
 				948156602E29042F00C28273 /* ContextualKnowledgeBaseView.swift in Sources */,
 				94FA11212E05CBB8003EC1E9 /* SituationTypingView.swift in Sources */,
+				944EA2172E2E303A00C110AF /* PsychologistNoteService.swift in Sources */,
 				943DFD722E17CBE3004F8043 /* LibraryViewController.swift in Sources */,
 				944EA20F2E2E126B00C110AF /* SettingsAccountService.swift in Sources */,
 				943DFD832E182676004F8043 /* FilterButton.swift in Sources */,

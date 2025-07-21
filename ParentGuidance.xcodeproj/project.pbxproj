@@ -64,6 +64,7 @@
 		944EA1E92E2DE4A900C110AF /* SettingsFrameworkState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1E82E2DE4A900C110AF /* SettingsFrameworkState.swift */; };
 		944EA1EB2E2DE6A800C110AF /* SettingsViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1EA2E2DE6A800C110AF /* SettingsViewState.swift */; };
 		944EA1EE2E2DE91400C110AF /* FoundationToolsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1ED2E2DE91400C110AF /* FoundationToolsSection.swift */; };
+		944EA1F02E2DEBAC00C110AF /* FamilyLanguageSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1EF2E2DEBAC00C110AF /* FamilyLanguageSection.swift */; };
 		9481564C2E23CDC000C28273 /* ChildProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */; };
 		9481564E2E25334C00C28273 /* AudioPermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564D2E25334C00C28273 /* AudioPermissionManager.swift */; };
 		948156502E2533EE00C28273 /* VoiceRecorderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */; };
@@ -218,6 +219,7 @@
 		944EA1E82E2DE4A900C110AF /* SettingsFrameworkState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsFrameworkState.swift; sourceTree = "<group>"; };
 		944EA1EA2E2DE6A800C110AF /* SettingsViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewState.swift; sourceTree = "<group>"; };
 		944EA1ED2E2DE91400C110AF /* FoundationToolsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundationToolsSection.swift; sourceTree = "<group>"; };
+		944EA1EF2E2DEBAC00C110AF /* FamilyLanguageSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyLanguageSection.swift; sourceTree = "<group>"; };
 		9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildProfileEditView.swift; sourceTree = "<group>"; };
 		9481564D2E25334C00C28273 /* AudioPermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPermissionManager.swift; sourceTree = "<group>"; };
 		9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorderError.swift; sourceTree = "<group>"; };
@@ -411,6 +413,7 @@
 			isa = PBXGroup;
 			children = (
 				944EA1ED2E2DE91400C110AF /* FoundationToolsSection.swift */,
+				944EA1EF2E2DEBAC00C110AF /* FamilyLanguageSection.swift */,
 			);
 			path = Sections;
 			sourceTree = "<group>";
@@ -964,6 +967,7 @@
 				94FA112A2E05CBFD003EC1E9 /* ChildBadge.swift in Sources */,
 				943DFD8B2E1826AF004F8043 /* ConfirmationDialog.swift in Sources */,
 				943DFD8F2E1A856E004F8043 /* Child.swift in Sources */,
+				944EA1F02E2DEBAC00C110AF /* FamilyLanguageSection.swift in Sources */,
 				9481566E2E2A12B600C28273 /* RegulationCategoryView.swift in Sources */,
 				94FA11252E05CBD4003EC1E9 /* SituationFollowUpView.swift in Sources */,
 				94B3D79C2E16C45B000F1D65 /* TodayViewController.swift in Sources */,

@@ -1,10 +1,10 @@
-refactor: extract FoundationToolsSection to separate component
+refactor: extract FamilyLanguageSection to separate component
 
-- Create FoundationToolsSection.swift with framework state management UI
-- Extract foundationToolsSection computed property and 4 related view methods (~110 lines)
-- Move loadingFrameworkView, errorFrameworkView, frameworkListView, noFrameworksView
-- Pass dependencies via parameters for loose coupling
-- Update SettingsView to use new FoundationToolsSection component
-- Maintain all existing functionality and localization keys
-- Build verified successful with no compilation errors
-- Reduce SettingsView.swift by approximately 110 lines
+    - Create FamilyLanguageSection.swift with family language configuration UI
+    - Extract familyLanguageSection and 4 related view methods (~230 lines)
+    - Move familyLanguageOverviewCard, translationStrategyCard, usageAnalyticsCard, getStrategyDescription
+    - Pass viewState dependency for loose coupling
+    - Update SettingsView to use new FamilyLanguageSection component
+    - Maintain all existing functionality and localization keys
+    - Build verified successful with no compilation errors
+    - Reduce SettingsView.swift by approximately 230 lines

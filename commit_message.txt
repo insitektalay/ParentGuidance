@@ -1,8 +1,10 @@
-refactor: extract all @State variables to SettingsViewState service class
+refactor: extract FoundationToolsSection to separate component
 
-- Create SettingsViewState.swift with 20 @Published properties from SettingsView
-- Replace all individual @State declarations with single @StateObject reference
-- Update all state variable references to use viewState prefix
+- Create FoundationToolsSection.swift with framework state management UI
+- Extract foundationToolsSection computed property and 4 related view methods (~110 lines)
+- Move loadingFrameworkView, errorFrameworkView, frameworkListView, noFrameworksView
+- Pass dependencies via parameters for loose coupling
+- Update SettingsView to use new FoundationToolsSection component
 - Maintain all existing functionality and localization keys
-- Reduce SettingsView complexity by centralizing state management
 - Build verified successful with no compilation errors
+- Reduce SettingsView.swift by approximately 110 lines

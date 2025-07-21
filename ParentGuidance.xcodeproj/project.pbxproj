@@ -76,6 +76,9 @@
 		944EA2012E2E02B300C110AF /* LanguageSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA2002E2E02B300C110AF /* LanguageSelectionView.swift */; };
 		944EA2032E2E04BD00C110AF /* LanguageOptionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA2022E2E04BD00C110AF /* LanguageOptionRow.swift */; };
 		944EA2052E2E06B000C110AF /* PrivacyPolicyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA2042E2E06B000C110AF /* PrivacyPolicyView.swift */; };
+		944EA2072E2E0E6E00C110AF /* SignOutConfirmationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA2062E2E0E6E00C110AF /* SignOutConfirmationView.swift */; };
+		944EA2092E2E0EDB00C110AF /* DeleteAccountConfirmationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA2082E2E0EDB00C110AF /* DeleteAccountConfirmationView.swift */; };
+		944EA20B2E2E0FDE00C110AF /* DeleteConfirmationTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA20A2E2E0FDE00C110AF /* DeleteConfirmationTextField.swift */; };
 		9481564C2E23CDC000C28273 /* ChildProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */; };
 		9481564E2E25334C00C28273 /* AudioPermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564D2E25334C00C28273 /* AudioPermissionManager.swift */; };
 		948156502E2533EE00C28273 /* VoiceRecorderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */; };
@@ -242,6 +245,9 @@
 		944EA2002E2E02B300C110AF /* LanguageSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageSelectionView.swift; sourceTree = "<group>"; };
 		944EA2022E2E04BD00C110AF /* LanguageOptionRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageOptionRow.swift; sourceTree = "<group>"; };
 		944EA2042E2E06B000C110AF /* PrivacyPolicyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyPolicyView.swift; sourceTree = "<group>"; };
+		944EA2062E2E0E6E00C110AF /* SignOutConfirmationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignOutConfirmationView.swift; sourceTree = "<group>"; };
+		944EA2082E2E0EDB00C110AF /* DeleteAccountConfirmationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccountConfirmationView.swift; sourceTree = "<group>"; };
+		944EA20A2E2E0FDE00C110AF /* DeleteConfirmationTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteConfirmationTextField.swift; sourceTree = "<group>"; };
 		9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildProfileEditView.swift; sourceTree = "<group>"; };
 		9481564D2E25334C00C28273 /* AudioPermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPermissionManager.swift; sourceTree = "<group>"; };
 		9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorderError.swift; sourceTree = "<group>"; };
@@ -454,6 +460,9 @@
 				944EA2002E2E02B300C110AF /* LanguageSelectionView.swift */,
 				944EA2022E2E04BD00C110AF /* LanguageOptionRow.swift */,
 				944EA2042E2E06B000C110AF /* PrivacyPolicyView.swift */,
+				944EA2062E2E0E6E00C110AF /* SignOutConfirmationView.swift */,
+				944EA2082E2E0EDB00C110AF /* DeleteAccountConfirmationView.swift */,
+				944EA20A2E2E0FDE00C110AF /* DeleteConfirmationTextField.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -1036,6 +1045,7 @@
 				944EA1E92E2DE4A900C110AF /* SettingsFrameworkState.swift in Sources */,
 				948156542E253D4400C28273 /* VoiceRecorderDelegate.swift in Sources */,
 				943DFD742E180D40004F8043 /* SituationDetailView.swift in Sources */,
+				944EA20B2E2E0FDE00C110AF /* DeleteConfirmationTextField.swift in Sources */,
 				9481565A2E2773FC00C28273 /* DynamicGuidanceParser.swift in Sources */,
 				94FA11102E05C88A003EC1E9 /* TodayView.swift in Sources */,
 				94FA110B2E056D40003EC1E9 /* APIKeyView.swift in Sources */,
@@ -1055,11 +1065,13 @@
 				94FA11332E05CC40003EC1E9 /* RoutineCard.swift in Sources */,
 				944EA1B02E2B653D00C110AF /* FamilyInvitationService.swift in Sources */,
 				944EA1B62E2B70AC00C110AF /* TranslationQueueManager.swift in Sources */,
+				944EA2072E2E0E6E00C110AF /* SignOutConfirmationView.swift in Sources */,
 				948605CE2E115CB2008D92DE /* AlertView.swift in Sources */,
 				944EA2012E2E02B300C110AF /* LanguageSelectionView.swift in Sources */,
 				943DFDA22E1A86A4004F8043 /* OnboardingManager.swift in Sources */,
 				943DFD7D2E182650004F8043 /* CategoryFilterChips.swift in Sources */,
 				9481566C2E2A11E200C28273 /* RegulationInsightsView.swift in Sources */,
+				944EA2092E2E0EDB00C110AF /* DeleteAccountConfirmationView.swift in Sources */,
 				943792AB2E1C34520089F512 /* FrameworkGeneratingView.swift in Sources */,
 				944EA1E22E2CD35400C110AF /* EdgeFunctionService.swift in Sources */,
 				944EA1AC2E2B567A00C110AF /* LanguageDetectionService.swift in Sources */,

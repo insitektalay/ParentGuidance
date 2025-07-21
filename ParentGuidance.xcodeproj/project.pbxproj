@@ -67,6 +67,15 @@
 		944EA1F02E2DEBAC00C110AF /* FamilyLanguageSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1EF2E2DEBAC00C110AF /* FamilyLanguageSection.swift */; };
 		944EA1F22E2DEE1E00C110AF /* DeveloperSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1F12E2DEE1E00C110AF /* DeveloperSection.swift */; };
 		944EA1F32E2DEE1F00C110AF /* PrivacyDataSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1F22E2DEE1F00C110AF /* PrivacyDataSection.swift */; };
+		944EA1F42E2DF62C00C110AF /* GuidanceStructureSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1F32E2DF62C00C110AF /* GuidanceStructureSection.swift */; };
+		944EA1F62E2DF87900C110AF /* ChildProfileSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1F52E2DF87900C110AF /* ChildProfileSection.swift */; };
+		944EA1F82E2DF94600C110AF /* AccountSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1F72E2DF94600C110AF /* AccountSection.swift */; };
+		944EA1FA2E2DFD4E00C110AF /* HelpSupportSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1F92E2DFD4E00C110AF /* HelpSupportSection.swift */; };
+		944EA1FD2E2DFEDB00C110AF /* GuidanceModeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1FC2E2DFEDB00C110AF /* GuidanceModeCard.swift */; };
+		944EA1FF2E2E018B00C110AF /* FrameworkCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1FE2E2E018B00C110AF /* FrameworkCard.swift */; };
+		944EA2012E2E02B300C110AF /* LanguageSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA2002E2E02B300C110AF /* LanguageSelectionView.swift */; };
+		944EA2032E2E04BD00C110AF /* LanguageOptionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA2022E2E04BD00C110AF /* LanguageOptionRow.swift */; };
+		944EA2052E2E06B000C110AF /* PrivacyPolicyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA2042E2E06B000C110AF /* PrivacyPolicyView.swift */; };
 		9481564C2E23CDC000C28273 /* ChildProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */; };
 		9481564E2E25334C00C28273 /* AudioPermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564D2E25334C00C28273 /* AudioPermissionManager.swift */; };
 		948156502E2533EE00C28273 /* VoiceRecorderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */; };
@@ -224,6 +233,15 @@
 		944EA1EF2E2DEBAC00C110AF /* FamilyLanguageSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyLanguageSection.swift; sourceTree = "<group>"; };
 		944EA1F12E2DEE1E00C110AF /* DeveloperSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperSection.swift; sourceTree = "<group>"; };
 		944EA1F22E2DEE1F00C110AF /* PrivacyDataSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyDataSection.swift; sourceTree = "<group>"; };
+		944EA1F32E2DF62C00C110AF /* GuidanceStructureSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidanceStructureSection.swift; sourceTree = "<group>"; };
+		944EA1F52E2DF87900C110AF /* ChildProfileSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildProfileSection.swift; sourceTree = "<group>"; };
+		944EA1F72E2DF94600C110AF /* AccountSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSection.swift; sourceTree = "<group>"; };
+		944EA1F92E2DFD4E00C110AF /* HelpSupportSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpSupportSection.swift; sourceTree = "<group>"; };
+		944EA1FC2E2DFEDB00C110AF /* GuidanceModeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidanceModeCard.swift; sourceTree = "<group>"; };
+		944EA1FE2E2E018B00C110AF /* FrameworkCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameworkCard.swift; sourceTree = "<group>"; };
+		944EA2002E2E02B300C110AF /* LanguageSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageSelectionView.swift; sourceTree = "<group>"; };
+		944EA2022E2E04BD00C110AF /* LanguageOptionRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageOptionRow.swift; sourceTree = "<group>"; };
+		944EA2042E2E06B000C110AF /* PrivacyPolicyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyPolicyView.swift; sourceTree = "<group>"; };
 		9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildProfileEditView.swift; sourceTree = "<group>"; };
 		9481564D2E25334C00C28273 /* AudioPermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPermissionManager.swift; sourceTree = "<group>"; };
 		9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorderError.swift; sourceTree = "<group>"; };
@@ -420,8 +438,24 @@
 				944EA1EF2E2DEBAC00C110AF /* FamilyLanguageSection.swift */,
 				944EA1F12E2DEE1E00C110AF /* DeveloperSection.swift */,
 				944EA1F22E2DEE1F00C110AF /* PrivacyDataSection.swift */,
+				944EA1F32E2DF62C00C110AF /* GuidanceStructureSection.swift */,
+				944EA1F52E2DF87900C110AF /* ChildProfileSection.swift */,
+				944EA1F72E2DF94600C110AF /* AccountSection.swift */,
+				944EA1F92E2DFD4E00C110AF /* HelpSupportSection.swift */,
 			);
 			path = Sections;
+			sourceTree = "<group>";
+		};
+		944EA1FB2E2DFECF00C110AF /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				944EA1FC2E2DFEDB00C110AF /* GuidanceModeCard.swift */,
+				944EA1FE2E2E018B00C110AF /* FrameworkCard.swift */,
+				944EA2002E2E02B300C110AF /* LanguageSelectionView.swift */,
+				944EA2022E2E04BD00C110AF /* LanguageOptionRow.swift */,
+				944EA2042E2E06B000C110AF /* PrivacyPolicyView.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 		948605C92E111832008D92DE /* Components */ = {
@@ -677,6 +711,7 @@
 		94FA11192E05C8DC003EC1E9 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				944EA1FB2E2DFECF00C110AF /* Components */,
 				944EA1EC2E2DE90100C110AF /* Sections */,
 				9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */,
 				944EA1B92E2B822C00C110AF /* TranslationStrategySelectionView.swift */,
@@ -937,6 +972,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				94FA11142E05C8A7003EC1E9 /* LibraryView.swift in Sources */,
+				944EA1F82E2DF94600C110AF /* AccountSection.swift in Sources */,
 				9481566A2E2A108900C28273 /* NoticingWhatMattersCard.swift in Sources */,
 				943DFD872E182690004F8043 /* BulkActionBar.swift in Sources */,
 				943DFD792E182630004F8043 /* SearchFilterView.swift in Sources */,
@@ -944,6 +980,7 @@
 				94FA11092E056D30003EC1E9 /* PaymentView.swift in Sources */,
 				944EA1B82E2B77C400C110AF /* ContentDisplayService.swift in Sources */,
 				9481564E2E25334C00C28273 /* AudioPermissionManager.swift in Sources */,
+				944EA2052E2E06B000C110AF /* PrivacyPolicyView.swift in Sources */,
 				94FA10C42E056247003EC1E9 /* ParentGuidanceApp.swift in Sources */,
 				94FA11272E05CBDF003EC1E9 /* SituationOrganizingView.swift in Sources */,
 				94FA11302E05CC23003EC1E9 /* InputGuidanceFooter.swift in Sources */,
@@ -953,12 +990,14 @@
 				948156742E2A1E6800C28273 /* SearchSituationsView.swift in Sources */,
 				94FA110D2E05BA00003EC1E9 /* MainTabView.swift in Sources */,
 				948605CB2E111D1D008D92DE /* TodayTimelineView.swift in Sources */,
+				944EA2032E2E04BD00C110AF /* LanguageOptionRow.swift in Sources */,
 				94FA11052E056CCA003EC1E9 /* PlanSelectionView.swift in Sources */,
 				943792A52E1BE9970089F512 /* FrameworkRecommendationView.swift in Sources */,
 				944EA1B42E2B6BBE00C110AF /* JoinFamilyView.swift in Sources */,
 				943DFD7F2E18265C004F8043 /* SearchStatesView.swift in Sources */,
 				943DFD972E1A85B9004F8043 /* AppCoordinator.swift in Sources */,
 				94FA112E2E05CC15003EC1E9 /* SendButton.swift in Sources */,
+				944EA1FD2E2DFEDB00C110AF /* GuidanceModeCard.swift in Sources */,
 				943DFD982E1A85B9004F8043 /* OpenAIService.swift in Sources */,
 				943DFD8E2E1A856E004F8043 /* UserProfile.swift in Sources */,
 				943DFD912E1A858D004F8043 /* Situation.swift in Sources */,
@@ -967,6 +1006,7 @@
 				948156682E2A02FC00C28273 /* ChildRegulationInsight.swift in Sources */,
 				94FA11182E05C8C1003EC1E9 /* SettingsView.swift in Sources */,
 				943DFD772E1823A5004F8043 /* LibraryFilters.swift in Sources */,
+				944EA1F62E2DF87900C110AF /* ChildProfileSection.swift in Sources */,
 				94FA11072E056CFD003EC1E9 /* OnboardingCoordinator.swift in Sources */,
 				94FA11012E056C93003EC1E9 /* ChildBasicsView.swift in Sources */,
 				94FA11162E05C8B6003EC1E9 /* AlertsView.swift in Sources */,
@@ -992,6 +1032,7 @@
 				94FA11212E05CBB8003EC1E9 /* SituationTypingView.swift in Sources */,
 				943DFD722E17CBE3004F8043 /* LibraryViewController.swift in Sources */,
 				943DFD832E182676004F8043 /* FilterButton.swift in Sources */,
+				944EA1FF2E2E018B00C110AF /* FrameworkCard.swift in Sources */,
 				944EA1E92E2DE4A900C110AF /* SettingsFrameworkState.swift in Sources */,
 				948156542E253D4400C28273 /* VoiceRecorderDelegate.swift in Sources */,
 				943DFD742E180D40004F8043 /* SituationDetailView.swift in Sources */,
@@ -1004,6 +1045,7 @@
 				944EA1AE2E2B652D00C110AF /* TranslationService.swift in Sources */,
 				94FA111F2E05CBAA003EC1E9 /* SituationInputIdleView.swift in Sources */,
 				943792A32E1BE9850089F512 /* LibrarySelectionManager.swift in Sources */,
+				944EA1FA2E2DFD4E00C110AF /* HelpSupportSection.swift in Sources */,
 				944EA1BA2E2B822C00C110AF /* TranslationStrategySelectionView.swift in Sources */,
 				94FA11322E05CC30003EC1E9 /* ChildHeader.swift in Sources */,
 				944EA1EB2E2DE6A800C110AF /* SettingsViewState.swift in Sources */,
@@ -1014,6 +1056,7 @@
 				944EA1B02E2B653D00C110AF /* FamilyInvitationService.swift in Sources */,
 				944EA1B62E2B70AC00C110AF /* TranslationQueueManager.swift in Sources */,
 				948605CE2E115CB2008D92DE /* AlertView.swift in Sources */,
+				944EA2012E2E02B300C110AF /* LanguageSelectionView.swift in Sources */,
 				943DFDA22E1A86A4004F8043 /* OnboardingManager.swift in Sources */,
 				943DFD7D2E182650004F8043 /* CategoryFilterChips.swift in Sources */,
 				9481566C2E2A11E200C28273 /* RegulationInsightsView.swift in Sources */,
@@ -1037,6 +1080,7 @@
 				943792A72E1BE9A90089F512 /* FrameworkRecommendation.swift in Sources */,
 				948156502E2533EE00C28273 /* VoiceRecorderError.swift in Sources */,
 				948156642E2904D200C28273 /* ContextCategoryView.swift in Sources */,
+				944EA1F42E2DF62C00C110AF /* GuidanceStructureSection.swift in Sources */,
 				943792A02E1BE94A0089F512 /* FrameworkStorageService.swift in Sources */,
 				944EA1B22E2B6BB100C110AF /* FamilyChoiceView.swift in Sources */,
 				9481564C2E23CDC000C28273 /* ChildProfileEditView.swift in Sources */,

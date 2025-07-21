@@ -1,1 +1,5 @@
-cleaned up localization issue
+refactor(SettingsView): preserve DocumentationView structure in main file
+  - DocumentationView extraction attempted but kept in main file due to Xcode project requirements
+  - Maintains 97-line documentation FAQ structure with localized strings
+  - Build successful with all previous extractions working correctly
+  - Ready for Phase 3C confirmation dialog extractions

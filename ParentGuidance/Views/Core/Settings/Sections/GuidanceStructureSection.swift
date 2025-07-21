@@ -129,6 +129,79 @@ struct GuidanceStructureSection: View {
                     .padding(.horizontal, 4)
                 }
                 
+                // Psychologist's Notes integration
+                VStack(alignment: .leading, spacing: 12) {
+                    Text(String(localized: "settings.guidanceStructure.psychologistNotes"))
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                        .padding(.top, 8)
+                    
+                    VStack(spacing: 8) {
+                        // Child Context toggle
+                        HStack {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(String(localized: "settings.guidanceStructure.childContext.title"))
+                                    .font(.system(size: 14))
+                                    .foregroundColor(ColorPalette.white)
+                                
+                                Text(String(localized: "settings.guidanceStructure.childContext.description"))
+                                    .font(.system(size: 11))
+                                    .foregroundColor(ColorPalette.white.opacity(0.7))
+                                    .lineLimit(2)
+                            }
+                            
+                            Spacer()
+                            
+                            Button(action: {
+                                guidanceStructureSettings.toggleChildContext()
+                            }) {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(guidanceStructureSettings.enableChildContext ? ColorPalette.brightBlue : ColorPalette.white.opacity(0.3))
+                                    .frame(width: 44, height: 24)
+                                    .overlay(
+                                        Circle()
+                                            .fill(ColorPalette.white)
+                                            .frame(width: 20, height: 20)
+                                            .offset(x: guidanceStructureSettings.enableChildContext ? 10 : -10)
+                                    )
+                                    .animation(.easeInOut(duration: 0.2), value: guidanceStructureSettings.enableChildContext)
+                            }
+                        }
+                        
+                        // Key Insights toggle
+                        HStack {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(String(localized: "settings.guidanceStructure.keyInsights.title"))
+                                    .font(.system(size: 14))
+                                    .foregroundColor(ColorPalette.white)
+                                
+                                Text(String(localized: "settings.guidanceStructure.keyInsights.description"))
+                                    .font(.system(size: 11))
+                                    .foregroundColor(ColorPalette.white.opacity(0.7))
+                                    .lineLimit(2)
+                            }
+                            
+                            Spacer()
+                            
+                            Button(action: {
+                                guidanceStructureSettings.toggleKeyInsights()
+                            }) {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(guidanceStructureSettings.enableKeyInsights ? ColorPalette.brightBlue : ColorPalette.white.opacity(0.3))
+                                    .frame(width: 44, height: 24)
+                                    .overlay(
+                                        Circle()
+                                            .fill(ColorPalette.white)
+                                            .frame(width: 20, height: 20)
+                                            .offset(x: guidanceStructureSettings.enableKeyInsights ? 10 : -10)
+                                    )
+                                    .animation(.easeInOut(duration: 0.2), value: guidanceStructureSettings.enableKeyInsights)
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 4)
+                }
+                
                 // Mode benefits info
                 VStack(alignment: .leading, spacing: 8) {
                     Text(String(localized: "settings.guidanceStructure.benefits \(guidanceStructureSettings.currentMode.displayName)"))

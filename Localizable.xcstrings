@@ -4276,6 +4276,56 @@
         }
       }
     },
+    "settings.guidanceStructure.psychologistNotes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Psychologist's Notes"
+          }
+        }
+      }
+    },
+    "settings.guidanceStructure.childContext.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Include Child Context"
+          }
+        }
+      }
+    },
+    "settings.guidanceStructure.childContext.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add comprehensive family context from previous interactions to guidance responses"
+          }
+        }
+      }
+    },
+    "settings.guidanceStructure.keyInsights.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Include Key Insights"
+          }
+        }
+      }
+    },
+    "settings.guidanceStructure.keyInsights.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Include behavioral patterns and traits observations in guidance responses"
+          }
+        }
+      }
+    },
     "settings.helpSupport.appVersion" : {
       "localizations" : {
         "en" : {

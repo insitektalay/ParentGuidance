@@ -1,6 +1,8 @@
-feat: add child context and key insights toggles to GuidanceStructureSettings
-    - Added enableChildContext and enableKeyInsights @AppStorage properties with default false
-    - Added computed properties with proper objectWillChange notifications for SwiftUI reactivity
-    - Added toggleChildContext() and toggleKeyInsights() convenience methods for UI interaction
-    - Added hasEnabledPsychologistNotes computed property to check if either toggle is enabled
-    - Maintains backward compatibility and follows existing patterns in the settings cla
+feat: add psychologist notes toggles to guidance structure settings UI
+  - Added "Psychologist's Notes" section to GuidanceStructureSection with two independent toggles
+  - Added "Include Child Context" toggle for comprehensive family context integration
+  - Added "Include Key Insights" toggle for behavioral patterns and traits observations
+  - Added localized strings following semantic key format (settings.guidanceStructure.*)
+  - Both toggles work independently and persist via @AppStorage in GuidanceStructureSettings
+  - Follows existing UI patterns with proper toggle animations and spacing
+  - Build successful with all UI components properly integrated

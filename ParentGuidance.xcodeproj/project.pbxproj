@@ -65,6 +65,8 @@
 		944EA1EB2E2DE6A800C110AF /* SettingsViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1EA2E2DE6A800C110AF /* SettingsViewState.swift */; };
 		944EA1EE2E2DE91400C110AF /* FoundationToolsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1ED2E2DE91400C110AF /* FoundationToolsSection.swift */; };
 		944EA1F02E2DEBAC00C110AF /* FamilyLanguageSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1EF2E2DEBAC00C110AF /* FamilyLanguageSection.swift */; };
+		944EA1F22E2DEE1E00C110AF /* DeveloperSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1F12E2DEE1E00C110AF /* DeveloperSection.swift */; };
+		944EA1F32E2DEE1F00C110AF /* PrivacyDataSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1F22E2DEE1F00C110AF /* PrivacyDataSection.swift */; };
 		9481564C2E23CDC000C28273 /* ChildProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */; };
 		9481564E2E25334C00C28273 /* AudioPermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564D2E25334C00C28273 /* AudioPermissionManager.swift */; };
 		948156502E2533EE00C28273 /* VoiceRecorderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */; };
@@ -220,6 +222,8 @@
 		944EA1EA2E2DE6A800C110AF /* SettingsViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewState.swift; sourceTree = "<group>"; };
 		944EA1ED2E2DE91400C110AF /* FoundationToolsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundationToolsSection.swift; sourceTree = "<group>"; };
 		944EA1EF2E2DEBAC00C110AF /* FamilyLanguageSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyLanguageSection.swift; sourceTree = "<group>"; };
+		944EA1F12E2DEE1E00C110AF /* DeveloperSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperSection.swift; sourceTree = "<group>"; };
+		944EA1F22E2DEE1F00C110AF /* PrivacyDataSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyDataSection.swift; sourceTree = "<group>"; };
 		9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildProfileEditView.swift; sourceTree = "<group>"; };
 		9481564D2E25334C00C28273 /* AudioPermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPermissionManager.swift; sourceTree = "<group>"; };
 		9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorderError.swift; sourceTree = "<group>"; };
@@ -414,6 +418,8 @@
 			children = (
 				944EA1ED2E2DE91400C110AF /* FoundationToolsSection.swift */,
 				944EA1EF2E2DEBAC00C110AF /* FamilyLanguageSection.swift */,
+				944EA1F12E2DEE1E00C110AF /* DeveloperSection.swift */,
+				944EA1F22E2DEE1F00C110AF /* PrivacyDataSection.swift */,
 			);
 			path = Sections;
 			sourceTree = "<group>";
@@ -1026,6 +1032,8 @@
 				943792A92E1C2B610089F512 /* TabNavigationManager.swift in Sources */,
 				94FA113E2E05CCA0003EC1E9 /* FoundationToolCard.swift in Sources */,
 				943DFD852E182684004F8043 /* SearchHistoryView.swift in Sources */,
+				944EA1F22E2DEE1E00C110AF /* DeveloperSection.swift in Sources */,
+				944EA1F32E2DEE1F00C110AF /* PrivacyDataSection.swift in Sources */,
 				943792A72E1BE9A90089F512 /* FrameworkRecommendation.swift in Sources */,
 				948156502E2533EE00C28273 /* VoiceRecorderError.swift in Sources */,
 				948156642E2904D200C28273 /* ContextCategoryView.swift in Sources */,

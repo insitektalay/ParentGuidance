@@ -1,8 +1,7 @@
-feat: complete EdgeFunction migration with documentation and cleanup
-  - Clean up excessive debug logging from Edge Function for production readiness
-  - Update CLAUDE.md with comprehensive EdgeFunction migration documentation
-  - Document unified Edge Function architecture and feature flag system
-  - All 4 AI operations verified working via Supabase Edge Functions
-  - Maintain compatibility with existing response formats and data persistence
-  EdgeFunction migration fully complete: iOS app successfully transitioned from direct OpenAI API calls to Supabase Edge Function infrastructure
-  with preserved functionality.
+refactor: extract SettingsFrameworkState to separate service file
+
+- Move SettingsFrameworkState class from SettingsView.swift to Services/SettingsFrameworkState.swift
+- Reduce SettingsView.swift from 2512 lines by extracting 107-line state management class
+- Maintain all existing functionality and published properties
+- Improve separation of concerns and maintainability
+- No functional changes, pure code organization improvement

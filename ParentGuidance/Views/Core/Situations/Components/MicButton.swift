@@ -34,7 +34,7 @@ struct MicButton: View {
         }
         .buttonStyle(PlainButtonStyle()) // Remove any system button animations
         .animation(nil) // Disable all animations on the button
-        .accessibilityLabel(isRecording ? "Stop recording" : "Start recording")
-        .accessibilityHint("Double tap to toggle voice recording")
+        .accessibilityLabel(isRecording ? String(localized: "situation.voice.stop") : String(localized: "situation.voice.start"))
+        .accessibilityHint(String(localized: "situation.voice.toggle.hint"))
     }
 }

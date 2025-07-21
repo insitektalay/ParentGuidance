@@ -109,7 +109,7 @@ struct GuidanceCard: View {
                 Image(systemName: "arrow.left.arrow.right")
                     .font(.system(size: 12, weight: .medium))
                 
-                Text(isShowingOriginal ? "Translate" : "Original")
+                Text(isShowingOriginal ? String(localized: "common.button.translate") : String(localized: "guidance.translation.original"))
                     .font(.system(size: 11, weight: .medium))
             }
             .foregroundColor(ColorPalette.white.opacity(0.8))

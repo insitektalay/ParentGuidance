@@ -67,7 +67,7 @@ struct NoticingWhatMattersCard: View {
             // Action button
             HStack(spacing: 12) {
                 Button(action: onViewInsights) {
-                    Text("View Insights")
+                    Text(String(localized: "library.childsWorld.button"))
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(ColorPalette.white)
                         .padding(.horizontal, 16)

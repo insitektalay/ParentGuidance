@@ -140,7 +140,7 @@ struct GoogleIcon: View {
 
 struct FacebookIcon: View {
     var body: some View {
-        Text("f")
+        Text(String(localized: "common.letter.f"))
             .font(.system(size: 20, weight: .bold))
             .foregroundColor(.white)
     }

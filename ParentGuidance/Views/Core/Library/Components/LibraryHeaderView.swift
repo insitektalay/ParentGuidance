@@ -42,7 +42,7 @@ struct LibraryHeaderView: View {
             }
         }
         .accessibilityElement(children: .contain)
-        .accessibilityLabel("Library search and filters")
+        .accessibilityLabel(String(localized: "library.searchAndFilters"))
     }
 }
 

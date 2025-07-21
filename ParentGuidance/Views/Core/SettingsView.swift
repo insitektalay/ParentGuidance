@@ -7,114 +7,6 @@
 
 import SwiftUI
 
-// MARK: - Framework State Management
-
-class SettingsFrameworkState: ObservableObject {
-    @Published var frameworks: [FrameworkRecommendation] = []
-    @Published var activeFrameworkIds: Set<String> = []
-    @Published var isLoading: Bool = false
-    @Published var errorMessage: String?
-    @Published var showingRemovalConfirmation: Bool = false
-    @Published var frameworkToRemove: FrameworkRecommendation?
-    @Published var isRemoving: Bool = false
-    
-    private var familyId: String?
-    
-    @MainActor
-    func loadFrameworks(familyId: String?) async {
-        guard let familyId = familyId else {
-            print("❌ No family ID available for SettingsFrameworkState")
-            return
-        }
-        
-        self.familyId = familyId
-        isLoading = true
-        errorMessage = nil
-        
-        do {
-            // Load all frameworks for this family
-            frameworks = try await FrameworkStorageService.shared.getFrameworkHistory(familyId: familyId)
-            
-            // Load active framework to identify which ones are active
-            if let activeFramework = try await FrameworkStorageService.shared.getActiveFramework(familyId: familyId) {
-                activeFrameworkIds = [activeFramework.id]
-                print("✅ Settings: Loaded \(frameworks.count) frameworks, 1 active: \(activeFramework.frameworkName)")
-            } else {
-                activeFrameworkIds = []
-                print("✅ Settings: Loaded \(frameworks.count) frameworks, none active")
-            }
-        } catch {
-            print("❌ Settings: Failed to load frameworks: \(error)")
-            errorMessage = "Unable to load frameworks"
-        }
-        
-        isLoading = false
-    }
-    
-    @MainActor
-    func toggleFramework(frameworkId: String) async {
-        isLoading = true
-        errorMessage = nil
-        
-        do {
-            if activeFrameworkIds.contains(frameworkId) {
-                // Deactivate framework
-                try await FrameworkStorageService.shared.deactivateFramework(id: frameworkId)
-                activeFrameworkIds.remove(frameworkId)
-                print("✅ Settings: Framework deactivated: \(frameworkId)")
-            } else {
-                // Activate framework
-                try await FrameworkStorageService.shared.activateFramework(id: frameworkId)
-                activeFrameworkIds.insert(frameworkId)
-                print("✅ Settings: Framework activated: \(frameworkId)")
-            }
-        } catch {
-            print("❌ Settings: Failed to toggle framework: \(error)")
-            errorMessage = "Unable to update framework"
-        }
-        
-        isLoading = false
-    }
-    
-    @MainActor
-    func removeFramework(frameworkId: String) async {
-        isRemoving = true
-        errorMessage = nil
-        
-        do {
-            // Remove from database
-            try await FrameworkStorageService.shared.deleteFrameworkRecommendation(id: frameworkId)
-            
-            // Remove from local state
-            frameworks.removeAll { $0.id == frameworkId }
-            activeFrameworkIds.remove(frameworkId)
-            
-            print("✅ Settings: Framework removed successfully: \(frameworkId)")
-            
-            // Clear removal state
-            frameworkToRemove = nil
-            showingRemovalConfirmation = false
-            
-        } catch {
-            print("❌ Settings: Failed to remove framework: \(error)")
-            errorMessage = "Unable to remove framework"
-        }
-        
-        isRemoving = false
-    }
-    
-    @MainActor
-    func prepareForRemoval(framework: FrameworkRecommendation) {
-        frameworkToRemove = framework
-        showingRemovalConfirmation = true
-    }
-    
-    @MainActor
-    func cancelRemoval() {
-        frameworkToRemove = nil
-        showingRemovalConfirmation = false
-    }
-}
 
 struct SettingsView: View {
     @EnvironmentObject var appCoordinator: AppCoordinator
@@ -829,7 +721,7 @@ struct SettingsView: View {
                 }
             }
         }
-        .alert("Export Status", isPresented: $showingExportSuccess) {
+        .alert(String(localized: "settings.export.alert.title"), isPresented: $showingExportSuccess) {
             Button(String(localized: "common.ok")) {
                 showingExportSuccess = false
                 exportSuccessMessage = nil
@@ -1283,7 +1175,7 @@ struct SettingsView: View {
                                 .font(.system(size: 14))
                                 .foregroundColor(config.needsDualLanguage ? .green : ColorPalette.white.opacity(0.6))
                             
-                            Text(config.needsDualLanguage ? "Yes" : "No")
+                            Text(config.needsDualLanguage ? String(localized: "common.button.yes") : String(localized: "common.button.no"))
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(ColorPalette.white)
                         }
@@ -1429,13 +1321,13 @@ struct SettingsView: View {
 
     private var developerSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Developer Tools")
+            Text(String(localized: "developer.settings.title"))
                 .font(.system(size: 20, weight: .semibold))
                 .foregroundColor(ColorPalette.white)
                 .padding(.horizontal, 16)
             
             VStack(alignment: .leading, spacing: 16) {
-                Text("EdgeFunction Migration Testing")
+                Text(String(localized: "developer.settings.edgeFunctionTesting"))
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(ColorPalette.white)
                 
@@ -1501,7 +1393,7 @@ struct SettingsView: View {
                     Circle()
                         .fill(isEnabled ? Color.green : Color.red)
                         .frame(width: 10, height: 10)
-                    Text(isEnabled ? "Edge Function" : "Direct API")
+                    Text(isEnabled ? String(localized: "developer.settings.edgeFunction") : String(localized: "developer.settings.directApi"))
                         .font(.system(size: 12, weight: .medium))
                         .foregroundColor(ColorPalette.white.opacity(0.9))
                 }
@@ -1520,11 +1412,11 @@ struct SettingsView: View {
     
     private var featureFlagStatus: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Status")
+            Text(String(localized: "common.label.status"))
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(ColorPalette.white.opacity(0.9))
             
-            Text("Create a new situation to test the enabled services. Check console logs to verify which code path is used.")
+            Text(String(localized: "developer.testing.instructions"))
                 .font(.system(size: 12))
                 .foregroundColor(ColorPalette.white.opacity(0.7))
                 .lineLimit(nil)
@@ -1539,7 +1431,7 @@ struct SettingsView: View {
                 .padding(.horizontal, 16)
             
             VStack(alignment: .leading, spacing: 16) {
-                Button(isExportingData ? "Exporting..." : "Export My Data") {
+                Button(isExportingData ? String(localized: "settings.export.progress") : String(localized: "settings.export.button")) {
                     Task {
                         await handleDataExport()
                     }
@@ -1731,9 +1623,9 @@ struct SettingsView: View {
                     
                     // Confirmation dialog
                     ConfirmationDialog(
-                        title: "Sign Out",
-                        message: "Are you sure you want to sign out? You'll need to sign in again to access your account.",
-                        destructiveButtonTitle: "Sign Out",
+                        title: String(localized: "settings.account.signOut.title"),
+                        message: String(localized: "settings.account.signOut.message"),
+                        destructiveButtonTitle: String(localized: "settings.account.signOut"),
                         onDestruct: {
                             handleSignOut()
                         },
@@ -1799,9 +1691,9 @@ struct SettingsView: View {
                     
                     // Confirmation dialog
                     ConfirmationDialog(
-                        title: "Remove Framework",
-                        message: "Are you sure you want to permanently remove this framework? This action cannot be undone.",
-                        destructiveButtonTitle: frameworkState.isRemoving ? "Removing..." : "Remove",
+                        title: String(localized: "framework.remove.title"),
+                        message: String(localized: "framework.remove.message"),
+                        destructiveButtonTitle: frameworkState.isRemoving ? String(localized: "framework.remove.progress") : String(localized: "framework.action.remove"),
                         onDestruct: {
                             if let framework = frameworkState.frameworkToRemove {
                                 Task {
@@ -1903,7 +1795,7 @@ struct FrameworkCard: View {
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(ColorPalette.white)
                     
-                    Text(isActive ? "Active" : "Inactive")
+                    Text(isActive ? String(localized: "framework.status.active") : String(localized: "framework.status.inactive"))
                         .font(.system(size: 12, weight: .medium))
                         .foregroundColor(isActive ? ColorPalette.brightBlue : ColorPalette.white.opacity(0.6))
                 }
@@ -1933,7 +1825,7 @@ struct FrameworkCard: View {
             
             // Framework actions
             HStack(spacing: 12) {
-                Button("Framework Guide") {
+                Button(String(localized: "framework.action.guide")) {
                     // TODO: Navigate to framework guide
                 }
                 .font(.system(size: 14, weight: .medium))
@@ -1943,7 +1835,7 @@ struct FrameworkCard: View {
                 .background(ColorPalette.brightBlue)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
                 
-                Button("Remove") {
+                Button(String(localized: "framework.action.remove")) {
                     onRemove()
                 }
                 .font(.system(size: 14, weight: .medium))
@@ -2039,7 +1931,7 @@ struct DeleteAccountConfirmationDialog: View {
             .foregroundColor(ColorPalette.navy.opacity(0.7))
             
             HStack(spacing: 16) {
-                Button("Cancel") {
+                Button(String(localized: "common.button.cancel")) {
                     onCancel()
                 }
                 .font(.system(size: 16, weight: .medium))
@@ -2051,7 +1943,7 @@ struct DeleteAccountConfirmationDialog: View {
                         .stroke(ColorPalette.navy, lineWidth: 1)
                 )
                 
-                Button("Continue") {
+                Button(String(localized: "common.button.continue")) {
                     onNextStep()
                 }
                 .font(.system(size: 16, weight: .medium))
@@ -2082,7 +1974,7 @@ struct DeleteAccountConfirmationDialog: View {
                 .multilineTextAlignment(.center)
             
             HStack(spacing: 16) {
-                Button("Go Back") {
+                Button(String(localized: "common.button.back")) {
                     onCancel()
                 }
                 .font(.system(size: 16, weight: .medium))
@@ -2094,7 +1986,7 @@ struct DeleteAccountConfirmationDialog: View {
                         .stroke(ColorPalette.navy, lineWidth: 1)
                 )
                 
-                Button("I Understand") {
+                Button(String(localized: "common.button.understand")) {
                     onNextStep()
                 }
                 .font(.system(size: 16, weight: .medium))
@@ -2132,7 +2024,7 @@ struct DeleteAccountConfirmationDialog: View {
                 VStack(spacing: 16) {
                     DeleteConfirmationTextField(onConfirmed: onDelete)
                     
-                    Button("Cancel") {
+                    Button(String(localized: "common.button.cancel")) {
                         onCancel()
                     }
                     .font(.system(size: 16, weight: .medium))
@@ -2159,7 +2051,7 @@ struct DeleteConfirmationTextField: View {
     
     var body: some View {
         VStack(spacing: 12) {
-            TextField("Type DELETE", text: $confirmationText)
+            TextField(String(localized: "settings.account.delete.placeholder"), text: $confirmationText)
                 .font(.system(size: 16, design: .monospaced))
                 .foregroundColor(ColorPalette.navy)
                 .padding(.horizontal, 16)
@@ -2171,7 +2063,7 @@ struct DeleteConfirmationTextField: View {
                 .autocapitalization(.allCharacters)
                 .disableAutocorrection(true)
             
-            Button("DELETE ACCOUNT") {
+            Button(String(localized: "settings.account.delete.title")) {
                 onConfirmed()
             }
             .font(.system(size: 16, weight: .bold))
@@ -2201,32 +2093,32 @@ struct PrivacyPolicyView: View {
                         .padding(.top)
                     
                     privacySection(
-                        title: "Data We Collect",
+                        title: String(localized: "privacy.section.dataCollection"),
                         content: "ParentGuidance collects only the information necessary to provide our parenting guidance service, including your child's basic information, parenting situations you share, and AI-generated guidance responses."
                     )
                     
                     privacySection(
-                        title: "How We Use Your Data",
+                        title: String(localized: "privacy.section.dataUsage"),
                         content: "Your data is used exclusively to provide personalized parenting guidance through AI analysis. We do not sell, share, or use your information for advertising purposes."
                     )
                     
                     privacySection(
-                        title: "Data Storage & Security",
+                        title: String(localized: "privacy.section.dataSecurity"),
                         content: "All data is securely stored using industry-standard encryption. You maintain full control over your data and can export or delete it at any time through the Settings."
                     )
                     
                     privacySection(
-                        title: "Your Rights",
+                        title: String(localized: "privacy.section.yourRights"),
                         content: "You have the right to access, export, correct, or delete your personal data. Use the 'Export My Data' feature to download all your information or 'Delete Account' to permanently remove all data."
                     )
                     
                     privacySection(
-                        title: "AI Processing",
+                        title: String(localized: "privacy.section.aiProcessing"),
                         content: "Situations you share are processed by AI to generate guidance. If you provide your own OpenAI API key, your data is processed directly through OpenAI's services according to their privacy policy."
                     )
                     
                     privacySection(
-                        title: "Contact",
+                        title: String(localized: "privacy.section.contact"),
                         content: "For privacy-related questions or concerns, please contact us through the Support section in Settings."
                     )
                     
@@ -2243,7 +2135,7 @@ struct PrivacyPolicyView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    Button(String(localized: "common.button.done")) {
                         dismiss()
                     }
                     .foregroundColor(ColorPalette.white)
@@ -2283,7 +2175,7 @@ struct DocumentationView: View {
                         .padding(.top)
                     
                     faqSection(
-                        title: "Getting Started",
+                        title: String(localized: "documentation.section.gettingStarted"),
                         items: [
                             ("How do I add my child's information?", "Go to Settings > Child Profile and tap 'Edit Profile' to update your child's name and date of birth."),
                             ("How do I get parenting guidance?", "Tap the 'New' tab and describe a parenting situation. The AI will provide personalized guidance based on your input."),
@@ -2292,7 +2184,7 @@ struct DocumentationView: View {
                     )
                     
                     faqSection(
-                        title: "Using the App",
+                        title: String(localized: "documentation.section.usingApp"),
                         items: [
                             ("How do I save a situation for later?", "Tap the heart icon on any situation in your Library to mark it as a favorite for easy access."),
                             ("Can I export my data?", "Yes! Go to Settings > Privacy & Data > 'Export My Data' to receive all your information via email."),
@@ -2301,7 +2193,7 @@ struct DocumentationView: View {
                     )
                     
                     faqSection(
-                        title: "Account & API Keys",
+                        title: String(localized: "documentation.section.accountApi"),
                         items: [
                             ("What's the difference between plans?", "Subscription plans include AI processing, while 'Bring Your Own API' lets you use your personal OpenAI API key."),
                             ("How do I add my OpenAI API key?", "If you selected 'Bring Your Own API', go to Settings > Account > 'Manage API Key' to add your key."),
@@ -2310,7 +2202,7 @@ struct DocumentationView: View {
                     )
                     
                     faqSection(
-                        title: "Troubleshooting",
+                        title: String(localized: "documentation.section.troubleshooting"),
                         items: [
                             ("The app isn't responding correctly", "Try closing and reopening the app. If issues persist, contact support with your device and app version."),
                             ("I can't see my situations", "Check your internet connection. Your situations are synced to the cloud and require internet access."),
@@ -2326,7 +2218,7 @@ struct DocumentationView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    Button(String(localized: "common.button.done")) {
                         dismiss()
                     }
                     .foregroundColor(ColorPalette.white)

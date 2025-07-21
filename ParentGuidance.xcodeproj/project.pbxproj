@@ -61,6 +61,7 @@
 		944EA1E22E2CD35400C110AF /* EdgeFunctionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1E12E2CD35400C110AF /* EdgeFunctionService.swift */; };
 		944EA1E42E2CDCE100C110AF /* GuidanceGenerationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1E32E2CDCE100C110AF /* GuidanceGenerationService.swift */; };
 		944EA1E62E2CF75100C110AF /* promptTemplates.json in Resources */ = {isa = PBXBuildFile; fileRef = 944EA1E52E2CF75000C110AF /* promptTemplates.json */; };
+		944EA1E92E2DE4A900C110AF /* SettingsFrameworkState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA1E82E2DE4A900C110AF /* SettingsFrameworkState.swift */; };
 		9481564C2E23CDC000C28273 /* ChildProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */; };
 		9481564E2E25334C00C28273 /* AudioPermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564D2E25334C00C28273 /* AudioPermissionManager.swift */; };
 		948156502E2533EE00C28273 /* VoiceRecorderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */; };
@@ -212,6 +213,7 @@
 		944EA1E32E2CDCE100C110AF /* GuidanceGenerationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidanceGenerationService.swift; sourceTree = "<group>"; };
 		944EA1E52E2CF75000C110AF /* promptTemplates.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = promptTemplates.json; sourceTree = "<group>"; };
 		944EA1E72E2CF8DC00C110AF /* promptTemplates.ts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.typescript; path = promptTemplates.ts; sourceTree = "<group>"; };
+		944EA1E82E2DE4A900C110AF /* SettingsFrameworkState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsFrameworkState.swift; sourceTree = "<group>"; };
 		9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildProfileEditView.swift; sourceTree = "<group>"; };
 		9481564D2E25334C00C28273 /* AudioPermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPermissionManager.swift; sourceTree = "<group>"; };
 		9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorderError.swift; sourceTree = "<group>"; };
@@ -556,6 +558,7 @@
 				944EA1B72E2B77C400C110AF /* ContentDisplayService.swift */,
 				944EA1E12E2CD35400C110AF /* EdgeFunctionService.swift */,
 				944EA1E32E2CDCE100C110AF /* GuidanceGenerationService.swift */,
+				944EA1E82E2DE4A900C110AF /* SettingsFrameworkState.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -965,6 +968,7 @@
 				94FA11212E05CBB8003EC1E9 /* SituationTypingView.swift in Sources */,
 				943DFD722E17CBE3004F8043 /* LibraryViewController.swift in Sources */,
 				943DFD832E182676004F8043 /* FilterButton.swift in Sources */,
+				944EA1E92E2DE4A900C110AF /* SettingsFrameworkState.swift in Sources */,
 				948156542E253D4400C28273 /* VoiceRecorderDelegate.swift in Sources */,
 				943DFD742E180D40004F8043 /* SituationDetailView.swift in Sources */,
 				9481565A2E2773FC00C28273 /* DynamicGuidanceParser.swift in Sources */,

@@ -28,8 +28,8 @@ struct SearchFilterView: View {
             }
             .padding(.horizontal, 16)
         }
-        .accessibilityLabel("Date filters")
-        .accessibilityHint("Filter situations by date range")
+        .accessibilityLabel(String(localized: "library.filter.date.title"))
+        .accessibilityHint(String(localized: "library.filter.date.hint"))
     }
 }
 

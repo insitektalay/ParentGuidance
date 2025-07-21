@@ -14,7 +14,7 @@ struct SendButton: View {
                 .clipShape(Circle())
         }
         .disabled(!isEnabled)
-        .accessibilityLabel("Send message")
-        .accessibilityHint(isEnabled ? "Double tap to send your message" : "Enter text to enable sending")
+        .accessibilityLabel(String(localized: "situation.input.send"))
+        .accessibilityHint(isEnabled ? String(localized: "situation.input.send.hint") : String(localized: "situation.input.empty.hint"))
     }
 }

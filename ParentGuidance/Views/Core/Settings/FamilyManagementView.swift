@@ -400,7 +400,7 @@ struct FamilyManagementView: View {
                     
                     Spacer()
                     
-                    Text(metrics.isHighUsageFamily ? "High Usage" : "Low Usage")
+                    Text(metrics.isHighUsageFamily ? String(localized: "family.usage.high") : String(localized: "family.usage.low"))
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(metrics.isHighUsageFamily ? .green : ColorPalette.white)
                 }

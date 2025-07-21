@@ -32,7 +32,7 @@ struct NotificationCard: View {
                 // Card content
                 VStack(alignment: .leading, spacing: 16) {
                     // Title
-                    Text("You might find this helpful")
+                    Text(String(localized: "alerts.notification.title"))
                         .font(.system(size: 18, weight: .medium))
                         .foregroundColor(ColorPalette.navy)
                     
@@ -43,7 +43,7 @@ struct NotificationCard: View {
                         .lineSpacing(2)
                     
                     // Disclaimer
-                    Text("This isn't a diagnosis — just a way to understand what might be happening and try some ideas that have worked for other families.")
+                    Text(String(localized: "disclaimer.guidance.description"))
                         .font(.system(size: 14))
                         .foregroundColor(ColorPalette.navy.opacity(0.6))
                         .lineSpacing(2)
@@ -52,7 +52,7 @@ struct NotificationCard: View {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack(spacing: 8) {
                             Button(action: onYesTryThis) {
-                                Text("Yes, Try This")
+                                Text(String(localized: "alerts.notification.accept"))
                                     .font(.system(size: 14, weight: .medium))
                                     .foregroundColor(ColorPalette.white)
                                     .padding(.horizontal, 16)
@@ -62,7 +62,7 @@ struct NotificationCard: View {
                             }
                             
                             Button(action: onNotRightNow) {
-                                Text("Not Right Now")
+                                Text(String(localized: "alerts.notification.dismiss"))
                                     .font(.system(size: 14, weight: .medium))
                                     .foregroundColor(ColorPalette.terracotta)
                                     .padding(.horizontal, 16)
@@ -74,7 +74,7 @@ struct NotificationCard: View {
                         
                         HStack(spacing: 8) {
                             Button(action: onMaybeLater) {
-                                Text("Maybe Later")
+                                Text(String(localized: "alerts.notification.postpone"))
                                     .font(.system(size: 14, weight: .medium))
                                     .foregroundColor(ColorPalette.terracotta)
                                     .padding(.horizontal, 16)
@@ -84,7 +84,7 @@ struct NotificationCard: View {
                             }
                             
                             Button(action: onLearnMore) {
-                                Text("Learn More")
+                                Text(String(localized: "common.button.learnMore"))
                                     .font(.system(size: 14, weight: .medium))
                                     .foregroundColor(ColorPalette.terracotta)
                                     .padding(.horizontal, 16)

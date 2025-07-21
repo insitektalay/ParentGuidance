@@ -16,11 +16,11 @@ struct SituationFollowUpView: View {
             VStack(spacing: 16) {
                 // Situation summary box
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Your situation:")
+                    Text(String(localized: "situation.followup.label"))
                         .font(.system(size: 14))
                         .foregroundColor(ColorPalette.white.opacity(0.9))
                     
-                    Text("Alex had a meltdown when asked to put on shoes...")
+                    Text(String(localized: "situation.example.text"))
                         .font(.system(size: 16))
                         .foregroundColor(ColorPalette.white)
                 }
@@ -32,11 +32,11 @@ struct SituationFollowUpView: View {
                 
                 // Title and subtitle
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Help me understand better")
+                    Text(String(localized: "situation.followup.button"))
                         .font(.system(size: 20, weight: .semibold))
                         .foregroundColor(ColorPalette.white)
                     
-                    Text("What led up to this moment?")
+                    Text(String(localized: "situation.followup.context"))
                         .font(.system(size: 16))
                         .foregroundColor(ColorPalette.white.opacity(0.9))
                 }
@@ -103,7 +103,7 @@ struct SituationFollowUpView: View {
                     }
                     
                     Button(action: onContinueAnyway) {
-                        Text("Continue anyway")
+                        Text(String(localized: "button.continueAnyway"))
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(ColorPalette.white)
                             .frame(maxWidth: .infinity)

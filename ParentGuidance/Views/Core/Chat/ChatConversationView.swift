@@ -53,21 +53,25 @@ struct ChatConversationView: View {
                         }
                     }
                     .padding(.top, 16)
-                    .padding(.bottom, 8)
+                    .padding(.bottom, 120) // Add sufficient padding for input bar clearance
                 }
                 .onChange(of: messages.count) { _ in
-                    withAnimation(.easeOut(duration: 0.3)) {
-                        if let lastMessage = messages.last {
-                            scrollProxy.scrollTo(lastMessage.id, anchor: .bottom)
-                        } else if isLoading {
-                            scrollProxy.scrollTo("loading", anchor: .bottom)
+                    // Delay scroll slightly to ensure layout is complete
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        withAnimation(.easeOut(duration: 0.4)) {
+                            if let lastMessage = messages.last {
+                                scrollProxy.scrollTo(lastMessage.id, anchor: .top)
+                            }
                         }
                     }
                 }
-                .onChange(of: isLoading) { _ in
-                    withAnimation(.easeOut(duration: 0.3)) {
-                        if isLoading {
-                            scrollProxy.scrollTo("loading", anchor: .bottom)
+                .onChange(of: isLoading) { newIsLoading in
+                    if newIsLoading {
+                        // Delay scroll slightly to ensure loading indicator is rendered
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            withAnimation(.easeOut(duration: 0.4)) {
+                                scrollProxy.scrollTo("loading", anchor: .top)
+                            }
                         }
                     }
                 }
@@ -106,10 +110,6 @@ struct ChatConversationView: View {
         let trimmedText = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedText.isEmpty else { return }
         
-        // Add user message
-        let userMessage = ChatMessage(text: trimmedText, sender: .user)
-        messages.append(userMessage)
-        
         // Clear input
         let messageToSend = trimmedText
         inputText = ""
@@ -117,7 +117,7 @@ struct ChatConversationView: View {
         // Start loading (managed by parent)
         isLoading = true
         
-        // Send message - parent will handle loading state
+        // Send message - parent will handle adding user message and loading state
         Task {
             await onSendMessage(messageToSend)
         }

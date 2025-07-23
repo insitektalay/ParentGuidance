@@ -1,7 +1,6 @@
-fix: resolve persistent loading indicator in chat interface
-- Add @Binding var isLoading to ChatConversationView for parent-managed loading state
-- Add @State private var chatIsLoading to NewSituationView to control loading indicator
-- Set chatIsLoading = true when user sends message
-- Set chatIsLoading = false when AI response is received or error occurs
-- Remove local loading state management from ChatConversationView handleSend method
-- Ensures "Generating response..."\ indicator disappears when response is displayed
+fix: resolve duplicate user messages in chat interface
+  - Remove duplicate user message addition from ChatConversationView.handleSend()
+  - Keep only the user message addition in NewSituationView.handleChatMessage()
+  - Parent view now has sole responsibility for managing chat messages state
+  - Prevents user messages from appearing twice in the conversation
+  - Maintains proper separation of concerns with parent controlling state

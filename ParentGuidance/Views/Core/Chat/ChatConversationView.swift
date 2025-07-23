@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Combine
 
 struct ChatConversationView: View {
     @Binding var messages: [ChatMessage]
@@ -20,12 +19,10 @@ struct ChatConversationView: View {
     let apiKey: String
     let onSendMessage: (String) async -> Void
     
-    // Keyboard handling
-    @State private var keyboardHeight: CGFloat = 0
     
     var body: some View {
         VStack(spacing: 0) {
-            // Messages scroll view
+            // Messages scroll view - takes available space above input bar
             ScrollViewReader { scrollProxy in
                 ScrollView {
                     VStack(spacing: 0) {
@@ -53,7 +50,7 @@ struct ChatConversationView: View {
                         }
                     }
                     .padding(.top, 16)
-                    .padding(.bottom, 120) // Add sufficient padding for input bar clearance
+                    .padding(.bottom, 20) // Space before input bar
                 }
                 .onChange(of: messages.count) { _ in
                     // Delay scroll slightly to ensure layout is complete
@@ -77,24 +74,30 @@ struct ChatConversationView: View {
                 }
             }
             
-            // Input bar
-            ChatInputBar(
-                text: $inputText,
-                onSend: handleSend,
-                onMic: handleMic,
-                isRecording: voiceRecorderViewModel.isRecording,
-                isTranscribing: voiceRecorderViewModel.isTranscribing,
-                isSending: isLoading
-            )
-            .padding(.bottom, keyboardHeight > 0 ? 0 : 50) // Account for tab bar when keyboard is hidden
+            // Fixed input bar at bottom
+            VStack(spacing: 0) {
+                // Subtle gradient overlay
+                LinearGradient(
+                    colors: [ColorPalette.navy.opacity(0.0), ColorPalette.navy.opacity(1.0)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 10)
+                
+                // Input bar
+                ChatInputBar(
+                    text: $inputText,
+                    onSend: handleSend,
+                    onMic: handleMic,
+                    isRecording: voiceRecorderViewModel.isRecording,
+                    isTranscribing: voiceRecorderViewModel.isTranscribing,
+                    isSending: isLoading
+                )
+                .background(ColorPalette.navy)
+            }
         }
         .background(ColorPalette.navy)
-        .onAppear {
-            setupKeyboardObservers()
-        }
-        .onDisappear {
-            removeKeyboardObservers()
-        }
+        .ignoresSafeArea(.keyboard, edges: .bottom)
         .alert(String(localized: "situation.input.recordingError"), isPresented: $voiceRecorderViewModel.showError) {
             Button(String(localized: "common.ok")) {
                 voiceRecorderViewModel.clearError()
@@ -103,6 +106,8 @@ struct ChatConversationView: View {
             Text(voiceRecorderViewModel.errorMessage ?? String(localized: "common.error.generic"))
         }
     }
+    
+    // MARK: - Layout Calculations - Simplified with proper keyboard handling
     
     // MARK: - Actions
     
@@ -157,34 +162,5 @@ struct ChatConversationView: View {
     // Note: Messages are now managed by parent view via @Binding
     // Parent view should directly append to the messages array
     
-    // MARK: - Keyboard Handling
-    
-    private func setupKeyboardObservers() {
-        NotificationCenter.default.addObserver(
-            forName: UIResponder.keyboardWillShowNotification,
-            object: nil,
-            queue: .main
-        ) { notification in
-            if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
-                withAnimation(.easeOut(duration: 0.25)) {
-                    keyboardHeight = keyboardFrame.height
-                }
-            }
-        }
-        
-        NotificationCenter.default.addObserver(
-            forName: UIResponder.keyboardWillHideNotification,
-            object: nil,
-            queue: .main
-        ) { _ in
-            withAnimation(.easeOut(duration: 0.25)) {
-                keyboardHeight = 0
-            }
-        }
-    }
-    
-    private func removeKeyboardObservers() {
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
 }
+

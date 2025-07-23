@@ -88,6 +88,10 @@
 		944EA2192E2E324700C110AF /* PsychologistNoteCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA2182E2E324700C110AF /* PsychologistNoteCard.swift */; };
 		944EA21B2E2E325800C110AF /* PsychologistNoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA21A2E2E325800C110AF /* PsychologistNoteView.swift */; };
 		944EA21D2E2E326700C110AF /* PsychologistNoteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA21C2E2E326700C110AF /* PsychologistNoteDetailView.swift */; };
+		944EA21F2E30ACA700C110AF /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA21E2E30ACA700C110AF /* ChatMessage.swift */; };
+		944EA2222E30ACEA00C110AF /* ChatInputBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA2212E30ACEA00C110AF /* ChatInputBar.swift */; };
+		944EA2242E30ACFA00C110AF /* ChatMessageBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA2232E30ACFA00C110AF /* ChatMessageBubble.swift */; };
+		944EA2262E30AD1300C110AF /* ChatConversationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA2252E30AD1300C110AF /* ChatConversationView.swift */; };
 		9481564C2E23CDC000C28273 /* ChildProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */; };
 		9481564E2E25334C00C28273 /* AudioPermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564D2E25334C00C28273 /* AudioPermissionManager.swift */; };
 		948156502E2533EE00C28273 /* VoiceRecorderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */; };
@@ -266,6 +270,10 @@
 		944EA2182E2E324700C110AF /* PsychologistNoteCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PsychologistNoteCard.swift; sourceTree = "<group>"; };
 		944EA21A2E2E325800C110AF /* PsychologistNoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PsychologistNoteView.swift; sourceTree = "<group>"; };
 		944EA21C2E2E326700C110AF /* PsychologistNoteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PsychologistNoteDetailView.swift; sourceTree = "<group>"; };
+		944EA21E2E30ACA700C110AF /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
+		944EA2212E30ACEA00C110AF /* ChatInputBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatInputBar.swift; sourceTree = "<group>"; };
+		944EA2232E30ACFA00C110AF /* ChatMessageBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageBubble.swift; sourceTree = "<group>"; };
+		944EA2252E30AD1300C110AF /* ChatConversationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatConversationView.swift; sourceTree = "<group>"; };
 		9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildProfileEditView.swift; sourceTree = "<group>"; };
 		9481564D2E25334C00C28273 /* AudioPermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPermissionManager.swift; sourceTree = "<group>"; };
 		9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorderError.swift; sourceTree = "<group>"; };
@@ -485,6 +493,24 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
+		944EA2202E30ACDD00C110AF /* Chat */ = {
+			isa = PBXGroup;
+			children = (
+				944EA2272E30AD1700C110AF /* Components */,
+				944EA2252E30AD1300C110AF /* ChatConversationView.swift */,
+			);
+			path = Chat;
+			sourceTree = "<group>";
+		};
+		944EA2272E30AD1700C110AF /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				944EA2212E30ACEA00C110AF /* ChatInputBar.swift */,
+				944EA2232E30ACFA00C110AF /* ChatMessageBubble.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		948605C92E111832008D92DE /* Components */ = {
 			isa = PBXGroup;
 			children = (
@@ -612,6 +638,7 @@
 				9481565B2E29019600C28273 /* ContextualInsight.swift */,
 				948156672E2A02FC00C28273 /* ChildRegulationInsight.swift */,
 				944EA2142E2E302D00C110AF /* PsychologistNote.swift */,
+				944EA21E2E30ACA700C110AF /* ChatMessage.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -677,6 +704,7 @@
 		94FA10F42E056465003EC1E9 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				944EA2202E30ACDD00C110AF /* Chat */,
 				949600D32E20F2B1008EC0C0 /* AppCoordinatorView.swift */,
 				94FA111D2E05C904003EC1E9 /* Today */,
 				94FA111C2E05C8FC003EC1E9 /* Alerts */,
@@ -1026,6 +1054,7 @@
 				94FA10FD2E056C6C003EC1E9 /* WelcomeView.swift in Sources */,
 				948156742E2A1E6800C28273 /* SearchSituationsView.swift in Sources */,
 				94FA110D2E05BA00003EC1E9 /* MainTabView.swift in Sources */,
+				944EA2262E30AD1300C110AF /* ChatConversationView.swift in Sources */,
 				948605CB2E111D1D008D92DE /* TodayTimelineView.swift in Sources */,
 				944EA2032E2E04BD00C110AF /* LanguageOptionRow.swift in Sources */,
 				94FA11052E056CCA003EC1E9 /* PlanSelectionView.swift in Sources */,
@@ -1065,6 +1094,7 @@
 				948605D52E133250008D92DE /* AuthService.swift in Sources */,
 				944EA20D2E2E125F00C110AF /* SettingsDataService.swift in Sources */,
 				9481565E2E29023B00C28273 /* ContextualInsightService.swift in Sources */,
+				944EA2222E30ACEA00C110AF /* ChatInputBar.swift in Sources */,
 				944EA1BC2E2B865900C110AF /* FamilyManagementView.swift in Sources */,
 				94FA10FF2E056C7A003EC1E9 /* AuthenticationView.swift in Sources */,
 				948156602E29042F00C28273 /* ContextualKnowledgeBaseView.swift in Sources */,
@@ -1112,12 +1142,14 @@
 				944EA1EE2E2DE91400C110AF /* FoundationToolsSection.swift in Sources */,
 				944EA2112E2E127600C110AF /* SettingsFormatterService.swift in Sources */,
 				943DFD7B2E182640004F8043 /* SortDropdown.swift in Sources */,
+				944EA2242E30ACFA00C110AF /* ChatMessageBubble.swift in Sources */,
 				943DFD932E1A85A2004F8043 /* Guidance.swift in Sources */,
 				94FA11362E05CC60003EC1E9 /* SituationGuidanceView.swift in Sources */,
 				94FA113A2E05CC80003EC1E9 /* NotificationCard.swift in Sources */,
 				94FA113C2E05CC90003EC1E9 /* SearchBar.swift in Sources */,
 				948156702E2A12C700C28273 /* RegulationInsightCard.swift in Sources */,
 				94CBD5152E20F80C0014C22A /* FakeFile.swift in Sources */,
+				944EA21F2E30ACA700C110AF /* ChatMessage.swift in Sources */,
 				943792A92E1C2B610089F512 /* TabNavigationManager.swift in Sources */,
 				94FA113E2E05CCA0003EC1E9 /* FoundationToolCard.swift in Sources */,
 				944EA21B2E2E325800C110AF /* PsychologistNoteView.swift in Sources */,

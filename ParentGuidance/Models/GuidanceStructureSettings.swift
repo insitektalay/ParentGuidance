@@ -83,6 +83,7 @@ class GuidanceStructureSettings: ObservableObject {
     @AppStorage("guidanceStyle") private var storedStyle: String = GuidanceStyle.warmPractical.rawValue
     @AppStorage("enableChildContext") private var storedChildContext: Bool = false
     @AppStorage("enableKeyInsights") private var storedKeyInsights: Bool = false
+    @AppStorage("useChatStyleInterface") private var storedChatStyle: Bool = false
     
     private init() {
         // Private initializer to enforce singleton pattern
@@ -128,6 +129,16 @@ class GuidanceStructureSettings: ObservableObject {
         }
     }
     
+    var useChatStyleInterface: Bool {
+        get {
+            return storedChatStyle
+        }
+        set {
+            storedChatStyle = newValue
+            objectWillChange.send()
+        }
+    }
+    
     var isUsingDynamicStructure: Bool {
         return currentMode == .dynamic
     }
@@ -150,6 +161,10 @@ class GuidanceStructureSettings: ObservableObject {
     
     func toggleKeyInsights() {
         enableKeyInsights.toggle()
+    }
+    
+    func toggleChatStyle() {
+        useChatStyleInterface.toggle()
     }
     
     // MARK: - Version Mapping

@@ -1,1 +1,11 @@
-BEFORE NEW CHAT UI FEATURE
+feat: implement chat-style interface toggle for New Situations tab
+- Add ChatMessage model with user/ai sender types
+- Create ChatInputBar component with growing text input, mic, and send buttons
+- Create ChatMessageBubble component with user bubbles and full-width AI responses
+- Create ChatConversationView with auto-scrolling and keyboard handling
+- Add useChatStyleInterface toggle to GuidanceStructureSettings with @AppStorage
+- Update Settings UI with new "Use Chat-style Input & Display" toggle
+- Integrate chat mode into NewSituationView with conditional rendering
+- Add comprehensive localization strings for chat interface
+- Maintain existing backend behavior and Library storage system
+- All high-priority core functionality implemented and tested

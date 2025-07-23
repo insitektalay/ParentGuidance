@@ -129,6 +129,45 @@ struct GuidanceStructureSection: View {
                     .padding(.horizontal, 4)
                 }
                 
+                // Chat Style Interface toggle
+                VStack(alignment: .leading, spacing: 12) {
+                    Text(String(localized: "settings.guidanceStructure.chatStyle.section"))
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                        .padding(.top, 8)
+                    
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(String(localized: "settings.guidanceStructure.chatStyle.title"))
+                                .font(.system(size: 14))
+                                .foregroundColor(ColorPalette.white)
+                            
+                            Text(String(localized: "settings.guidanceStructure.chatStyle.description"))
+                                .font(.system(size: 11))
+                                .foregroundColor(ColorPalette.white.opacity(0.7))
+                                .lineLimit(2)
+                        }
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            guidanceStructureSettings.toggleChatStyle()
+                        }) {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(guidanceStructureSettings.useChatStyleInterface ? ColorPalette.brightBlue : ColorPalette.white.opacity(0.3))
+                                .frame(width: 44, height: 24)
+                                .overlay(
+                                    Circle()
+                                        .fill(ColorPalette.white)
+                                        .frame(width: 20, height: 20)
+                                        .offset(x: guidanceStructureSettings.useChatStyleInterface ? 10 : -10)
+                                )
+                                .animation(.easeInOut(duration: 0.2), value: guidanceStructureSettings.useChatStyleInterface)
+                        }
+                    }
+                    .padding(.horizontal, 4)
+                }
+                
                 // Psychologist's Notes integration
                 VStack(alignment: .leading, spacing: 12) {
                     Text(String(localized: "settings.guidanceStructure.psychologistNotes"))

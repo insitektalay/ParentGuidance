@@ -28,26 +28,46 @@ struct NewSituationView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var appCoordinator: AppCoordinator
     
+    // Chat mode state
+    @State private var chatConversationView: ChatConversationView?
+    
     var body: some View {
         NavigationStack {
             Group {
-                if isLoading {
-                    SituationOrganizingView()
-                } else if let guidance = guidanceResponse {
-                    SituationGuidanceViewWithData(guidance: guidance)
-                } else {
-                    SituationInputIdleView(
-                        childName: "Alex",
-                        apiKey: userApiKey,
-                        onStartRecording: {
-                            // Recording is now handled internally by SituationInputIdleView
-                        },
-                        onSendMessage: { inputText in
-                            Task {
-                                await handleSendMessage(inputText)
+                if guidanceStructureSettings.useChatStyleInterface {
+                    // Chat-style interface
+                    if chatConversationView == nil {
+                        Color.clear
+                            .onAppear {
+                                chatConversationView = ChatConversationView(
+                                    childName: "Alex",
+                                    apiKey: userApiKey,
+                                    onSendMessage: handleChatMessage
+                                )
                             }
-                        }
-                    )
+                    } else {
+                        chatConversationView
+                    }
+                } else {
+                    // Original card-based interface
+                    if isLoading {
+                        SituationOrganizingView()
+                    } else if let guidance = guidanceResponse {
+                        SituationGuidanceViewWithData(guidance: guidance)
+                    } else {
+                        SituationInputIdleView(
+                            childName: "Alex",
+                            apiKey: userApiKey,
+                            onStartRecording: {
+                                // Recording is now handled internally by SituationInputIdleView
+                            },
+                            onSendMessage: { inputText in
+                                Task {
+                                    await handleSendMessage(inputText)
+                                }
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -55,6 +75,155 @@ struct NewSituationView: View {
         .onAppear {
             Task {
                 await loadUserApiKey()
+            }
+        }
+    }
+    
+    private func handleChatMessage(_ inputText: String) async {
+        // This is the chat mode handler - it processes the message but updates the chat UI
+        do {
+            // Step 1: Get user's family_id first
+            guard let userId = appCoordinator.currentUserId else {
+                print("❌ No current user ID available")
+                return
+            }
+            let userProfile = try await AuthService.shared.loadUserProfile(userId: userId)
+            
+            // If no family_id, create a family for this user
+            var familyId = userProfile.familyId
+            if familyId == nil {
+                familyId = try await ConversationService.shared.createFamilyForUser(userId: userId)
+            }
+            
+            // Step 2: Get user's API key
+            let apiKey = try await getUserApiKey(userId: userId)
+            
+            // Step 2.5: Check for active framework
+            let activeFramework = try? await FrameworkStorageService.shared.getActiveFramework(familyId: familyId!)
+            
+            // Step 2.6: Fetch psychologist notes if toggles are enabled
+            let settings = GuidanceStructureSettings.shared
+            var childContext: String? = nil
+            var keyInsights: String? = nil
+            
+            if settings.enableChildContext || settings.enableKeyInsights {
+                do {
+                    let notes = try await PsychologistNoteService.shared.fetchPsychologistNotes(familyId: familyId!)
+                    if let latestContextNote = notes.first(where: { $0.noteType == .context }) {
+                        if settings.enableChildContext {
+                            childContext = latestContextNote.content
+                        }
+                    }
+                    if let latestTraitsNote = notes.first(where: { $0.noteType == .traits }) {
+                        if settings.enableKeyInsights {
+                            keyInsights = latestTraitsNote.content
+                        }
+                    }
+                } catch {
+                    print("⚠️ Failed to fetch psychologist notes: \(error)")
+                    // Continue with empty notes - non-blocking
+                }
+            }
+            
+            // Step 3: Generate guidance using GuidanceGenerationService
+            let (guidance, rawContent) = try await GuidanceGenerationService.shared.generateGuidance(
+                situation: inputText,
+                childContext: childContext,
+                keyInsights: keyInsights,
+                apiKey: apiKey,
+                activeFramework: activeFramework,
+                useStreaming: false // Start with non-streaming for compatibility
+            )
+            
+            // Step 4: Analyze situation for category and incident classification
+            let (category, isIncident) = try await ConversationService.shared.analyzeSituation(
+                situationText: inputText,
+                apiKey: apiKey,
+                activeFramework: activeFramework
+            )
+            
+            // Step 5: Save the situation to database with AI-generated title and analysis
+            let situationId = try await ConversationService.shared.saveSituation(
+                familyId: familyId,
+                childId: nil, // TODO: Get from current child context if needed
+                title: guidance.title,
+                description: inputText,
+                category: category,
+                isIncident: isIncident
+            )
+            
+            // Step 6: Save the guidance response linked to the situation using raw content
+            do {
+                let guidanceId = try await ConversationService.shared.saveGuidance(
+                    situationId: situationId,
+                    content: rawContent, // Use raw bracket-delimited content
+                    category: "parenting_guidance"
+                )
+            } catch {
+                print("❌ [CRITICAL] Failed to save guidance in handleChatMessage!")
+                print("❌ [CRITICAL] Error: \(error)")
+                print("❌ [CRITICAL] Error description: \(error.localizedDescription)")
+                // Re-throw to maintain error handling
+                throw error
+            }
+            
+            // Step 7: Extract contextual insights (background task)
+            Task {
+                do {
+                    let insights = try await ContextualInsightService.shared.extractContextFromSituation(
+                        situationText: inputText,
+                        apiKey: apiKey,
+                        familyId: familyId!,
+                        childId: nil, // TODO: Get from current child context if needed
+                        situationId: situationId
+                    )
+                    
+                    // Save insights to database
+                    try await ContextualInsightService.shared.saveContextInsights(insights)
+                } catch {
+                    print("⚠️ Context extraction failed (non-critical): \(error)")
+                    print("⚠️ This won't affect the main guidance flow")
+                }
+            }
+            
+            // Step 7.5: Extract child regulation insights (background task)
+            Task {
+                do {
+                    let regulationInsights = try await ContextualInsightService.shared.extractChildRegulationInsights(
+                        situationText: inputText,
+                        apiKey: apiKey,
+                        familyId: familyId!,
+                        childId: nil, // TODO: Get from current child context if needed
+                        situationId: situationId
+                    )
+                    
+                    // Save regulation insights to database
+                    try await ContextualInsightService.shared.saveChildRegulationInsights(regulationInsights)
+                } catch {
+                    print("⚠️ Child regulation insights extraction failed (non-critical): \(error)")
+                    print("⚠️ This won't affect the main guidance flow")
+                }
+            }
+            
+            // Step 8: Update chat UI with the full guidance text
+            await MainActor.run {
+                // Extract all text from the guidance sections for chat display
+                let fullGuidanceText = guidance.displaySections
+                    .map { "**\($0.title)**\n\n\($0.content)" }
+                    .joined(separator: "\n\n")
+                
+                // Update the chat view with the response
+                chatConversationView?.updateWithGuidanceResponse(fullGuidanceText)
+            }
+            
+        } catch {
+            print("❌ Error in chat message handling: \(error)")
+            print("❌ Error details: \(error.localizedDescription)")
+            
+            // Update chat with error message
+            await MainActor.run {
+                let errorMessage = "I encountered an error while processing your request. Please try again."
+                chatConversationView?.updateWithGuidanceResponse(errorMessage)
             }
         }
     }

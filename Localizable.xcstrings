@@ -4346,6 +4346,56 @@
         }
       }
     },
+    "settings.guidanceStructure.chatStyle.section" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interface Style"
+          }
+        }
+      }
+    },
+    "settings.guidanceStructure.chatStyle.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use Chat-style Input & Display"
+          }
+        }
+      }
+    },
+    "settings.guidanceStructure.chatStyle.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Display conversations in a chat format instead of swipable cards"
+          }
+        }
+      }
+    },
+    "chat.input.placeholder" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type a message…"
+          }
+        }
+      }
+    },
+    "chat.message.loading" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generating response..."
+          }
+        }
+      }
+    },
     "settings.helpSupport.appVersion" : {
       "localizations" : {
         "en" : {

@@ -29,25 +29,21 @@ struct NewSituationView: View {
     @EnvironmentObject var appCoordinator: AppCoordinator
     
     // Chat mode state
-    @State private var chatConversationView: ChatConversationView?
+    @State private var chatMessages: [ChatMessage] = []
+    @State private var chatIsLoading: Bool = false
     
     var body: some View {
         NavigationStack {
             Group {
                 if guidanceStructureSettings.useChatStyleInterface {
                     // Chat-style interface
-                    if chatConversationView == nil {
-                        Color.clear
-                            .onAppear {
-                                chatConversationView = ChatConversationView(
-                                    childName: "Alex",
-                                    apiKey: userApiKey,
-                                    onSendMessage: handleChatMessage
-                                )
-                            }
-                    } else {
-                        chatConversationView
-                    }
+                    ChatConversationView(
+                        messages: $chatMessages,
+                        isLoading: $chatIsLoading,
+                        childName: "Alex",
+                        apiKey: userApiKey,
+                        onSendMessage: handleChatMessage
+                    )
                 } else {
                     // Original card-based interface
                     if isLoading {
@@ -81,6 +77,14 @@ struct NewSituationView: View {
     
     private func handleChatMessage(_ inputText: String) async {
         // This is the chat mode handler - it processes the message but updates the chat UI
+        
+        // Add user message immediately to chat and start loading
+        await MainActor.run {
+            let userMessage = ChatMessage(text: inputText, sender: .user)
+            chatMessages.append(userMessage)
+            chatIsLoading = true
+        }
+        
         do {
             // Step 1: Get user's family_id first
             guard let userId = appCoordinator.currentUserId else {
@@ -212,8 +216,10 @@ struct NewSituationView: View {
                     .map { "**\($0.title)**\n\n\($0.content)" }
                     .joined(separator: "\n\n")
                 
-                // Update the chat view with the response
-                chatConversationView?.updateWithGuidanceResponse(fullGuidanceText)
+                // Add AI response message to chat and stop loading
+                let aiMessage = ChatMessage(text: fullGuidanceText, sender: .ai)
+                chatMessages.append(aiMessage)
+                chatIsLoading = false
             }
             
         } catch {
@@ -223,7 +229,9 @@ struct NewSituationView: View {
             // Update chat with error message
             await MainActor.run {
                 let errorMessage = "I encountered an error while processing your request. Please try again."
-                chatConversationView?.updateWithGuidanceResponse(errorMessage)
+                let aiMessage = ChatMessage(text: errorMessage, sender: .ai)
+                chatMessages.append(aiMessage)
+                chatIsLoading = false
             }
         }
     }

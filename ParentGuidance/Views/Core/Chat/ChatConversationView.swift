@@ -9,9 +9,9 @@ import SwiftUI
 import Combine
 
 struct ChatConversationView: View {
-    @State private var messages: [ChatMessage] = []
+    @Binding var messages: [ChatMessage]
+    @Binding var isLoading: Bool
     @State private var inputText: String = ""
-    @State private var isLoading: Bool = false
     @State private var currentStreamingMessageId: UUID?
     @FocusState private var isInputFocused: Bool
     @StateObject private var voiceRecorderViewModel = VoiceRecorderViewModel()
@@ -114,15 +114,12 @@ struct ChatConversationView: View {
         let messageToSend = trimmedText
         inputText = ""
         
-        // Start loading
+        // Start loading (managed by parent)
         isLoading = true
         
-        // Send message and handle response
+        // Send message - parent will handle loading state
         Task {
             await onSendMessage(messageToSend)
-            
-            // The response will be handled by updateWithGuidanceResponse
-            // which should be called from the parent view
         }
     }
     
@@ -157,32 +154,8 @@ struct ChatConversationView: View {
     }
     
     // MARK: - Public Methods for Parent View
-    
-    func updateWithGuidanceResponse(_ guidanceText: String) {
-        // Add AI response message
-        let aiMessage = ChatMessage(text: guidanceText, sender: .ai)
-        messages.append(aiMessage)
-        isLoading = false
-        currentStreamingMessageId = nil
-    }
-    
-    func updateWithStreamingResponse(_ partialText: String, messageId: UUID) {
-        // Update or add streaming message
-        if let index = messages.firstIndex(where: { $0.id == messageId }) {
-            // Update existing message
-            messages[index] = ChatMessage(
-                text: partialText,
-                sender: .ai,
-                timestamp: messages[index].timestamp
-            )
-        } else {
-            // Add new message
-            let aiMessage = ChatMessage(text: partialText, sender: .ai)
-            messages.append(aiMessage)
-            currentStreamingMessageId = aiMessage.id
-        }
-        isLoading = false
-    }
+    // Note: Messages are now managed by parent view via @Binding
+    // Parent view should directly append to the messages array
     
     // MARK: - Keyboard Handling
     

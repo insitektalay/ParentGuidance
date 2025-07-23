@@ -1,11 +1,7 @@
-feat: implement chat-style interface toggle for New Situations tab
-- Add ChatMessage model with user/ai sender types
-- Create ChatInputBar component with growing text input, mic, and send buttons
-- Create ChatMessageBubble component with user bubbles and full-width AI responses
-- Create ChatConversationView with auto-scrolling and keyboard handling
-- Add useChatStyleInterface toggle to GuidanceStructureSettings with @AppStorage
-- Update Settings UI with new "Use Chat-style Input & Display" toggle
-- Integrate chat mode into NewSituationView with conditional rendering
-- Add comprehensive localization strings for chat interface
-- Maintain existing backend behavior and Library storage system
-- All high-priority core functionality implemented and tested
+fix: resolve persistent loading indicator in chat interface
+- Add @Binding var isLoading to ChatConversationView for parent-managed loading state
+- Add @State private var chatIsLoading to NewSituationView to control loading indicator
+- Set chatIsLoading = true when user sends message
+- Set chatIsLoading = false when AI response is received or error occurs
+- Remove local loading state management from ChatConversationView handleSend method
+- Ensures "Generating response..."\ indicator disappears when response is displayed

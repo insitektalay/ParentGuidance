@@ -1,14 +1,1 @@
-fix: resolve Dynamic structure mode being ignored in guidance generation
-
-Fixed critical bug where user's Dynamic structure mode setting was being overridden by hardcoded "fixed" values in GuidanceGenerationService.
-
-The system was always using Fixed mode prompts regardless of user toggle preference.
-
-Changes:
-  - Updated streamGuidanceViaEdgeFunction() and generateGuidanceViaEdgeFunctionStreaming() methods
-  - Replaced hardcoded structureMode: "fixed" with dynamic reading from GuidanceStructureSettings.shared
-  - Now properly respects user's choice between Fixed and Dynamic guidance structure modes
-  - Ensures Dynamic mode uses the correct prompt templates for more flexible guidance responses
-
-This resolves the issue where users selecting Dynamic mode would still receive Fixed-structure guidance responses.
-
+BEFORE NEW CHAT UI FEATURE

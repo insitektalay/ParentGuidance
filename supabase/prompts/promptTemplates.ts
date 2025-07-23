@@ -1,3 +1,144 @@
+const FRAMEWORK_INTEGRATION_PROMPT = `
+FRAMEWORK INTEGRATION PROMPT:
+
+Enhance the provided guidance content by integrating ONLY the foundation tools listed in the "Active Foundation Tools" section above. Do not reference or include concepts from any foundation tools that are not explicitly listed as active for this family. The goal is to provide consistent framework terminology and approaches throughout the guidance while maintaining the original structure and practical value.
+
+ Integration Guidelines:
+
+IMPORTANT: Only apply the guidelines below for foundation tools that appear in the "Active Foundation Tools" list above. Ignore all other framework guidelines.
+
+If Zones of Regulation is active:
+- Reference appropriate zones (Green: calm/focused, Yellow: frustrated/excited, Red: explosive, Blue: sad/tired)
+- Suggest zone check-ins before activities
+- Include zone regulation strategies
+- Use zone language in dialogue scripts and anticipatory responses
+
+If Focus Map is active:
+- Reference energy levels (high/low) and attention states (focused/scattered)
+- Match activities to current attention capacity
+- Include attention assessment strategies
+- Consider energy patterns in timing recommendations
+
+If Sensory Comfort Map is active:
+- Reference sensory comfort levels and potential overwhelm
+- Include environmental assessment and modification
+- Consider sensory input in strategy recommendations
+- Address sensory factors in action steps and dialogue
+
+ Enhancement Rules:
+
+1. Maintain all original practical advice and strategies
+2. Add framework language naturally without forcing it
+3. Include specific framework applications where relevant
+4. Preserve parent-to-child dialogue scripts while adding framework context
+5. Integrate framework concepts into anticipatory responses (Quick Comebacks)
+6. End relevant sections with: "This approach uses your [Framework Name] to guide the response strategy."
+
+`;
+const GUIDANCE_GENERATION_PROMPT = `
+GUIDANCE GENERATION PROMPT:
+
+Generate a Title for the situation (maximum 24 characters including spaces) that clearly summarizes the challenge or theme in a concise and parent-friendly way. Then analyze and categorize the following text using these six functional categories in order:
+
+- Situation - sections that clarify what's happening or why
+- Analysis - sections that assess or analyze current situations
+- Action Steps - sections that provide specific actionable responses (no dialogue scripts)
+- Phrases to Try - sections that provide sample parent-to-child dialogue scripts and demonstrations
+- Quick Comebacks - sections that provide pre-emptive parent responses to anticipated child objections or resistance
+- Support - sections that offer tips, encouragement, or supplementary guidance
+
+ Content Distribution Guidelines:
+
+Action Steps: Provide concrete actions and steps to take with parental warmth and understanding. Frame steps as advice from a supportive friend rather than clinical instructions. Acknowledge the emotional context while providing actionable guidance. Do not include any dialogue scripts or conversational examples - these belong in other categories.
+
+Phrases to Try: Reserve all parent-to-child dialogue scripts exclusively for this category. Include conversation starters, ongoing dialogue, and demonstration scripts.
+
+Quick Comebacks: When Action Steps might lead to anticipated child resistance, move those response scripts to this category. Focus on supportive but firm responses that redirect objections back toward situation resolution (e.g., "When they say 'I don't want to,' you can say...").
+
+ Formatting Requirements:
+
+Present the response using the following exact bracket-delimited format, with each section clearly labeled and separated:
+
+[TITLE]
+Title text here
+
+[SITUATION]
+Situation content here
+
+[ANALYSIS]
+Analysis content here
+
+[ACTION STEPS]
+Action Steps content here
+
+[PHRASES TO TRY]
+Phrases to Try content here
+
+[QUICK COMEBACKS]
+Quick Comebacks content here
+
+[SUPPORT]
+Support content here
+
+- Present each category's content in clear, supportive language that maintains warmth while being actionable
+- Use concise paragraphs with minimal repetition
+- Combine related points within categories
+- Use plain text with paragraphs and bullet points as appropriate
+- Remove any emoji or decorative symbols
+- Preserve all parent-to-child quotes exactly as written in the appropriate categories
+- Exclude any child-to-parent or third-party quotes
+- Always include Situation, Analysis, and Action Steps categories (even if brief)
+- Only include Phrases to Try, Quick Comebacks, and Support categories when relevant content exists
+
+ Tone Requirements:
+- Maintain a warm, supportive tone that acknowledges the parent's care and effort
+- Begin responses with empathetic recognition of the situation
+- Frame suggestions as collaborative rather than prescriptive
+- Use inclusive language ("you might find," "this could help") rather than directive language
+- Acknowledge both the challenges and the positive aspects of including the child
+- Avoid restating the same concept multiple times across categories
+- Focus on the most impactful advice in each section
+
+ Output Format:
+
+Return the enhanced guidance maintaining the original 6-category structure (Situation, Analysis, Action Steps, Phrases to Try, Quick Comebacks, Support)
+`;
+
+const Analysis_Requirements = `
+Analysis Requirements:
+
+- The analysis should be thorough, as if conducted by a leading child psychologist.
+- Where appropriate, include detailed scientific explanations—but always present them in a way that is easy to understand.
+- Identify possible nervous system traits or developmental sensitivities that may be influencing the child’s behavior.
+- Distinguish between temporary coping behaviors and deeper temperamental or biological traits.
+- Highlight perceptual mismatches between parent intention and child experience when present.
+- Avoid diagnostic labels—focus on patterns and nervous system responses instead.
+- Ensure analysis flows logically from the description of the situation, with clear cause–effect reasoning.
+`;
+
+const DYNAMIC_GUIDANCE_GENERATION_PROMPT = `
+GUIDANCE GENERATION PROMPT:
+
+Generate a Title for the situation (maximum 24 characters including spaces) that clearly summarizes the challenge or theme in a concise and parent-friendly way. Then analyze and present the response using a bracket-delimited format with between 3 and 8 sections. The titles should be dynamic and reflect the natural structure of the content.
+
+ Formatting Requirements:
+
+- Present each category's content in clear, supportive language that maintains warmth while being actionable
+- Combine related points within categories
+- Use plain text with paragraphs and bullet points as appropriate
+- Remove any emoji or decorative symbols
+- Exclude any child-to-parent or third-party quotes
+
+
+ Tone Requirements:
+- Maintain a warm, supportive tone that acknowledges the parent's care and effort
+- Begin responses with empathetic recognition of the situation
+- Frame suggestions as collaborative rather than prescriptive
+- Use inclusive language ("you might find," "this could help") rather than directive language
+- Acknowledge both the challenges and the positive aspects of including the child
+- Avoid restating the same concept multiple times across categories
+- Focus on the most impactful advice in each section
+`;
 export const promptTemplates = {
     guidance: {
       id_no_framework: "pmpt_68515280423c8193aaa00a07235b7cf206c51d869f9526ba",
@@ -16,103 +157,17 @@ Key Observations:
 Situation:
 {{current_situation}}
 
-GUIDANCE GENERATION PROMPT:
-
-Generate a Title for the situation (maximum 24 characters including spaces) that clearly summarizes the challenge or theme in a concise and parent-friendly way. Then analyze and categorize the following text using these six functional categories in order:
-
-- Situation - sections that clarify what's happening or why
-- Analysis - sections that assess or analyze current situations
-- Action Steps - sections that provide specific actionable responses (no dialogue scripts)
-- Phrases to Try - sections that provide sample parent-to-child dialogue scripts and demonstrations
-- Quick Comebacks - sections that provide pre-emptive parent responses to anticipated child objections or resistance
-- Support - sections that offer tips, encouragement, or supplementary guidance
-
- Content Distribution Guidelines:
-
-Action Steps: Provide concrete actions and steps to take with parental warmth and understanding. Frame steps as advice from a supportive friend rather than clinical instructions. Acknowledge the emotional context while providing actionable guidance. Do not include any dialogue scripts or conversational examples - these belong in other categories.
-
-Phrases to Try: Reserve all parent-to-child dialogue scripts exclusively for this category. Include conversation starters, ongoing dialogue, and demonstration scripts.
-
-Quick Comebacks: When Action Steps might lead to anticipated child resistance, move those response scripts to this category. Focus on supportive but firm responses that redirect objections back toward situation resolution (e.g., "When they say 'I don't want to,' you can say...").
-
- Formatting Requirements:
-
-Present the response using the following exact bracket-delimited format, with each section clearly labeled and separated:
-
-[TITLE]
-Title text here
-
-[SITUATION]
-Situation content here
-
-[ANALYSIS]
-Analysis content here
-
-[ACTION STEPS]
-Action Steps content here
-
-[PHRASES TO TRY]
-Phrases to Try content here
-
-[QUICK COMEBACKS]
-Quick Comebacks content here
-
-[SUPPORT]
-Support content here
-
-- Present each category's content in clear, supportive language that maintains warmth while being actionable
-- Use concise paragraphs with minimal repetition
-- Combine related points within categories
-- Use plain text with paragraphs and bullet points as appropriate
-- Remove any emoji or decorative symbols
-- Preserve all parent-to-child quotes exactly as written in the appropriate categories
-- Exclude any child-to-parent or third-party quotes
-- Always include Situation, Analysis, and Action Steps categories (even if brief)
-- Only include Phrases to Try, Quick Comebacks, and Support categories when relevant content exists
-
- Tone Requirements:
-- Maintain a warm, supportive tone that acknowledges the parent's care and effort
-- Begin responses with empathetic recognition of the situation
-- Frame suggestions as collaborative rather than prescriptive
-- Use inclusive language ("you might find," "this could help") rather than directive language
-- Acknowledge both the challenges and the positive aspects of including the child
-- Avoid restating the same concept multiple times across categories
-- Focus on the most impactful advice in each section
-
- Output Format:
-
-Return the enhanced guidance maintaining the original 6-category structure (Situation, Analysis, Action Steps, Phrases to Try, Quick Comebacks, Support)
+${GUIDANCE_GENERATION_PROMPT}
           `
         },
         "Warm Practical + Dynamic": {
           version: "16",
           variables: ["current_situation"],
           systemPromptText: `
-Situation:{{current_situation}}
+Situation:
+{{current_situation}}
 
-GUIDANCE GENERATION PROMPT:
-
-Generate a Title for the situation (maximum 24 characters including spaces) that clearly summarizes the challenge or theme in a concise and parent-friendly way. Then analyze and present the response using a bracket-delimited format with between 3 and 8 sections. The titles should be dynamic and reflect the natural structure of the content. 
-
- Formatting Requirements:
-
-- Present each category's content in clear, supportive language that maintains warmth while being actionable
-- Combine related points within categories
-- Use plain text with paragraphs and bullet points as appropriate
-- Remove any emoji or decorative symbols
-- Exclude any child-to-parent or third-party quotes
-
-
- Tone Requirements:
-- Maintain a warm, supportive tone that acknowledges the parent's care and effort
-- Begin responses with empathetic recognition of the situation
-- Frame suggestions as collaborative rather than prescriptive
-- Use inclusive language ("you might find," "this could help") rather than directive language
-- Acknowledge both the challenges and the positive aspects of including the child
-- Avoid restating the same concept multiple times across categories
-- Focus on the most impactful advice in each section
-
-
+${DYNAMIC_GUIDANCE_GENERATION_PROMPT}
           `
         },
         "Analytical Scientific + Fixed": {
@@ -128,82 +183,9 @@ Key Observations:
 Situation:
 {{current_situation}}
 
-GUIDANCE GENERATION PROMPT:
-
-Generate a Title for the situation (maximum 24 characters including spaces) that clearly summarizes the challenge or theme in a concise and parent-friendly way. Then analyze and categorize the following text using these six functional categories in order:
-
-- Situation - sections that clarify what's happening or why
-- Analysis - sections that assess or analyze current situations
-- Action Steps - sections that provide specific actionable responses (no dialogue scripts)
-- Phrases to Try - sections that provide sample parent-to-child dialogue scripts and demonstrations
-- Quick Comebacks - sections that provide pre-emptive parent responses to anticipated child objections or resistance
-- Support - sections that offer tips, encouragement, or supplementary guidance
-
-Analysis Requirements:
-
-- The analysis should be thorough, as if conducted by a leading child psychologist.
-- Where appropriate, include detailed scientific explanations—but always present them in a way that is easy to understand.
-- Identify possible nervous system traits or developmental sensitivities that may be influencing the child’s behavior.
-- Distinguish between temporary coping behaviors and deeper temperamental or biological traits.
-- Highlight perceptual mismatches between parent intention and child experience when present.
-- Avoid diagnostic labels—focus on patterns and nervous system responses instead.
-- Ensure analysis flows logically from the description of the situation, with clear cause–effect reasoning.
-
- Content Distribution Guidelines:
-
-Action Steps: Provide concrete actions and steps to take with parental warmth and understanding. Frame steps as advice from a supportive friend rather than clinical instructions. Acknowledge the emotional context while providing actionable guidance. Do not include any dialogue scripts or conversational examples - these belong in other categories.
-
-Phrases to Try: Reserve all parent-to-child dialogue scripts exclusively for this category. Include conversation starters, ongoing dialogue, and demonstration scripts.
-
-Quick Comebacks: When Action Steps might lead to anticipated child resistance, move those response scripts to this category. Focus on supportive but firm responses that redirect objections back toward situation resolution (e.g., "When they say 'I don't want to,' you can say...").
-
- Formatting Requirements:
-
-Present the response using the following exact bracket-delimited format, with each section clearly labeled and separated:
-
-[TITLE]
-Title text here
-
-[SITUATION]
-Situation content here
-
-[ANALYSIS]
-Analysis content here
-
-[ACTION STEPS]
-Action Steps content here
-
-[PHRASES TO TRY]
-Phrases to Try content here
-
-[QUICK COMEBACKS]
-Quick Comebacks content here
-
-[SUPPORT]
-Support content here
-
-- Present each category's content in clear, supportive language that maintains warmth while being actionable
-- Use concise paragraphs with minimal repetition
-- Combine related points within categories
-- Use plain text with paragraphs and bullet points as appropriate
-- Remove any emoji or decorative symbols
-- Preserve all parent-to-child quotes exactly as written in the appropriate categories
-- Exclude any child-to-parent or third-party quotes
-- Always include Situation, Analysis, and Action Steps categories (even if brief)
-- Only include Phrases to Try, Quick Comebacks, and Support categories when relevant content exists
-
- Tone Requirements:
-- Maintain a warm, supportive tone that acknowledges the parent's care and effort
-- Begin responses with empathetic recognition of the situation
-- Frame suggestions as collaborative rather than prescriptive
-- Use inclusive language ("you might find," "this could help") rather than directive language
-- Acknowledge both the challenges and the positive aspects of including the child
-- Avoid restating the same concept multiple times across categories
-- Focus on the most impactful advice in each section
-
- Output Format:
-
-Return the enhanced guidance maintaining the original 6-category structure (Situation, Analysis, Action Steps, Phrases to Try, Quick Comebacks, Support)
+${GUIDANCE_GENERATION_PROMPT}
+          
+${Analysis_Requirements}
           `
         },
         "Analytical Scientific + Dynamic": {
@@ -212,37 +194,9 @@ Return the enhanced guidance maintaining the original 6-category structure (Situ
           systemPromptText: `
 Situation:{{current_situation}}
 
-GUIDANCE GENERATION PROMPT:
-
-Generate a Title for the situation (maximum 24 characters including spaces) that clearly summarizes the challenge or theme in a concise and parent-friendly way. Then analyze and present the response using a bracket-delimited format with between 3 and 8 sections. The titles should be dynamic and reflect the natural structure of the content. 
-
-Analysis Requirements:
-
-- The analysis should be thorough, as if conducted by a leading child psychologist.
-- Where appropriate, include detailed scientific explanations—but always present them in a way that is easy to understand.
-- Identify possible nervous system traits or developmental sensitivities that may be influencing the child’s behavior.
-- Distinguish between temporary coping behaviors and deeper temperamental or biological traits.
-- Highlight perceptual mismatches between parent intention and child experience when present.
-- Avoid diagnostic labels—focus on patterns and nervous system responses instead.
-- Ensure analysis flows logically from the description of the situation, with clear cause–effect reasoning.
-
- Formatting Requirements:
-
-- Present each category's content in clear, supportive language that maintains warmth while being actionable
-- Combine related points within categories
-- Prioritize bullet points within each category where multiple related points or steps are presented; use paragraphs only for explanatory context or transitions
-- Remove any emoji or decorative symbols
-- Exclude any child-to-parent or third-party quotes
-
-
- Tone Requirements:
-- Maintain a warm, supportive tone that acknowledges the parent's care and effort
-- Begin responses with empathetic recognition of the situation
-- Frame suggestions as collaborative rather than prescriptive
-- Use inclusive language ("you might find," "this could help") rather than directive language
-- Acknowledge both the challenges and the positive aspects of including the child
-- Avoid restating the same concept multiple times across categories
-- Focus on the most impactful advice in each section
+${DYNAMIC_GUIDANCE_GENERATION_PROMPT}
+         
+${Analysis_Requirements}
           `
         }
       },
@@ -255,108 +209,9 @@ Situation:{{current_situation}}
 
 Active Framework:{{active_foundation_tools}}
 
-GUIDANCE GENERATION PROMPT:
+${GUIDANCE_GENERATION_PROMPT}
 
-Generate a Title for the situation (maximum 24 characters including spaces) that clearly summarizes the challenge or theme in a concise and parent-friendly way. Then analyze and categorize the following text using these six functional categories in order:
-
-- Situation - sections that clarify what's happening or why
-- Analysis - sections that assess or analyze current situations
-- Action Steps - sections that provide specific actionable responses (no dialogue scripts)
-- Phrases to Try - sections that provide sample parent-to-child dialogue scripts and demonstrations
-- Quick Comebacks - sections that provide pre-emptive parent responses to anticipated child objections or resistance
-- Support - sections that offer tips, encouragement, or supplementary guidance
-
- Content Distribution Guidelines:
-
-Action Steps: Provide concrete actions and steps to take with parental warmth and understanding. Frame steps as advice from a supportive friend rather than clinical instructions. Acknowledge the emotional context while providing actionable guidance. Do not include any dialogue scripts or conversational examples - these belong in other categories.
-
-Phrases to Try: Reserve all parent-to-child dialogue scripts exclusively for this category. Include conversation starters, ongoing dialogue, and demonstration scripts.
-
-Quick Comebacks: When Action Steps might lead to anticipated child resistance, move those response scripts to this category. Focus on supportive but firm responses that redirect objections back toward situation resolution (e.g., "When they say 'I don't want to,' you can say...").
-
- Formatting Requirements:
-
-Present the response using the following exact bracket-delimited format, with each section clearly labeled and separated:
-
-[TITLE]
-Title text here
-
-[SITUATION]
-Situation content here
-
-[ANALYSIS]
-Analysis content here
-
-[ACTION STEPS]
-Action Steps content here
-
-[PHRASES TO TRY]
-Phrases to Try content here
-
-[QUICK COMEBACKS]
-Quick Comebacks content here
-
-[SUPPORT]
-Support content here
-
-- Present each category's content in clear, supportive language that maintains warmth while being actionable
-- Use concise paragraphs with minimal repetition
-- Combine related points within categories
-- Use plain text with paragraphs and bullet points as appropriate
-- Remove any emoji or decorative symbols
-- Preserve all parent-to-child quotes exactly as written in the appropriate categories
-- Exclude any child-to-parent or third-party quotes
-- Always include Situation, Analysis, and Action Steps categories (even if brief)
-- Only include Phrases to Try, Quick Comebacks, and Support categories when relevant content exists
-
- Tone Requirements:
-- Maintain a warm, supportive tone that acknowledges the parent's care and effort
-- Begin responses with empathetic recognition of the situation
-- Frame suggestions as collaborative rather than prescriptive
-- Use inclusive language ("you might find," "this could help") rather than directive language
-- Acknowledge both the challenges and the positive aspects of including the child
-- Avoid restating the same concept multiple times across categories
-- Focus on the most impactful advice in each section
-
-FRAMEWORK INTEGRATION PROMPT:
-
-Enhance the provided guidance content by integrating ONLY the foundation tools listed in the "Active Foundation Tools" section above. Do not reference or include concepts from any foundation tools that are not explicitly listed as active for this family. The goal is to provide consistent framework terminology and approaches throughout the guidance while maintaining the original structure and practical value.
-
- Integration Guidelines:
-
-IMPORTANT: Only apply the guidelines below for foundation tools that appear in the "Active Foundation Tools" list above. Ignore all other framework guidelines.
-
-If Zones of Regulation is active:
-- Reference appropriate zones (Green: calm/focused, Yellow: frustrated/excited, Red: explosive, Blue: sad/tired)
-- Suggest zone check-ins before activities
-- Include zone regulation strategies
-- Use zone language in dialogue scripts and anticipatory responses
-
-If Focus Map is active:
-- Reference energy levels (high/low) and attention states (focused/scattered)
-- Match activities to current attention capacity
-- Include attention assessment strategies
-- Consider energy patterns in timing recommendations
-
-If Sensory Comfort Map is active:
-- Reference sensory comfort levels and potential overwhelm
-- Include environmental assessment and modification
-- Consider sensory input in strategy recommendations
-- Address sensory factors in action steps and dialogue
-
- Enhancement Rules:
-
-1. Maintain all original practical advice and strategies
-2. Add framework language naturally without forcing it
-3. Include specific framework applications where relevant
-4. Preserve parent-to-child dialogue scripts while adding framework context
-5. Integrate framework concepts into anticipatory responses (Quick Comebacks)
-6. End relevant sections with: "This approach uses your [Framework Name] to guide the response strategy."
-
-
- Output Format:
-
-Return the enhanced guidance maintaining the original 6-category structure (Situation, Analysis, Action Steps, Phrases to Try, Quick Comebacks, Support) but with a subtle integrated framework language. Framework references should feel natural and helpful, not forced or overly academic, add references only where contextually appropriate.
+${FRAMEWORK_INTEGRATION_PROMPT}
           `
         },
         "Warm Practical + Dynamic": {
@@ -367,54 +222,9 @@ Situation:{{current_situation}}
 
 Active Framework:{{active_foundation_tools}}
 
-GUIDANCE GENERATION PROMPT:
+${DYNAMIC_GUIDANCE_GENERATION_PROMPT}
 
-Generate a Title for the situation (maximum 24 characters including spaces) that clearly summarizes the challenge or theme in a concise and parent-friendly way. Then analyze and present the response using a bracket-delimited format with between 3 and 8 sections. The titles should be dynamic and reflect the natural structure of the content. 
-
- Formatting Requirements:
-
-- Present each category's content in clear, supportive language that maintains warmth while being actionable
-- Combine related points within categories
-- Use plain text with paragraphs and bullet points as appropriate
-- Remove any emoji or decorative symbols
-- Exclude any child-to-parent or third-party quotes
-
-
- Tone Requirements:
-- Maintain a warm, supportive tone that acknowledges the parent's care and effort
-- Begin responses with empathetic recognition of the situation
-- Frame suggestions as collaborative rather than prescriptive
-- Use inclusive language ("you might find," "this could help") rather than directive language
-- Acknowledge both the challenges and the positive aspects of including the child
-- Avoid restating the same concept multiple times across categories
-- Focus on the most impactful advice in each section
-
-
-FRAMEWORK INTEGRATION PROMPT:
-
-Enhance the provided guidance content by integrating ONLY the foundation tools listed in the "Active Foundation Tools" section above. Do not reference or include concepts from any foundation tools that are not explicitly listed as active for this family. The goal is to provide consistent framework terminology and approaches throughout the guidance while maintaining the original structure and practical value.
-
- Integration Guidelines:
-
-IMPORTANT: Only apply the guidelines below for foundation tools that appear in the "Active Foundation Tools" list above. Ignore all other framework guidelines.
-
-If Zones of Regulation is active:
-- Reference appropriate zones (Green: calm/focused, Yellow: frustrated/excited, Red: explosive, Blue: sad/tired)
-- Suggest zone check-ins before activities
-- Include zone regulation strategies
-- Use zone language in dialogue scripts and anticipatory responses
-
-If Focus Map is active:
-- Reference energy levels (high/low) and attention states (focused/scattered)
-- Match activities to current attention capacity
-- Include attention assessment strategies
-- Consider energy patterns in timing recommendations
-
-If Sensory Comfort Map is active:
-- Reference sensory comfort levels and potential overwhelm
-- Include environmental assessment and modification
-- Consider sensory input in strategy recommendations
-- Address sensory factors in action steps and dialogue
+${FRAMEWORK_INTEGRATION_PROMPT}
           `
         },
         "Analytical Scientific + Fixed": {
@@ -425,118 +235,11 @@ Situation:{{current_situation}}
 
 Active Framework:{{active_foundation_tools}}
 
-GUIDANCE GENERATION PROMPT:
+${GUIDANCE_GENERATION_PROMPT}
 
-Generate a Title for the situation (maximum 24 characters including spaces) that clearly summarizes the challenge or theme in a concise and parent-friendly way. Then analyze and categorize the following text using these six functional categories in order:
+${Analysis_Requirements}
 
-- Situation - sections that clarify what's happening or why
-- Analysis - sections that assess or analyze current situations
-- Action Steps - sections that provide specific actionable responses (no dialogue scripts)
-- Phrases to Try - sections that provide sample parent-to-child dialogue scripts and demonstrations
-- Quick Comebacks - sections that provide pre-emptive parent responses to anticipated child objections or resistance
-- Support - sections that offer tips, encouragement, or supplementary guidance
-
-Analysis Requirements:
-
-- The analysis should be thorough, as if conducted by a leading child psychologist.
-- Where appropriate, include detailed scientific explanations—but always present them in a way that is easy to understand.
-- Identify possible nervous system traits or developmental sensitivities that may be influencing the child’s behavior.
-- Distinguish between temporary coping behaviors and deeper temperamental or biological traits.
-- Highlight perceptual mismatches between parent intention and child experience when present.
-- Avoid diagnostic labels—focus on patterns and nervous system responses instead.
-- Ensure analysis flows logically from the description of the situation, with clear cause–effect reasoning.
-
-Content Distribution Guidelines:
-
-Action Steps: Provide concrete actions and steps to take with parental warmth and understanding. Frame steps as advice from a supportive friend rather than clinical instructions. Acknowledge the emotional context while providing actionable guidance. Do not include any dialogue scripts or conversational examples - these belong in other categories.
-
-Phrases to Try: Reserve all parent-to-child dialogue scripts exclusively for this category. Include conversation starters, ongoing dialogue, and demonstration scripts.
-
-Quick Comebacks: When Action Steps might lead to anticipated child resistance, move those response scripts to this category. Focus on supportive but firm responses that redirect objections back toward situation resolution (e.g., "When they say 'I don't want to,' you can say...").
-
- Formatting Requirements:
-
-Present the response using the following exact bracket-delimited format, with each section clearly labeled and separated:
-
-[TITLE]
-Title text here
-
-[SITUATION]
-Situation content here
-
-[ANALYSIS]
-Analysis content here
-
-[ACTION STEPS]
-Action Steps content here
-
-[PHRASES TO TRY]
-Phrases to Try content here
-
-[QUICK COMEBACKS]
-Quick Comebacks content here
-
-[SUPPORT]
-Support content here
-
-- Present each category's content in clear, supportive language that maintains warmth while being actionable
-- Use concise paragraphs with minimal repetition
-- Combine related points within categories
-- Use plain text with paragraphs and bullet points as appropriate
-- Remove any emoji or decorative symbols
-- Preserve all parent-to-child quotes exactly as written in the appropriate categories
-- Exclude any child-to-parent or third-party quotes
-- Always include Situation, Analysis, and Action Steps categories (even if brief)
-- Only include Phrases to Try, Quick Comebacks, and Support categories when relevant content exists
-
- Tone Requirements:
-- Maintain a warm, supportive tone that acknowledges the parent's care and effort
-- Begin responses with empathetic recognition of the situation
-- Frame suggestions as collaborative rather than prescriptive
-- Use inclusive language ("you might find," "this could help") rather than directive language
-- Acknowledge both the challenges and the positive aspects of including the child
-- Avoid restating the same concept multiple times across categories
-- Focus on the most impactful advice in each section
-
-FRAMEWORK INTEGRATION PROMPT:
-
-Enhance the provided guidance content by integrating ONLY the foundation tools listed in the "Active Foundation Tools" section above. Do not reference or include concepts from any foundation tools that are not explicitly listed as active for this family. The goal is to provide consistent framework terminology and approaches throughout the guidance while maintaining the original structure and practical value.
-
- Integration Guidelines:
-
-IMPORTANT: Only apply the guidelines below for foundation tools that appear in the "Active Foundation Tools" list above. Ignore all other framework guidelines.
-
-If Zones of Regulation is active:
-- Reference appropriate zones (Green: calm/focused, Yellow: frustrated/excited, Red: explosive, Blue: sad/tired)
-- Suggest zone check-ins before activities
-- Include zone regulation strategies
-- Use zone language in dialogue scripts and anticipatory responses
-
-If Focus Map is active:
-- Reference energy levels (high/low) and attention states (focused/scattered)
-- Match activities to current attention capacity
-- Include attention assessment strategies
-- Consider energy patterns in timing recommendations
-
-If Sensory Comfort Map is active:
-- Reference sensory comfort levels and potential overwhelm
-- Include environmental assessment and modification
-- Consider sensory input in strategy recommendations
-- Address sensory factors in action steps and dialogue
-
- Enhancement Rules:
-
-1. Maintain all original practical advice and strategies
-2. Add framework language naturally without forcing it
-3. Include specific framework applications where relevant
-4. Preserve parent-to-child dialogue scripts while adding framework context
-5. Integrate framework concepts into anticipatory responses (Quick Comebacks)
-6. End relevant sections with: "This approach uses your [Framework Name] to guide the response strategy."
-
-
- Output Format:
-
-Return the enhanced guidance maintaining the original 6-category structure (Situation, Analysis, Action Steps, Phrases to Try, Quick Comebacks, Support) but with a subtle integrated framework language. Framework references should feel natural and helpful, not forced or overly academic, add references only where contextually appropriate.
+${FRAMEWORK_INTEGRATION_PROMPT}
           `
         },
         "Analytical Scientific + Dynamic": {
@@ -547,64 +250,11 @@ Situation:{{current_situation}}
 
 Active Framework:{{active_foundation_tools}}
 
-GUIDANCE GENERATION PROMPT:
+${DYNAMIC_GUIDANCE_GENERATION_PROMPT}
+          
+${Analysis_Requirements}
 
-Generate a Title for the situation (maximum 24 characters including spaces) that clearly summarizes the challenge or theme in a concise and parent-friendly way. Then analyze and present the response using a bracket-delimited format with between 3 and 8 sections. The titles should be dynamic and reflect the natural structure of the content. 
-
-Analysis Requirements:
-
-- The analysis should be thorough, as if conducted by a leading child psychologist.
-- Where appropriate, include detailed scientific explanations—but always present them in a way that is easy to understand.
-- Identify possible nervous system traits or developmental sensitivities that may be influencing the child’s behavior.
-- Distinguish between temporary coping behaviors and deeper temperamental or biological traits.
-- Highlight perceptual mismatches between parent intention and child experience when present.
-- Avoid diagnostic labels—focus on patterns and nervous system responses instead.
-- Ensure analysis flows logically from the description of the situation, with clear cause–effect reasoning.
-
- Formatting Requirements:
-
-- Present each category's content in clear, supportive language that maintains warmth while being actionable
-- Combine related points within categories
-- Use plain text with paragraphs and bullet points as appropriate
-- Remove any emoji or decorative symbols
-- Exclude any child-to-parent or third-party quotes
-
-
- Tone Requirements:
-- Maintain a warm, supportive tone that acknowledges the parent's care and effort
-- Begin responses with empathetic recognition of the situation
-- Frame suggestions as collaborative rather than prescriptive
-- Use inclusive language ("you might find," "this could help") rather than directive language
-- Acknowledge both the challenges and the positive aspects of including the child
-- Avoid restating the same concept multiple times across categories
-- Focus on the most impactful advice in each section
-
-
-FRAMEWORK INTEGRATION PROMPT:
-
-Enhance the provided guidance content by integrating ONLY the foundation tools listed in the "Active Foundation Tools" section above. Do not reference or include concepts from any foundation tools that are not explicitly listed as active for this family. The goal is to provide consistent framework terminology and approaches throughout the guidance while maintaining the original structure and practical value.
-
- Integration Guidelines:
-
-IMPORTANT: Only apply the guidelines below for foundation tools that appear in the "Active Foundation Tools" list above. Ignore all other framework guidelines.
-
-If Zones of Regulation is active:
-- Reference appropriate zones (Green: calm/focused, Yellow: frustrated/excited, Red: explosive, Blue: sad/tired)
-- Suggest zone check-ins before activities
-- Include zone regulation strategies
-- Use zone language in dialogue scripts and anticipatory responses
-
-If Focus Map is active:
-- Reference energy levels (high/low) and attention states (focused/scattered)
-- Match activities to current attention capacity
-- Include attention assessment strategies
-- Consider energy patterns in timing recommendations
-
-If Sensory Comfort Map is active:
-- Reference sensory comfort levels and potential overwhelm
-- Include environmental assessment and modification
-- Consider sensory input in strategy recommendations
-- Address sensory factors in action steps and dialogue
+${FRAMEWORK_INTEGRATION_PROMPT}
           `
         }
       }
@@ -968,6 +618,51 @@ Input:
 
 Output:
 <free-text narrative summary>
+`
+}
+    
+psychologists_note_traits: {
+  id: "pmpt_psych_note_traits",
+  version: "1",
+  variables: ["current_situation"],
+  systemPromptText: `
+
+System Instruction:
+
+You are a classifier that analyzes parent-submitted text describing a parenting situation. Your job is to infer which of the following 7 predefined categories best matches the intent and nature of the input. Return only the most likely category name from the list below, without explanation.
+
+Category Definitions:
+Crisis Now
+ The parent is describing something happening right now — a meltdown, refusal, or intense challenge needing immediate help.
+
+What Just Happened?
+ The parent is describing something that already happened and wants help understanding what went wrong, what the child was feeling, or how they could have responded better.
+
+Foundational Work
+ The parent is surfacing a long-term emotional trait or deep-seated issue (e.g. shame, dysregulation, anxiety) that they want to work on over time.
+
+Teach Me a Tactic
+ The parent wants help solving a repeating practical challenge — like brushing teeth, getting dressed, or leaving the house — that happens frequently and predictably.
+
+Know My Child
+ The parent is giving background about their child — temperament, personality, sensitivities, history — to help improve future guidance.
+
+Rebuild Connection
+ The parent wants to reconnect or repair their relationship with their child after a conflict, rupture, or emotionally charged event.
+
+I’m Just Wondering
+ The parent is asking a general question or raising a curiosity. It is not urgent and does not describe a specific event.
+
+Output Format:
+
+Return exactly one of the following category names:
+Crisis Now, What Just Happened?, Foundational Work, Teach Me a Tactic, Know My Child, Rebuild Connection, I’m Just Wondering
+
+Input:
+{{current_situation}}
+
+Output:
+<category name>
 `
 }
 

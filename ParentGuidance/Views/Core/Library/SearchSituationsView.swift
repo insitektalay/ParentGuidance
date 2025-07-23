@@ -14,6 +14,8 @@ struct SearchSituationsView: View {
     
     @Environment(\.dismiss) private var dismiss
     @StateObject private var controller: LibraryViewController
+    @State private var shouldDismiss = false
+    @State private var hasEnteredSelectionMode = false
     
     init(familyId: String, selectionManager: LibrarySelectionManager, isSelectionMode: Bool = false) {
         self.familyId = familyId
@@ -25,10 +27,7 @@ struct SearchSituationsView: View {
         controller.currentUserId = familyId
         self._controller = StateObject(wrappedValue: controller)
         
-        // Enter selection mode if needed
-        if isSelectionMode {
-            selectionManager.enterSelectionMode()
-        }
+        // NOTE: Selection mode activation moved to onAppear to avoid SwiftUI state conflicts
     }
     
     var body: some View {
@@ -51,6 +50,24 @@ struct SearchSituationsView: View {
             controller.currentUserId = familyId
             if controller.situations.isEmpty {
                 controller.loadSituations()
+            }
+            
+            // Enter selection mode if needed, but only once
+            if isSelectionMode && !hasEnteredSelectionMode {
+                hasEnteredSelectionMode = true
+                // Only enter selection mode if it's not already active
+                if !selectionManager.isInSelectionMode {
+                    DispatchQueue.main.async {
+                        selectionManager.enterSelectionMode()
+                    }
+                } else {
+                    print("📋 Selection mode already active - using existing state")
+                }
+            }
+        }
+        .onReceive(selectionManager.$isGeneratingFramework) { isGenerating in
+            if !isGenerating && shouldDismiss {
+                dismiss()
             }
         }
     }
@@ -110,6 +127,7 @@ struct SearchSituationsView: View {
             }
             .overlay(sortDropdownOverlay)
             .overlay(deleteConfirmationOverlay)
+            .overlay(frameworkGenerationOverlay)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(ColorPalette.navy)
@@ -164,9 +182,9 @@ struct SearchSituationsView: View {
             .foregroundColor(ColorPalette.white.opacity(0.8))
             
             Button(String(localized: "library.selection.generateFramework")) {
-                print("Generate Framework tapped - placeholder for Step 5")
+                print("Generate Framework tapped - starting generation")
+                shouldDismiss = true
                 selectionManager.handleGenerateFrameworkTap()
-                dismiss()
             }
             .font(.system(size: 14, weight: .medium))
             .foregroundColor(ColorPalette.terracotta)
@@ -425,6 +443,58 @@ struct SearchSituationsView: View {
                     )
                 }
                 .zIndex(2000) // Higher than sort dropdown
+            }
+        }
+    }
+    
+    private var frameworkGenerationOverlay: some View {
+        Group {
+            if selectionManager.isGeneratingFramework {
+                ZStack {
+                    // Semi-transparent background
+                    Color.black.opacity(0.6)
+                        .ignoresSafeArea()
+                    
+                    // Generation progress card
+                    VStack(spacing: 20) {
+                        // Progress indicator
+                        ProgressView()
+                            .scaleEffect(1.5)
+                            .foregroundColor(ColorPalette.terracotta)
+                        
+                        // Status text
+                        VStack(spacing: 8) {
+                            Text(String(localized: "library.framework.generating.title"))
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundColor(ColorPalette.white)
+                                .multilineTextAlignment(.center)
+                            
+                            Text(String(localized: "library.framework.generating.subtitle"))
+                                .font(.system(size: 14))
+                                .foregroundColor(ColorPalette.white.opacity(0.8))
+                                .multilineTextAlignment(.center)
+                        }
+                        
+                        // Selection count reminder
+                        Text(selectionManager.selectionCountText)
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(ColorPalette.terracotta.opacity(0.8))
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 4)
+                            .background(ColorPalette.terracotta.opacity(0.1))
+                            .clipShape(RoundedRectangle(cornerRadius: 6))
+                    }
+                    .padding(24)
+                    .background(ColorPalette.navy)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(ColorPalette.white.opacity(0.2), lineWidth: 1)
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .shadow(color: .black.opacity(0.3), radius: 20, x: 0, y: 10)
+                    .padding(40)
+                }
+                .zIndex(3000) // Highest priority overlay
             }
         }
     }

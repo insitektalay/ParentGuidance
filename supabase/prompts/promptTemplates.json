@@ -1,0 +1,76 @@
+{
+    "guidance": {
+      "id_no_framework": "pmpt_68515280423c8193aaa00a07235b7cf206c51d869f9526ba",
+      "id_with_framework": "pmpt_68516f961dc08190aceb4f591ee010050a454989b0581453",
+      "versions_no_framework": {
+        "Warm Practical + Fixed": {
+          "version": "12",
+          "variables": ["current_situation", "family_context"]
+        },
+        "Warm Practical + Dynamic": {
+          "version": "16",
+          "variables": ["current_situation"]
+        },
+        "Analytical Scientific + Fixed": {
+          "version": "19",
+          "variables": ["current_situation", "family_context"]
+        },
+        "Analytical Scientific + Dynamic": {
+          "version": "18",
+          "variables": ["current_situation"]
+        }
+      },
+      "versions_with_framework": {
+        "Warm Practical + Fixed": {
+          "version": "3",
+          "variables": ["current_situation", "active_foundation_tools"]
+        },
+        "Warm Practical + Dynamic": {
+          "version": "6",
+          "variables": ["current_situation", "active_foundation_tools"]
+        },
+        "Analytical Scientific + Fixed": {
+          "version": "7",
+          "variables": ["current_situation", "active_foundation_tools"]
+        },
+        "Analytical Scientific + Dynamic": {
+          "version": "8",
+          "variables": ["current_situation", "active_foundation_tools"]
+        }
+      },
+      "systemPromptText_no_framework": "
+    <<PASTE VERSIONED PROMPT TEXT HERE>>
+                                       ",
+      "systemPromptText_with_framework": "
+    <<PASTE VERSIONED PROMPT TEXT HERE>>
+    "
+    },
+    "analyze": {
+      "id": "pmpt_686b988bf0ac8196a69e972f08842b9a05893c8e8a5153c7",
+      "version": "1",
+      "variables": ["situation_inputted"],
+      "systemPromptText": "<<PASTE TEXT>>"
+    },
+    "framework": {
+      "id": "pmpt_68511f82ba448193a1af0dc01215706f0d3d3fe75d5db0f1",
+      "version": "3",
+      "variables": ["situation_summary"],
+      "systemPromptText": "<<PASTE TEXT>>"
+    },
+    "context": {
+      "id_general": "pmpt_68778827e310819792876a9f5a844c050059609da32e4637",
+      "id_regulation": "pmpt_6877c15da6388196a389c79feeefd4e30cccdbe5ba3909fb",
+      "version_general": "4",
+      "version_regulation": "5",
+      "variables": ["long_prompt"],
+      "systemPromptText_general": "<<PASTE TEXT>>",
+      "systemPromptText_regulation": "<<PASTE TEXT>>"
+    },
+    "translate": {
+      "id": "pmpt_687b28fd26208195b7bc8864d8d484090e772c7ac2176688",
+      "version": "1",
+      "variables": ["input_text", "lang"],
+      "systemPromptText": "<<PASTE TEXT>>"
+    }
+  }
+  

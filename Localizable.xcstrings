@@ -2538,6 +2538,26 @@
         }
       }
     },
+    "library.framework.generating.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generating Framework"
+          }
+        }
+      }
+    },
+    "library.framework.generating.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Creating your personalized parenting framework based on your selected situations..."
+          }
+        }
+      }
+    },
     "library.situation.sentTime" : {
       "extractionState" : "stale",
       "localizations" : {

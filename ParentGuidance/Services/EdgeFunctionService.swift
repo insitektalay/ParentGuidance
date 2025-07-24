@@ -28,16 +28,19 @@ class EdgeFunctionService {
         keyInsights: String? = nil,
         activeFramework: FrameworkRecommendation? = nil,
         structureMode: String = "fixed",
+        situationType: SituationType = .imJustWondering,
         apiKey: String
     ) async throws -> AsyncThrowingStream<String, Error> {
         print("🔄 [EdgeFunction] Streaming guidance via Edge Function")
         print("   → Operation: guidance")
         print("   → Has Framework: \(activeFramework != nil)")
         print("   → Structure Mode: \(structureMode)")
+        print("   → Situation Type: \(situationType.rawValue)")
         
         var variables: [String: Any] = [
             "current_situation": situation,
-            "structure_mode": structureMode
+            "structure_mode": structureMode,
+            "situation_type": situationType.rawValue
         ]
         
         if let childContext = childContext, !childContext.isEmpty {

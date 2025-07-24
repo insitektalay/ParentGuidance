@@ -92,6 +92,9 @@
 		944EA2222E30ACEA00C110AF /* ChatInputBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA2212E30ACEA00C110AF /* ChatInputBar.swift */; };
 		944EA2242E30ACFA00C110AF /* ChatMessageBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA2232E30ACFA00C110AF /* ChatMessageBubble.swift */; };
 		944EA2262E30AD1300C110AF /* ChatConversationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA2252E30AD1300C110AF /* ChatConversationView.swift */; };
+		944EA2292E320C1B00C110AF /* SituationType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA2282E320C1B00C110AF /* SituationType.swift */; };
+		944EA22B2E320C3000C110AF /* SituationTypeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA22A2E320C3000C110AF /* SituationTypeCard.swift */; };
+		944EA22D2E320C3E00C110AF /* SituationTypePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA22C2E320C3E00C110AF /* SituationTypePickerView.swift */; };
 		9481564C2E23CDC000C28273 /* ChildProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */; };
 		9481564E2E25334C00C28273 /* AudioPermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564D2E25334C00C28273 /* AudioPermissionManager.swift */; };
 		948156502E2533EE00C28273 /* VoiceRecorderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */; };
@@ -274,6 +277,9 @@
 		944EA2212E30ACEA00C110AF /* ChatInputBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatInputBar.swift; sourceTree = "<group>"; };
 		944EA2232E30ACFA00C110AF /* ChatMessageBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageBubble.swift; sourceTree = "<group>"; };
 		944EA2252E30AD1300C110AF /* ChatConversationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatConversationView.swift; sourceTree = "<group>"; };
+		944EA2282E320C1B00C110AF /* SituationType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SituationType.swift; sourceTree = "<group>"; };
+		944EA22A2E320C3000C110AF /* SituationTypeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SituationTypeCard.swift; sourceTree = "<group>"; };
+		944EA22C2E320C3E00C110AF /* SituationTypePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SituationTypePickerView.swift; sourceTree = "<group>"; };
 		9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildProfileEditView.swift; sourceTree = "<group>"; };
 		9481564D2E25334C00C28273 /* AudioPermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPermissionManager.swift; sourceTree = "<group>"; };
 		9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorderError.swift; sourceTree = "<group>"; };
@@ -639,6 +645,7 @@
 				948156672E2A02FC00C28273 /* ChildRegulationInsight.swift */,
 				944EA2142E2E302D00C110AF /* PsychologistNote.swift */,
 				944EA21E2E30ACA700C110AF /* ChatMessage.swift */,
+				944EA2282E320C1B00C110AF /* SituationType.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -809,6 +816,7 @@
 				94FA11202E05CBB8003EC1E9 /* SituationTypingView.swift */,
 				94FA11242E05CBD4003EC1E9 /* SituationFollowUpView.swift */,
 				94FA11262E05CBDF003EC1E9 /* SituationOrganizingView.swift */,
+				944EA22C2E320C3E00C110AF /* SituationTypePickerView.swift */,
 			);
 			path = Situations;
 			sourceTree = "<group>";
@@ -839,6 +847,7 @@
 				94FA112B2E05CC08003EC1E9 /* MicButton.swift */,
 				94FA112D2E05CC15003EC1E9 /* SendButton.swift */,
 				94FA112F2E05CC23003EC1E9 /* InputGuidanceFooter.swift */,
+				944EA22A2E320C3000C110AF /* SituationTypeCard.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -1070,6 +1079,7 @@
 				943DFD912E1A858D004F8043 /* Situation.swift in Sources */,
 				94FA112C2E05CC08003EC1E9 /* MicButton.swift in Sources */,
 				94FA11122E05C898003EC1E9 /* NewSituationView.swift in Sources */,
+				944EA2292E320C1B00C110AF /* SituationType.swift in Sources */,
 				948156682E2A02FC00C28273 /* ChildRegulationInsight.swift in Sources */,
 				94FA11182E05C8C1003EC1E9 /* SettingsView.swift in Sources */,
 				943DFD772E1823A5004F8043 /* LibraryFilters.swift in Sources */,
@@ -1136,6 +1146,7 @@
 				9481566C2E2A11E200C28273 /* RegulationInsightsView.swift in Sources */,
 				944EA2092E2E0EDB00C110AF /* DeleteAccountConfirmationView.swift in Sources */,
 				943792AB2E1C34520089F512 /* FrameworkGeneratingView.swift in Sources */,
+				944EA22B2E320C3000C110AF /* SituationTypeCard.swift in Sources */,
 				944EA1E22E2CD35400C110AF /* EdgeFunctionService.swift in Sources */,
 				944EA1AC2E2B567A00C110AF /* LanguageDetectionService.swift in Sources */,
 				94FA11342E05CC50003EC1E9 /* GuidanceCard.swift in Sources */,
@@ -1146,6 +1157,7 @@
 				943DFD932E1A85A2004F8043 /* Guidance.swift in Sources */,
 				94FA11362E05CC60003EC1E9 /* SituationGuidanceView.swift in Sources */,
 				94FA113A2E05CC80003EC1E9 /* NotificationCard.swift in Sources */,
+				944EA22D2E320C3E00C110AF /* SituationTypePickerView.swift in Sources */,
 				94FA113C2E05CC90003EC1E9 /* SearchBar.swift in Sources */,
 				948156702E2A12C700C28273 /* RegulationInsightCard.swift in Sources */,
 				94CBD5152E20F80C0014C22A /* FakeFile.swift in Sources */,

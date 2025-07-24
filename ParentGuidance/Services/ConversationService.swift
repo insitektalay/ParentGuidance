@@ -62,6 +62,7 @@ class ConversationService: ObservableObject {
         childId: String?,
         title: String,
         description: String,
+        situationType: String = "one_time",
         category: String? = nil,
         isIncident: Bool = false
     ) async throws -> String {
@@ -70,6 +71,7 @@ class ConversationService: ObservableObject {
             childId: childId,
             title: title,
             description: description,
+            situationType: situationType,
             category: category,
             isIncident: isIncident
         )

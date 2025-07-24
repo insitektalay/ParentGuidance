@@ -38,6 +38,7 @@ class GuidanceGenerationService {
         keyInsights: String? = nil,
         apiKey: String,
         activeFramework: FrameworkRecommendation? = nil,
+        situationType: SituationType = .imJustWondering,
         useStreaming: Bool = false
     ) async throws -> (GuidanceResponseProtocol, String) {
         
@@ -48,7 +49,8 @@ class GuidanceGenerationService {
                 childContext: childContext,
                 keyInsights: keyInsights,
                 apiKey: apiKey,
-                activeFramework: activeFramework
+                activeFramework: activeFramework,
+                situationType: situationType
             )
         } else if useEdgeFunction {
             print("🚀 [GuidanceGenerationService] Using EdgeFunction (non-streaming)")
@@ -57,7 +59,8 @@ class GuidanceGenerationService {
                 childContext: childContext,
                 keyInsights: keyInsights,
                 apiKey: apiKey,
-                activeFramework: activeFramework
+                activeFramework: activeFramework,
+                situationType: situationType
             )
         } else {
             print("🔗 [GuidanceGenerationService] Using Direct API (legacy)")
@@ -66,7 +69,8 @@ class GuidanceGenerationService {
                 childContext: childContext,
                 keyInsights: keyInsights,
                 apiKey: apiKey,
-                activeFramework: activeFramework
+                activeFramework: activeFramework,
+                situationType: situationType
             )
         }
     }
@@ -78,6 +82,7 @@ class GuidanceGenerationService {
         keyInsights: String? = nil,
         apiKey: String,
         activeFramework: FrameworkRecommendation? = nil,
+        situationType: SituationType = .imJustWondering,
         onUpdate: @escaping (String) -> Void,
         onComplete: @escaping (GuidanceResponseProtocol, String) -> Void,
         onError: @escaping (Error) -> Void
@@ -91,6 +96,7 @@ class GuidanceGenerationService {
                         keyInsights: keyInsights,
                         apiKey: apiKey,
                         activeFramework: activeFramework,
+                        situationType: situationType,
                         onUpdate: onUpdate,
                         onComplete: onComplete
                     )
@@ -101,7 +107,8 @@ class GuidanceGenerationService {
                         childContext: childContext,
                         keyInsights: keyInsights,
                         apiKey: apiKey,
-                        activeFramework: activeFramework
+                        activeFramework: activeFramework,
+                        situationType: situationType
                     )
                     onComplete(guidance, rawContent)
                 }
@@ -120,6 +127,7 @@ class GuidanceGenerationService {
         keyInsights: String?,
         apiKey: String,
         activeFramework: FrameworkRecommendation?,
+        situationType: SituationType,
         onUpdate: @escaping (String) -> Void,
         onComplete: @escaping (GuidanceResponseProtocol, String) -> Void
     ) async throws {
@@ -137,6 +145,7 @@ class GuidanceGenerationService {
                 keyInsights: keyInsights,
                 activeFramework: activeFramework,
                 structureMode: structureMode,
+                situationType: situationType,
                 apiKey: apiKey
             )
             
@@ -169,7 +178,8 @@ class GuidanceGenerationService {
         childContext: String?,
         keyInsights: String?,
         apiKey: String,
-        activeFramework: FrameworkRecommendation?
+        activeFramework: FrameworkRecommendation?,
+        situationType: SituationType
     ) async throws -> (GuidanceResponseProtocol, String) {
         print("🔄 Using Edge Function for guidance generation (collecting streaming)")
         
@@ -185,6 +195,7 @@ class GuidanceGenerationService {
                 keyInsights: keyInsights,
                 activeFramework: activeFramework,
                 structureMode: structureMode,
+                situationType: situationType,
                 apiKey: apiKey
             )
             
@@ -209,7 +220,8 @@ class GuidanceGenerationService {
         childContext: String?,
         keyInsights: String?,
         apiKey: String,
-        activeFramework: FrameworkRecommendation?
+        activeFramework: FrameworkRecommendation?,
+        situationType: SituationType
     ) async throws -> (GuidanceResponseProtocol, String) {
         // For now, use the streaming approach and collect all content
         return try await generateGuidanceViaEdgeFunctionStreaming(
@@ -217,7 +229,8 @@ class GuidanceGenerationService {
             childContext: childContext,
             keyInsights: keyInsights,
             apiKey: apiKey,
-            activeFramework: activeFramework
+            activeFramework: activeFramework,
+            situationType: situationType
         )
     }
     
@@ -229,7 +242,8 @@ class GuidanceGenerationService {
         childContext: String?,
         keyInsights: String?,
         apiKey: String,
-        activeFramework: FrameworkRecommendation?
+        activeFramework: FrameworkRecommendation?,
+        situationType: SituationType
     ) async throws -> (GuidanceResponseProtocol, String) {
         print("🔄 Using direct API for guidance generation (legacy)")
         

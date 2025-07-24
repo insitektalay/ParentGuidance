@@ -32,10 +32,20 @@ struct NewSituationView: View {
     @State private var chatMessages: [ChatMessage] = []
     @State private var chatIsLoading: Bool = false
     
+    // Situation type selection state
+    @State private var selectedSituationType: SituationType?
+    @State private var showTypePicker = true
+    
     var body: some View {
         NavigationStack {
             Group {
-                if guidanceStructureSettings.useChatStyleInterface {
+                if showTypePicker {
+                    // Show situation type picker first
+                    SituationTypePickerView(onTypeSelected: { type in
+                        selectedSituationType = type
+                        showTypePicker = false
+                    })
+                } else if guidanceStructureSettings.useChatStyleInterface {
                     // Chat-style interface
                     ChatConversationView(
                         messages: $chatMessages,
@@ -102,6 +112,9 @@ struct NewSituationView: View {
             // Step 2: Get user's API key
             let apiKey = try await getUserApiKey(userId: userId)
             
+            // Get selected situation type or default
+            let situationType = selectedSituationType ?? .imJustWondering
+            
             // Step 2.5: Check for active framework
             let activeFramework = try? await FrameworkStorageService.shared.getActiveFramework(familyId: familyId!)
             
@@ -152,6 +165,7 @@ struct NewSituationView: View {
                 childId: nil, // TODO: Get from current child context if needed
                 title: guidance.title,
                 description: inputText,
+                situationType: situationType.rawValue,
                 category: category,
                 isIncident: isIncident
             )
@@ -257,6 +271,9 @@ struct NewSituationView: View {
             // Step 2: Get user's API key
             let apiKey = try await getUserApiKey(userId: userId)
             
+            // Get selected situation type or default
+            let situationType = selectedSituationType ?? .imJustWondering
+            
             // Step 2.5: Check for active framework
             let activeFramework = try? await FrameworkStorageService.shared.getActiveFramework(familyId: familyId!)
             
@@ -307,6 +324,7 @@ struct NewSituationView: View {
                 childId: nil, // TODO: Get from current child context if needed
                 title: guidance.title,
                 description: inputText,
+                situationType: situationType.rawValue,
                 category: category,
                 isIncident: isIncident
             )

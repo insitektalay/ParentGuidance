@@ -4651,6 +4651,156 @@
         }
       }
     },
+    "situation.picker.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What's happening?"
+          }
+        }
+      }
+    },
+    "situation.type.crisisNow.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crisis Now"
+          }
+        }
+      }
+    },
+    "situation.type.crisisNow.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It's happening now — meltdown, refusal, or chaos. I need help fast."
+          }
+        }
+      }
+    },
+    "situation.type.whatJustHappened.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What Just Happened?"
+          }
+        }
+      }
+    },
+    "situation.type.whatJustHappened.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Here's what happened earlier. What was going on in my child's brain? What could I have done differently?"
+          }
+        }
+      }
+    },
+    "situation.type.foundationalWork.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foundational Work"
+          }
+        }
+      }
+    },
+    "situation.type.foundationalWork.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There's a deeper trait or long-term issue we need to work on — shame, sibling dysregulation, separation anxiety, etc."
+          }
+        }
+      }
+    },
+    "situation.type.teachMeATactic.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teach Me a Tactic"
+          }
+        }
+      }
+    },
+    "situation.type.teachMeATactic.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can you help me solve a daily struggle like teeth brushing or getting dressed — something practical and recurring?"
+          }
+        }
+      }
+    },
+    "situation.type.knowMyChild.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Know My Child"
+          }
+        }
+      }
+    },
+    "situation.type.knowMyChild.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Here's some background on my child so you can understand them better."
+          }
+        }
+      }
+    },
+    "situation.type.rebuildConnection.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebuild Connection"
+          }
+        }
+      }
+    },
+    "situation.type.rebuildConnection.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong between us — I want to reconnect, repair, and rebuild trust after conflict."
+          }
+        }
+      }
+    },
+    "situation.type.imJustWondering.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I'm Just Wondering"
+          }
+        }
+      }
+    },
+    "situation.type.imJustWondering.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This isn't urgent — I'm just curious about something parenting-related or want to prepare ahead."
+          }
+        }
+      }
+    },
     "situation.voice.start" : {
       "localizations" : {
         "en" : {

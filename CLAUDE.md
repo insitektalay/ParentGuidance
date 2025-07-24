@@ -30,6 +30,9 @@ xcodebuild test -project ParentGuidance.xcodeproj -scheme ParentGuidance -destin
 
 # Run UI tests only
 xcodebuild test -project ParentGuidance.xcodeproj -scheme ParentGuidance -destination 'platform=iOS Simulator,name=iPhone 15' -only-testing:ParentGuidanceUITests
+
+# Run a single test
+xcodebuild test -project ParentGuidance.xcodeproj -scheme ParentGuidance -destination 'platform=iOS Simulator,name=iPhone 15' -only-testing:ParentGuidanceTests/TestClassName/testMethodName
 ```
 
 ### Linting and Code Quality
@@ -37,8 +40,12 @@ The project uses standard Xcode warnings and built-in Swift compiler checks. No 
 
 ### Quick Test Build
 ```bash
-# Quick test build using the provided script
+# Quick test build using the provided script (filters output to show only errors and success messages)
 ./test_build.sh
+
+# Clean build (remove derived data first)
+rm -rf ~/Library/Developer/Xcode/DerivedData/ParentGuidance-*
+xcodebuild -project ParentGuidance.xcodeproj -scheme ParentGuidance clean build
 ```
 
 ### Development Environment Setup
@@ -125,7 +132,7 @@ Multi-state input system for parenting situations:
 
 #### Main Tab Views (`Views/Core/`)
 - **Today**: Timeline view with empty state (`TodayViewController`, `TodayTimelineView`, `TodayEmptyView`)
-- **New**: Primary situation input (`NewSituationView`) with OpenAI integration and background context extraction
+- **New**: Primary situation input (`NewSituationView`) with OpenAI integration, background context extraction, and chat-style interface option (`ChatConversationView`, `ChatInputBar`)
 - **Library**: Search and browse past situations (`LibraryView`) with comprehensive filtering, selection management (`LibrarySelectionManager`), and contextual knowledge base (`YourChildsWorldCard`, `ContextualKnowledgeBaseView`)
 - **Alerts**: Notification management (`AlertView`) with framework recommendations (`FrameworkRecommendationView`)
 - **Settings**: User preferences and account management (`SettingsView`)
@@ -155,6 +162,7 @@ The app uses Supabase with these core tables:
 - ✅ Contextual knowledge base with automatic insight extraction and categorization
 - ✅ Framework generation and recommendation system
 - ✅ EdgeFunction migration completed for all AI operations
+- ✅ Chat-style interface option for situation input
 - ⚠️ Testing implementation is minimal (placeholder tests only)
 - ⚠️ Error handling and edge cases need enhancement
 
@@ -199,3 +207,9 @@ The app uses Supabase with these core tables:
 - **Test Data Setup**: Automated scripts for creating development users and sample data
 - **Schema Management**: SQL files for database structure and policies
 - **Local Development**: Supabase local development environment support
+
+### Supabase Edge Functions
+- **Location**: `supabase/functions/guidance/`
+- **Main Function**: Unified AI operations handler supporting guidance, analyze, context, framework, and translate operations
+- **Prompt Templates**: Centralized in `supabase/prompts/promptTemplates.ts` with variable interpolation
+- **Local Development**: Use `supabase functions serve` for local testing

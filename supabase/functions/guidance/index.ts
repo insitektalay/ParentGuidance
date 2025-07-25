@@ -163,7 +163,7 @@ serve(async (req) => {
       // Interpolate the system prompt with variables
       const systemPrompt = interpolatePrompt(promptTemplate.systemPromptText, promptVariables)
 
-      // Rest of the OpenAI API call remains the same...
+      // Make the OpenAI API call
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -180,9 +180,67 @@ serve(async (req) => {
         })
       })
 
-      // ... rest of the function remains unchanged
+      // Check if the response is successful
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error(`[ERROR] OpenAI API error: ${response.status} - ${errorText}`)
+        throw new Error(`OpenAI API error: ${response.status} - ${errorText}`)
+      }
+
+      // Parse the OpenAI response
+      const data = await response.json()
+      const content = data.choices?.[0]?.message?.content
+
+      if (!content) {
+        console.error('[ERROR] No content received from OpenAI')
+        throw new Error('No content received from OpenAI')
+      }
+
+      console.log(`[DEBUG] Guidance response received, length: ${content.length} characters`)
+
+      // Return the content as SSE stream for iOS client compatibility
+      const stream = new ReadableStream({
+        async start(controller) {
+          try {
+            // Stream the content word by word to simulate streaming
+            const words = content.split(' ')
+            
+            for (let i = 0; i < words.length; i++) {
+              const chunk = words[i] + (i < words.length - 1 ? ' ' : '')
+              const sseData = `data: ${JSON.stringify([{ type: 'text', value: chunk }])}\n\n`
+              controller.enqueue(new TextEncoder().encode(sseData))
+              
+              // Small delay to simulate streaming
+              if (i < words.length - 1) {
+                await new Promise(resolve => setTimeout(resolve, 5))
+              }
+            }
+            
+            // Send completion signal
+            controller.enqueue(new TextEncoder().encode('data: [DONE]\n\n'))
+            controller.close()
+          } catch (error) {
+            console.error('[ERROR] Streaming error:', error)
+            controller.error(error)
+          }
+        }
+      })
+
+      return new Response(stream, {
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive',
+        }
+      })
+
     } catch (error) {
-      // ... error handling remains unchanged
+      console.error('Guidance operation error:', error)
+      return new Response(
+        JSON.stringify({ error: 'Failed to generate guidance', details: error.message }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     }
   }
 

@@ -67,7 +67,7 @@ struct GuidanceCard: View {
                         .lineSpacing(4)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                .padding(3)
+                .padding(24)
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             .frame(height: 580)

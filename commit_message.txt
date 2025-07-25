@@ -1,1 +1,11 @@
-Before trying to fix card text issue, cannot see top of text
+Fix microphone functionality in New Situation screen
+
+The microphone button in the card-based interface was non-functional due to improper state management. The voice recorder view model was being   created locally in SituationInputIdleView instead of being shared from the parent NewSituationView.
+
+Changes:
+- Pass voiceRecorderViewModel from NewSituationView to SituationInputIdleView as a parameter
+- Update SituationInputIdleView to use @ObservedObject instead of @StateObject for the view model
+- Fix parameter ordering in both the main view initialization and preview provider
+
+This aligns the card-based interface with the chat interface's working implementation, restoring voice recording and transcription
+capabilities.

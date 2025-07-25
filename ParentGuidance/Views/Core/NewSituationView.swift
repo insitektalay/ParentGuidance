@@ -62,11 +62,9 @@ struct NewSituationView: View {
                         SituationGuidanceViewWithData(guidance: guidance)
                     } else {
                         SituationInputIdleView(
+                            voiceRecorderViewModel: voiceRecorderViewModel,
                             childName: "Alex",
                             apiKey: userApiKey,
-                            onStartRecording: {
-                                // Recording is now handled internally by SituationInputIdleView
-                            },
                             onSendMessage: { inputText in
                                 Task {
                                     await handleSendMessage(inputText)

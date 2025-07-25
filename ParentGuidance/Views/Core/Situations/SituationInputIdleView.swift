@@ -4,7 +4,7 @@ import Combine
 struct SituationInputIdleView: View {
     @State private var inputText: String = ""
     @FocusState private var isTextEditorFocused: Bool
-    @StateObject private var voiceRecorderViewModel = VoiceRecorderViewModel()
+    @ObservedObject var voiceRecorderViewModel: VoiceRecorderViewModel
     
     // Keyboard detection state
     @State private var isKeyboardVisible: Bool = false
@@ -12,7 +12,6 @@ struct SituationInputIdleView: View {
     
     let childName: String
     let apiKey: String
-    let onStartRecording: () -> Void
     let onSendMessage: (String) -> Void
     
     // MARK: - Height Calculations
@@ -200,9 +199,9 @@ struct SituationInputIdleView: View {
 
 #Preview {
     SituationInputIdleView(
+        voiceRecorderViewModel: VoiceRecorderViewModel(),
         childName: "Alex",
         apiKey: "test-api-key",
-        onStartRecording: {},
         onSendMessage: { _ in }
     )
 }

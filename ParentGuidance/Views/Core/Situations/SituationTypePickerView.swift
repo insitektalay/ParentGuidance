@@ -11,11 +11,6 @@ struct SituationTypePickerView: View {
     @State private var selectedType: SituationType?
     let onTypeSelected: (SituationType) -> Void
     
-    private let columns = [
-        GridItem(.flexible(), spacing: 12),
-        GridItem(.flexible(), spacing: 12)
-    ]
-    
     var body: some View {
         VStack(spacing: 0) {
             // Header
@@ -27,9 +22,9 @@ struct SituationTypePickerView: View {
                 .padding(.top, 20)
                 .padding(.bottom, 24)
             
-            // Grid of situation types
+            // List of situation types
             ScrollView {
-                LazyVGrid(columns: columns, spacing: 12) {
+                VStack(spacing: 12) {
                     ForEach(SituationType.allCases, id: \.self) { type in
                         SituationTypeCard(
                             situationType: type,
@@ -45,7 +40,7 @@ struct SituationTypePickerView: View {
                     }
                 }
                 .padding(.horizontal, 20)
-                .padding(.bottom, 100) // Space for tab bar
+                .padding(.bottom, 120) // Extra space for tab bar and safe area
             }
         }
         .background(ColorPalette.navy)

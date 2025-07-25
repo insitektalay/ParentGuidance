@@ -14,23 +14,28 @@ struct SituationTypeCard: View {
     
     var body: some View {
         Button(action: action) {
-            VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .top, spacing: 12) {
                 Text(situationType.emoji)
-                    .font(.system(size: 32))
+                    .font(.system(size: 36))
                 
-                Text(LocalizedStringKey(situationType.titleKey))
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(ColorPalette.white)
-                    .multilineTextAlignment(.leading)
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(LocalizedStringKey(situationType.titleKey))
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundColor(ColorPalette.white)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                    
+                    Text(LocalizedStringKey(situationType.subtitleKey))
+                        .font(.system(size: 15))
+                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                        .multilineTextAlignment(.leading)
+                        .lineLimit(3)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
                 
-                Text(LocalizedStringKey(situationType.subtitleKey))
-                    .font(.system(size: 14))
-                    .foregroundColor(ColorPalette.white.opacity(0.7))
-                    .multilineTextAlignment(.leading)
-                    .lineLimit(2)
-                    .fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 0)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(maxWidth: .infinity, minHeight: 90, alignment: .leading)
             .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: 12)

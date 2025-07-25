@@ -619,7 +619,7 @@ Input:
 Output:
 <free-text narrative summary>
 `
-}
+},
     
 psychologists_note_traits: {
   id: "pmpt_psych_note_traits",

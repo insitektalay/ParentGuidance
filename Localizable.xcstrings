@@ -881,6 +881,26 @@
     "Cancels the action" : {
 
     },
+    "chat.input.placeholder" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type a message…"
+          }
+        }
+      }
+    },
+    "chat.message.loading" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generating response..."
+          }
+        }
+      }
+    },
     "childBasics.addAnother" : {
       "localizations" : {
         "en" : {
@@ -2119,6 +2139,26 @@
         }
       }
     },
+    "library.framework.generating.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Creating your personalized parenting framework based on your selected situations..."
+          }
+        }
+      }
+    },
+    "library.framework.generating.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generating Framework"
+          }
+        }
+      }
+    },
     "library.insights.category.count %d" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -2534,26 +2574,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Generate Framework"
-          }
-        }
-      }
-    },
-    "library.framework.generating.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Generating Framework"
-          }
-        }
-      }
-    },
-    "library.framework.generating.subtitle" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Creating your personalized parenting framework based on your selected situations..."
           }
         }
       }
@@ -3060,6 +3080,216 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Your Rights"
+          }
+        }
+      }
+    },
+    "psychologistNote.delete.confirm.action" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Note"
+          }
+        }
+      }
+    },
+    "psychologistNote.delete.confirm.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This action cannot be undone."
+          }
+        }
+      }
+    },
+    "psychologistNote.delete.confirm.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete this note?"
+          }
+        }
+      }
+    },
+    "psychologistNote.detail.content" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Professional Summary"
+          }
+        }
+      }
+    },
+    "psychologistNote.detail.created" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Created"
+          }
+        }
+      }
+    },
+    "psychologistNote.detail.metadata" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note Information"
+          }
+        }
+      }
+    },
+    "psychologistNote.detail.sources" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Based on"
+          }
+        }
+      }
+    },
+    "psychologistNote.detail.type" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type"
+          }
+        }
+      }
+    },
+    "psychologistNote.empty.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generate professional summaries from your collected insights to get a comprehensive view of your child's development patterns."
+          }
+        }
+      }
+    },
+    "psychologistNote.empty.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No notes yet"
+          }
+        }
+      }
+    },
+    "psychologistNote.error.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to load notes"
+          }
+        }
+      }
+    },
+    "psychologistNote.existing.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your Notes"
+          }
+        }
+      }
+    },
+    "psychologistNote.generate.context" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generate Child Context"
+          }
+        }
+      }
+    },
+    "psychologistNote.generate.context.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Professional summary of your child's environment and context"
+          }
+        }
+      }
+    },
+    "psychologistNote.generate.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generate AI-powered clinical summaries from your collected insights"
+          }
+        }
+      }
+    },
+    "psychologistNote.generate.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generate New Notes"
+          }
+        }
+      }
+    },
+    "psychologistNote.generate.traits" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generate Key Insights"
+          }
+        }
+      }
+    },
+    "psychologistNote.generate.traits.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Professional analysis of behavioral patterns and traits"
+          }
+        }
+      }
+    },
+    "psychologistNote.loading" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading notes..."
+          }
+        }
+      }
+    },
+    "psychologistNote.share.footer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generated with ParentGuidance"
+          }
+        }
+      }
+    },
+    "psychologistNote.view.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Psychologist's Note"
           }
         }
       }
@@ -4236,6 +4466,76 @@
         }
       }
     },
+    "settings.guidanceStructure.chatStyle.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Display conversations in a chat format instead of swipable cards"
+          }
+        }
+      }
+    },
+    "settings.guidanceStructure.chatStyle.section" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interface Style"
+          }
+        }
+      }
+    },
+    "settings.guidanceStructure.chatStyle.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use Chat-style Input & Display"
+          }
+        }
+      }
+    },
+    "settings.guidanceStructure.childContext.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add comprehensive family context from previous interactions to guidance responses"
+          }
+        }
+      }
+    },
+    "settings.guidanceStructure.childContext.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Include Child Context"
+          }
+        }
+      }
+    },
+    "settings.guidanceStructure.keyInsights.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Include behavioral patterns and traits observations in guidance responses"
+          }
+        }
+      }
+    },
+    "settings.guidanceStructure.keyInsights.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Include Key Insights"
+          }
+        }
+      }
+    },
     "settings.guidanceStructure.learnMore" : {
       "localizations" : {
         "en" : {
@@ -4252,6 +4552,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Preview Mode"
+          }
+        }
+      }
+    },
+    "settings.guidanceStructure.psychologistNotes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Psychologist's Notes"
           }
         }
       }
@@ -4292,106 +4602,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Guidance Structure"
-          }
-        }
-      }
-    },
-    "settings.guidanceStructure.psychologistNotes" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Psychologist's Notes"
-          }
-        }
-      }
-    },
-    "settings.guidanceStructure.childContext.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Include Child Context"
-          }
-        }
-      }
-    },
-    "settings.guidanceStructure.childContext.description" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add comprehensive family context from previous interactions to guidance responses"
-          }
-        }
-      }
-    },
-    "settings.guidanceStructure.keyInsights.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Include Key Insights"
-          }
-        }
-      }
-    },
-    "settings.guidanceStructure.keyInsights.description" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Include behavioral patterns and traits observations in guidance responses"
-          }
-        }
-      }
-    },
-    "settings.guidanceStructure.chatStyle.section" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Interface Style"
-          }
-        }
-      }
-    },
-    "settings.guidanceStructure.chatStyle.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Use Chat-style Input & Display"
-          }
-        }
-      }
-    },
-    "settings.guidanceStructure.chatStyle.description" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Display conversations in a chat format instead of swipable cards"
-          }
-        }
-      }
-    },
-    "chat.input.placeholder" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Type a message…"
-          }
-        }
-      }
-    },
-    "chat.message.loading" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Generating response..."
           }
         }
       }
@@ -4661,17 +4871,8 @@
         }
       }
     },
-    "situation.type.crisisNow.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crisis Now"
-          }
-        }
-      }
-    },
     "situation.type.crisisNow.subtitle" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4681,27 +4882,30 @@
         }
       }
     },
-    "situation.type.whatJustHappened.title" : {
+    "situation.type.crisisNow.title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "What Just Happened?"
+            "value" : "Crisis Now"
           }
         }
       }
     },
-    "situation.type.whatJustHappened.subtitle" : {
+    "situation.type.foundationalWork.subtitle" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Here's what happened earlier. What was going on in my child's brain? What could I have done differently?"
+            "value" : "We need to work on a deeper issue — like shame, sibling triggers, or anxiety."
           }
         }
       }
     },
     "situation.type.foundationalWork.title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4711,77 +4915,19 @@
         }
       }
     },
-    "situation.type.foundationalWork.subtitle" : {
+    "situation.type.imJustWondering.subtitle" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "There's a deeper trait or long-term issue we need to work on — shame, sibling dysregulation, separation anxiety, etc."
-          }
-        }
-      }
-    },
-    "situation.type.teachMeATactic.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Teach Me a Tactic"
-          }
-        }
-      }
-    },
-    "situation.type.teachMeATactic.subtitle" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Can you help me solve a daily struggle like teeth brushing or getting dressed — something practical and recurring?"
-          }
-        }
-      }
-    },
-    "situation.type.knowMyChild.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Know My Child"
-          }
-        }
-      }
-    },
-    "situation.type.knowMyChild.subtitle" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Here's some background on my child so you can understand them better."
-          }
-        }
-      }
-    },
-    "situation.type.rebuildConnection.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rebuild Connection"
-          }
-        }
-      }
-    },
-    "situation.type.rebuildConnection.subtitle" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Something went wrong between us — I want to reconnect, repair, and rebuild trust after conflict."
+            "value" : "Not urgent — just curious about something parenting-related or planning ahead. "
           }
         }
       }
     },
     "situation.type.imJustWondering.title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4791,12 +4937,90 @@
         }
       }
     },
-    "situation.type.imJustWondering.subtitle" : {
+    "situation.type.knowMyChild.subtitle" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This isn't urgent — I'm just curious about something parenting-related or want to prepare ahead."
+            "value" : "Here's some background on my child so you can understand them better."
+          }
+        }
+      }
+    },
+    "situation.type.knowMyChild.title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Know My Child"
+          }
+        }
+      }
+    },
+    "situation.type.rebuildConnection.subtitle" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong — I want to reconnect, repair, and rebuild trust."
+          }
+        }
+      }
+    },
+    "situation.type.rebuildConnection.title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rebuild Connection"
+          }
+        }
+      }
+    },
+    "situation.type.teachMeATactic.subtitle" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Need help with daily struggles like teeth brushing or getting dressed — practical fixes."
+          }
+        }
+      }
+    },
+    "situation.type.teachMeATactic.title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teach Me a Tactic"
+          }
+        }
+      }
+    },
+    "situation.type.whatJustHappened.subtitle" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something happened earlier. What was my child thinking? Could I have handled it better? "
+          }
+        }
+      }
+    },
+    "situation.type.whatJustHappened.title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What Just Happened?"
           }
         }
       }
@@ -5045,216 +5269,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ParentPal"
-          }
-        }
-      }
-    },
-    "psychologistNote.delete.confirm.action" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete Note"
-          }
-        }
-      }
-    },
-    "psychologistNote.delete.confirm.message" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This action cannot be undone."
-          }
-        }
-      }
-    },
-    "psychologistNote.delete.confirm.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete this note?"
-          }
-        }
-      }
-    },
-    "psychologistNote.detail.content" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Professional Summary"
-          }
-        }
-      }
-    },
-    "psychologistNote.detail.created" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Created"
-          }
-        }
-      }
-    },
-    "psychologistNote.detail.metadata" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Note Information"
-          }
-        }
-      }
-    },
-    "psychologistNote.detail.sources" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Based on"
-          }
-        }
-      }
-    },
-    "psychologistNote.detail.type" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Type"
-          }
-        }
-      }
-    },
-    "psychologistNote.empty.subtitle" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Generate professional summaries from your collected insights to get a comprehensive view of your child's development patterns."
-          }
-        }
-      }
-    },
-    "psychologistNote.empty.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No notes yet"
-          }
-        }
-      }
-    },
-    "psychologistNote.error.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Unable to load notes"
-          }
-        }
-      }
-    },
-    "psychologistNote.existing.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Your Notes"
-          }
-        }
-      }
-    },
-    "psychologistNote.generate.context" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Generate Child Context"
-          }
-        }
-      }
-    },
-    "psychologistNote.generate.context.subtitle" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Professional summary of your child's environment and context"
-          }
-        }
-      }
-    },
-    "psychologistNote.generate.subtitle" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Generate AI-powered clinical summaries from your collected insights"
-          }
-        }
-      }
-    },
-    "psychologistNote.generate.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Generate New Notes"
-          }
-        }
-      }
-    },
-    "psychologistNote.generate.traits" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Generate Key Insights"
-          }
-        }
-      }
-    },
-    "psychologistNote.generate.traits.subtitle" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Professional analysis of behavioral patterns and traits"
-          }
-        }
-      }
-    },
-    "psychologistNote.loading" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Loading notes..."
-          }
-        }
-      }
-    },
-    "psychologistNote.share.footer" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Generated with ParentGuidance"
-          }
-        }
-      }
-    },
-    "psychologistNote.view.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Psychologist's Note"
           }
         }
       }

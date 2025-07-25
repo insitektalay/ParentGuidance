@@ -1,8 +1,1 @@
-feat: add situation type selection with 7 parenting scenario categories
-- Create SituationType enum with crisis, reflection, foundational work, tactics, child understanding, connection repair, and general inquiry   types
-- Add SituationTypeCard and SituationTypePickerView components with grid layout and selection states
-- Update NewSituationView to show type picker before situation input interface
-- Integrate situationType parameter throughout data pipeline: ConversationService, GuidanceGenerationService, EdgeFunctionService
-- Add 15 localization strings for all situation type titles, subtitles, and picker interface
-- Maintain existing 16-prompt combination system while preparing for future expansion to 112 combinations
-- Preserve backwards compatibility with existing database schema and API structure
+Before trying to fix card text issue, cannot see top of text

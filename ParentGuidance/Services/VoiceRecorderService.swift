@@ -34,13 +34,15 @@ class VoiceRecorderService: NSObject, ObservableObject {
         case idle
         case preparing
         case recording
+        case transcribing
         case paused
         case finished
         case error(VoiceRecorderError)
         
         static func == (lhs: RecordingState, rhs: RecordingState) -> Bool {
             switch (lhs, rhs) {
-            case (.idle, .idle), (.preparing, .preparing), (.recording, .recording), (.paused, .paused), (.finished, .finished):
+            case (.idle, .idle), (.preparing, .preparing), (.recording, .recording), 
+                 (.transcribing, .transcribing), (.paused, .paused), (.finished, .finished):
                 return true
             case (.error, .error):
                 return true
@@ -63,6 +65,9 @@ class VoiceRecorderService: NSObject, ObservableObject {
     
     func startRecording() async throws -> URL {
         print("🎙️ Starting recording...")
+        
+        // Update state immediately for responsive UI
+        await updateRecordingState(.preparing)
         
         // Notify delegate that recording will start
         await MainActor.run {
@@ -89,8 +94,6 @@ class VoiceRecorderService: NSObject, ObservableObject {
             }
             throw error
         }
-        
-        await updateRecordingState(.preparing)
         
         do {
             // Configure audio session
@@ -142,7 +145,7 @@ class VoiceRecorderService: NSObject, ObservableObject {
     func stopRecording() async throws -> URL {
         print("🛑 Stopping recording...")
         
-        guard recordingState == .recording else {
+        guard recordingState == .recording || recordingState == .transcribing else {
             print("❌ Stop recording failed: Not currently recording")
             throw VoiceRecorderError.recordingNotStarted
         }
@@ -161,8 +164,10 @@ class VoiceRecorderService: NSObject, ObservableObject {
         recorder.stop()
         stopRecordingTimer()
         
-        // Update state
-        await updateRecordingState(.finished)
+        // Update state only if not already updated
+        if recordingState != .finished {
+            await updateRecordingState(.finished)
+        }
         audioRecorder = nil
         
         // Deactivate audio session
@@ -352,11 +357,17 @@ class VoiceRecorderService: NSObject, ObservableObject {
     func stopRecordingAndTranscribe(apiKey: String) async throws -> (recordingURL: URL, transcription: String) {
         print("🛑 Stopping recording and starting transcription...")
         
+        // Immediately update state for instant UI feedback
+        await updateRecordingState(.transcribing)
+        
         // Stop recording and get file URL
         let recordingURL = try await stopRecording()
         
         // Transcribe the audio
         let transcription = try await transcribeAudio(fileURL: recordingURL, apiKey: apiKey)
+        
+        // Update state to idle after transcription completes
+        await updateRecordingState(.idle)
         
         // Notify delegate of complete flow completion
         await MainActor.run {
@@ -486,11 +497,13 @@ class VoiceRecorderService: NSObject, ObservableObject {
         recordingState = state
         
         switch state {
-        case .recording:
+        case .recording, .preparing:
             isRecording = true
-        case .idle, .finished, .error:
+        case .idle, .finished, .error, .transcribing:
             isRecording = false
-            recordingDuration = 0
+            if state != .transcribing {
+                recordingDuration = 0
+            }
         default:
             break
         }

@@ -80,7 +80,8 @@ struct SituationInputIdleView: View {
             // Input controls
             HStack(spacing: isKeyboardVisible ? 20 : 16) {
                 MicButton(
-                    isRecording: voiceRecorderViewModel.isRecording || voiceRecorderViewModel.isTranscribing,
+                    isRecording: voiceRecorderViewModel.isRecording,
+                    isTranscribing: voiceRecorderViewModel.isTranscribing,
                     action: {
                         // Disable button during transcription
                         guard !voiceRecorderViewModel.isTranscribing else { return }

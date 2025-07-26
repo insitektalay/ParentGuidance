@@ -1,11 +1,21 @@
-Fix microphone functionality in New Situation screen
+feat: implement instant microphone button feedback with transcribing state
 
-The microphone button in the card-based interface was non-functional due to improper state management. The voice recorder view model was being   created locally in SituationInputIdleView instead of being shared from the parent NewSituationView.
+Add immediate visual feedback for microphone button interactions by introducing a dedicated transcribing state with distinct visual indicators.
 
-Changes:
-- Pass voiceRecorderViewModel from NewSituationView to SituationInputIdleView as a parameter
-- Update SituationInputIdleView to use @ObservedObject instead of @StateObject for the view model
-- Fix parameter ordering in both the main view initialization and preview provider
+Visual States:
+  - Recording: Red button with white stop icon + pulsing animation
+  - Transcribing: White button with terracotta checkmark icon (static)
+  - Idle: Terracotta button with white microphone icon
 
-This aligns the card-based interface with the chat interface's working implementation, restoring voice recording and transcription
-capabilities.
+Implementation:
+  - Add .transcribing state to VoiceRecorderService RecordingState enum
+  - Update MicButton component with isTranscribing parameter and computed visual properties
+  - Modify stopRecordingAndTranscribe to immediately transition to transcribing state
+  - Update SituationInputIdleView and SituationFollowUpView to pass separate recording/transcribing states
+
+User Experience Impact:
+  - Button now responds instantly when pressed to stop recording
+  - Clear visual indication that transcription is in progress
+  - Eliminates perceived lag and provides better user feedback throughout the voice recording workflow
+
+Resolves the slow microphone button response issue while maintaining proper state management and audio processing functionality.

@@ -11,12 +11,20 @@ import AVFoundation
 class AudioPermissionManager {
     static let shared = AudioPermissionManager()
     
+    private var cachedPermissionStatus: AVAudioSession.RecordPermission?
+    
     private init() {}
     
     // MARK: - Permission Status
     
     var permissionStatus: AVAudioSession.RecordPermission {
-        return AVAudioSession.sharedInstance().recordPermission
+        // Use cached value if available for performance
+        if let cached = cachedPermissionStatus {
+            return cached
+        }
+        let status = AVAudioSession.sharedInstance().recordPermission
+        cachedPermissionStatus = status
+        return status
     }
     
     var isPermissionGranted: Bool {
@@ -55,8 +63,10 @@ class AudioPermissionManager {
                 print("📝 Permission request result: \(granted)")
                 if granted {
                     print("✅ Microphone permission granted")
+                    self.cachedPermissionStatus = .granted
                 } else {
                     print("❌ Microphone permission denied by user")
+                    self.cachedPermissionStatus = .denied
                 }
                 continuation.resume(returning: granted)
             }
@@ -67,6 +77,15 @@ class AudioPermissionManager {
     
     func checkAndRequestPermission() async -> Bool {
         print("🔍 Checking microphone permission status...")
+        
+        // Quick check with cached value first
+        if cachedPermissionStatus == .granted {
+            print("✅ Microphone permission already granted (cached)")
+            return true
+        }
+        
+        // Refresh cache and check again
+        cachedPermissionStatus = nil
         
         switch permissionStatus {
         case .granted:
@@ -79,7 +98,11 @@ class AudioPermissionManager {
             
         case .undetermined:
             print("❓ Microphone permission undetermined - requesting...")
-            return await requestMicrophonePermission()
+            let granted = await requestMicrophonePermission()
+            if granted {
+                cachedPermissionStatus = .granted
+            }
+            return granted
             
         @unknown default:
             print("⚠️ Unknown microphone permission status")
@@ -89,17 +112,31 @@ class AudioPermissionManager {
     
     // MARK: - Audio Session Configuration
     
+    private var isAudioSessionConfigured = false
+    
     func configureAudioSession() throws {
         print("🎵 Configuring audio session for recording...")
         
         let audioSession = AVAudioSession.sharedInstance()
         
+        // Only configure if not already configured
+        if !isAudioSessionConfigured {
+            do {
+                try audioSession.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker])
+                isAudioSessionConfigured = true
+                print("✅ Audio session category configured")
+            } catch {
+                print("❌ Failed to configure audio session category: \(error)")
+                throw error
+            }
+        }
+        
+        // Always activate (fast operation)
         do {
-            try audioSession.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker])
             try audioSession.setActive(true)
-            print("✅ Audio session configured successfully")
+            print("✅ Audio session activated")
         } catch {
-            print("❌ Failed to configure audio session: \(error)")
+            print("❌ Failed to activate audio session: \(error)")
             throw error
         }
     }

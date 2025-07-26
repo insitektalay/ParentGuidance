@@ -52,19 +52,23 @@ class VoiceRecorderViewModel: ObservableObject {
         }
     }
     
-    func stopRecordingAndTranscribe(apiKey: String) async {
+    func stopRecordingAndTranscribe(apiKey: String) async throws -> (recordingURL: URL, transcription: String) {
         print("🛑 ViewModel: Stopping recording and transcribing...")
         
+        // Set transcribing state immediately for UI feedback
+        isTranscribing = true
+        
         do {
-            isTranscribing = true
             let result = try await voiceRecorder.stopRecordingAndTranscribe(apiKey: apiKey)
             transcriptionText = result.transcription
             isTranscribing = false
             print("✅ ViewModel: Transcription completed: \(result.transcription)")
+            return result
         } catch {
             print("❌ ViewModel: Stop and transcribe failed - \(error)")
             isTranscribing = false
             await handleError(error)
+            throw error
         }
     }
     

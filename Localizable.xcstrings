@@ -5232,6 +5232,12 @@
         }
       }
     },
+    "Transcribing audio recording" : {
+
+    },
+    "Transcribing..." : {
+
+    },
     "usage.high" : {
       "extractionState" : "stale",
       "localizations" : {

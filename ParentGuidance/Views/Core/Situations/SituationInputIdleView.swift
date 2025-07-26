@@ -38,39 +38,47 @@ struct SituationInputIdleView: View {
             VStack(spacing: 0) {
             // Main input area
             VStack(spacing: 8) {
-                TextEditor(text: $inputText)
-                    .font(.system(size: isKeyboardVisible ? 16 : 18))
-                    .foregroundColor(ColorPalette.white)
-                    .scrollContentBackground(.hidden)
-                    .background(ColorPalette.white.opacity(isKeyboardVisible ? 0.05 : 0.08))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(
-                                isTextEditorFocused ? ColorPalette.terracotta : Color.clear,
-                                lineWidth: 2
-                            )
-                    )
-                    .frame(height: availableHeight(for: geometry))
-                    .overlay(
-                        Group {
-                            if inputText.isEmpty && !isTextEditorFocused {
-                                VStack {
-                                    HStack {
-                                        Text(String(localized: "situation.input.placeholder \(childName)"))
-                                            .font(.system(size: isKeyboardVisible ? 16 : 18))
-                                            .foregroundColor(ColorPalette.white.opacity(isKeyboardVisible ? 0.5 : 0.6))
-                                            .padding(.top, 8)
-                                            .padding(.leading, 5)
+                ZStack {
+                    TextEditor(text: $inputText)
+                        .font(.system(size: isKeyboardVisible ? 16 : 18))
+                        .foregroundColor(ColorPalette.white)
+                        .scrollContentBackground(.hidden)
+                        .background(ColorPalette.white.opacity(isKeyboardVisible ? 0.05 : 0.08))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(
+                                    isTextEditorFocused ? ColorPalette.terracotta : Color.clear,
+                                    lineWidth: 2
+                                )
+                        )
+                        .frame(height: availableHeight(for: geometry))
+                        .overlay(
+                            Group {
+                                if inputText.isEmpty && !isTextEditorFocused {
+                                    VStack {
+                                        HStack {
+                                            Text(String(localized: "situation.input.placeholder \(childName)"))
+                                                .font(.system(size: isKeyboardVisible ? 16 : 18))
+                                                .foregroundColor(ColorPalette.white.opacity(isKeyboardVisible ? 0.5 : 0.6))
+                                                .padding(.top, 8)
+                                                .padding(.leading, 5)
+                                            Spacer()
+                                        }
                                         Spacer()
                                     }
-                                    Spacer()
                                 }
                             }
-                        }
-                    )
-                    .focused($isTextEditorFocused)
-                    .padding(.horizontal, isKeyboardVisible ? 16 : 20)
+                        )
+                        .focused($isTextEditorFocused)
+                    
+                    // Transcribing overlay
+                    if voiceRecorderViewModel.isTranscribing {
+                        TranscribingOverlay()
+                            .transition(.scale.combined(with: .opacity))
+                    }
+                }
+                .padding(.horizontal, isKeyboardVisible ? 16 : 20)
                 
                 InputGuidanceFooter()
                     .padding(.top, 8)

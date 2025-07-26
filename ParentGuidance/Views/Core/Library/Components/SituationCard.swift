@@ -186,22 +186,33 @@ struct SituationCard: View {
                     onTap()
                 }
             }
-            .gesture(
+            .simultaneousGesture(
                 DragGesture()
                     .onChanged { value in
-                        // Only allow left swipe (negative translation)
-                        if value.translation.width < 0 {
+                        // Only respond to primarily horizontal swipes (left swipe for delete)
+                        let horizontalMovement = abs(value.translation.width)
+                        let verticalMovement = abs(value.translation.height)
+                        
+                        // Only activate horizontal swipe if it's more horizontal than vertical
+                        // and it's a left swipe (negative width)
+                        if horizontalMovement > verticalMovement && value.translation.width < 0 {
                             dragOffset = max(value.translation.width, -80) // Limit to delete button width
                         }
                     }
                     .onEnded { value in
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            if value.translation.width < -40 { // Threshold for showing delete
-                                dragOffset = -80
-                                showingDeleteButton = true
-                            } else {
-                                dragOffset = 0
-                                showingDeleteButton = false
+                        let horizontalMovement = abs(value.translation.width)
+                        let verticalMovement = abs(value.translation.height)
+                        
+                        // Only process horizontal swipe gesture if it was primarily horizontal
+                        if horizontalMovement > verticalMovement {
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                if value.translation.width < -40 { // Threshold for showing delete
+                                    dragOffset = -80
+                                    showingDeleteButton = true
+                                } else {
+                                    dragOffset = 0
+                                    showingDeleteButton = false
+                                }
                             }
                         }
                     }

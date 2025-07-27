@@ -314,6 +314,23 @@ class GuidanceGenerationService {
             }
         }()
         
+        // Log the prompt variables for debugging
+        print("🔍 ===== DIRECT API PROMPT VARIABLES =====")
+        print("🔍 NOTE: Direct API uses OpenAI Prompts API - the full prompt")
+        print("🔍 is constructed server-side by OpenAI, not locally.")
+        print("🔍 Variables sent to OpenAI:")
+        print("🔍 Prompt ID: \(promptId)")
+        print("🔍 Version: \(version)")
+        print("🔍 Variables: \(variables)")
+        print("🔍 Has Framework: \(activeFramework != nil)")
+        if let framework = activeFramework {
+            print("🔍 Framework Name: \(framework.frameworkName)")
+            print("🔍 Formatted Framework: \(formatFrameworkForPrompt(framework))")
+        }
+        print("🔍 Structure Mode: \(guidanceStructureSettings.currentMode)")
+        print("🔍 Guidance Style: \(guidanceStructureSettings.currentStyle)")
+        print("🔍 ==============================================")
+        
         let requestBody: [String: Any] = [
             "prompt": [
                 "id": promptId,

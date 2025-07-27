@@ -1,11 +1,12 @@
-Fix framework generation for dynamic guidance structure mode
+Add comprehensive prompt logging and simplify framework integration
 
-Previously, framework generation failed when users had "Dynamic Structure" selected in settings because it was looking   for [SITUATION] sections that only exist in "Fixed Structure" mode. Dynamic mode uses AI-generated section headers   instead.
+Added detailed logging throughout the guidance generation pipeline to debug framework integration issues. Modified   framework formatting to pass only the framework name instead of full notification text to reduce token usage and allow   more flexible AI interpretation.
 
-Modified FrameworkGenerationService to:
-- Check if dynamic structure mode is enabled via GuidanceStructureSettings
-- Use complete guidance content for dynamic mode instead of extracting sections
-- Preserve existing behavior for fixed structure mode
-- Include original situation context (title + description) with guidance
+Changes:
+  - Added complete prompt logging in Edge Function with clear visual markers
+  - Enhanced EdgeFunctionService with framework formatting verification
+  - Updated GuidanceGenerationService with detailed variable logging for direct API path
+  - Simplified formatFrameworkForPrompt/Request methods to return only framework name
+  - Updated prompt template integration to use framework as background context rather than explicit instruction
 
-Also simplified framework prompt formatting to only pass the framework name instead of name + notification text, reducing    token usage and allowing more flexible AI interpretation.
+The logging now shows exactly what prompt gets sent to the LLM, making it easier to debug dynamic vs fixed structure mode  issues and verify proper framework integration.

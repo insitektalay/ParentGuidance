@@ -1,7 +1,7 @@
 const FRAMEWORK_INTEGRATION_PROMPT = `
-Enhance the guidance by naturally incorporating relevant concepts from the family's active foundation tool: Active Framework:{{active_foundation_tools}}.
+Active Framework: {{active_foundation_tools}}
 
-Use each active tool to inform the advice and tone, guiding the overall approach without needing to be mentioned repeatedly. Only refer to a framework by name when it helps clarify or deepen the parent's understanding — avoid overusing or forcing the terms into the text.
+Consider this framework as background context. It should influence the general tone and structure of the advice, but there is no need to mention it directly unless the response would be incomplete or unclear without it. Most responses will not need to name the framework explicitly.
 
 `;
 const GUIDANCE_GENERATION_PROMPT = `
@@ -74,7 +74,7 @@ Return the enhanced guidance maintaining the original 6-category structure (Situ
 `;
 
 const Analysis_Requirements = `
-Provide a rigorous, developmentally-informed explanation of the child’s behavior, drawing on current research in neuroscience, psychology, and child development. Use precise terminology where appropriate (e.g., executive function, sensory integration, co-regulation, amygdala reactivity), and clearly distinguish between hypotheses and evidence. Maintain clarity and coherence, and avoid speculation or repetition.
+Provide a clear, developmentally-informed explanation of the child’s behavior. Ground your response in established scientific understanding, using accurate terminology where it naturally applies. Aim for precision and clarity, distinguishing between well-supported insights and emerging interpretations without introducing speculation.
 `;
 
 const DYNAMIC_GUIDANCE_GENERATION_PROMPT = `
@@ -165,8 +165,6 @@ ${Analysis_Requirements}
           systemPromptText: `
 Situation:{{current_situation}}
 
-Active Framework:{{active_foundation_tools}}
-
 ${GUIDANCE_GENERATION_PROMPT}
 
 ${FRAMEWORK_INTEGRATION_PROMPT}
@@ -178,8 +176,6 @@ ${FRAMEWORK_INTEGRATION_PROMPT}
           systemPromptText: `
 Situation:{{current_situation}}
 
-Active Framework:{{active_foundation_tools}}
-
 ${DYNAMIC_GUIDANCE_GENERATION_PROMPT}
 
 ${FRAMEWORK_INTEGRATION_PROMPT}
@@ -190,8 +186,6 @@ ${FRAMEWORK_INTEGRATION_PROMPT}
           variables: ["current_situation", "active_foundation_tools"],
           systemPromptText: `
 Situation:{{current_situation}}
-
-Active Framework:{{active_foundation_tools}}
 
 ${GUIDANCE_GENERATION_PROMPT}
 
@@ -205,8 +199,6 @@ ${FRAMEWORK_INTEGRATION_PROMPT}
           variables: ["current_situation", "active_foundation_tools"],
           systemPromptText: `
 Situation:{{current_situation}}
-
-Active Framework:{{active_foundation_tools}}
 
 ${DYNAMIC_GUIDANCE_GENERATION_PROMPT}
           

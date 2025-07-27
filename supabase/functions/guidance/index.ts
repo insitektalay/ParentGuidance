@@ -302,6 +302,14 @@ async function handleValidateKeyOperation(apiKey: string, provider: string) {
       // Interpolate the system prompt with variables
       const systemPrompt = interpolatePrompt(promptTemplate.systemPromptText, promptVariables)
 
+      // Log the complete final prompt for debugging
+      console.log(`🚨🚨🚨 COMPLETE FINAL PROMPT STARTS HERE 🚨🚨🚨`)
+      console.log(`Provider: ${provider} | Template: ${configKey}`)
+      console.log(`Variables:`, promptVariables)
+      console.log(`🚨🚨🚨 FULL PROMPT TEXT BELOW 🚨🚨🚨`)
+      console.log(systemPrompt)
+      console.log(`🚨🚨🚨 COMPLETE FINAL PROMPT ENDS HERE 🚨🚨🚨`)
+
       // Use direct API calls for multi-provider support
       const config = getProviderConfig(provider)
       

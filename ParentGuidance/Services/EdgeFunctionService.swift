@@ -55,8 +55,21 @@ class EdgeFunctionService {
         }
         
         if let framework = activeFramework {
-            variables["active_foundation_tools"] = formatFrameworkForRequest(framework)
+            let formattedFramework = formatFrameworkForRequest(framework)
+            variables["active_foundation_tools"] = formattedFramework
+            print("🔍 FRAMEWORK FORMATTING CHECK:")
+            print("🔍   Original name: '\(framework.frameworkName)'")
+            print("🔍   Formatted value: '\(formattedFramework)'")
+            print("🔍   Contains notification text: \(formattedFramework.contains(framework.notificationText))")
         }
+        
+        // Log all variables being sent to edge function
+        print("📤 ===== EDGE FUNCTION REQUEST VARIABLES =====")
+        print("📤 All variables being sent:")
+        for (key, value) in variables {
+            print("📤   \(key): \(value)")
+        }
+        print("📤 ===============================================")
         
         return try await streamRequest(
             operation: "guidance",
@@ -293,20 +306,7 @@ class EdgeFunctionService {
     
     /// Format framework for the request
     private func formatFrameworkForRequest(_ framework: FrameworkRecommendation) -> String {
-        var parts: [String] = []
-        
-        parts.append("Framework: \(framework.frameworkName)")
-        
-        if !framework.notificationText.isEmpty {
-            parts.append("Description: \(framework.notificationText)")
-        }
-        
-        // Add framework type description if available
-        if let frameworkType = framework.frameworkType {
-            parts.append("Type Description: \(frameworkType.description)")
-        }
-        
-        return parts.joined(separator: "\n")
+        return framework.frameworkName
     }
     
     /// Make a custom Edge Function call with custom body parameters (for audio transcription)

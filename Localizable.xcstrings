@@ -1686,6 +1686,9 @@
         }
       }
     },
+    "Framework Generation Error" : {
+
+    },
     "framework.action.deactivate" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -2666,6 +2669,9 @@
 
     },
     "No insights collected yet" : {
+
+    },
+    "OK" : {
 
     },
     "onboarding.benefit.familyMembers" : {

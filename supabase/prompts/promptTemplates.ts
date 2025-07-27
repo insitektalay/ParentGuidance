@@ -1,38 +1,7 @@
 const FRAMEWORK_INTEGRATION_PROMPT = `
-FRAMEWORK INTEGRATION PROMPT:
+Enhance the guidance by naturally incorporating relevant concepts from the family's active foundation tools, listed above. Do not reference or include any tools that are not active.
 
-Enhance the provided guidance content by integrating ONLY the foundation tools listed in the "Active Foundation Tools" section above. Do not reference or include concepts from any foundation tools that are not explicitly listed as active for this family. The goal is to provide consistent framework terminology and approaches throughout the guidance while maintaining the original structure and practical value.
-
- Integration Guidelines:
-
-IMPORTANT: Only apply the guidelines below for foundation tools that appear in the "Active Foundation Tools" list above. Ignore all other framework guidelines.
-
-If Zones of Regulation is active:
-- Reference appropriate zones (Green: calm/focused, Yellow: frustrated/excited, Red: explosive, Blue: sad/tired)
-- Suggest zone check-ins before activities
-- Include zone regulation strategies
-- Use zone language in dialogue scripts and anticipatory responses
-
-If Focus Map is active:
-- Reference energy levels (high/low) and attention states (focused/scattered)
-- Match activities to current attention capacity
-- Include attention assessment strategies
-- Consider energy patterns in timing recommendations
-
-If Sensory Comfort Map is active:
-- Reference sensory comfort levels and potential overwhelm
-- Include environmental assessment and modification
-- Consider sensory input in strategy recommendations
-- Address sensory factors in action steps and dialogue
-
- Enhancement Rules:
-
-1. Maintain all original practical advice and strategies
-2. Add framework language naturally without forcing it
-3. Include specific framework applications where relevant
-4. Preserve parent-to-child dialogue scripts while adding framework context
-5. Integrate framework concepts into anticipatory responses (Quick Comebacks)
-6. End relevant sections with: "This approach uses your [Framework Name] to guide the response strategy."
+Use each active tool as a lens to inform the advice and language, not as content to be named repeatedly. Framework terms should only appear when they clarify or enhance the parent's understanding — avoid repeating or forcing them into every sentence.
 
 `;
 const GUIDANCE_GENERATION_PROMPT = `
@@ -105,39 +74,28 @@ Return the enhanced guidance maintaining the original 6-category structure (Situ
 `;
 
 const Analysis_Requirements = `
-Analysis Requirements:
-
-- The analysis should be thorough, as if conducted by a leading child psychologist.
-- Where appropriate, include detailed scientific explanations—but always present them in a way that is easy to understand.
-- Identify possible nervous system traits or developmental sensitivities that may be influencing the child’s behavior.
-- Distinguish between temporary coping behaviors and deeper temperamental or biological traits.
-- Highlight perceptual mismatches between parent intention and child experience when present.
-- Avoid diagnostic labels—focus on patterns and nervous system responses instead.
-- Ensure analysis flows logically from the description of the situation, with clear cause–effect reasoning.
+Provide a rigorous, developmentally-informed explanation of the child’s behavior, drawing on current research in neuroscience, psychology, and child development. Use precise terminology where appropriate (e.g., executive function, sensory integration, co-regulation, amygdala reactivity), and clearly distinguish between hypotheses and evidence. Maintain clarity and coherence, and avoid speculation or repetition.
 `;
 
 const DYNAMIC_GUIDANCE_GENERATION_PROMPT = `
-GUIDANCE GENERATION PROMPT:
+Write your response in a warm, conversational tone. Title the entire response and organize it into 5–8 clearly defined sections using bracketed headers, following this format exactly:
 
-Generate a Title for the situation (maximum 24 characters including spaces) that clearly summarizes the challenge or theme in a concise and parent-friendly way. Then analyze and present the response using a bracket-delimited format with between 3 and 8 sections. The titles should be dynamic and reflect the natural structure of the content.
+[TITLE]  
+A concise, parent-friendly title here
 
- Formatting Requirements:
+[Section Name]  
+Content here
 
-- Present each category's content in clear, supportive language that maintains warmth while being actionable
-- Combine related points within categories
-- Use plain text with paragraphs and bullet points as appropriate
-- Remove any emoji or decorative symbols
-- Exclude any child-to-parent or third-party quotes
+[Another Section]  
+More content here
 
+Do not prefix section titles with numbers (e.g., “1.”, “Card 1:”, or “2:”) — use clean, standalone titles only.
+`;
 
- Tone Requirements:
-- Maintain a warm, supportive tone that acknowledges the parent's care and effort
-- Begin responses with empathetic recognition of the situation
-- Frame suggestions as collaborative rather than prescriptive
-- Use inclusive language ("you might find," "this could help") rather than directive language
-- Acknowledge both the challenges and the positive aspects of including the child
-- Avoid restating the same concept multiple times across categories
-- Focus on the most impactful advice in each section
+const DISCLAIMER= `
+If the response contains references to conditions such as ADHD, autism, or any diagnostic term, automatically append a short disclaimer at the end of the response:
+
+“This isn’t a diagnosis. It’s always best to speak with a qualified professional if you have ongoing concerns about your child’s development.”
 `;
 export const promptTemplates = {
     guidance: {
@@ -195,7 +153,7 @@ ${Analysis_Requirements}
 Situation:{{current_situation}}
 
 ${DYNAMIC_GUIDANCE_GENERATION_PROMPT}
-         
+          
 ${Analysis_Requirements}
           `
         }

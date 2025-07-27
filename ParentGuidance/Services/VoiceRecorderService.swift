@@ -227,6 +227,12 @@ class VoiceRecorderService: NSObject, ObservableObject {
     func transcribeAudio(fileURL: URL, apiKey: String) async throws -> String {
         print("🎤 Starting transcription for file: \(fileURL.lastPathComponent)")
         
+        // Validate API key
+        guard !apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            print("❌ API key is empty")
+            throw VoiceRecorderError.apiKeyMissing
+        }
+        
         // Notify delegate that transcription will start
         await MainActor.run {
             delegate?.voiceRecorderWillStartTranscription(self, fileURL: fileURL)
@@ -260,7 +266,7 @@ class VoiceRecorderService: NSObject, ObservableObject {
         // Add model field
         body.append("--\(boundary)\r\n".data(using: .utf8)!)
         body.append("Content-Disposition: form-data; name=\"model\"\r\n\r\n".data(using: .utf8)!)
-        body.append("gpt-4o-transcribe\r\n".data(using: .utf8)!)
+        body.append("whisper-1\r\n".data(using: .utf8)!)
         
         // Add file field
         body.append("--\(boundary)\r\n".data(using: .utf8)!)
@@ -305,7 +311,27 @@ class VoiceRecorderService: NSObject, ObservableObject {
             if let responseString = String(data: data, encoding: .utf8) {
                 print("❌ Error response: \(responseString)")
             }
-            throw VoiceRecorderError.transcriptionFailed(NSError(domain: "OpenAIError", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP \(httpResponse.statusCode)"]))
+            
+            // Provide more specific error handling based on status code
+            switch httpResponse.statusCode {
+            case 401:
+                throw VoiceRecorderError.apiKeyMissing
+            case 400:
+                // Bad request - could be invalid model or file format
+                throw VoiceRecorderError.invalidFileFormat
+            case 413:
+                // Payload too large
+                let sizeInMB = try? getRecordingFileSize(fileURL)
+                throw VoiceRecorderError.fileTooLarge(sizeInMB: sizeInMB ?? 0)
+            case 429:
+                // Rate limit exceeded
+                throw VoiceRecorderError.networkError(NSError(domain: "OpenAIError", code: 429, userInfo: [NSLocalizedDescriptionKey: "API rate limit exceeded. Please try again later."]))
+            case 500...599:
+                // Server error
+                throw VoiceRecorderError.transcriptionFailed(NSError(domain: "OpenAIError", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "OpenAI server error. Please try again."]))
+            default:
+                throw VoiceRecorderError.transcriptionFailed(NSError(domain: "OpenAIError", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP \(httpResponse.statusCode)"]))
+            }
         }
         
         // Parse JSON response
@@ -317,6 +343,12 @@ class VoiceRecorderService: NSObject, ObservableObject {
             let jsonResponse = try JSONSerialization.jsonObject(with: data) as? [String: Any]
             guard let transcriptionText = jsonResponse?["text"] as? String else {
                 print("❌ No transcription text in response")
+                throw VoiceRecorderError.noTranscriptionContent
+            }
+            
+            // Check if transcription is empty or just whitespace
+            guard !transcriptionText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                print("❌ Transcription text is empty")
                 throw VoiceRecorderError.noTranscriptionContent
             }
             

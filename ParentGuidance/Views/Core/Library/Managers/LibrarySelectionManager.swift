@@ -21,6 +21,12 @@ class LibrarySelectionManager: ObservableObject {
     /// Whether framework generation is currently in progress
     @Published var isGeneratingFramework: Bool = false
     
+    /// Error message for framework generation failures
+    @Published var errorMessage: String?
+    
+    /// Whether to show error alert
+    @Published var showError: Bool = false
+    
     // MARK: - User Context
     var currentUserId: String?
     var currentFamilyId: String?
@@ -104,12 +110,16 @@ class LibrarySelectionManager: ObservableObject {
     func generateFramework() async {
         guard canGenerateFramework else {
             print("❌ Cannot generate framework: insufficient selections (\(selectedCount) < 2)")
+            await MainActor.run {
+                setError("Please select at least 2 situations to generate a framework")
+            }
             return
         }
         
-        // Set loading state
+        // Set loading state and clear any previous errors
         await MainActor.run {
             isGeneratingFramework = true
+            clearError()
         }
         
         print("🚀 Framework generation initiated with \(selectedCount) situations")
@@ -166,12 +176,11 @@ class LibrarySelectionManager: ObservableObject {
                 print("   Storage error: \(storageError.localizedDescription)")
             }
             
-            // Clear loading state on error
+            // Clear loading state and show error on main thread
             await MainActor.run {
                 isGeneratingFramework = false
+                handleFrameworkError(error)
             }
-            
-            // TODO: Step 7 - Show error message in UI
         }
     }
     
@@ -234,6 +243,33 @@ class LibrarySelectionManager: ObservableObject {
         print("🔄 Resetting LibrarySelectionManager")
         isInSelectionMode = false
         selectedSituationIds.removeAll()
+        clearError()
+    }
+    
+    // MARK: - Error Handling Methods
+    
+    /// Set error message and show error alert
+    private func setError(_ message: String) {
+        print("❌ LibrarySelectionManager Error: \(message)")
+        errorMessage = message
+        showError = true
+    }
+    
+    /// Clear error state
+    func clearError() {
+        errorMessage = nil
+        showError = false
+    }
+    
+    /// Handle framework generation errors with user-friendly messages
+    private func handleFrameworkError(_ error: Error) {
+        if let frameworkError = error as? FrameworkGenerationError {
+            setError(frameworkError.localizedDescription)
+        } else if let storageError = error as? FrameworkStorageError {
+            setError(storageError.localizedDescription)
+        } else {
+            setError("Failed to generate framework recommendation. Please try again.")
+        }
     }
 }
 
@@ -250,7 +286,7 @@ extension LibrarySelectionManager {
             }
         } else {
             print("⚠️ Framework generation validation failed: \(validation.errorMessage ?? "Unknown error")")
-            // TODO: Step 7 - Show error message in UI
+            setError(validation.errorMessage ?? "Framework generation validation failed")
         }
     }
     

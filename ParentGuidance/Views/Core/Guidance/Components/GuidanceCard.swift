@@ -70,7 +70,6 @@ struct GuidanceCard: View {
                 .padding(24)
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .frame(height: 580)
             .background(Color.clear)
             .overlay(
                 RoundedRectangle(cornerRadius: 16)

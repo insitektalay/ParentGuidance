@@ -138,6 +138,12 @@ class GuidanceGenerationService {
         do {
             let guidanceStructureSettings = GuidanceStructureSettings.shared
             let structureMode = guidanceStructureSettings.currentMode == .fixed ? "fixed" : "dynamic"
+            let guidanceStyle = guidanceStructureSettings.currentStyle == .warmPractical ? "Warm Practical" : "Analytical Scientific"
+            
+            print("📊 [GuidanceGenerationService] Current settings:")
+            print("   → Structure Mode: \(structureMode)")
+            print("   → Guidance Style: \(guidanceStyle)")
+            print("   → Selected Prompt Version: \(guidanceStructureSettings.getPromptVersion(hasFramework: activeFramework != nil))")
             
             let stream = try await EdgeFunctionService.shared.streamGuidance(
                 situation: situation,
@@ -145,6 +151,7 @@ class GuidanceGenerationService {
                 keyInsights: keyInsights,
                 activeFramework: activeFramework,
                 structureMode: structureMode,
+                guidanceStyle: guidanceStyle,
                 situationType: situationType,
                 apiKey: apiKey
             )
@@ -188,6 +195,12 @@ class GuidanceGenerationService {
         do {
             let guidanceStructureSettings = GuidanceStructureSettings.shared
             let structureMode = guidanceStructureSettings.currentMode == .fixed ? "fixed" : "dynamic"
+            let guidanceStyle = guidanceStructureSettings.currentStyle == .warmPractical ? "Warm Practical" : "Analytical Scientific"
+            
+            print("📊 [GuidanceGenerationService] Current settings:")
+            print("   → Structure Mode: \(structureMode)")
+            print("   → Guidance Style: \(guidanceStyle)")
+            print("   → Selected Prompt Version: \(guidanceStructureSettings.getPromptVersion(hasFramework: activeFramework != nil))")
             
             let stream = try await EdgeFunctionService.shared.streamGuidance(
                 situation: situation,
@@ -195,6 +208,7 @@ class GuidanceGenerationService {
                 keyInsights: keyInsights,
                 activeFramework: activeFramework,
                 structureMode: structureMode,
+                guidanceStyle: guidanceStyle,
                 situationType: situationType,
                 apiKey: apiKey
             )

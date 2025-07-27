@@ -28,6 +28,7 @@ class EdgeFunctionService {
         keyInsights: String? = nil,
         activeFramework: FrameworkRecommendation? = nil,
         structureMode: String = "fixed",
+        guidanceStyle: String = "Warm Practical",
         situationType: SituationType = .imJustWondering,
         apiKey: String
     ) async throws -> AsyncThrowingStream<String, Error> {
@@ -35,11 +36,13 @@ class EdgeFunctionService {
         print("   → Operation: guidance")
         print("   → Has Framework: \(activeFramework != nil)")
         print("   → Structure Mode: \(structureMode)")
+        print("   → Guidance Style: \(guidanceStyle)")
         print("   → Situation Type: \(situationType.rawValue)")
         
         var variables: [String: Any] = [
             "current_situation": situation,
             "structure_mode": structureMode,
+            "guidance_style": guidanceStyle,
             "situation_type": situationType.rawValue
         ]
         

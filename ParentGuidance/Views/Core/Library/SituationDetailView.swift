@@ -149,7 +149,7 @@ struct SituationDetailView: View {
                                             }
                                         }
                                         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                                        .frame(height: 400)
+                                        .frame(height: 600)
                                         
                                         // Page indicators
                                         HStack(spacing: 8) {

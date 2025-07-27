@@ -71,6 +71,13 @@ struct LibraryView: View {
                     .environmentObject(appCoordinator)
             }
         }
+        .alert("Framework Generation Error", isPresented: $selectionManager.showError) {
+            Button("OK") {
+                selectionManager.clearError()
+            }
+        } message: {
+            Text(selectionManager.errorMessage ?? "An error occurred while generating the framework recommendation.")
+        }
     }
     
     private var libraryListView: some View {

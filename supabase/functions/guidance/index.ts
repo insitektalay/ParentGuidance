@@ -129,6 +129,7 @@ serve(async (req) => {
 
     console.log(`[DEBUG] Guidance configuration: style="${style}", mode="${mode}", configKey="${configKey}", hasFramework=${hasFramework}`)
     console.log(`[DEBUG] Situation type: ${situation_type || 'not provided'}`) // NEW LINE ADDED
+    console.log(`[DEBUG] Raw variables received:`, { guidance_style, structure_mode })
 
     try {
       // Select the appropriate prompt template
@@ -144,6 +145,7 @@ serve(async (req) => {
         if (!promptTemplate) {
           throw new Error(`Unknown guidance configuration: ${configKey}`)
         }
+        console.log(`[DEBUG] Selected WITH FRAMEWORK prompt: ${configKey}`)
         promptVariables.active_foundation_tools = active_foundation_tools
       } else {
         // Without framework
@@ -151,6 +153,7 @@ serve(async (req) => {
         if (!promptTemplate) {
           throw new Error(`Unknown guidance configuration: ${configKey}`)
         }
+        console.log(`[DEBUG] Selected NO FRAMEWORK prompt: ${configKey}`)
         // Add psychologist notes variables if present
         if (child_context && promptTemplate.variables.includes("child_context")) {
           promptVariables.child_context = child_context

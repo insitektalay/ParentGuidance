@@ -8,6 +8,7 @@
 import Foundation
 
 enum SituationType: String, CaseIterable {
+    case justLetMeType = "just_let_me_type"
     case crisisNow = "crisis_now"
     case whatJustHappened = "what_just_happened"
     case foundationalWork = "foundational_work"
@@ -18,6 +19,7 @@ enum SituationType: String, CaseIterable {
     
     var emoji: String {
         switch self {
+        case .justLetMeType: return "📝"
         case .crisisNow: return "🔥"
         case .whatJustHappened: return "🌪️"
         case .foundationalWork: return "🧱"
@@ -30,6 +32,7 @@ enum SituationType: String, CaseIterable {
     
     var titleKey: String {
         switch self {
+        case .justLetMeType: return "situation.type.justLetMeType.title"
         case .crisisNow: return "situation.type.crisisNow.title"
         case .whatJustHappened: return "situation.type.whatJustHappened.title"
         case .foundationalWork: return "situation.type.foundationalWork.title"
@@ -42,6 +45,7 @@ enum SituationType: String, CaseIterable {
     
     var subtitleKey: String {
         switch self {
+        case .justLetMeType: return "situation.type.justLetMeType.subtitle"
         case .crisisNow: return "situation.type.crisisNow.subtitle"
         case .whatJustHappened: return "situation.type.whatJustHappened.subtitle"
         case .foundationalWork: return "situation.type.foundationalWork.subtitle"

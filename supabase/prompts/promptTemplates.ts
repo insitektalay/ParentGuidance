@@ -1,3 +1,22 @@
+const generalEntry = `Respond naturally based on the situation text. No assumptions about urgency, tone, or structure.
+`;
+const crisisNow = `This is an urgent, emotionally intense moment. Provide fast, calming, practical guidance with empathy.
+`;
+const whatJustHappened = `Reflect on the recent moment with insight. Help the parent understand what might have happened internally for the child and offer suggestions for next time.
+`;
+const foundationalWork = `Address a deeper trait or pattern. Focus on long-term development, emotional growth, and internal change.
+`;
+const teachMeATactic = `Give step-by-step, practical suggestions to resolve everyday struggles with warmth and realism.
+`;
+const knowMyChild = `The user is offering background info. Focus on understanding the child better to inform future guidance.
+`;
+const rebuildConnection = `Help the parent repair emotional connection. Emphasize empathy, trust-building, and emotional safety.
+`;
+const imJustWondering = `This is a non-urgent question. Offer thoughtful, curious, and informative guidance that supports reflective parenting.
+`;
+
+
+
 const FRAMEWORK_INTEGRATION_PROMPT = `
 Active Framework: {{active_foundation_tools}}
 

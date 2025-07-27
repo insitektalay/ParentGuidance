@@ -68,18 +68,7 @@ struct SituationCard: View {
     }
     
     private var iconForEmoji: String {
-        switch emoji {
-        case "🦷":
-            return "mouth" // Closest SF Symbol to tooth
-        case "🛁":
-            return "drop.fill" // Bathtub/water representation
-        case "🚗":
-            return "car.fill"
-        case "🍽️":
-            return "fork.knife"
-        default:
-            return "circle.fill"
-        }
+        return Self.getIconForEmoji(emoji)
     }
     
     var body: some View {

@@ -154,12 +154,12 @@ struct TodayTimelineView: View {
         // Create comprehensive keyword → SF Symbol mapping
         let iconMappings: [String: String] = [
             // Daily Care & Hygiene
-            "teeth": "toothbrush.fill",
-            "brush": "toothbrush.fill",
-            "brushing": "toothbrush.fill",
-            "dental": "toothbrush.fill",
-            "bath": "bathtub.fill",
-            "shower": "shower.fill",
+            "teeth": "mouth",
+            "brush": "mouth",
+            "brushing": "mouth",
+            "dental": "mouth",
+            "bath": "drop.fill",
+            "shower": "drop.fill",
             "washing": "hands.sparkles.fill",
             "wash": "hands.sparkles.fill",
             "soap": "hands.sparkles.fill",
@@ -170,8 +170,8 @@ struct TodayTimelineView: View {
             "bed": "bed.double.fill",
             "bedtime": "bed.double.fill",
             "nap": "bed.double.fill",
-            "tired": "moon.zzz.fill",
-            "sleepy": "moon.zzz.fill",
+            "tired": "moon.fill",
+            "sleepy": "moon.fill",
             
             // Food & Eating
             "eat": "fork.knife",
@@ -181,10 +181,10 @@ struct TodayTimelineView: View {
             "dinner": "fork.knife",
             "lunch": "fork.knife",
             "breakfast": "fork.knife",
-            "snack": "carrot.fill",
+            "snack": "apple.logo",
             "hungry": "fork.knife",
             "kitchen": "fork.knife",
-            "cooking": "frying.pan.fill",
+            "cooking": "flame.fill",
             
             // Transportation
             "car": "car.fill",
@@ -193,8 +193,8 @@ struct TodayTimelineView: View {
             "bus": "bus.fill",
             "walk": "figure.walk",
             "walking": "figure.walk",
-            "bike": "bicycle",
-            "scooter": "scooter",
+            "bike": "bicycle.circle.fill",
+            "scooter": "bicycle.circle.fill",
             
             // School & Learning
             "school": "building.2.fill",
@@ -209,23 +209,23 @@ struct TodayTimelineView: View {
             // Play & Activities
             "play": "gamecontroller.fill",
             "playing": "gamecontroller.fill",
-            "toy": "teddybear.fill",
-            "toys": "teddybear.fill",
+            "toy": "gift.fill",
+            "toys": "gift.fill",
             "game": "gamecontroller.fill",
-            "lego": "building.2.crop.circle.fill",
-            "blocks": "building.2.crop.circle.fill",
-            "puzzle": "puzzlepiece.fill",
+            "lego": "square.stack.3d.up.fill",
+            "blocks": "square.stack.3d.up.fill",
+            "puzzle": "puzzlepiece.extension.fill",
             
             // Sports & Exercise
-            "soccer": "soccerball",
-            "football": "football.fill",
-            "basketball": "basketball.fill",
-            "tennis": "tennis.racket",
+            "soccer": "sportscourt.fill",
+            "football": "sportscourt.fill",
+            "basketball": "sportscourt.fill",
+            "tennis": "sportscourt.fill",
             "swimming": "figure.pool.swim",
             "run": "figure.run",
             "running": "figure.run",
-            "exercise": "figure.strengthtraining.traditional",
-            "playground": "figure.playground",
+            "exercise": "dumbbell.fill",
+            "playground": "figure.and.child.holdinghands",
             
             // Technology & Media
             "tv": "tv.fill",
@@ -263,9 +263,9 @@ struct TodayTimelineView: View {
             
             // Health & Medical
             "sick": "cross.case.fill",
-            "medicine": "pills.fill",
-            "doctor": "stethoscope",
-            "fever": "thermometer",
+            "medicine": "pill.fill",
+            "doctor": "cross.case.fill",
+            "fever": "thermometer.medium",
             "hurt": "bandage.fill",
             "pain": "bandage.fill",
             
@@ -275,7 +275,7 @@ struct TodayTimelineView: View {
             "shopping": "cart.fill",
             "park": "tree.fill",
             "restaurant": "fork.knife.circle.fill",
-            "library": "building.columns.fill",
+            "library": "books.vertical.fill",
             "church": "building.columns.fill",
             "hospital": "cross.case.fill",
             

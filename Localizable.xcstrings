@@ -4976,6 +4976,28 @@
         }
       }
     },
+    "situation.type.justLetMeType.subtitle" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I just want to type what's happening — not sure which type this falls under."
+          }
+        }
+      }
+    },
+    "situation.type.justLetMeType.title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Just Let Me Type"
+          }
+        }
+      }
+    },
     "situation.type.crisisNow.subtitle" : {
       "extractionState" : "stale",
       "localizations" : {

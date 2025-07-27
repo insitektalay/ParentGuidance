@@ -261,6 +261,13 @@ class GuidanceGenerationService {
     ) async throws -> (GuidanceResponseProtocol, String) {
         print("🔄 Using direct API for guidance generation (legacy)")
         
+        // Prepend guidance note to situation for Direct API (since templates are server-side)
+        let guidanceNote = situationType.guidanceNote
+        let situationWithGuidance = "\(guidanceNote)\n\n\(situation)"
+        
+        print("🔍 [Direct API] Added guidance note for situation type: \(situationType.rawValue)")
+        print("🔍 [Direct API] Guidance note: \(guidanceNote)")
+        
         let url = URL(string: "https://api.openai.com/v1/responses")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -276,7 +283,7 @@ class GuidanceGenerationService {
                 
                 // Include psychologist notes if provided
                 var variables: [String: Any] = [
-                    "current_situation": situation,
+                    "current_situation": situationWithGuidance,
                     "active_foundation_tools": formatFrameworkForPrompt(framework)
                 ]
                 if let childContext = childContext, !childContext.isEmpty {
@@ -297,7 +304,7 @@ class GuidanceGenerationService {
                 
                 // Include psychologist notes if provided
                 var variables: [String: Any] = [
-                    "current_situation": situation
+                    "current_situation": situationWithGuidance
                 ]
                 if let childContext = childContext, !childContext.isEmpty {
                     variables["child_context"] = childContext

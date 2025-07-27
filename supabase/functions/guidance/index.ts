@@ -268,11 +268,29 @@ async function handleValidateKeyOperation(apiKey: string, provider: string) {
     console.log(`[DEBUG] Raw variables received:`, { guidance_style, structure_mode })
 
     try {
+      // Map situation_type to guidance note
+      const situationTypeToGuidanceNote: Record<string, string> = {
+        'just_let_me_type': 'Respond naturally based on the situation text. No assumptions about urgency, tone, or structure.',
+        'crisis_now': 'This is an urgent, emotionally intense moment. Provide fast, calming, practical guidance with empathy.',
+        'what_just_happened': 'Reflect on the recent moment with insight. Help the parent understand what might have happened internally for the child and offer suggestions for next time.',
+        'foundational_work': 'Address a deeper trait or pattern. Focus on long-term development, emotional growth, and internal change.',
+        'teach_me_a_tactic': 'Give step-by-step, practical suggestions to resolve everyday struggles with warmth and realism.',
+        'know_my_child': 'The user is offering background info. Focus on understanding the child better to inform future guidance.',
+        'rebuild_connection': 'Help the parent repair emotional connection. Emphasize empathy, trust-building, and emotional safety.',
+        'im_just_wondering': 'This is a non-urgent question. Offer thoughtful, curious, and informative guidance that supports reflective parenting.'
+      }
+      
+      const situationTypeKey = situation_type || 'im_just_wondering'
+      const guidanceNote = situationTypeToGuidanceNote[situationTypeKey] || situationTypeToGuidanceNote['im_just_wondering']
+      
+      console.log(`[DEBUG] Situation type '${situationTypeKey}' mapped to guidance note: "${guidanceNote}"`)
+
       // Select the appropriate prompt template
       let promptTemplate: any
       let promptVariables: Record<string, any> = {
         current_situation: current_situation,
-        situation_type: situation_type || 'im_just_wondering' // NEW LINE ADDED
+        situation_type: situationTypeKey,
+        situation_guidance_note: guidanceNote
       }
 
       if (hasFramework) {

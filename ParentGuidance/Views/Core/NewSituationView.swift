@@ -147,6 +147,7 @@ struct NewSituationView: View {
                 keyInsights: keyInsights,
                 apiKey: apiKey,
                 activeFramework: activeFramework,
+                situationType: situationType,
                 useStreaming: false // Start with non-streaming for compatibility
             )
             
@@ -306,6 +307,7 @@ struct NewSituationView: View {
                 keyInsights: keyInsights,
                 apiKey: apiKey,
                 activeFramework: activeFramework,
+                situationType: situationType,
                 useStreaming: false // Start with non-streaming for compatibility
             )
             

@@ -114,8 +114,118 @@ Do not prefix section titles with numbers (e.g., “1.”, “Card 1:”, or “
 const DISCLAIMER= `
 If the response contains references to conditions such as ADHD, autism, or any diagnostic term, automatically append a short disclaimer at the end of the response:
 
-“This isn’t a diagnosis. It’s always best to speak with a qualified professional if you have ongoing concerns about your child’s development.”
+"This isn't a diagnosis. It's always best to speak with a qualified professional if you have ongoing concerns about your child's development."
 `;
+
+// Pre-resolve template literals for proper compilation
+const warmPracticalFixedNoFramework = `
+Child Context:
+{{child_context}}
+
+Key Observations:
+{{key_insights}}
+
+Guidance Context:
+{{situation_guidance_note}}
+
+Situation:
+{{current_situation}}
+
+${GUIDANCE_GENERATION_PROMPT}
+`;
+
+const warmPracticalDynamicNoFramework = `
+Guidance Context:
+{{situation_guidance_note}}
+
+Situation:
+{{current_situation}}
+
+${DYNAMIC_GUIDANCE_GENERATION_PROMPT}
+`;
+
+const analyticalScientificFixedNoFramework = `
+Child Context:
+{{child_context}}
+
+Key Observations:
+{{key_insights}}
+
+Guidance Context:
+{{situation_guidance_note}}
+
+Situation:
+{{current_situation}}
+
+${GUIDANCE_GENERATION_PROMPT}
+
+${Analysis_Requirements}
+`;
+
+const analyticalScientificDynamicNoFramework = `
+Guidance Context:
+{{situation_guidance_note}}
+
+Situation:
+{{current_situation}}
+
+${DYNAMIC_GUIDANCE_GENERATION_PROMPT}
+
+${Analysis_Requirements}
+`;
+
+const warmPracticalFixedWithFramework = `
+Guidance Context:
+{{situation_guidance_note}}
+
+Situation:
+{{current_situation}}
+
+${GUIDANCE_GENERATION_PROMPT}
+
+${FRAMEWORK_INTEGRATION_PROMPT}
+`;
+
+const warmPracticalDynamicWithFramework = `
+Guidance Context:
+{{situation_guidance_note}}
+
+Situation:
+{{current_situation}}
+
+${DYNAMIC_GUIDANCE_GENERATION_PROMPT}
+
+${FRAMEWORK_INTEGRATION_PROMPT}
+`;
+
+const analyticalScientificFixedWithFramework = `
+Guidance Context:
+{{situation_guidance_note}}
+
+Situation:
+{{current_situation}}
+
+${GUIDANCE_GENERATION_PROMPT}
+
+${Analysis_Requirements}
+
+${FRAMEWORK_INTEGRATION_PROMPT}
+`;
+
+const analyticalScientificDynamicWithFramework = `
+Guidance Context:
+{{situation_guidance_note}}
+
+Situation:
+{{current_situation}}
+
+${DYNAMIC_GUIDANCE_GENERATION_PROMPT}
+
+${Analysis_Requirements}
+
+${FRAMEWORK_INTEGRATION_PROMPT}
+`;
+
 export const promptTemplates = {
     guidance: {
       id_no_framework: "pmpt_68515280423c8193aaa00a07235b7cf206c51d869f9526ba",
@@ -123,108 +233,45 @@ export const promptTemplates = {
       versions_no_framework: {
         "Warm Practical + Fixed": {
           version: "12",
-          variables: ["current_situation", "child_context", "key_insights"],
-          systemPromptText: `
-Child Context:
-{{child_context}}
-
-Key Observations:
-{{key_insights}}
-
-Situation:
-{{current_situation}}
-
-${GUIDANCE_GENERATION_PROMPT}
-          `
+          variables: ["current_situation", "child_context", "key_insights", "situation_guidance_note"],
+          systemPromptText: warmPracticalFixedNoFramework
         },
         "Warm Practical + Dynamic": {
           version: "16",
-          variables: ["current_situation"],
-          systemPromptText: `
-Situation:
-{{current_situation}}
-
-${DYNAMIC_GUIDANCE_GENERATION_PROMPT}
-          `
+          variables: ["current_situation", "situation_guidance_note"],
+          systemPromptText: warmPracticalDynamicNoFramework
         },
         "Analytical Scientific + Fixed": {
           version: "19",
-          variables: ["current_situation", "child_context", "key_insights"],
-          systemPromptText: `
-Child Context:
-{{child_context}}
-
-Key Observations:
-{{key_insights}}
-
-Situation:
-{{current_situation}}
-
-${GUIDANCE_GENERATION_PROMPT}
-          
-${Analysis_Requirements}
-          `
+          variables: ["current_situation", "child_context", "key_insights", "situation_guidance_note"],
+          systemPromptText: analyticalScientificFixedNoFramework
         },
         "Analytical Scientific + Dynamic": {
           version: "18",
-          variables: ["current_situation"],
-          systemPromptText: `
-Situation:{{current_situation}}
-
-${DYNAMIC_GUIDANCE_GENERATION_PROMPT}
-          
-${Analysis_Requirements}
-          `
+          variables: ["current_situation", "situation_guidance_note"],
+          systemPromptText: analyticalScientificDynamicNoFramework
         }
       },
       versions_with_framework: {
         "Warm Practical + Fixed": {
           version: "3",
-          variables: ["current_situation", "active_foundation_tools"],
-          systemPromptText: `
-Situation:{{current_situation}}
-
-${GUIDANCE_GENERATION_PROMPT}
-
-${FRAMEWORK_INTEGRATION_PROMPT}
-          `
+          variables: ["current_situation", "active_foundation_tools", "situation_guidance_note"],
+          systemPromptText: warmPracticalFixedWithFramework
         },
         "Warm Practical + Dynamic": {
           version: "6",
-          variables: ["current_situation", "active_foundation_tools"],
-          systemPromptText: `
-Situation:{{current_situation}}
-
-${DYNAMIC_GUIDANCE_GENERATION_PROMPT}
-
-${FRAMEWORK_INTEGRATION_PROMPT}
-          `
+          variables: ["current_situation", "active_foundation_tools", "situation_guidance_note"],
+          systemPromptText: warmPracticalDynamicWithFramework
         },
         "Analytical Scientific + Fixed": {
           version: "7",
-          variables: ["current_situation", "active_foundation_tools"],
-          systemPromptText: `
-Situation:{{current_situation}}
-
-${GUIDANCE_GENERATION_PROMPT}
-
-${Analysis_Requirements}
-
-${FRAMEWORK_INTEGRATION_PROMPT}
-          `
+          variables: ["current_situation", "active_foundation_tools", "situation_guidance_note"],
+          systemPromptText: analyticalScientificFixedWithFramework
         },
         "Analytical Scientific + Dynamic": {
           version: "8",
-          variables: ["current_situation", "active_foundation_tools"],
-          systemPromptText: `
-Situation:{{current_situation}}
-
-${DYNAMIC_GUIDANCE_GENERATION_PROMPT}
-          
-${Analysis_Requirements}
-
-${FRAMEWORK_INTEGRATION_PROMPT}
-          `
+          variables: ["current_situation", "active_foundation_tools", "situation_guidance_note"],
+          systemPromptText: analyticalScientificDynamicWithFramework
         }
       }
     },

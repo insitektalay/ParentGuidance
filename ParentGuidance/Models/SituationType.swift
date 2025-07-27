@@ -55,4 +55,18 @@ enum SituationType: String, CaseIterable {
         case .imJustWondering: return "situation.type.imJustWondering.subtitle"
         }
     }
+    
+    /// Get the guidance note for this situation type to provide context to the AI
+    var guidanceNote: String {
+        switch self {
+        case .justLetMeType: return "Respond naturally based on the situation text. No assumptions about urgency, tone, or structure."
+        case .crisisNow: return "This is an urgent, emotionally intense moment. Provide fast, calming, practical guidance with empathy."
+        case .whatJustHappened: return "Reflect on the recent moment with insight. Help the parent understand what might have happened internally for the child and offer suggestions for next time."
+        case .foundationalWork: return "Address a deeper trait or pattern. Focus on long-term development, emotional growth, and internal change."
+        case .teachMeATactic: return "Give step-by-step, practical suggestions to resolve everyday struggles with warmth and realism."
+        case .knowMyChild: return "The user is offering background info. Focus on understanding the child better to inform future guidance."
+        case .rebuildConnection: return "Help the parent repair emotional connection. Emphasize empathy, trust-building, and emotional safety."
+        case .imJustWondering: return "This is a non-urgent question. Offer thoughtful, curious, and informative guidance that supports reflective parenting."
+        }
+    }
 }

@@ -126,6 +126,10 @@ class FrameworkGenerationService {
     private func extractSituationData(from situations: [Situation]) async throws -> String {
         var allSituationTexts: [String] = []
         
+        // Check if user is using dynamic structure mode
+        let isDynamicMode = GuidanceStructureSettings.shared.isUsingDynamicStructure
+        print("🔧 Structure mode: \(isDynamicMode ? "Dynamic" : "Fixed")")
+        
         for situation in situations {
             print("📋 Processing situation: \(situation.title)")
             
@@ -134,46 +138,71 @@ class FrameworkGenerationService {
                 situationId: situation.id
             )
             
-            // Extract [SITUATION] sections from guidance
-            let situationSections = extractSituationSections(from: guidance)
-            allSituationTexts.append(contentsOf: situationSections)
+            // Add original situation context
+            let situationContext = "Situation: \(situation.title)\nDescription: \(situation.description)\n\n"
+            
+            // Extract guidance content based on structure mode
+            let guidanceContent = extractSituationSections(from: guidance, isDynamicMode: isDynamicMode)
+            
+            if !guidanceContent.isEmpty {
+                // Combine situation context with guidance
+                let combinedContent = situationContext + guidanceContent.joined(separator: "\n\n")
+                allSituationTexts.append(combinedContent)
+            } else if isDynamicMode && !guidance.isEmpty {
+                // Fallback for dynamic mode: include situation context even without guidance sections
+                allSituationTexts.append(situationContext)
+            }
         }
         
         // Combine all situation texts
-        let combinedText = allSituationTexts.joined(separator: "\n\n")
+        let combinedText = allSituationTexts.joined(separator: "\n\n---\n\n")
         print("📝 Combined situation data: \(combinedText.prefix(100))...")
         
         return combinedText
     }
     
     /// Extract [SITUATION] sections from guidance content
-    private func extractSituationSections(from guidance: [Guidance]) -> [String] {
+    private func extractSituationSections(from guidance: [Guidance], isDynamicMode: Bool) -> [String] {
         var situationSections: [String] = []
         
-        for guidanceItem in guidance {
-            let content = guidanceItem.content
-            
-            // Look for [SITUATION] section using regex
-            let pattern = #"\[SITUATION\](.*?)(?=\[|$)"#
-            
-            do {
-                let regex = try NSRegularExpression(pattern: pattern, options: [.caseInsensitive, .dotMatchesLineSeparators])
-                let range = NSRange(location: 0, length: content.count)
+        if isDynamicMode {
+            // For dynamic mode, use the complete guidance content
+            print("🎯 Dynamic mode: Using complete guidance content")
+            for guidanceItem in guidance {
+                let content = guidanceItem.content.trimmingCharacters(in: .whitespacesAndNewlines)
+                if !content.isEmpty {
+                    situationSections.append(content)
+                    print("📄 Added full guidance content: \(content.prefix(50))...")
+                }
+            }
+        } else {
+            // For fixed mode, extract [SITUATION] sections
+            print("📐 Fixed mode: Extracting [SITUATION] sections")
+            for guidanceItem in guidance {
+                let content = guidanceItem.content
                 
-                let matches = regex.matches(in: content, options: [], range: range)
-                for match in matches {
-                    if let situationRange = Range(match.range(at: 1), in: content) {
-                        let situationText = String(content[situationRange])
-                            .trimmingCharacters(in: .whitespacesAndNewlines)
-                        
-                        if !situationText.isEmpty {
-                            situationSections.append(situationText)
-                            print("✂️ Extracted situation section: \(situationText.prefix(50))...")
+                // Look for [SITUATION] section using regex
+                let pattern = #"\[SITUATION\](.*?)(?=\[|$)"#
+                
+                do {
+                    let regex = try NSRegularExpression(pattern: pattern, options: [.caseInsensitive, .dotMatchesLineSeparators])
+                    let range = NSRange(location: 0, length: content.count)
+                    
+                    let matches = regex.matches(in: content, options: [], range: range)
+                    for match in matches {
+                        if let situationRange = Range(match.range(at: 1), in: content) {
+                            let situationText = String(content[situationRange])
+                                .trimmingCharacters(in: .whitespacesAndNewlines)
+                            
+                            if !situationText.isEmpty {
+                                situationSections.append(situationText)
+                                print("✂️ Extracted situation section: \(situationText.prefix(50))...")
+                            }
                         }
                     }
+                } catch {
+                    print("❌ Regex error extracting situation: \(error)")
                 }
-            } catch {
-                print("❌ Regex error extracting situation: \(error)")
             }
         }
         

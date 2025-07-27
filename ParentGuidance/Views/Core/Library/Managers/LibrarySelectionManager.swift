@@ -184,25 +184,15 @@ class LibrarySelectionManager: ObservableObject {
         }
     }
     
-    /// Get user's API key (helper method)
+    /// Get user's active API key (helper method)
     private func getUserApiKey(userId: String) async throws -> String {
-        let supabase = SupabaseManager.shared.client
-        
-        // Query just the API key field and decode as a dictionary
-        let response: [[String: String?]] = try await supabase
-            .from("profiles")
-            .select("user_api_key")
-            .eq("id", value: userId)
-            .execute()
-            .value
-        
-        guard let row = response.first,
-              let apiKey = row["user_api_key"] as? String,
-              !apiKey.isEmpty else {
+        guard let activeApiKey = try await MultiProviderApiKeyService.shared.getActiveApiKey(for: userId) else {
+            print("❌ No active API key found for user: \(userId)")
             throw FrameworkGenerationError.invalidAPIKey
         }
         
-        return apiKey
+        print("✅ Found active API key for provider: \(activeApiKey.provider.displayName)")
+        return activeApiKey.apiKey
     }
     
     /// Validate that framework generation requirements are met

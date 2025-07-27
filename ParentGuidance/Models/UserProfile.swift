@@ -20,8 +20,6 @@ struct UserProfile: Codable {
     let onboardingCompletedAt: String?
     let subscriptionStatus: String?
     let subscriptionId: String?
-    let userApiKey: String?
-    let apiKeyProvider: String?
     let preferredLanguage: String
     let createdAt: String
     let updatedAt: String
@@ -39,8 +37,6 @@ struct UserProfile: Codable {
         onboardingCompletedAt = try container.decodeIfPresent(String.self, forKey: .onboardingCompletedAt)
         subscriptionStatus = try container.decodeIfPresent(String.self, forKey: .subscriptionStatus)
         subscriptionId = try container.decodeIfPresent(String.self, forKey: .subscriptionId)
-        userApiKey = try container.decodeIfPresent(String.self, forKey: .userApiKey)
-        apiKeyProvider = try container.decodeIfPresent(String.self, forKey: .apiKeyProvider)
         preferredLanguage = try container.decodeIfPresent(String.self, forKey: .preferredLanguage) ?? "en"
         createdAt = try container.decode(String.self, forKey: .createdAt)
         updatedAt = try container.decode(String.self, forKey: .updatedAt)
@@ -75,8 +71,6 @@ struct UserProfile: Codable {
         case onboardingCompletedAt = "onboarding_completed_at"
         case subscriptionStatus = "subscription_status"
         case subscriptionId = "subscription_id"
-        case userApiKey = "user_api_key"
-        case apiKeyProvider = "api_key_provider"
         case preferredLanguage = "preferred_language"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
@@ -92,6 +86,14 @@ struct UserProfile: Codable {
     
     var needsApiKey: Bool {
         return selectedPlan == "api" && !planSetupComplete
+    }
+    
+    // MARK: - Migration Helper
+    
+    /// Check if this profile needs migration to the new multi-provider API key system
+    /// This is a temporary method to help during the transition period
+    var needsApiKeyMigration: Bool {
+        return selectedPlan == "api" && planSetupComplete
     }
 }
 

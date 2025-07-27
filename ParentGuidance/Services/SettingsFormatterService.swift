@@ -79,10 +79,11 @@ class SettingsFormatterService {
             return "Unknown"
         }
         
-        if let apiKey = profile.userApiKey, !apiKey.isEmpty {
-            return "Connected (\(profile.apiKeyProvider?.capitalized ?? "OpenAI"))"
-        } else if profile.selectedPlan == "api" {
-            return "Not configured"
+        if profile.selectedPlan == "api" {
+            // Multi-provider API key system - check if any API keys are configured
+            // Note: In a real implementation, we would check MultiProviderApiKeyService
+            // For now, just show generic status since we can't easily check from here
+            return "Check API Key Management"
         } else {
             return "Not required"
         }

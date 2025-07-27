@@ -4,6 +4,9 @@
     "" : {
 
     },
+    "%@ API Key" : {
+
+    },
     "%lld" : {
 
     },
@@ -21,6 +24,15 @@
 
     },
     "%lld%%" : {
+
+    },
+    "1." : {
+
+    },
+    "2." : {
+
+    },
+    "3." : {
 
     },
     "accessibility.cancelAction" : {
@@ -162,6 +174,21 @@
           }
         }
       }
+    },
+    "Active" : {
+
+    },
+    "Active Provider" : {
+
+    },
+    "Add %@ API Key" : {
+
+    },
+    "Add API Key" : {
+
+    },
+    "Added:" : {
+
     },
     "alerts.category.previous" : {
       "localizations" : {
@@ -373,6 +400,18 @@
           }
         }
       }
+    },
+    "All AI operations will use this provider" : {
+
+    },
+    "API key is valid and working" : {
+
+    },
+    "API Key Management" : {
+
+    },
+    "API Key:" : {
+
     },
     "apiKey.getKey" : {
       "localizations" : {
@@ -631,6 +670,9 @@
     "Are you sure you want to delete this insight? This action cannot be undone." : {
 
     },
+    "Are you sure you want to delete your %@ API key? This action cannot be undone." : {
+
+    },
     "auth.continueWithApple" : {
       "localizations" : {
         "en" : {
@@ -700,6 +742,9 @@
           }
         }
       }
+    },
+    "Available Providers" : {
+
     },
     "button.addDetails" : {
       "localizations" : {
@@ -1147,6 +1192,7 @@
       }
     },
     "common.close" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1308,6 +1354,9 @@
         }
       }
     },
+    "Configured" : {
+
+    },
     "confirmation.delete.instruction" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1353,6 +1402,12 @@
         }
       }
     },
+    "Copy and paste it below" : {
+
+    },
+    "Create a new API key" : {
+
+    },
     "Deactivate" : {
 
     },
@@ -1360,6 +1415,9 @@
 
     },
     "Delete" : {
+
+    },
+    "Delete API Key" : {
 
     },
     "Delete Insight" : {
@@ -1468,7 +1526,13 @@
         }
       }
     },
+    "Done" : {
+
+    },
     "Double tap to change how situations are sorted" : {
+
+    },
+    "Error" : {
 
     },
     "error.loading.insights" : {
@@ -1490,6 +1554,9 @@
           }
         }
       }
+    },
+    "Example: %@" : {
+
     },
     "example.situation" : {
       "extractionState" : "stale",
@@ -1795,6 +1862,12 @@
     "G" : {
 
     },
+    "Get %@ Key" : {
+
+    },
+    "Get Key" : {
+
+    },
     "guidance.error.title" : {
       "localizations" : {
         "en" : {
@@ -1954,6 +2027,9 @@
           }
         }
       }
+    },
+    "Instructions" : {
+
     },
     "label.dateFilters" : {
       "extractionState" : "stale",
@@ -2665,6 +2741,9 @@
     "Loading insights..." : {
 
     },
+    "Manage your AI provider API keys and switch between different services" : {
+
+    },
     "More details mean better guidance." : {
 
     },
@@ -2808,6 +2887,12 @@
           }
         }
       }
+    },
+    "Open" : {
+
+    },
+    "Paste your API key here" : {
+
     },
     "payment.cancelAnytime" : {
       "localizations" : {
@@ -3391,6 +3476,12 @@
         }
       }
     },
+    "Save" : {
+
+    },
+    "Saving..." : {
+
+    },
     "screen.alerts.title" : {
       "localizations" : {
         "en" : {
@@ -3435,6 +3526,12 @@
 
     },
     "Sent %@" : {
+
+    },
+    "Set Active" : {
+
+    },
+    "Set as active provider" : {
 
     },
     "settings.account.apiKey" : {
@@ -3668,6 +3765,7 @@
       }
     },
     "settings.apiKey.comingSoon" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3678,6 +3776,7 @@
       }
     },
     "settings.apiKey.title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5158,6 +5257,12 @@
         }
       }
     },
+    "Test API Key" : {
+
+    },
+    "This will replace your current active provider" : {
+
+    },
     "today.empty.createButton" : {
       "localizations" : {
         "en" : {
@@ -5254,6 +5359,15 @@
           }
         }
       }
+    },
+    "Validating..." : {
+
+    },
+    "Validation failed" : {
+
+    },
+    "Visit %@'s API key page" : {
+
     },
     "welcome.getStarted" : {
       "localizations" : {

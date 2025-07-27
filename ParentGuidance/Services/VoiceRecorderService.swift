@@ -12,6 +12,9 @@ import Combine
 class VoiceRecorderService: NSObject, ObservableObject {
     static let shared = VoiceRecorderService()
     
+    /// Feature flag to use Edge Function instead of direct OpenAI API for transcription
+    private let useEdgeFunction = UserDefaults.standard.bool(forKey: "voice_use_edge_function")
+    
     // MARK: - Published Properties
     
     @Published var isRecording = false
@@ -59,6 +62,20 @@ class VoiceRecorderService: NSObject, ObservableObject {
     private override init() {
         super.init()
         print("🎙️ VoiceRecorderService initialized")
+        print("🔧 Using Edge Function for transcription: \(useEdgeFunction)")
+    }
+    
+    // MARK: - Configuration Methods
+    
+    /// Enable or disable Edge Function usage for voice transcription
+    static func setUseEdgeFunction(_ enabled: Bool) {
+        UserDefaults.standard.set(enabled, forKey: "voice_use_edge_function")
+        print("🔧 VoiceRecorderService Edge Function usage set to: \(enabled)")
+    }
+    
+    /// Check if Edge Function is currently enabled for voice transcription
+    static func isUsingEdgeFunction() -> Bool {
+        return UserDefaults.standard.bool(forKey: "voice_use_edge_function")
     }
     
     // MARK: - Public Recording Methods
@@ -241,6 +258,80 @@ class VoiceRecorderService: NSObject, ObservableObject {
         // Validate file exists and size
         try validateRecordingFile(at: fileURL)
         
+        // Choose implementation based on feature flag
+        let transcription: String
+        
+        if useEdgeFunction {
+            print("🚀 [VoiceRecorderService] Using EdgeFunction for transcription")
+            transcription = try await transcribeViaEdgeFunction(fileURL: fileURL, apiKey: apiKey)
+        } else {
+            print("🚀 [VoiceRecorderService] Using Direct OpenAI API for transcription")
+            transcription = try await transcribeViaDirectAPI(fileURL: fileURL, apiKey: apiKey)
+        }
+        
+        // Notify delegate of successful transcription
+        await MainActor.run {
+            delegate?.voiceRecorderDidCompleteTranscription(self, transcription: transcription, fileURL: fileURL)
+        }
+        
+        return transcription
+    }
+    
+    // MARK: - Edge Function Transcription
+    
+    private func transcribeViaEdgeFunction(fileURL: URL, apiKey: String) async throws -> String {
+        // Read audio file data and encode as base64
+        let audioData: Data
+        do {
+            audioData = try Data(contentsOf: fileURL)
+            print("📁 Audio file loaded: \(audioData.count) bytes")
+        } catch {
+            print("❌ Failed to read audio file: \(error)")
+            throw VoiceRecorderError.fileNotFound
+        }
+        
+        let base64AudioData = audioData.base64EncodedString()
+        
+        // Call Edge Function
+        let requestBody: [String: Any] = [
+            "operation": "transcribe",
+            "variables": [:],
+            "apiKey": apiKey,
+            "audioData": base64AudioData
+        ]
+        
+        do {
+            let response = try await EdgeFunctionService.shared.callEdgeFunction(
+                operation: "transcribe",
+                variables: [:],
+                apiKey: apiKey,
+                customBody: requestBody
+            )
+            
+            // Parse response
+            if let transcription = response["transcription"] as? String {
+                if !transcription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    print("✅ EdgeFunction transcription successful")
+                    print("📝 Transcribed text: \(transcription)")
+                    return transcription
+                } else {
+                    print("❌ EdgeFunction transcription returned empty text")
+                    throw VoiceRecorderError.noTranscriptionContent
+                }
+            } else {
+                print("❌ EdgeFunction response missing transcription field")
+                throw VoiceRecorderError.invalidResponse
+            }
+        } catch {
+            print("❌ EdgeFunction transcription failed: \(error)")
+            throw VoiceRecorderError.transcriptionFailed(error)
+        }
+    }
+    
+    // MARK: - Direct API Transcription
+    
+    private func transcribeViaDirectAPI(fileURL: URL, apiKey: String) async throws -> String {
+        
         // Read audio file data
         let audioData: Data
         do {
@@ -352,23 +443,14 @@ class VoiceRecorderService: NSObject, ObservableObject {
                 throw VoiceRecorderError.noTranscriptionContent
             }
             
-            print("✅ Transcription successful")
+            print("✅ Direct API transcription successful")
             print("📝 Transcribed text: \(transcriptionText)")
-            
-            // Notify delegate of successful transcription
-            await MainActor.run {
-                delegate?.voiceRecorderDidCompleteTranscription(self, transcription: transcriptionText, fileURL: fileURL)
-            }
             
             return transcriptionText
             
         } catch {
             print("❌ Failed to parse transcription response: \(error)")
-            let voiceError = VoiceRecorderError.transcriptionFailed(error)
-            await MainActor.run {
-                delegate?.voiceRecorderDidEncounterError(self, error: voiceError)
-            }
-            throw voiceError
+            throw VoiceRecorderError.transcriptionFailed(error)
         }
     }
     

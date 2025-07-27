@@ -308,6 +308,57 @@ class EdgeFunctionService {
         
         return parts.joined(separator: "\n")
     }
+    
+    /// Make a custom Edge Function call with custom body parameters (for audio transcription)
+    func callEdgeFunction(
+        operation: String,
+        variables: [String: Any],
+        apiKey: String,
+        customBody: [String: Any]? = nil
+    ) async throws -> [String: Any] {
+        print("🔄 [EdgeFunction] Calling Edge Function with custom body")
+        print("   → Operation: \(operation)")
+        
+        let url = URL(string: baseURL)!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(try await SupabaseManager.shared.client.auth.session.accessToken)", 
+                        forHTTPHeaderField: "Authorization")
+        
+        // Use custom body if provided, otherwise create standard body
+        let body = customBody ?? [
+            "operation": operation,
+            "variables": variables,
+            "apiKey": apiKey
+        ]
+        
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        // Check response status
+        if let httpResponse = response as? HTTPURLResponse {
+            print("📊 [EdgeFunction] Response status: \(httpResponse.statusCode)")
+            
+            if httpResponse.statusCode != 200 {
+                print("❌ [EdgeFunction] HTTP error: \(httpResponse.statusCode)")
+                if let responseString = String(data: data, encoding: .utf8) {
+                    print("❌ [EdgeFunction] Error response: \(responseString)")
+                }
+                throw EdgeFunctionError.httpError(statusCode: httpResponse.statusCode)
+            }
+        }
+        
+        // Parse JSON response
+        guard let jsonResponse = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            print("❌ [EdgeFunction] Invalid JSON response")
+            throw EdgeFunctionError.invalidResponse
+        }
+        
+        print("✅ [EdgeFunction] Response received successfully")
+        return jsonResponse
+    }
 }
 
 // MARK: - Error Types

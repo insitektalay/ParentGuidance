@@ -1,21 +1,22 @@
+//
+//  ApiKeyManagementView.swift
+//  ParentGuidance
+//
+//  Created by alex kerss on 27/07/2025.
+//
+
 import SwiftUI
 
 struct ApiKeyManagementView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var apiKey: String = ""
-    @State private var isTestingConnection: Bool = false
-    @State private var isSaving: Bool = false
-    @State private var testResult: TestResult?
-    @State private var showingError: Bool = false
-    @State private var errorMessage: String?
+    @StateObject private var apiKeyService = MultiProviderApiKeyService.shared
+    @State private var showingAddKeySheet = false
+    @State private var selectedProvider: ApiKeyProvider?
+    @State private var showingDeleteConfirmation = false
+    @State private var keyToDelete: UserApiKey?
     
     let userProfile: UserProfile
-    let onApiKeySaved: () -> Void
-    
-    enum TestResult {
-        case success
-        case failure(String)
-    }
+    let onApiKeySaved: (() -> Void)?
     
     var body: some View {
         NavigationView {
@@ -23,13 +24,13 @@ struct ApiKeyManagementView: View {
                 VStack(spacing: 24) {
                     // Header section
                     VStack(spacing: 8) {
-                        Text(String(localized: "apiKeyManagement.title"))
+                        Text("API Key Management")
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(ColorPalette.white)
                             .multilineTextAlignment(.center)
                         
-                        Text(String(localized: "apiKeyManagement.subtitle"))
+                        Text("Manage your AI provider API keys and switch between different services")
                             .font(.body)
                             .foregroundColor(ColorPalette.white.opacity(0.8))
                             .multilineTextAlignment(.center)
@@ -37,112 +38,86 @@ struct ApiKeyManagementView: View {
                     .padding(.top, 40)
                     .padding(.horizontal, 24)
                     
-                    // Current API Key Status
+                    // Provider Cards
                     VStack(spacing: 16) {
                         HStack {
-                            Text(String(localized: "apiKeyManagement.currentStatus"))
+                            Text("Available Providers")
                                 .font(.system(size: 16, weight: .semibold))
                                 .foregroundColor(ColorPalette.white)
                             
                             Spacer()
+                            
+                            if apiKeyService.isLoading {
+                                ProgressView()
+                                    .scaleEffect(0.8)
+                                    .tint(ColorPalette.white)
+                            }
                         }
                         
-                        HStack {
-                            Text(String(localized: "apiKeyManagement.apiKey"))
-                                .font(.system(size: 14))
-                                .foregroundColor(ColorPalette.white.opacity(0.9))
-                            
-                            Spacer()
-                            
-                            Text(formatCurrentApiKey())
-                                .font(.system(size: 14, family: .monospaced))
-                                .foregroundColor(ColorPalette.white.opacity(0.7))
+                        ForEach(ApiKeyProvider.allCases.sorted()) { provider in
+                            ApiKeyProviderCard(
+                                provider: provider,
+                                userApiKey: getUserApiKey(for: provider),
+                                isActive: isActiveProvider(provider),
+                                onAddKey: {
+                                    selectedProvider = provider
+                                    showingAddKeySheet = true
+                                },
+                                onSetActive: {
+                                    Task {
+                                        await setActiveProvider(provider)
+                                    }
+                                },
+                                onDeleteKey: { apiKey in
+                                    keyToDelete = apiKey
+                                    showingDeleteConfirmation = true
+                                }
+                            )
                         }
-                        
-                        if let testResult = testResult {
+                    }
+                    .padding(.horizontal, 24)
+                    
+                    // Current Active Provider Summary
+                    if let activeKey = apiKeyService.activeApiKey {
+                        VStack(spacing: 12) {
                             HStack {
-                                Text(String(localized: "apiKeyManagement.connection"))
-                                    .font(.system(size: 14))
-                                    .foregroundColor(ColorPalette.white.opacity(0.9))
+                                Text("Active Provider")
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(ColorPalette.white)
+                                
+                                Spacer()
+                            }
+                            
+                            HStack {
+                                Image(systemName: activeKey.provider.iconName)
+                                    .foregroundColor(activeKey.provider.brandColor)
+                                
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(activeKey.provider.displayName)
+                                        .font(.system(size: 14, weight: .medium))
+                                        .foregroundColor(ColorPalette.white)
+                                    
+                                    Text("All AI operations will use this provider")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                                }
                                 
                                 Spacer()
                                 
-                                switch testResult {
-                                case .success:
-                                    HStack(spacing: 4) {
-                                        Image(systemName: "checkmark.circle.fill")
-                                            .foregroundColor(.green)
-                                        Text(String(localized: "apiKeyManagement.connected"))
-                                            .foregroundColor(.green)
-                                    }
-                                    .font(.system(size: 14))
-                                    
-                                case .failure(let error):
-                                    HStack(spacing: 4) {
-                                        Image(systemName: "xmark.circle.fill")
-                                            .foregroundColor(.red)
-                                        Text(String(localized: "apiKeyManagement.failed"))
-                                            .foregroundColor(.red)
-                                    }
-                                    .font(.system(size: 14))
-                                }
+                                Text("Active")
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundColor(.green)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(.green.opacity(0.2))
+                                    .clipShape(RoundedRectangle(cornerRadius: 6))
                             }
                         }
+                        .padding(16)
+                        .background(ColorPalette.white.opacity(0.05))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .padding(.horizontal, 24)
                     }
-                    .padding(16)
-                    .background(ColorPalette.white.opacity(0.05))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .padding(.horizontal, 24)
-                    
-                    // API Key Input
-                    VStack(spacing: 16) {
-                        HStack {
-                            Text(String(localized: "apiKeyManagement.updateKey"))
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(ColorPalette.white)
-                            
-                            Spacer()
-                        }
-                        
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(String(localized: "apiKeyManagement.openaiKey"))
-                                .font(.system(size: 14))
-                                .foregroundColor(ColorPalette.white.opacity(0.9))
-                            
-                            SecureField(String(localized: "apiKeyManagement.placeholder"), text: $apiKey)
-                                .font(.system(size: 14, family: .monospaced))
-                                .foregroundColor(ColorPalette.navy)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 12)
-                                .background(ColorPalette.white)
-                                .clipShape(RoundedRectangle(cornerRadius: 8))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .stroke(ColorPalette.terracotta.opacity(0.3), lineWidth: 1)
-                                )
-                        }
-                        
-                        HStack(spacing: 12) {
-                            Button(isTestingConnection ? String(localized: "apiKeyManagement.testing") : String(localized: "apiKeyManagement.testConnection")) {
-                                Task {
-                                    await testApiKey()
-                                }
-                            }
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(ColorPalette.white)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(isValidApiKey && !isTestingConnection ? ColorPalette.brightBlue : ColorPalette.white.opacity(0.3))
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                            .disabled(!isValidApiKey || isTestingConnection)
-                            
-                            Spacer()
-                        }
-                    }
-                    .padding(16)
-                    .background(ColorPalette.white.opacity(0.05))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .padding(.horizontal, 24)
                     
                     Spacer(minLength: 100)
                 }
@@ -153,147 +128,146 @@ struct ApiKeyManagementView: View {
             .navigationBarBackButtonHidden(true)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button(String(localized: "common.cancel")) {
+                    Button("Cancel") {
                         dismiss()
                     }
                     .foregroundColor(ColorPalette.white.opacity(0.8))
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(isSaving ? String(localized: "apiKeyManagement.saving") : String(localized: "common.save")) {
-                        Task {
-                            await saveApiKey()
-                        }
+                    Button("Done") {
+                        onApiKeySaved?()
+                        dismiss()
                     }
-                    .foregroundColor(isValidApiKey && !isSaving ? ColorPalette.terracotta : ColorPalette.white.opacity(0.5))
-                    .disabled(!isValidApiKey || isSaving)
+                    .foregroundColor(ColorPalette.terracotta)
                 }
             }
         }
         .onAppear {
-            loadCurrentApiKey()
+            loadApiKeys()
         }
-        .alert("Error", isPresented: $showingError) {
-            Button(String(localized: "common.ok")) {
-                showingError = false
+        .sheet(isPresented: $showingAddKeySheet) {
+            if let provider = selectedProvider {
+                AddApiKeySheet(
+                    provider: provider,
+                    userProfile: userProfile,
+                    onKeySaved: {
+                        loadApiKeys()
+                        onApiKeySaved?()
+                    }
+                )
+            }
+        }
+        .alert("Delete API Key", isPresented: $showingDeleteConfirmation) {
+            Button("Cancel", role: .cancel) { }
+            Button("Delete", role: .destructive) {
+                if let key = keyToDelete {
+                    Task {
+                        await deleteApiKey(key)
+                    }
+                }
             }
         } message: {
-            Text(errorMessage ?? String(localized: "common.error.generic"))
-        }
-    }
-    
-    // MARK: - API Key Validation
-    
-    private var isValidApiKey: Bool {
-        apiKey.trimmingCharacters(in: .whitespacesAndNewlines).hasPrefix("sk-") &&
-        apiKey.trimmingCharacters(in: .whitespacesAndNewlines).count >= 20
-    }
-    
-    // MARK: - Data Loading
-    
-    private func loadCurrentApiKey() {
-        if let currentKey = userProfile.userApiKey, !currentKey.isEmpty {
-            // Don't load the actual key for security, just show it exists
-            apiKey = ""
-        }
-    }
-    
-    private func formatCurrentApiKey() -> String {
-        if let currentKey = userProfile.userApiKey, !currentKey.isEmpty {
-            // Show only first and last few characters for security
-            let prefix = String(currentKey.prefix(7)) // "sk-" + 4 chars
-            let suffix = String(currentKey.suffix(4))
-            return "\(prefix)...\(suffix)"
-        } else {
-            return String(localized: "apiKeyManagement.notConfigured")
-        }
-    }
-    
-    // MARK: - API Key Testing
-    
-    private func testApiKey() async {
-        guard isValidApiKey else { return }
-        
-        await MainActor.run {
-            isTestingConnection = true
-            testResult = nil
-        }
-        
-        // Simple test: try to make a basic request to OpenAI API
-        do {
-            let url = URL(string: "https://api.openai.com/v1/models")!
-            var request = URLRequest(url: url)
-            request.httpMethod = "GET"
-            request.setValue("Bearer \(apiKey.trimmingCharacters(in: .whitespacesAndNewlines))", forHTTPHeaderField: "Authorization")
-            
-            let (_, response) = try await URLSession.shared.data(for: request)
-            
-            await MainActor.run {
-                if let httpResponse = response as? HTTPURLResponse {
-                    if httpResponse.statusCode == 200 {
-                        testResult = .success
-                    } else {
-                        testResult = .failure("HTTP \(httpResponse.statusCode)")
-                    }
-                } else {
-                    testResult = .failure("Invalid response")
-                }
-                isTestingConnection = false
+            if let key = keyToDelete {
+                Text("Are you sure you want to delete your \(key.provider.displayName) API key? This action cannot be undone.")
             }
-            
-        } catch {
-            await MainActor.run {
-                testResult = .failure(error.localizedDescription)
-                isTestingConnection = false
+        }
+        .alert("Error", isPresented: .init(
+            get: { apiKeyService.errorMessage != nil },
+            set: { _ in apiKeyService.clearError() }
+        )) {
+            Button("OK") {
+                apiKeyService.clearError()
+            }
+        } message: {
+            Text(apiKeyService.errorMessage ?? "An error occurred")
+        }
+    }
+    
+    // MARK: - Helper Methods
+    
+    private func loadApiKeys() {
+        Task {
+            do {
+                try await apiKeyService.loadApiKeys(for: userProfile.id)
+            } catch {
+                print("Failed to load API keys: \(error)")
             }
         }
     }
     
-    // MARK: - API Key Saving
+    private func getUserApiKey(for provider: ApiKeyProvider) -> UserApiKey? {
+        return apiKeyService.userApiKeys.first { $0.provider == provider }
+    }
     
-    private func saveApiKey() async {
-        guard isValidApiKey else { return }
-        
-        await MainActor.run {
-            isSaving = true
-            errorMessage = nil
-        }
+    private func isActiveProvider(_ provider: ApiKeyProvider) -> Bool {
+        return apiKeyService.activeApiKey?.provider == provider
+    }
+    
+    private func setActiveProvider(_ provider: ApiKeyProvider) async {
+        guard let apiKey = getUserApiKey(for: provider) else { return }
         
         do {
-            let trimmedKey = apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
-            try await AuthService.shared.saveApiKey(trimmedKey, userId: userProfile.id)
-            
-            await MainActor.run {
-                isSaving = false
-                onApiKeySaved()
-                dismiss()
-            }
-            
+            try await apiKeyService.setActiveApiKey(keyId: apiKey.id)
         } catch {
-            await MainActor.run {
-                isSaving = false
-                errorMessage = "Failed to save API key: \(error.localizedDescription)"
-                showingError = true
-            }
+            print("Failed to set active provider: \(error)")
+        }
+    }
+    
+    private func deleteApiKey(_ apiKey: UserApiKey) async {
+        do {
+            try await apiKeyService.deleteApiKey(keyId: apiKey.id)
+            keyToDelete = nil
+        } catch {
+            print("Failed to delete API key: \(error)")
         }
     }
 }
 
+// MARK: - Preview
+
 #Preview {
     ApiKeyManagementView(
-        userProfile: UserProfile(from: try! JSONDecoder().decode(UserProfile.self, from: """
-        {
-            "id": "test-id",
-            "email": "test@example.com",
-            "selected_plan": "api",
-            "user_api_key": "sk-test12345678901234567890abcdef",
-            "api_key_provider": "openai",
-            "plan_setup_complete": "true",
-            "child_details_complete": "true",
-            "created_at": "2024-01-01T00:00:00Z",
-            "updated_at": "2024-01-01T00:00:00Z"
-        }
-        """.data(using: .utf8)!)),
+        userProfile: UserProfile(
+            userId: "test-id",
+            email: "test@example.com",
+            selectedPlan: "api",
+            planSetupComplete: true,
+            childDetailsComplete: true,
+            preferredLanguage: "en",
+            createdAt: "2024-01-01T00:00:00Z",
+            updatedAt: "2024-01-01T00:00:00Z"
+        ),
         onApiKeySaved: {}
     )
+}
+
+// MARK: - Convenience Initializer for UserProfile
+
+extension UserProfile {
+    init(
+        userId: String,
+        email: String?,
+        selectedPlan: String?,
+        planSetupComplete: Bool,
+        childDetailsComplete: Bool,
+        preferredLanguage: String = "en",
+        createdAt: String,
+        updatedAt: String
+    ) {
+        self.id = userId
+        self.familyId = nil
+        self.email = email
+        self.fullName = nil
+        self.role = nil
+        self.selectedPlan = selectedPlan
+        self.planSetupComplete = planSetupComplete
+        self.childDetailsComplete = childDetailsComplete
+        self.onboardingCompletedAt = nil
+        self.subscriptionStatus = nil
+        self.subscriptionId = nil
+        self.preferredLanguage = preferredLanguage
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+    }
 }

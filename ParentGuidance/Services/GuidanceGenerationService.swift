@@ -357,10 +357,7 @@ class GuidanceGenerationService {
     
     /// Format framework for prompt (legacy compatibility)
     private func formatFrameworkForPrompt(_ framework: FrameworkRecommendation) -> String {
-        return """
-        Framework: \(framework.frameworkName)
-        Details: \(framework.notificationText)
-        """
+        return framework.frameworkName
     }
 }
 

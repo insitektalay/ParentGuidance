@@ -1,7 +1,7 @@
 const FRAMEWORK_INTEGRATION_PROMPT = `
-Enhance the guidance by naturally incorporating relevant concepts from the family's active foundation tools, listed above. Do not reference or include any tools that are not active.
+Enhance the guidance by naturally incorporating relevant concepts from the family's active foundation tool: Active Framework:{{active_foundation_tools}}.
 
-Use each active tool as a lens to inform the advice and language, not as content to be named repeatedly. Framework terms should only appear when they clarify or enhance the parent's understanding — avoid repeating or forcing them into every sentence.
+Use each active tool to inform the advice and tone, guiding the overall approach without needing to be mentioned repeatedly. Only refer to a framework by name when it helps clarify or deepen the parent's understanding — avoid overusing or forcing the terms into the text.
 
 `;
 const GUIDANCE_GENERATION_PROMPT = `

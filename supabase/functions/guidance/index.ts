@@ -9,9 +9,11 @@ const corsHeaders = {
 }
 
 interface RequestBody {
-  operation: 'guidance' | 'analyze' | 'framework' | 'context' | 'translate' | 'psychologists_note_context' | 'psychologists_note_traits'
+  operation: 'guidance' | 'analyze' | 'framework' | 'context' | 'translate' | 'psychologists_note_context' | 'psychologists_note_traits' | 'transcribe' | 'validate_key'
   variables: Record<string, any>
   apiKey: string
+  provider?: 'openai' | 'anthropic' | 'xai' | 'google' // Provider override
+  audioData?: string // Base64 encoded audio data for transcribe operation
 }
 
 // Helper function to interpolate variables in prompt templates
@@ -23,6 +25,62 @@ function interpolatePrompt(template: string, variables: Record<string, any>): st
   }
   return interpolated
 }
+
+// Helper function to detect provider from API key
+function detectProvider(apiKey: string): 'openai' | 'anthropic' | 'xai' | 'google' {
+  if (apiKey.startsWith('sk-ant-')) return 'anthropic'
+  if (apiKey.startsWith('xai-')) return 'xai'
+  if (apiKey.startsWith('sk-')) return 'openai'
+  // Google keys are typically just alphanumeric
+  return 'google'
+}
+
+// Helper function to get API endpoint and model for each provider
+function getProviderConfig(provider: string) {
+  switch (provider) {
+    case 'openai':
+      return {
+        endpoint: 'https://api.openai.com/v1/chat/completions',
+        model: 'gpt-4',
+        headers: (apiKey: string) => ({
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        })
+      }
+    case 'anthropic':
+      return {
+        endpoint: 'https://api.anthropic.com/v1/messages',
+        model: 'claude-3-sonnet-20240229',
+        headers: (apiKey: string) => ({
+          'x-api-key': apiKey,
+          'Content-Type': 'application/json',
+          'anthropic-version': '2023-06-01'
+        })
+      }
+    case 'xai':
+      return {
+        endpoint: 'https://api.x.ai/v1/chat/completions',
+        model: 'grok-beta',
+        headers: (apiKey: string) => ({
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        })
+      }
+    case 'google':
+      return {
+        endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
+        model: 'gemini-pro',
+        headers: (apiKey: string) => ({
+          'Content-Type': 'application/json'
+        }),
+        // Google uses API key as query parameter
+        keyParam: 'key'
+      }
+    default:
+      throw new Error(`Unsupported provider: ${provider}`)
+  }
+}
+
 
 serve(async (req) => {
   console.log(`[DEBUG] Request received: ${req.method} ${req.url}`)
@@ -64,9 +122,11 @@ serve(async (req) => {
 
     // Parse request body
     const body: RequestBody = await req.json()
-    const { operation, variables, apiKey } = body
+    const { operation, variables, apiKey, provider } = body
     
-    console.log(`[DEBUG] Operation: ${operation}, variables: [${Object.keys(variables || {}).join(', ')}]`)
+    // Determine the AI provider to use
+    const detectedProvider = provider || detectProvider(apiKey)
+    console.log(`[DEBUG] Operation: ${operation}, provider: ${detectedProvider}, variables: [${Object.keys(variables || {}).join(', ')}]`)
 
     if (!apiKey) {
       return new Response(
@@ -79,25 +139,31 @@ serve(async (req) => {
     console.log(`[DEBUG] Routing to operation: "${operation}"`)
     switch (operation) {
       case 'guidance':
-        return await handleGuidanceOperation(apiKey, variables)
+        return await handleGuidanceOperation(apiKey, variables, detectedProvider)
       
       case 'analyze':
-        return await handleAnalyzeOperation(apiKey, variables)
+        return await handleAnalyzeOperation(apiKey, variables, detectedProvider)
       
       case 'framework':
-        return await handleFrameworkOperation(apiKey, variables)
+        return await handleFrameworkOperation(apiKey, variables, detectedProvider)
       
       case 'context':
-        return await handleContextOperation(apiKey, variables)
+        return await handleContextOperation(apiKey, variables, detectedProvider)
       
       case 'translate':
-        return await handleTranslateOperation(apiKey, variables)
+        return await handleTranslateOperation(apiKey, variables, detectedProvider)
       
       case 'psychologists_note_context':
-        return await handlePsychologistNoteContextOperation(apiKey, variables)
+        return await handlePsychologistNoteContextOperation(apiKey, variables, detectedProvider)
       
       case 'psychologists_note_traits':
-        return await handlePsychologistNoteTraitsOperation(apiKey, variables)
+        return await handlePsychologistNoteTraitsOperation(apiKey, variables, detectedProvider)
+      
+      case 'transcribe':
+        return await handleTranscribeOperation(apiKey, variables, body.audioData, detectedProvider)
+      
+      case 'validate_key':
+        return await handleValidateKeyOperation(apiKey, detectedProvider)
       
       default:
         return new Response(
@@ -115,8 +181,78 @@ serve(async (req) => {
   }
 })
 
+// Handle API key validation
+async function handleValidateKeyOperation(apiKey: string, provider: string) {
+  console.log(`[DEBUG] Validating API key for provider: ${provider}`)
+  
+  try {
+    const config = getProviderConfig(provider)
+    
+    // Prepare a minimal request body for validation
+    let requestBody
+    if (provider === 'anthropic') {
+      requestBody = {
+        model: config.model,
+        max_tokens: 5,
+        messages: [
+          { role: 'user', content: 'Hello' }
+        ]
+      }
+    } else if (provider === 'google') {
+      requestBody = {
+        contents: [{
+          parts: [{ text: 'Hello' }]
+        }],
+        generationConfig: {
+          maxOutputTokens: 5
+        }
+      }
+    } else {
+      // OpenAI and xAI use the same format
+      requestBody = {
+        model: config.model,
+        messages: [
+          { role: 'user', content: 'Hello' }
+        ],
+        max_tokens: 5
+      }
+    }
+    
+    // Make API request to validate key
+    const url = config.keyParam ? `${config.endpoint}?${config.keyParam}=${apiKey}` : config.endpoint
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: config.headers(apiKey),
+      body: JSON.stringify(requestBody)
+    })
+    
+    if (response.ok) {
+      console.log(`[DEBUG] API key validation successful for ${provider}`)
+      return new Response(
+        JSON.stringify({ success: true }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    } else {
+      const errorText = await response.text()
+      console.error(`[ERROR] API key validation failed for ${provider}: ${response.status} - ${errorText}`)
+      return new Response(
+        JSON.stringify({ success: false, error: `API key validation failed: ${response.status}` }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+    
+  } catch (error) {
+    console.error(`[ERROR] API key validation failed for ${provider}:`, error)
+    
+    return new Response(
+      JSON.stringify({ success: false, error: error.message }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  }
+}
+
 // Handle guidance generation (non-streaming for now)
-  async function handleGuidanceOperation(apiKey: string, variables: any) {
+  async function handleGuidanceOperation(apiKey: string, variables: any, provider: string) {
     const { current_situation, child_context, key_insights, active_foundation_tools, structure_mode, guidance_style, situation_type } = variables
 
     // Determine which prompt template to use
@@ -166,37 +302,74 @@ serve(async (req) => {
       // Interpolate the system prompt with variables
       const systemPrompt = interpolatePrompt(promptTemplate.systemPromptText, promptVariables)
 
-      // Make the OpenAI API call
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'gpt-4',
+      // Use direct API calls for multi-provider support
+      const config = getProviderConfig(provider)
+      
+      console.log(`[DEBUG] Using ${provider} with model: ${config.model}`)
+      
+      // Prepare request body based on provider
+      let requestBody
+      if (provider === 'anthropic') {
+        requestBody = {
+          model: config.model,
+          max_tokens: 2000,
+          temperature: 0.7,
+          messages: [
+            { role: 'user', content: systemPrompt }
+          ]
+        }
+      } else if (provider === 'google') {
+        requestBody = {
+          contents: [{
+            parts: [{ text: systemPrompt }]
+          }],
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 2000
+          }
+        }
+      } else {
+        // OpenAI and xAI use the same format
+        requestBody = {
+          model: config.model,
           messages: [
             { role: 'system', content: systemPrompt }
           ],
           temperature: 0.7,
           max_tokens: 2000
-        })
+        }
+      }
+      
+      // Make API request
+      const url = config.keyParam ? `${config.endpoint}?${config.keyParam}=${apiKey}` : config.endpoint
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: config.headers(apiKey),
+        body: JSON.stringify(requestBody)
       })
 
-      // Check if the response is successful
       if (!response.ok) {
         const errorText = await response.text()
-        console.error(`[ERROR] OpenAI API error: ${response.status} - ${errorText}`)
-        throw new Error(`OpenAI API error: ${response.status} - ${errorText}`)
+        console.error(`[ERROR] ${provider} API error: ${response.status} - ${errorText}`)
+        throw new Error(`${provider} API error: ${response.status}`)
       }
 
-      // Parse the OpenAI response
       const data = await response.json()
-      const content = data.choices?.[0]?.message?.content
+      
+      // Extract content based on provider response format
+      let content
+      if (provider === 'anthropic') {
+        content = data.content?.[0]?.text
+      } else if (provider === 'google') {
+        content = data.candidates?.[0]?.content?.parts?.[0]?.text
+      } else {
+        // OpenAI and xAI
+        content = data.choices?.[0]?.message?.content
+      }
 
       if (!content) {
-        console.error('[ERROR] No content received from OpenAI')
-        throw new Error('No content received from OpenAI')
+        console.error(`[ERROR] No content received from ${provider}`)
+        throw new Error(`No content received from ${provider}`)
       }
 
       console.log(`[DEBUG] Guidance response received, length: ${content.length} characters`)
@@ -249,7 +422,7 @@ serve(async (req) => {
 
 
 // Handle situation analysis (non-streaming)
-async function handleAnalyzeOperation(apiKey: string, variables: any) {
+async function handleAnalyzeOperation(apiKey: string, variables: any, provider: string) {
   const { situation_text } = variables
   console.log(`[DEBUG] Analyze operation - text length: ${situation_text?.length || 0}`)
 
@@ -262,35 +435,73 @@ async function handleAnalyzeOperation(apiKey: string, variables: any) {
     // Get the system prompt and interpolate variables
     const systemPrompt = interpolatePrompt(promptTemplates.analyze.systemPromptText, promptVariables)
 
-    // Use native fetch to call OpenAI API
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4',
+    // Use direct API calls for multi-provider support
+    const config = getProviderConfig(provider)
+    
+    console.log(`[DEBUG] Analyze using ${provider} with model: ${config.model}`)
+    
+    // Prepare request body based on provider
+    let requestBody
+    if (provider === 'anthropic') {
+      requestBody = {
+        model: config.model,
+        max_tokens: 500,
+        temperature: 0.3,
+        messages: [
+          { role: 'user', content: systemPrompt }
+        ]
+      }
+    } else if (provider === 'google') {
+      requestBody = {
+        contents: [{
+          parts: [{ text: systemPrompt }]
+        }],
+        generationConfig: {
+          temperature: 0.3,
+          maxOutputTokens: 500
+        }
+      }
+    } else {
+      // OpenAI and xAI use the same format
+      requestBody = {
+        model: config.model,
         messages: [
           { role: 'system', content: systemPrompt }
         ],
-        temperature: 0.3, // Lower temperature for more consistent categorization
+        temperature: 0.3,
         max_tokens: 500
-        // Removed JSON response format - causing 400 errors
-      })
+      }
+    }
+    
+    // Make API request
+    const url = config.keyParam ? `${config.endpoint}?${config.keyParam}=${apiKey}` : config.endpoint
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: config.headers(apiKey),
+      body: JSON.stringify(requestBody)
     })
 
     if (!response.ok) {
       const errorText = await response.text()
-      console.error(`[ERROR] Analyze OpenAI API error: ${response.status}`)
-      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`)
+      console.error(`[ERROR] ${provider} API error: ${response.status} - ${errorText}`)
+      throw new Error(`${provider} API error: ${response.status}`)
     }
 
     const data = await response.json()
-    const content = data.choices?.[0]?.message?.content
+    
+    // Extract content based on provider response format
+    let content
+    if (provider === 'anthropic') {
+      content = data.content?.[0]?.text
+    } else if (provider === 'google') {
+      content = data.candidates?.[0]?.content?.parts?.[0]?.text
+    } else {
+      // OpenAI and xAI
+      content = data.choices?.[0]?.message?.content
+    }
 
     if (!content) {
-      throw new Error('No content received from OpenAI')
+      throw new Error(`No content received from ${provider}`)
     }
 
     // Parse the analysis response (custom format from prompt template)
@@ -334,7 +545,7 @@ async function handleAnalyzeOperation(apiKey: string, variables: any) {
 }
 
 // Handle framework generation (non-streaming)
-async function handleFrameworkOperation(apiKey: string, variables: any) {
+async function handleFrameworkOperation(apiKey: string, variables: any, provider: string) {
   const { recent_situations } = variables
 
   try {
@@ -389,7 +600,7 @@ async function handleFrameworkOperation(apiKey: string, variables: any) {
 }
 
 // Handle context extraction (non-streaming)
-async function handleContextOperation(apiKey: string, variables: any) {
+async function handleContextOperation(apiKey: string, variables: any, provider: string) {
   const { situation_text, extraction_type } = variables
   console.log(`[DEBUG] Context operation - type: ${extraction_type}, text length: ${situation_text?.length || 0}`)
 
@@ -454,7 +665,7 @@ async function handleContextOperation(apiKey: string, variables: any) {
 }
 
 // Handle translation (simulated streaming for compatibility)
-async function handleTranslateOperation(apiKey: string, variables: any) {
+async function handleTranslateOperation(apiKey: string, variables: any, provider: string) {
   const { guidance_content, target_language } = variables
 
   try {
@@ -538,7 +749,7 @@ async function handleTranslateOperation(apiKey: string, variables: any) {
 }
 
 // Handle psychologist note context generation (non-streaming)
-async function handlePsychologistNoteContextOperation(apiKey: string, variables: any) {
+async function handlePsychologistNoteContextOperation(apiKey: string, variables: any, provider: string) {
   const { structured_context_data_over_time } = variables
   console.log(`[DEBUG] Psychologist note context operation - data length: ${structured_context_data_over_time?.length || 0}`)
 
@@ -598,7 +809,7 @@ async function handlePsychologistNoteContextOperation(apiKey: string, variables:
 }
 
 // Handle psychologist note traits generation (non-streaming)
-async function handlePsychologistNoteTraitsOperation(apiKey: string, variables: any) {
+async function handlePsychologistNoteTraitsOperation(apiKey: string, variables: any, provider: string) {
   const { bullet_point_pattern_data_over_time } = variables
   console.log(`[DEBUG] Psychologist note traits operation - data length: ${bullet_point_pattern_data_over_time?.length || 0}`)
 
@@ -689,3 +900,79 @@ async function handlePsychologistNoteTraitsOperation(apiKey: string, variables: 
     }'
 
 */
+
+// ================== AUDIO TRANSCRIPTION HANDLER ==================
+
+async function handleTranscribeOperation(
+  apiKey: string, 
+  variables: Record<string, any>,
+  audioData?: string,
+  provider: string = 'openai'
+): Promise<Response> {
+  console.log('[DEBUG] Starting audio transcription operation')
+
+  try {
+    // Validate audio data
+    if (!audioData) {
+      throw new Error('No audio data provided')
+    }
+
+    // Decode base64 audio data
+    const audioBuffer = Uint8Array.from(atob(audioData), c => c.charCodeAt(0))
+    console.log(`[DEBUG] Audio buffer size: ${audioBuffer.length} bytes`)
+
+    // Create a File object from the buffer
+    const audioFile = new File([audioBuffer], 'audio.m4a', { type: 'audio/m4a' })
+
+    // Use Vercel AI SDK for transcription
+    console.log('[DEBUG] Calling OpenAI Whisper via Vercel AI SDK')
+    
+    // Note: The Vercel AI SDK doesn't have a direct transcription method yet,
+    // so we'll make a direct API call with proper error handling
+    const formData = new FormData()
+    formData.append('file', audioFile)
+    formData.append('model', 'whisper-1')
+    formData.append('response_format', 'json')
+
+    const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: formData
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error(`[ERROR] Transcription API error: ${response.status} - ${errorText}`)
+      throw new Error(`Transcription API error: ${response.status}`)
+    }
+
+    const data = await response.json()
+    console.log('[DEBUG] Transcription successful')
+
+    return new Response(
+      JSON.stringify({ 
+        transcription: data.text,
+        duration: data.duration 
+      }),
+      { 
+        status: 200, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      }
+    )
+
+  } catch (error) {
+    console.error('[ERROR] Transcription operation failed:', error)
+    return new Response(
+      JSON.stringify({ 
+        error: error.message || 'Transcription failed',
+        details: 'Failed to transcribe audio'
+      }),
+      { 
+        status: 500, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      }
+    )
+  }
+}

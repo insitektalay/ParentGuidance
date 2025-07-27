@@ -354,9 +354,12 @@ struct PsychologistNoteView: View {
             
             let userProfile = try await AuthService.shared.loadUserProfile(userId: userId)
             
-            guard let apiKey = userProfile.userApiKey else {
+            // Check if user has active API key via MultiProviderApiKeyService
+            guard let activeApiKey = try await MultiProviderApiKeyService.shared.getActiveApiKey(for: userId) else {
                 throw PsychologistNoteError.generationFailed("No API key configured")
             }
+            
+            let apiKey = activeApiKey.apiKey
             
             // Generate the note
             let newNote = try await PsychologistNoteService.shared.generatePsychologistNote(

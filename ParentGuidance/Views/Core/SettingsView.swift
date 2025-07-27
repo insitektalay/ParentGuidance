@@ -17,7 +17,7 @@ struct SettingsView: View {
     // Services
     private let dataService = SettingsDataService.shared
     private let accountService = SettingsAccountService.shared
-    private let formatterService = SettingsFormatterService.shared
+    private let formatterService: SettingsFormatterService = SettingsFormatterService.shared
     private let utilityService = SettingsUtilityService.shared
     
     // MARK: - Formatting Helpers (delegated to service)
@@ -276,31 +276,16 @@ struct SettingsView: View {
         }
         .sheet(isPresented: $viewState.showingApiKeyManagement) {
             if let profile = viewState.userProfile {
-                NavigationView {
-                    VStack {
-                        Text(String(localized: "settings.apiKey.title"))
-                            .font(.title2)
-                            .foregroundColor(ColorPalette.white)
-                            .padding()
-                        
-                        Text(String(localized: "settings.apiKey.comingSoon"))
-                            .foregroundColor(ColorPalette.white.opacity(0.8))
-                            .padding()
-                        
-                        Spacer()
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(ColorPalette.navy)
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .navigationBarLeading) {
-                            Button(String(localized: "common.close")) {
-                                viewState.showingApiKeyManagement = false
-                            }
-                            .foregroundColor(ColorPalette.white)
+                ApiKeyManagementView(
+                    userProfile: profile,
+                    onApiKeySaved: {
+                        viewState.showingApiKeyManagement = false
+                        // Reload user profile to reflect changes
+                        Task {
+                            await loadUserProfile()
                         }
                     }
-                }
+                )
             }
         }
         .alert(String(localized: "settings.export.alert.title"), isPresented: $viewState.showingExportSuccess) {

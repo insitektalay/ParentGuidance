@@ -1,1 +1,11 @@
-feat: fix scrolling issues in Library situation cards by resolving gesture conflicts    Replace exclusive DragGesture with simultaneousGesture in SituationCard to allow vertical scrolling while preserving swipe-to-delete   functionality. Added directional logic that only activates horizontal swipe gestures for delete action, allowing vertical movements to pass   through to ScrollView for smooth scrolling. This brings Library card scrolling behavior in line with situation type picker cards.
+Fix framework generation for dynamic guidance structure mode
+
+Previously, framework generation failed when users had "Dynamic Structure" selected in settings because it was looking   for [SITUATION] sections that only exist in "Fixed Structure" mode. Dynamic mode uses AI-generated section headers   instead.
+
+Modified FrameworkGenerationService to:
+- Check if dynamic structure mode is enabled via GuidanceStructureSettings
+- Use complete guidance content for dynamic mode instead of extracting sections
+- Preserve existing behavior for fixed structure mode
+- Include original situation context (title + description) with guidance
+
+Also simplified framework prompt formatting to only pass the framework name instead of name + notification text, reducing    token usage and allowing more flexible AI interpretation.

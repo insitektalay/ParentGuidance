@@ -14,6 +14,13 @@
 		943792A72E1BE9A90089F512 /* FrameworkRecommendation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943792A62E1BE9A90089F512 /* FrameworkRecommendation.swift */; };
 		943792A92E1C2B610089F512 /* TabNavigationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943792A82E1C2B610089F512 /* TabNavigationManager.swift */; };
 		943792AB2E1C34520089F512 /* FrameworkGeneratingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943792AA2E1C34520089F512 /* FrameworkGeneratingView.swift */; };
+		943BC97B2E35D7770056EFF9 /* VoiceRecorderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943BC97A2E35D7770056EFF9 /* VoiceRecorderViewModel.swift */; };
+		943BC97C2E35D7770056EFF9 /* MultiProviderApiKeyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943BC9792E35D7770056EFF9 /* MultiProviderApiKeyService.swift */; };
+		943BC97E2E35D84E0056EFF9 /* ApiKeyManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943BC97D2E35D84E0056EFF9 /* ApiKeyManagementView.swift */; };
+		943BC9822E35D85A0056EFF9 /* ApiKeyProviderCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943BC9802E35D85A0056EFF9 /* ApiKeyProviderCard.swift */; };
+		943BC9832E35D85A0056EFF9 /* AddApiKeySheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943BC97F2E35D85A0056EFF9 /* AddApiKeySheet.swift */; };
+		943BC9872E35D9310056EFF9 /* UserApiKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943BC9862E35D9310056EFF9 /* UserApiKey.swift */; };
+		943BC9882E35D9310056EFF9 /* ApiKeyProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943BC9852E35D9310056EFF9 /* ApiKeyProvider.swift */; };
 		943DFD722E17CBE3004F8043 /* LibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD712E17CBE3004F8043 /* LibraryViewController.swift */; };
 		943DFD742E180D40004F8043 /* SituationDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD732E180D40004F8043 /* SituationDetailView.swift */; };
 		943DFD772E1823A5004F8043 /* LibraryFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD762E1823A5004F8043 /* LibraryFilters.swift */; };
@@ -191,6 +198,13 @@
 		943792A62E1BE9A90089F512 /* FrameworkRecommendation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameworkRecommendation.swift; sourceTree = "<group>"; };
 		943792A82E1C2B610089F512 /* TabNavigationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabNavigationManager.swift; sourceTree = "<group>"; };
 		943792AA2E1C34520089F512 /* FrameworkGeneratingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameworkGeneratingView.swift; sourceTree = "<group>"; };
+		943BC9792E35D7770056EFF9 /* MultiProviderApiKeyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiProviderApiKeyService.swift; sourceTree = "<group>"; };
+		943BC97A2E35D7770056EFF9 /* VoiceRecorderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorderViewModel.swift; sourceTree = "<group>"; };
+		943BC97D2E35D84E0056EFF9 /* ApiKeyManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiKeyManagementView.swift; sourceTree = "<group>"; };
+		943BC97F2E35D85A0056EFF9 /* AddApiKeySheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddApiKeySheet.swift; sourceTree = "<group>"; };
+		943BC9802E35D85A0056EFF9 /* ApiKeyProviderCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiKeyProviderCard.swift; sourceTree = "<group>"; };
+		943BC9852E35D9310056EFF9 /* ApiKeyProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiKeyProvider.swift; sourceTree = "<group>"; };
+		943BC9862E35D9310056EFF9 /* UserApiKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserApiKey.swift; sourceTree = "<group>"; };
 		943DFD712E17CBE3004F8043 /* LibraryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryViewController.swift; sourceTree = "<group>"; };
 		943DFD732E180D40004F8043 /* SituationDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SituationDetailView.swift; sourceTree = "<group>"; };
 		943DFD762E1823A5004F8043 /* LibraryFilters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryFilters.swift; sourceTree = "<group>"; };
@@ -489,6 +503,8 @@
 		944EA1FB2E2DFECF00C110AF /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				943BC97F2E35D85A0056EFF9 /* AddApiKeySheet.swift */,
+				943BC9802E35D85A0056EFF9 /* ApiKeyProviderCard.swift */,
 				944EA1FC2E2DFEDB00C110AF /* GuidanceModeCard.swift */,
 				944EA1FE2E2E018B00C110AF /* FrameworkCard.swift */,
 				944EA2002E2E02B300C110AF /* LanguageSelectionView.swift */,
@@ -635,6 +651,8 @@
 		94FA10EF2E056303003EC1E9 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				943BC9852E35D9310056EFF9 /* ApiKeyProvider.swift */,
+				943BC9862E35D9310056EFF9 /* UserApiKey.swift */,
 				943DFD8D2E1A856E004F8043 /* Child.swift */,
 				943DFD8C2E1A856E004F8043 /* UserProfile.swift */,
 				94FA10F72E0564DE003EC1E9 /* Core */,
@@ -655,6 +673,8 @@
 		94FA10F02E05630A003EC1E9 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				943BC9792E35D7770056EFF9 /* MultiProviderApiKeyService.swift */,
+				943BC97A2E35D7770056EFF9 /* VoiceRecorderViewModel.swift */,
 				943DFD942E1A85B9004F8043 /* AppCoordinator.swift */,
 				943DFD952E1A85B9004F8043 /* OpenAIService.swift */,
 				948605D02E133149008D92DE /* SupabaseManager.swift */,
@@ -781,6 +801,7 @@
 		94FA11192E05C8DC003EC1E9 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				943BC97D2E35D84E0056EFF9 /* ApiKeyManagementView.swift */,
 				944EA1FB2E2DFECF00C110AF /* Components */,
 				944EA1EC2E2DE90100C110AF /* Sections */,
 				9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */,
@@ -1080,6 +1101,8 @@
 				943DFD982E1A85B9004F8043 /* OpenAIService.swift in Sources */,
 				943DFD8E2E1A856E004F8043 /* UserProfile.swift in Sources */,
 				943DFD912E1A858D004F8043 /* Situation.swift in Sources */,
+				943BC97B2E35D7770056EFF9 /* VoiceRecorderViewModel.swift in Sources */,
+				943BC97C2E35D7770056EFF9 /* MultiProviderApiKeyService.swift in Sources */,
 				94FA112C2E05CC08003EC1E9 /* MicButton.swift in Sources */,
 				94FA11122E05C898003EC1E9 /* NewSituationView.swift in Sources */,
 				944EA2292E320C1B00C110AF /* SituationType.swift in Sources */,
@@ -1109,6 +1132,7 @@
 				9481565E2E29023B00C28273 /* ContextualInsightService.swift in Sources */,
 				944EA2222E30ACEA00C110AF /* ChatInputBar.swift in Sources */,
 				944EA1BC2E2B865900C110AF /* FamilyManagementView.swift in Sources */,
+				943BC97E2E35D84E0056EFF9 /* ApiKeyManagementView.swift in Sources */,
 				94FA10FF2E056C7A003EC1E9 /* AuthenticationView.swift in Sources */,
 				948156602E29042F00C28273 /* ContextualKnowledgeBaseView.swift in Sources */,
 				94FA11212E05CBB8003EC1E9 /* SituationTypingView.swift in Sources */,
@@ -1165,7 +1189,11 @@
 				948156702E2A12C700C28273 /* RegulationInsightCard.swift in Sources */,
 				94CBD5152E20F80C0014C22A /* FakeFile.swift in Sources */,
 				944EA21F2E30ACA700C110AF /* ChatMessage.swift in Sources */,
+				943BC9872E35D9310056EFF9 /* UserApiKey.swift in Sources */,
+				943BC9882E35D9310056EFF9 /* ApiKeyProvider.swift in Sources */,
 				943792A92E1C2B610089F512 /* TabNavigationManager.swift in Sources */,
+				943BC9822E35D85A0056EFF9 /* ApiKeyProviderCard.swift in Sources */,
+				943BC9832E35D85A0056EFF9 /* AddApiKeySheet.swift in Sources */,
 				94FA113E2E05CCA0003EC1E9 /* FoundationToolCard.swift in Sources */,
 				944EA21B2E2E325800C110AF /* PsychologistNoteView.swift in Sources */,
 				943DFD852E182684004F8043 /* SearchHistoryView.swift in Sources */,

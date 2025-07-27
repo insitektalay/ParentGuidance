@@ -113,46 +113,33 @@ class AuthService: ObservableObject {
         }
     }
     
-    func saveApiKey(_ apiKey: String, userId: String) async throws {
+    func saveApiKey(_ apiKey: String, provider: ApiKeyProvider = .openai, userId: String) async throws {
         print("🔄 Attempting to save API key for user: \(userId)")
+        print("🔑 Provider: \(provider.displayName)")
         print("🔑 API key (first 10 chars): \(apiKey.prefix(10))...")
-        let supabase = SupabaseManager.shared.client
         
         do {
+            // Use the new multi-provider service to add the API key
+            let newApiKey = try await MultiProviderApiKeyService.shared.addApiKey(
+                userId: userId,
+                provider: provider,
+                apiKey: apiKey,
+                makeActive: true
+            )
+            
+            // Update the profile to mark plan setup as complete
+            let supabase = SupabaseManager.shared.client
             let response = try await supabase
                 .from("profiles")
                 .update([
-                    "user_api_key": apiKey,
-                    "api_key_provider": "openai",
                     "plan_setup_complete": "true",
                     "updated_at": ISO8601DateFormatter().string(from: Date())
                 ])
                 .eq("id", value: userId)
                 .execute()
             
-            print("✅ API key update response: \(response)")
-            
-            // Verify the update actually worked
-            let verifyProfile: [UserProfile] = try await supabase
-                .from("profiles")
-                .select("*")
-                .eq("id", value: userId)
-                .execute()
-                .value
-            
-            if let updatedProfile = verifyProfile.first {
-                print("✅ Verification - Updated profile:")
-                print("   - Has API key: \(updatedProfile.userApiKey != nil)")
-                print("   - API provider: \(updatedProfile.apiKeyProvider ?? "none")")
-                print("   - Plan setup complete: \(updatedProfile.planSetupComplete)")
-                
-                if updatedProfile.userApiKey != nil && updatedProfile.planSetupComplete {
-                    print("✅ API key update successful - data was actually saved!")
-                } else {
-                    print("❌ API key update failed - data was not saved despite HTTP 200!")
-                    throw NSError(domain: "DatabaseError", code: 500, userInfo: [NSLocalizedDescriptionKey: "API key update did not persist"])
-                }
-            }
+            print("✅ Profile updated to mark plan setup complete")
+            print("✅ API key saved successfully with ID: \(newApiKey.id)")
             
         } catch {
             print("❌ Failed to save API key: \(error)")

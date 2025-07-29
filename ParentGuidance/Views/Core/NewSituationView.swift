@@ -222,6 +222,25 @@ struct NewSituationView: View {
                 }
             }
             
+            // Step 7.6: Extract coping strategies (background task)
+            Task {
+                do {
+                    let copingStrategies = try await ContextualInsightService.shared.extractCopingStrategies(
+                        situationText: inputText,
+                        apiKey: apiKey,
+                        familyId: familyId!,
+                        childId: nil, // TODO: Get from current child context if needed
+                        situationId: situationId
+                    )
+                    
+                    // Save coping strategies to database
+                    try await ContextualInsightService.shared.saveChildRegulationInsights(copingStrategies)
+                } catch {
+                    print("⚠️ Coping strategies extraction failed (non-critical): \(error)")
+                    print("⚠️ This won't affect the main guidance flow")
+                }
+            }
+            
             // Step 8: Update chat UI with the full guidance text
             await MainActor.run {
                 // Extract all text from the guidance sections for chat display
@@ -379,6 +398,25 @@ struct NewSituationView: View {
                     try await ContextualInsightService.shared.saveChildRegulationInsights(regulationInsights)
                 } catch {
                     print("⚠️ Child regulation insights extraction failed (non-critical): \(error)")
+                    print("⚠️ This won't affect the main guidance flow")
+                }
+            }
+            
+            // Step 7.6: Extract coping strategies (background task)
+            Task {
+                do {
+                    let copingStrategies = try await ContextualInsightService.shared.extractCopingStrategies(
+                        situationText: inputText,
+                        apiKey: apiKey,
+                        familyId: familyId!,
+                        childId: nil, // TODO: Get from current child context if needed
+                        situationId: situationId
+                    )
+                    
+                    // Save coping strategies to database
+                    try await ContextualInsightService.shared.saveChildRegulationInsights(copingStrategies)
+                } catch {
+                    print("⚠️ Coping strategies extraction failed (non-critical): \(error)")
                     print("⚠️ This won't affect the main guidance flow")
                 }
             }

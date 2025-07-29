@@ -39,6 +39,7 @@ enum RegulationCategory: String, Codable, CaseIterable {
     case core = "Core"
     case adhd = "ADHD"
     case mildAutism = "Mild Autism"
+    case copingStrategies = "Coping Strategies"
     
     var displayName: String {
         return self.rawValue
@@ -52,6 +53,8 @@ enum RegulationCategory: String, Codable, CaseIterable {
             return "Attention & Focus Patterns"
         case .mildAutism:
             return "Flexibility & Social Understanding"
+        case .copingStrategies:
+            return "Coping Strategies"
         }
     }
 }

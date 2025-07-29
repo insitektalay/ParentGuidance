@@ -680,7 +680,22 @@ Input:
 Output:
 <category name>
 `
-}
+  },
 
+  child_coping_strategies: {
+    id: "pmpt_coping_strat",
+    version: "1",
+    variables: ["longtext"],
+    systemPromptText: `
+Extract a short, simple list of the child's main coping strategies from the following text. Do not include any explanations or examples:
+
+{{longtext}}
+`
+  },
+    
+    
+    
+    
+    
   }
   

@@ -158,6 +158,23 @@ class EdgeFunctionService {
         )
     }
     
+    /// Extract coping strategies (non-streaming)
+    func extractCopingStrategies(
+        situationText: String,
+        apiKey: String
+    ) async throws -> String {
+        print("🔄 [EdgeFunction] Extracting coping strategies via Edge Function")
+        print("   → Operation: coping_strategies")
+        
+        return try await jsonRequest(
+            operation: "coping_strategies",
+            variables: [
+                "longtext": situationText
+            ],
+            apiKey: apiKey
+        )
+    }
+    
     /// Stream translation of guidance content
     func streamTranslation(
         guidanceContent: String,

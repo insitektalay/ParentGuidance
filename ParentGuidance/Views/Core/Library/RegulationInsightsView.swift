@@ -197,6 +197,8 @@ extension RegulationCategory {
             return "target"
         case .mildAutism:
             return "brain.head.profile"
+        case .copingStrategies:
+            return "shield.checkered"
         }
     }
 }

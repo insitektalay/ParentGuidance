@@ -69,6 +69,131 @@ class ContextualInsightService {
         return insights
     }
     
+    /// Extract coping strategies from situation text
+    func extractCopingStrategies(
+        situationText: String,
+        apiKey: String,
+        familyId: String,
+        childId: String? = nil,
+        situationId: String
+    ) async throws -> [ChildRegulationInsight] {
+        print("🧠 Starting coping strategies extraction for situation: \(situationId)")
+        print("📝 Situation text: \(situationText.prefix(100))...")
+        
+        // Choose implementation based on feature flag
+        let content: String
+        if useEdgeFunction {
+            print("🚀 [ContextualInsightService] Using EdgeFunction for coping strategies")
+            content = try await extractCopingStrategiesViaEdgeFunction(
+                situationText: situationText,
+                apiKey: apiKey
+            )
+        } else {
+            print("🔗 [ContextualInsightService] Using Direct API for coping strategies")
+            content = try await extractCopingStrategiesViaDirectAPI(
+                situationText: situationText,
+                apiKey: apiKey
+            )
+        }
+        
+        // Parse the response into ChildRegulationInsight objects
+        let insights = try parseCopingStrategiesResponse(
+            content: content,
+            familyId: familyId,
+            childId: childId,
+            situationId: situationId
+        )
+        
+        print("✅ Parsed \(insights.count) coping strategies")
+        return insights
+    }
+    
+    /// Extract coping strategies using Edge Function approach
+    private func extractCopingStrategiesViaEdgeFunction(
+        situationText: String,
+        apiKey: String
+    ) async throws -> String {
+        print("🔄 Using Edge Function for coping strategies extraction")
+        
+        do {
+            let response = try await EdgeFunctionService.shared.extractCopingStrategies(
+                situationText: situationText,
+                apiKey: apiKey
+            )
+            
+            print("✅ Coping strategies extracted via Edge Function")
+            return response
+            
+        } catch {
+            print("❌ Edge Function coping strategies extraction failed: \(error)")
+            throw ContextualInsightError.apiError(0)
+        }
+    }
+    
+    /// Extract coping strategies using legacy direct API approach
+    private func extractCopingStrategiesViaDirectAPI(
+        situationText: String,
+        apiKey: String
+    ) async throws -> String {
+        print("🔄 Using direct API for coping strategies extraction (legacy)")
+        
+        let url = URL(string: "https://api.openai.com/v1/responses")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let requestBody: [String: Any] = [
+            "prompt": [
+                "id": "pmpt_coping_strat",
+                "version": "1",
+                "variables": [
+                    "longtext": situationText
+                ]
+            ]
+        ]
+        
+        print("📡 Making coping strategies API request...")
+        request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            print("❌ Invalid HTTP response for coping strategies")
+            throw ContextualInsightError.invalidResponse
+        }
+        
+        if httpResponse.statusCode != 200 {
+            print("❌ Coping strategies HTTP error: \(httpResponse.statusCode)")
+            if let responseString = String(data: data, encoding: .utf8) {
+                print("❌ Error response: \(responseString)")
+            }
+            throw ContextualInsightError.apiError(httpResponse.statusCode)
+        }
+        
+        print("✅ Coping strategies HTTP 200 response received")
+        
+        do {
+            // Parse using the same PromptResponse structure
+            let promptResponse = try JSONDecoder().decode(PromptResponse.self, from: data)
+            
+            guard let firstOutput = promptResponse.output.first,
+                  let firstContent = firstOutput.content.first else {
+                print("❌ No content in coping strategies response")
+                throw ContextualInsightError.noContent
+            }
+            
+            let content = firstContent.text
+            print("📝 Coping strategies content received: \(content.prefix(200))...")
+            
+            return content
+            
+        } catch {
+            print("❌ Error parsing coping strategies response: \(error)")
+            throw ContextualInsightError.parsingError(error)
+        }
+    }
+    
     /// Extract child regulation insights using Edge Function approach
     private func extractChildRegulationInsightsViaEdgeFunction(
         situationText: String,
@@ -282,6 +407,54 @@ class ContextualInsightService {
     }
     
     // MARK: - Response Parsing
+    
+    private func parseCopingStrategiesResponse(
+        content: String,
+        familyId: String,
+        childId: String?,
+        situationId: String
+    ) throws -> [ChildRegulationInsight] {
+        print("🧠 Parsing coping strategies response...")
+        
+        // The coping strategies prompt returns a simple list
+        // Split by newlines and filter out empty lines
+        let strategies = content
+            .components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+            .filter { !$0.hasPrefix("•") && !$0.hasPrefix("-") && !$0.hasPrefix("*") ? true : !String($0.dropFirst()).trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+            .map { strategy in
+                // Clean up bullet points and numbered lists if they exist
+                var cleaned = strategy
+                if cleaned.hasPrefix("• ") || cleaned.hasPrefix("- ") || cleaned.hasPrefix("* ") {
+                    cleaned = String(cleaned.dropFirst(2))
+                }
+                // Handle numbered lists (1. 2. 3. etc.)
+                if let range = cleaned.range(of: "^\\d+\\.\\s*", options: .regularExpression) {
+                    cleaned = String(cleaned[range.upperBound...])
+                }
+                return cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
+            }
+            .filter { !$0.isEmpty }
+        
+        var insights: [ChildRegulationInsight] = []
+        let responseId = UUID().uuidString
+        
+        for strategy in strategies {
+            let insight = ChildRegulationInsight(
+                familyId: familyId,
+                childId: childId,
+                situationId: situationId,
+                category: .copingStrategies,
+                content: strategy,
+                insightResponseId: responseId
+            )
+            insights.append(insight)
+        }
+        
+        print("🧠 Parsed \(insights.count) coping strategies from response")
+        return insights
+    }
     
     private func parseRegulationInsightsResponse(
         content: String,

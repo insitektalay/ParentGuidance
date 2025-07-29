@@ -1,12 +1,3 @@
-Add AI Processing Features toggle controls in Settings
-   - Created AIProcessingSettings service to manage UserDefaults persistence for 4 toggle states
-   - Added new Settings section "AI Processing Features" with individual toggles for each LLM call
-   - Implemented toggles for: Situation Analysis, Context Extraction, Regulation Insights, and Coping Strategies
-   - Each toggle displays description and warning when disabled to inform users of implications
-   - Updated NewSituationView to conditionally execute LLM calls based on toggle states
-   - Situation Analysis falls back to "general" category when disabled
-   - Background extraction tasks (Context, Regulation, Coping) skip entirely when disabled
-   - Added 14 new localization keys to Localizable.xcstrings for all UI text
-   - Integrated toggle state loading into SettingsAccountService feature flag system
-   Allows users to selectively disable AI features to reduce API costs while maintaining core guidance functionality. All
-   toggles default to enabled for new users.
+Add Child Context and Key Observations to Dynamic guidance templates
+Updated Dynamic prompt templates to include Child Context and Key Observations sections, bringing feature parity with   Fixed structure mode. Modified both Warm Practical and Analytical Scientific Dynamic templates to accept child_context   and key_insights variables, and updated their variable declarations accordingly.
+This ensures users can benefit from psychologist notes and regulatory insights regardless of their chosen guidance   structure mode, while maintaining existing toggle controls for granular feature management.

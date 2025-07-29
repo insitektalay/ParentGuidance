@@ -135,6 +135,12 @@ ${GUIDANCE_GENERATION_PROMPT}
 `;
 
 const warmPracticalDynamicNoFramework = `
+Child Context:
+{{child_context}}
+
+Key Observations:
+{{key_insights}}
+
 Guidance Context:
 {{situation_guidance_note}}
 
@@ -163,6 +169,12 @@ ${Analysis_Requirements}
 `;
 
 const analyticalScientificDynamicNoFramework = `
+Child Context:
+{{child_context}}
+
+Key Observations:
+{{key_insights}}
+
 Guidance Context:
 {{situation_guidance_note}}
 
@@ -238,7 +250,7 @@ export const promptTemplates = {
         },
         "Warm Practical + Dynamic": {
           version: "16",
-          variables: ["current_situation", "situation_guidance_note"],
+          variables: ["current_situation", "child_context", "key_insights", "situation_guidance_note"],
           systemPromptText: warmPracticalDynamicNoFramework
         },
         "Analytical Scientific + Fixed": {
@@ -248,7 +260,7 @@ export const promptTemplates = {
         },
         "Analytical Scientific + Dynamic": {
           version: "18",
-          variables: ["current_situation", "situation_guidance_note"],
+          variables: ["current_situation", "child_context", "key_insights", "situation_guidance_note"],
           systemPromptText: analyticalScientificDynamicNoFramework
         }
       },

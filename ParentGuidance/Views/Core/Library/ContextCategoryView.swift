@@ -96,7 +96,6 @@ struct ContextCategoryView: View {
                 .font(.system(size: 16))
                 .foregroundColor(ColorPalette.white.opacity(0.7))
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
     private var errorView: some View {
@@ -117,7 +116,6 @@ struct ContextCategoryView: View {
             .foregroundColor(ColorPalette.terracotta)
             .font(.system(size: 16, weight: .medium))
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
     private var emptyView: some View {
@@ -136,7 +134,6 @@ struct ContextCategoryView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
     private var insightListView: some View {

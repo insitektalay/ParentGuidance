@@ -1,1 +1,6 @@
-Pre Situation Categories Working
+Update ContextInsightCard to use delete button and upgrade Edge Function to GPT-4 Turbo
+Fixed scrolling issues in "Your Child's World" insights by replacing problematic swipe-to-delete gesture with a direct
+delete button positioned at bottom-right of each card. The custom drag gesture was interfering with vertical scrolling,
+preventing users from browsing through insights.
+Also upgraded the Supabase Edge Function to use gpt-4-turbo-preview model across all AI operations (guidance generation,
+situation analysis, context extraction, translation, and psychologist notes) for improved performance and capabilities.

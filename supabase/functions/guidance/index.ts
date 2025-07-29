@@ -41,7 +41,7 @@ function getProviderConfig(provider: string) {
     case 'openai':
       return {
         endpoint: 'https://api.openai.com/v1/chat/completions',
-        model: 'gpt-4',
+        model: 'gpt-4-turbo-preview',
         headers: (apiKey: string) => ({
           'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json'
@@ -591,7 +591,7 @@ async function handleFrameworkOperation(apiKey: string, variables: any, provider
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4',
+        model: 'gpt-4-turbo-preview',
         messages: [
           { role: 'system', content: systemPrompt }
         ],
@@ -653,7 +653,7 @@ async function handleContextOperation(apiKey: string, variables: any, provider: 
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4',
+        model: 'gpt-4-turbo-preview',
         messages: [
           { role: 'system', content: systemPrompt }
         ],
@@ -712,7 +712,7 @@ async function handleTranslateOperation(apiKey: string, variables: any, provider
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4',
+        model: 'gpt-4-turbo-preview',
         messages: [
           { role: 'system', content: systemPrompt }
         ],
@@ -796,7 +796,7 @@ async function handlePsychologistNoteContextOperation(apiKey: string, variables:
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4',
+        model: 'gpt-4-turbo-preview',
         messages: [
           { role: 'system', content: systemPrompt }
         ],
@@ -856,7 +856,7 @@ async function handlePsychologistNoteTraitsOperation(apiKey: string, variables: 
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4',
+        model: 'gpt-4-turbo-preview',
         messages: [
           { role: 'system', content: systemPrompt }
         ],

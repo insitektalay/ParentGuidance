@@ -11,96 +11,59 @@ struct ContextInsightCard: View {
     let insight: ContextualInsight
     let onDelete: () -> Void
     
-    @State private var dragOffset: CGSize = .zero
-    @State private var isDragging = false
-    
-    private let deleteThreshold: CGFloat = -80
-    private let deleteButtonWidth: CGFloat = 80
+    @State private var showingDeleteAlert = false
     
     var body: some View {
-        HStack(spacing: 0) {
-            // Main content
-            VStack(alignment: .leading, spacing: 8) {
-                // Subcategory (if available)
-                if let subcategory = insight.subcategory {
-                    Text(subcategory.displayName)
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(ColorPalette.brightBlue)
-                }
-                
-                // Insight content
-                Text(insight.content)
-                    .font(.system(size: 14))
-                    .foregroundColor(ColorPalette.white.opacity(0.9))
-                    .lineLimit(nil)
-                    .multilineTextAlignment(.leading)
-                
+        VStack(alignment: .leading, spacing: 8) {
+            // Subcategory (if available)
+            if let subcategory = insight.subcategory {
+                Text(subcategory.displayName)
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(ColorPalette.brightBlue)
+            }
+            
+            // Insight content
+            Text(insight.content)
+                .font(.system(size: 14))
+                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .lineLimit(nil)
+                .multilineTextAlignment(.leading)
+            
+            // Bottom row with date and delete button
+            HStack(alignment: .bottom) {
                 // Date
                 Text(formatDate(insight.createdAt))
                     .font(.system(size: 11))
                     .foregroundColor(ColorPalette.white.opacity(0.5))
-            }
-            .padding(16)
-            .background(Color(red: 0.21, green: 0.22, blue: 0.33))
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(ColorPalette.white.opacity(0.1), lineWidth: 1)
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .offset(x: dragOffset.width)
-            .animation(.easeOut(duration: 0.2), value: dragOffset)
-            
-            // Delete button (revealed when swiping left)
-            if dragOffset.width < -10 {
-                Button(action: onDelete) {
+                
+                Spacer()
+                
+                // Delete button
+                Button(action: {
+                    showingDeleteAlert = true
+                }) {
                     Image(systemName: "trash")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(ColorPalette.white)
-                        .frame(width: deleteButtonWidth, height: 60)
-                        .background(ColorPalette.terracotta)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(ColorPalette.white.opacity(0.6))
                 }
-                .transition(.move(edge: .trailing))
-                .animation(.easeOut(duration: 0.2), value: dragOffset)
+                .buttonStyle(PlainButtonStyle())
             }
         }
-        .gesture(
-            DragGesture()
-                .onChanged { value in
-                    isDragging = true
-                    
-                    // Only allow left swipe (negative values)
-                    if value.translation.width < 0 {
-                        dragOffset = CGSize(
-                            width: max(value.translation.width, -deleteButtonWidth),
-                            height: 0
-                        )
-                    }
-                }
-                .onEnded { value in
-                    isDragging = false
-                    
-                    // Snap to delete position or return to original
-                    if value.translation.width < deleteThreshold {
-                        // Show delete button
-                        withAnimation(.easeOut(duration: 0.2)) {
-                            dragOffset = CGSize(width: -deleteButtonWidth, height: 0)
-                        }
-                    } else {
-                        // Return to original position
-                        withAnimation(.easeOut(duration: 0.2)) {
-                            dragOffset = .zero
-                        }
-                    }
-                }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(red: 0.21, green: 0.22, blue: 0.33))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(ColorPalette.white.opacity(0.1), lineWidth: 1)
         )
-        .onTapGesture {
-            // Tap anywhere to close the delete button
-            if dragOffset.width < 0 {
-                withAnimation(.easeOut(duration: 0.2)) {
-                    dragOffset = .zero
-                }
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .alert("Delete Insight", isPresented: $showingDeleteAlert) {
+            Button("Cancel", role: .cancel) { }
+            Button("Delete", role: .destructive) {
+                onDelete()
             }
+        } message: {
+            Text("Are you sure you want to delete this insight? This action cannot be undone.")
         }
     }
     

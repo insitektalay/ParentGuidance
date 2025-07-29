@@ -229,6 +229,9 @@ struct SettingsView: View {
                 // Family Language Section
                 FamilyLanguageSection(viewState: viewState)
                 
+                // AI Processing Section
+                AIProcessingSection(viewState: viewState)
+                
                 // Developer Section (for testing EdgeFunction migration)
                 DeveloperSection(viewState: viewState)
                 

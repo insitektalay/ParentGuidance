@@ -1,4 +1,4 @@
-const generalEntry = `Respond naturally based on the situation text. No assumptions about urgency, tone, or structure.
+const generalEntry = `
 `;
 const crisisNow = `This is an urgent, emotionally intense moment. Provide fast, calming, practical guidance with empathy.
 `;

@@ -83,12 +83,24 @@ class SettingsAccountService: ObservableObject {
             viewState.contextUseEdgeFunction = ContextualInsightService.isUsingEdgeFunction()
             viewState.guidanceUseEdgeFunction = GuidanceGenerationService.isUsingEdgeFunction()
             
+            // Load AI processing feature toggles
+            let aiSettings = AIProcessingSettings.shared.loadSettings()
+            viewState.enableSituationAnalysis = aiSettings.situationAnalysis
+            viewState.enableContextExtraction = aiSettings.contextExtraction
+            viewState.enableRegulationInsights = aiSettings.regulationInsights
+            viewState.enableCopingStrategies = aiSettings.copingStrategies
+            
             print("🔧 Feature flag states loaded:")
             print("   Translation: \(viewState.translationUseEdgeFunction ? "Edge Function" : "Direct API")")
             print("   Conversation: \(viewState.conversationUseEdgeFunction ? "Edge Function" : "Direct API")")
             print("   Framework: \(viewState.frameworkUseEdgeFunction ? "Edge Function" : "Direct API")")
             print("   Context: \(viewState.contextUseEdgeFunction ? "Edge Function" : "Direct API")")
             print("   Guidance: \(viewState.guidanceUseEdgeFunction ? "Edge Function" : "Direct API")")
+            print("🤖 AI Processing features:")
+            print("   Situation Analysis: \(viewState.enableSituationAnalysis ? "Enabled" : "Disabled")")
+            print("   Context Extraction: \(viewState.enableContextExtraction ? "Enabled" : "Disabled")")
+            print("   Regulation Insights: \(viewState.enableRegulationInsights ? "Enabled" : "Disabled")")
+            print("   Coping Strategies: \(viewState.enableCopingStrategies ? "Enabled" : "Disabled")")
         }
     }
     

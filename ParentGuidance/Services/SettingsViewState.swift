@@ -40,6 +40,13 @@ class SettingsViewState: ObservableObject {
     @Published var contextUseEdgeFunction: Bool = false
     @Published var guidanceUseEdgeFunction: Bool = false
     
+    // MARK: - AI Processing Feature Toggles
+    
+    @Published var enableSituationAnalysis: Bool = true
+    @Published var enableContextExtraction: Bool = true
+    @Published var enableRegulationInsights: Bool = true
+    @Published var enableCopingStrategies: Bool = true
+    
     // MARK: - Privacy & Data State
     
     @Published var isExportingData: Bool = false

@@ -21,6 +21,8 @@
 		943BC9832E35D85A0056EFF9 /* AddApiKeySheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943BC97F2E35D85A0056EFF9 /* AddApiKeySheet.swift */; };
 		943BC9872E35D9310056EFF9 /* UserApiKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943BC9862E35D9310056EFF9 /* UserApiKey.swift */; };
 		943BC9882E35D9310056EFF9 /* ApiKeyProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943BC9852E35D9310056EFF9 /* ApiKeyProvider.swift */; };
+		943BC98C2E38A2000056EFF9 /* AIProcessingSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943BC98B2E38A1FD0056EFF9 /* AIProcessingSection.swift */; };
+		943BC98E2E38A2150056EFF9 /* AIProcessingSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943BC98D2E38A2110056EFF9 /* AIProcessingSettings.swift */; };
 		943DFD722E17CBE3004F8043 /* LibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD712E17CBE3004F8043 /* LibraryViewController.swift */; };
 		943DFD742E180D40004F8043 /* SituationDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD732E180D40004F8043 /* SituationDetailView.swift */; };
 		943DFD772E1823A5004F8043 /* LibraryFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943DFD762E1823A5004F8043 /* LibraryFilters.swift */; };
@@ -205,6 +207,8 @@
 		943BC9802E35D85A0056EFF9 /* ApiKeyProviderCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiKeyProviderCard.swift; sourceTree = "<group>"; };
 		943BC9852E35D9310056EFF9 /* ApiKeyProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiKeyProvider.swift; sourceTree = "<group>"; };
 		943BC9862E35D9310056EFF9 /* UserApiKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserApiKey.swift; sourceTree = "<group>"; };
+		943BC98B2E38A1FD0056EFF9 /* AIProcessingSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIProcessingSection.swift; sourceTree = "<group>"; };
+		943BC98D2E38A2110056EFF9 /* AIProcessingSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIProcessingSettings.swift; sourceTree = "<group>"; };
 		943DFD712E17CBE3004F8043 /* LibraryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryViewController.swift; sourceTree = "<group>"; };
 		943DFD732E180D40004F8043 /* SituationDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SituationDetailView.swift; sourceTree = "<group>"; };
 		943DFD762E1823A5004F8043 /* LibraryFilters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryFilters.swift; sourceTree = "<group>"; };
@@ -488,6 +492,7 @@
 		944EA1EC2E2DE90100C110AF /* Sections */ = {
 			isa = PBXGroup;
 			children = (
+				943BC98B2E38A1FD0056EFF9 /* AIProcessingSection.swift */,
 				944EA1ED2E2DE91400C110AF /* FoundationToolsSection.swift */,
 				944EA1EF2E2DEBAC00C110AF /* FamilyLanguageSection.swift */,
 				944EA1F12E2DEE1E00C110AF /* DeveloperSection.swift */,
@@ -673,6 +678,7 @@
 		94FA10F02E05630A003EC1E9 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				943BC98D2E38A2110056EFF9 /* AIProcessingSettings.swift */,
 				943BC9792E35D7770056EFF9 /* MultiProviderApiKeyService.swift */,
 				943BC97A2E35D7770056EFF9 /* VoiceRecorderViewModel.swift */,
 				943DFD942E1A85B9004F8043 /* AppCoordinator.swift */,
@@ -1150,6 +1156,7 @@
 				94FA11102E05C88A003EC1E9 /* TodayView.swift in Sources */,
 				94FA110B2E056D40003EC1E9 /* APIKeyView.swift in Sources */,
 				943DFD9B2E1A85EE004F8043 /* ConversationService.swift in Sources */,
+				943BC98C2E38A2000056EFF9 /* AIProcessingSection.swift in Sources */,
 				944EA1AA2E2B566400C110AF /* FamilyLanguageService.swift in Sources */,
 				943DFD892E18269D004F8043 /* ExportSheet.swift in Sources */,
 				944EA1AE2E2B652D00C110AF /* TranslationService.swift in Sources */,
@@ -1195,6 +1202,7 @@
 				943BC9822E35D85A0056EFF9 /* ApiKeyProviderCard.swift in Sources */,
 				943BC9832E35D85A0056EFF9 /* AddApiKeySheet.swift in Sources */,
 				94FA113E2E05CCA0003EC1E9 /* FoundationToolCard.swift in Sources */,
+				943BC98E2E38A2150056EFF9 /* AIProcessingSettings.swift in Sources */,
 				944EA21B2E2E325800C110AF /* PsychologistNoteView.swift in Sources */,
 				943DFD852E182684004F8043 /* SearchHistoryView.swift in Sources */,
 				944EA1F22E2DEE1E00C110AF /* DeveloperSection.swift in Sources */,

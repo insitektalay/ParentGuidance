@@ -152,11 +152,20 @@ struct NewSituationView: View {
             )
             
             // Step 4: Analyze situation for category and incident classification
-            let (category, isIncident) = try await ConversationService.shared.analyzeSituation(
-                situationText: inputText,
-                apiKey: apiKey,
-                activeFramework: activeFramework
-            )
+            let (category, isIncident): (String, Bool)
+            if AIProcessingSettings.shared.isSituationAnalysisEnabled() {
+                let result = try await ConversationService.shared.analyzeSituation(
+                    situationText: inputText,
+                    apiKey: apiKey,
+                    activeFramework: activeFramework
+                )
+                category = result.category ?? "general"
+                isIncident = result.isIncident
+            } else {
+                // Use defaults when disabled
+                print("⚠️ Situation Analysis disabled - using default values")
+                (category, isIncident) = ("general", false)
+            }
             
             // Step 5: Save the situation to database with AI-generated title and analysis
             let situationId = try await ConversationService.shared.saveSituation(
@@ -185,60 +194,72 @@ struct NewSituationView: View {
             }
             
             // Step 7: Extract contextual insights (background task)
-            Task {
-                do {
-                    let insights = try await ContextualInsightService.shared.extractContextFromSituation(
-                        situationText: inputText,
-                        apiKey: apiKey,
-                        familyId: familyId!,
-                        childId: nil, // TODO: Get from current child context if needed
-                        situationId: situationId
-                    )
-                    
-                    // Save insights to database
-                    try await ContextualInsightService.shared.saveContextInsights(insights)
-                } catch {
-                    print("⚠️ Context extraction failed (non-critical): \(error)")
-                    print("⚠️ This won't affect the main guidance flow")
+            if AIProcessingSettings.shared.isContextExtractionEnabled() {
+                Task {
+                    do {
+                        let insights = try await ContextualInsightService.shared.extractContextFromSituation(
+                            situationText: inputText,
+                            apiKey: apiKey,
+                            familyId: familyId!,
+                            childId: nil, // TODO: Get from current child context if needed
+                            situationId: situationId
+                        )
+                        
+                        // Save insights to database
+                        try await ContextualInsightService.shared.saveContextInsights(insights)
+                    } catch {
+                        print("⚠️ Context extraction failed (non-critical): \(error)")
+                        print("⚠️ This won't affect the main guidance flow")
+                    }
                 }
+            } else {
+                print("⚠️ Context Extraction disabled - skipping 'Your Child's World' insights")
             }
             
             // Step 7.5: Extract child regulation insights (background task)
-            Task {
-                do {
-                    let regulationInsights = try await ContextualInsightService.shared.extractChildRegulationInsights(
-                        situationText: inputText,
-                        apiKey: apiKey,
-                        familyId: familyId!,
-                        childId: nil, // TODO: Get from current child context if needed
-                        situationId: situationId
-                    )
-                    
-                    // Save regulation insights to database
-                    try await ContextualInsightService.shared.saveChildRegulationInsights(regulationInsights)
-                } catch {
-                    print("⚠️ Child regulation insights extraction failed (non-critical): \(error)")
-                    print("⚠️ This won't affect the main guidance flow")
+            if AIProcessingSettings.shared.isRegulationInsightsEnabled() {
+                Task {
+                    do {
+                        let regulationInsights = try await ContextualInsightService.shared.extractChildRegulationInsights(
+                            situationText: inputText,
+                            apiKey: apiKey,
+                            familyId: familyId!,
+                            childId: nil, // TODO: Get from current child context if needed
+                            situationId: situationId
+                        )
+                        
+                        // Save regulation insights to database
+                        try await ContextualInsightService.shared.saveChildRegulationInsights(regulationInsights)
+                    } catch {
+                        print("⚠️ Child regulation insights extraction failed (non-critical): \(error)")
+                        print("⚠️ This won't affect the main guidance flow")
+                    }
                 }
+            } else {
+                print("⚠️ Regulation Insights disabled - skipping Core/ADHD/Autism pattern detection")
             }
             
             // Step 7.6: Extract coping strategies (background task)
-            Task {
-                do {
-                    let copingStrategies = try await ContextualInsightService.shared.extractCopingStrategies(
-                        situationText: inputText,
-                        apiKey: apiKey,
-                        familyId: familyId!,
-                        childId: nil, // TODO: Get from current child context if needed
-                        situationId: situationId
-                    )
-                    
-                    // Save coping strategies to database
-                    try await ContextualInsightService.shared.saveChildRegulationInsights(copingStrategies)
-                } catch {
-                    print("⚠️ Coping strategies extraction failed (non-critical): \(error)")
-                    print("⚠️ This won't affect the main guidance flow")
+            if AIProcessingSettings.shared.isCopingStrategiesEnabled() {
+                Task {
+                    do {
+                        let copingStrategies = try await ContextualInsightService.shared.extractCopingStrategies(
+                            situationText: inputText,
+                            apiKey: apiKey,
+                            familyId: familyId!,
+                            childId: nil, // TODO: Get from current child context if needed
+                            situationId: situationId
+                        )
+                        
+                        // Save coping strategies to database
+                        try await ContextualInsightService.shared.saveChildRegulationInsights(copingStrategies)
+                    } catch {
+                        print("⚠️ Coping strategies extraction failed (non-critical): \(error)")
+                        print("⚠️ This won't affect the main guidance flow")
+                    }
                 }
+            } else {
+                print("⚠️ Coping Strategies disabled - skipping strategy extraction")
             }
             
             // Step 8: Update chat UI with the full guidance text
@@ -331,11 +352,20 @@ struct NewSituationView: View {
             )
             
             // Step 4: Analyze situation for category and incident classification
-            let (category, isIncident) = try await ConversationService.shared.analyzeSituation(
-                situationText: inputText,
-                apiKey: apiKey,
-                activeFramework: activeFramework
-            )
+            let (category, isIncident): (String, Bool)
+            if AIProcessingSettings.shared.isSituationAnalysisEnabled() {
+                let result = try await ConversationService.shared.analyzeSituation(
+                    situationText: inputText,
+                    apiKey: apiKey,
+                    activeFramework: activeFramework
+                )
+                category = result.category ?? "general"
+                isIncident = result.isIncident
+            } else {
+                // Use defaults when disabled
+                print("⚠️ Situation Analysis disabled - using default values")
+                (category, isIncident) = ("general", false)
+            }
             
             // Step 5: Save the situation to database with AI-generated title and analysis
             let situationId = try await ConversationService.shared.saveSituation(
@@ -365,60 +395,72 @@ struct NewSituationView: View {
             }
             
             // Step 7: Extract contextual insights (background task)
-            Task {
-                do {
-                    let insights = try await ContextualInsightService.shared.extractContextFromSituation(
-                        situationText: inputText,
-                        apiKey: apiKey,
-                        familyId: familyId!,
-                        childId: nil, // TODO: Get from current child context if needed
-                        situationId: situationId
-                    )
-                    
-                    // Save insights to database
-                    try await ContextualInsightService.shared.saveContextInsights(insights)
-                } catch {
-                    print("⚠️ Context extraction failed (non-critical): \(error)")
-                    print("⚠️ This won't affect the main guidance flow")
+            if AIProcessingSettings.shared.isContextExtractionEnabled() {
+                Task {
+                    do {
+                        let insights = try await ContextualInsightService.shared.extractContextFromSituation(
+                            situationText: inputText,
+                            apiKey: apiKey,
+                            familyId: familyId!,
+                            childId: nil, // TODO: Get from current child context if needed
+                            situationId: situationId
+                        )
+                        
+                        // Save insights to database
+                        try await ContextualInsightService.shared.saveContextInsights(insights)
+                    } catch {
+                        print("⚠️ Context extraction failed (non-critical): \(error)")
+                        print("⚠️ This won't affect the main guidance flow")
+                    }
                 }
+            } else {
+                print("⚠️ Context Extraction disabled - skipping 'Your Child's World' insights")
             }
             
             // Step 7.5: Extract child regulation insights (background task)
-            Task {
-                do {
-                    let regulationInsights = try await ContextualInsightService.shared.extractChildRegulationInsights(
-                        situationText: inputText,
-                        apiKey: apiKey,
-                        familyId: familyId!,
-                        childId: nil, // TODO: Get from current child context if needed
-                        situationId: situationId
-                    )
-                    
-                    // Save regulation insights to database
-                    try await ContextualInsightService.shared.saveChildRegulationInsights(regulationInsights)
-                } catch {
-                    print("⚠️ Child regulation insights extraction failed (non-critical): \(error)")
-                    print("⚠️ This won't affect the main guidance flow")
+            if AIProcessingSettings.shared.isRegulationInsightsEnabled() {
+                Task {
+                    do {
+                        let regulationInsights = try await ContextualInsightService.shared.extractChildRegulationInsights(
+                            situationText: inputText,
+                            apiKey: apiKey,
+                            familyId: familyId!,
+                            childId: nil, // TODO: Get from current child context if needed
+                            situationId: situationId
+                        )
+                        
+                        // Save regulation insights to database
+                        try await ContextualInsightService.shared.saveChildRegulationInsights(regulationInsights)
+                    } catch {
+                        print("⚠️ Child regulation insights extraction failed (non-critical): \(error)")
+                        print("⚠️ This won't affect the main guidance flow")
+                    }
                 }
+            } else {
+                print("⚠️ Regulation Insights disabled - skipping Core/ADHD/Autism pattern detection")
             }
             
             // Step 7.6: Extract coping strategies (background task)
-            Task {
-                do {
-                    let copingStrategies = try await ContextualInsightService.shared.extractCopingStrategies(
-                        situationText: inputText,
-                        apiKey: apiKey,
-                        familyId: familyId!,
-                        childId: nil, // TODO: Get from current child context if needed
-                        situationId: situationId
-                    )
-                    
-                    // Save coping strategies to database
-                    try await ContextualInsightService.shared.saveChildRegulationInsights(copingStrategies)
-                } catch {
-                    print("⚠️ Coping strategies extraction failed (non-critical): \(error)")
-                    print("⚠️ This won't affect the main guidance flow")
+            if AIProcessingSettings.shared.isCopingStrategiesEnabled() {
+                Task {
+                    do {
+                        let copingStrategies = try await ContextualInsightService.shared.extractCopingStrategies(
+                            situationText: inputText,
+                            apiKey: apiKey,
+                            familyId: familyId!,
+                            childId: nil, // TODO: Get from current child context if needed
+                            situationId: situationId
+                        )
+                        
+                        // Save coping strategies to database
+                        try await ContextualInsightService.shared.saveChildRegulationInsights(copingStrategies)
+                    } catch {
+                        print("⚠️ Coping strategies extraction failed (non-critical): \(error)")
+                        print("⚠️ This won't affect the main guidance flow")
+                    }
                 }
+            } else {
+                print("⚠️ Coping Strategies disabled - skipping strategy extraction")
             }
             
             // Step 8: Update UI

@@ -5420,6 +5420,146 @@
           }
         }
       }
+    },
+    "settings.aiprocessing.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI Processing Features"
+          }
+        }
+      }
+    },
+    "settings.aiprocessing.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Control which AI features process your situations"
+          }
+        }
+      }
+    },
+    "settings.aiprocessing.situationanalysis.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Situation Analysis"
+          }
+        }
+      }
+    },
+    "settings.aiprocessing.situationanalysis.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Categorizes situations and detects incidents"
+          }
+        }
+      }
+    },
+    "settings.aiprocessing.situationanalysis.implications" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Situations won't be categorized or marked as incidents. Library filtering by category will be less effective."
+          }
+        }
+      }
+    },
+    "settings.aiprocessing.contextextraction.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Context Extraction"
+          }
+        }
+      }
+    },
+    "settings.aiprocessing.contextextraction.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Builds insights for 'Your Child's World'"
+          }
+        }
+      }
+    },
+    "settings.aiprocessing.contextextraction.implications" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The 'Your Child's World' knowledge base won't grow. Future guidance may be less personalized."
+          }
+        }
+      }
+    },
+    "settings.aiprocessing.regulationinsights.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regulation Insights"
+          }
+        }
+      }
+    },
+    "settings.aiprocessing.regulationinsights.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Identifies emotional regulation patterns"
+          }
+        }
+      }
+    },
+    "settings.aiprocessing.regulationinsights.implications" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "'Noticing What Matters' won't capture Core, ADHD, or Autism patterns from your situations."
+          }
+        }
+      }
+    },
+    "settings.aiprocessing.copingstrategies.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coping Strategies"
+          }
+        }
+      }
+    },
+    "settings.aiprocessing.copingstrategies.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extracts actionable coping strategies"
+          }
+        }
+      }
+    },
+    "settings.aiprocessing.copingstrategies.implications" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Coping Strategies section won't populate with new strategies from your situations."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

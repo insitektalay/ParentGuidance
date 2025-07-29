@@ -1,13 +1,12 @@
-Add Coping Strategies feature to Noticing What Matters section
-   - Added new RegulationCategory enum case for copingStrategies with shield.checkered icon
-   - Implemented coping_strategies operation in Edge Function with multi-provider support
-   - Created extractCopingStrategies method in ContextualInsightService with EdgeFunction/Direct API modes
-   - Added parseCopingStrategiesResponse to handle simple list format and strip numbered prefixes
-   - Integrated coping strategies extraction as 5th background LLM call in situation submission flow
-   - Updated RegulationInsightsView to display new category in UI
-   - Fixed Edge Function response format from plain text to JSON for proper parsing
-   - Replaced swipe-to-delete with visible delete buttons in RegulationInsightCard
-   - Updated Edge Function model from generic 'gpt-4' to 'gpt-4-turbo-preview'
-
-Uses existing child_coping_strategies prompt template to extract actionable strategies from user situations and stores
-them in insight_bullet_points table alongside other regulation insights.
+Add AI Processing Features toggle controls in Settings
+   - Created AIProcessingSettings service to manage UserDefaults persistence for 4 toggle states
+   - Added new Settings section "AI Processing Features" with individual toggles for each LLM call
+   - Implemented toggles for: Situation Analysis, Context Extraction, Regulation Insights, and Coping Strategies
+   - Each toggle displays description and warning when disabled to inform users of implications
+   - Updated NewSituationView to conditionally execute LLM calls based on toggle states
+   - Situation Analysis falls back to "general" category when disabled
+   - Background extraction tasks (Context, Regulation, Coping) skip entirely when disabled
+   - Added 14 new localization keys to Localizable.xcstrings for all UI text
+   - Integrated toggle state loading into SettingsAccountService feature flag system
+   Allows users to selectively disable AI features to reduce API costs while maintaining core guidance functionality. All
+   toggles default to enabled for new users.

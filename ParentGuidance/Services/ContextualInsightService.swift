@@ -718,6 +718,31 @@ class ContextualInsightService {
     
     // MARK: - Database Operations
     
+    /// Fetch existing coping strategies for a family
+    func fetchCopingStrategies(familyId: String) async throws -> [ChildRegulationInsight] {
+        print("📋 Fetching existing coping strategies for family: \(familyId)")
+        
+        do {
+            let insights: [ChildRegulationInsight] = try await SupabaseManager.shared.client
+                .from("insight_bullet_points")
+                .select("*")
+                .eq("family_id", value: familyId)
+                .eq("category", value: RegulationCategory.copingStrategies.rawValue)
+                .order("created_at", ascending: false)
+                .execute()
+                .value
+            
+            // Filter out "No strong patterns found" entries
+            let validInsights = insights.filter { !$0.isNoPatternFound }
+            
+            print("✅ Found \(validInsights.count) existing coping strategies")
+            return validInsights
+        } catch {
+            print("❌ Error fetching coping strategies: \(error)")
+            throw error
+        }
+    }
+    
     func saveChildRegulationInsights(_ insights: [ChildRegulationInsight]) async throws {
         print("💾 Saving \(insights.count) child regulation insights to database...")
         

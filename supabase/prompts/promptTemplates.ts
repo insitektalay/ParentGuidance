@@ -94,6 +94,8 @@ Return the enhanced guidance maintaining the original 6-category structure (Situ
 
 const Analysis_Requirements = `
 Provide a clear, developmentally-informed explanation of the child’s behavior. Ground your response in established scientific understanding, using accurate terminology where it naturally applies. Aim for precision and clarity, distinguishing between well-supported insights and emerging interpretations without introducing speculation.
+
+Shape all advice with the goal of reducing or smoothing the home consequences of the child’s coping strategies. Use the coping consequences list as a lens to interpret the child’s behavior and needs—especially when they may not align with the parent’s stated preference. Where appropriate, gently question or reframe the adult’s assumptions in light of what best supports the child’s emotional regulation and the family’s overall well-being. Avoid defaulting to assumptions about what is “good” for the child on the surface. Instead, consider whether a choice might carry hidden emotional or behavioral costs that only emerge over time. When competing explanations exist for a child’s behavior or needs, weigh the long-term emotional cost of coping strategies alongside the apparent short-term benefits of external routines or expectations. Where relevant, consider whether the child may be nearing the limits of their emotional capacity, making further demands counterproductive to their well-being. Shape recommendations with the long-term goal of strengthening the child’s nervous system—supporting their capacity for emotional resilience, self-regulation, and recovery. Consider whether a given choice helps build tolerance for transitions, nurtures co-regulation, and gradually expands the child’s ability to manage challenging states without overwhelm. Do not assume that continued participation in structured or social settings strengthens the child’s nervous system. For children who mask or show signs of coping fatigue, resilience is more often built through co-regulation, emotional recovery, and safe, supported downshifting—especially when internal limits are near.
 `;
 
 const DYNAMIC_GUIDANCE_GENERATION_PROMPT = `
@@ -131,6 +133,9 @@ Guidance Context:
 Situation:
 {{current_situation}}
 
+Coping Strategies and Home Consequences:
+{{coping_strategies_home_consequences}}
+
 ${GUIDANCE_GENERATION_PROMPT}
 `;
 
@@ -147,6 +152,9 @@ Guidance Context:
 Situation:
 {{current_situation}}
 
+Coping Strategies and Home Consequences:
+{{coping_strategies_home_consequences}}
+
 ${DYNAMIC_GUIDANCE_GENERATION_PROMPT}
 `;
 
@@ -162,6 +170,9 @@ Guidance Context:
 
 Situation:
 {{current_situation}}
+
+Coping Strategies and Home Consequences:
+{{coping_strategies_home_consequences}}
 
 ${GUIDANCE_GENERATION_PROMPT}
 
@@ -181,6 +192,9 @@ Guidance Context:
 Situation:
 {{current_situation}}
 
+Coping Strategies and Home Consequences:
+{{coping_strategies_home_consequences}}
+
 ${DYNAMIC_GUIDANCE_GENERATION_PROMPT}
 
 ${Analysis_Requirements}
@@ -192,6 +206,9 @@ Guidance Context:
 
 Situation:
 {{current_situation}}
+
+Coping Strategies and Home Consequences:
+{{coping_strategies_home_consequences}}
 
 ${GUIDANCE_GENERATION_PROMPT}
 
@@ -205,6 +222,9 @@ Guidance Context:
 Situation:
 {{current_situation}}
 
+Coping Strategies and Home Consequences:
+{{coping_strategies_home_consequences}}
+
 ${DYNAMIC_GUIDANCE_GENERATION_PROMPT}
 
 ${FRAMEWORK_INTEGRATION_PROMPT}
@@ -216,6 +236,9 @@ Guidance Context:
 
 Situation:
 {{current_situation}}
+
+Coping Strategies and Home Consequences:
+{{coping_strategies_home_consequences}}
 
 ${GUIDANCE_GENERATION_PROMPT}
 
@@ -231,6 +254,9 @@ Guidance Context:
 Situation:
 {{current_situation}}
 
+Coping Strategies and Home Consequences:
+{{coping_strategies_home_consequences}}
+
 ${DYNAMIC_GUIDANCE_GENERATION_PROMPT}
 
 ${Analysis_Requirements}
@@ -245,44 +271,44 @@ export const promptTemplates = {
       versions_no_framework: {
         "Warm Practical + Fixed": {
           version: "12",
-          variables: ["current_situation", "child_context", "key_insights", "situation_guidance_note"],
+          variables: ["current_situation", "child_context", "key_insights", "situation_guidance_note", "coping_strategies_home_consequences"],
           systemPromptText: warmPracticalFixedNoFramework
         },
         "Warm Practical + Dynamic": {
           version: "16",
-          variables: ["current_situation", "child_context", "key_insights", "situation_guidance_note"],
+          variables: ["current_situation", "child_context", "key_insights", "situation_guidance_note", "coping_strategies_home_consequences"],
           systemPromptText: warmPracticalDynamicNoFramework
         },
         "Analytical Scientific + Fixed": {
           version: "19",
-          variables: ["current_situation", "child_context", "key_insights", "situation_guidance_note"],
+          variables: ["current_situation", "child_context", "key_insights", "situation_guidance_note", "coping_strategies_home_consequences"],
           systemPromptText: analyticalScientificFixedNoFramework
         },
         "Analytical Scientific + Dynamic": {
           version: "18",
-          variables: ["current_situation", "child_context", "key_insights", "situation_guidance_note"],
+          variables: ["current_situation", "child_context", "key_insights", "situation_guidance_note", "coping_strategies_home_consequences"],
           systemPromptText: analyticalScientificDynamicNoFramework
         }
       },
       versions_with_framework: {
         "Warm Practical + Fixed": {
           version: "3",
-          variables: ["current_situation", "active_foundation_tools", "situation_guidance_note"],
+          variables: ["current_situation", "active_foundation_tools", "situation_guidance_note", "coping_strategies_home_consequences"],
           systemPromptText: warmPracticalFixedWithFramework
         },
         "Warm Practical + Dynamic": {
           version: "6",
-          variables: ["current_situation", "active_foundation_tools", "situation_guidance_note"],
+          variables: ["current_situation", "active_foundation_tools", "situation_guidance_note", "coping_strategies_home_consequences"],
           systemPromptText: warmPracticalDynamicWithFramework
         },
         "Analytical Scientific + Fixed": {
           version: "7",
-          variables: ["current_situation", "active_foundation_tools", "situation_guidance_note"],
+          variables: ["current_situation", "active_foundation_tools", "situation_guidance_note", "coping_strategies_home_consequences"],
           systemPromptText: analyticalScientificFixedWithFramework
         },
         "Analytical Scientific + Dynamic": {
           version: "8",
-          variables: ["current_situation", "active_foundation_tools", "situation_guidance_note"],
+          variables: ["current_situation", "active_foundation_tools", "situation_guidance_note", "coping_strategies_home_consequences"],
           systemPromptText: analyticalScientificDynamicWithFramework
         }
       }
@@ -704,7 +730,18 @@ Extract a short, simple list of the child's main coping strategies from the foll
 {{longtext}}
 `
   },
+
     
+    extract_overall_recomendation: {
+      id: "pmpt_extract_rec",
+      version: "1",
+      variables: ["source_text"],
+      systemPromptText: `
+      Using the following text, extract the overall recommendation as a single clear paragraph. The output should start with the heading [Overall Recommendation], followed on a newline by the overall recommendation text, maximum two sentences, and output nothing else.
+
+      {{source_text}}
+  `
+    },
     
     
     

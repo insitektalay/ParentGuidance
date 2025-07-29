@@ -237,6 +237,37 @@ struct GuidanceStructureSection: View {
                                     .animation(.easeInOut(duration: 0.2), value: guidanceStructureSettings.enableKeyInsights)
                             }
                         }
+                        
+                        // Coping Strategies toggle
+                        HStack {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(String(localized: "settings.guidanceStructure.copingStrategies.title"))
+                                    .font(.system(size: 14))
+                                    .foregroundColor(ColorPalette.white)
+                                
+                                Text(String(localized: "settings.guidanceStructure.copingStrategies.description"))
+                                    .font(.system(size: 11))
+                                    .foregroundColor(ColorPalette.white.opacity(0.7))
+                                    .lineLimit(2)
+                            }
+                            
+                            Spacer()
+                            
+                            Button(action: {
+                                guidanceStructureSettings.toggleCopingStrategies()
+                            }) {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(guidanceStructureSettings.enableCopingStrategies ? ColorPalette.brightBlue : ColorPalette.white.opacity(0.3))
+                                    .frame(width: 44, height: 24)
+                                    .overlay(
+                                        Circle()
+                                            .fill(ColorPalette.white)
+                                            .frame(width: 20, height: 20)
+                                            .offset(x: guidanceStructureSettings.enableCopingStrategies ? 10 : -10)
+                                    )
+                                    .animation(.easeInOut(duration: 0.2), value: guidanceStructureSettings.enableCopingStrategies)
+                            }
+                        }
                     }
                     .padding(.horizontal, 4)
                 }

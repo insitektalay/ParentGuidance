@@ -26,6 +26,7 @@ class EdgeFunctionService {
         situation: String,
         childContext: String? = nil,
         keyInsights: String? = nil,
+        copingStrategies: String? = nil,
         activeFramework: FrameworkRecommendation? = nil,
         structureMode: String = "fixed",
         guidanceStyle: String = "Warm Practical",
@@ -52,6 +53,10 @@ class EdgeFunctionService {
         
         if let keyInsights = keyInsights, !keyInsights.isEmpty {
             variables["key_insights"] = keyInsights
+        }
+        
+        if let copingStrategies = copingStrategies, !copingStrategies.isEmpty {
+            variables["coping_strategies_home_consequences"] = copingStrategies
         }
         
         if let framework = activeFramework {

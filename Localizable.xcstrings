@@ -4641,6 +4641,26 @@
         }
       }
     },
+    "settings.guidanceStructure.copingStrategies.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Include known coping strategies and home consequences in guidance responses"
+          }
+        }
+      }
+    },
+    "settings.guidanceStructure.copingStrategies.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Include Coping Strategies"
+          }
+        }
+      }
+    },
     "settings.guidanceStructure.learnMore" : {
       "localizations" : {
         "en" : {

@@ -83,6 +83,7 @@ class GuidanceStructureSettings: ObservableObject {
     @AppStorage("guidanceStyle") private var storedStyle: String = GuidanceStyle.warmPractical.rawValue
     @AppStorage("enableChildContext") private var storedChildContext: Bool = false
     @AppStorage("enableKeyInsights") private var storedKeyInsights: Bool = false
+    @AppStorage("enableCopingStrategies") private var storedCopingStrategies: Bool = false
     @AppStorage("useChatStyleInterface") private var storedChatStyle: Bool = false
     
     private init() {
@@ -129,6 +130,16 @@ class GuidanceStructureSettings: ObservableObject {
         }
     }
     
+    var enableCopingStrategies: Bool {
+        get {
+            return storedCopingStrategies
+        }
+        set {
+            storedCopingStrategies = newValue
+            objectWillChange.send()
+        }
+    }
+    
     var useChatStyleInterface: Bool {
         get {
             return storedChatStyle
@@ -144,7 +155,7 @@ class GuidanceStructureSettings: ObservableObject {
     }
     
     var hasEnabledPsychologistNotes: Bool {
-        return enableChildContext || enableKeyInsights
+        return enableChildContext || enableKeyInsights || enableCopingStrategies
     }
     
     func toggleMode() {
@@ -161,6 +172,10 @@ class GuidanceStructureSettings: ObservableObject {
     
     func toggleKeyInsights() {
         enableKeyInsights.toggle()
+    }
+    
+    func toggleCopingStrategies() {
+        enableCopingStrategies.toggle()
     }
     
     func toggleChatStyle() {

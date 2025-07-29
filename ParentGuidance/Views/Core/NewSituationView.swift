@@ -120,6 +120,7 @@ struct NewSituationView: View {
             let settings = GuidanceStructureSettings.shared
             var childContext: String? = nil
             var keyInsights: String? = nil
+            var copingStrategies: String? = nil
             
             if settings.enableChildContext || settings.enableKeyInsights {
                 do {
@@ -140,11 +141,28 @@ struct NewSituationView: View {
                 }
             }
             
+            // Step 2.7: Fetch existing coping strategies if toggle is enabled
+            if settings.enableCopingStrategies {
+                do {
+                    let copingInsights = try await ContextualInsightService.shared.fetchCopingStrategies(familyId: familyId!)
+                    if !copingInsights.isEmpty {
+                        // Convert insights to comma-separated list
+                        let strategies = copingInsights.map { $0.content }.joined(separator: ", ")
+                        copingStrategies = strategies
+                        print("✅ Fetched \(copingInsights.count) coping strategies for guidance")
+                    }
+                } catch {
+                    print("⚠️ Failed to fetch coping strategies: \(error)")
+                    // Continue with empty strategies - non-blocking
+                }
+            }
+            
             // Step 3: Generate guidance using GuidanceGenerationService
             let (guidance, rawContent) = try await GuidanceGenerationService.shared.generateGuidance(
                 situation: inputText,
                 childContext: childContext,
                 keyInsights: keyInsights,
+                copingStrategies: copingStrategies,
                 apiKey: apiKey,
                 activeFramework: activeFramework,
                 situationType: situationType,
@@ -320,6 +338,7 @@ struct NewSituationView: View {
             let settings = GuidanceStructureSettings.shared
             var childContext: String? = nil
             var keyInsights: String? = nil
+            var copingStrategies: String? = nil
             
             if settings.enableChildContext || settings.enableKeyInsights {
                 do {
@@ -340,11 +359,28 @@ struct NewSituationView: View {
                 }
             }
             
+            // Step 2.7: Fetch existing coping strategies if toggle is enabled
+            if settings.enableCopingStrategies {
+                do {
+                    let copingInsights = try await ContextualInsightService.shared.fetchCopingStrategies(familyId: familyId!)
+                    if !copingInsights.isEmpty {
+                        // Convert insights to comma-separated list
+                        let strategies = copingInsights.map { $0.content }.joined(separator: ", ")
+                        copingStrategies = strategies
+                        print("✅ Fetched \(copingInsights.count) coping strategies for guidance")
+                    }
+                } catch {
+                    print("⚠️ Failed to fetch coping strategies: \(error)")
+                    // Continue with empty strategies - non-blocking
+                }
+            }
+            
             // Step 3: Generate guidance using GuidanceGenerationService
             let (guidance, rawContent) = try await GuidanceGenerationService.shared.generateGuidance(
                 situation: inputText,
                 childContext: childContext,
                 keyInsights: keyInsights,
+                copingStrategies: copingStrategies,
                 apiKey: apiKey,
                 activeFramework: activeFramework,
                 situationType: situationType,

@@ -36,6 +36,7 @@ class GuidanceGenerationService {
         situation: String,
         childContext: String? = nil,
         keyInsights: String? = nil,
+        copingStrategies: String? = nil,
         apiKey: String,
         activeFramework: FrameworkRecommendation? = nil,
         situationType: SituationType = .imJustWondering,
@@ -48,6 +49,7 @@ class GuidanceGenerationService {
                 situation: situation,
                 childContext: childContext,
                 keyInsights: keyInsights,
+                copingStrategies: copingStrategies,
                 apiKey: apiKey,
                 activeFramework: activeFramework,
                 situationType: situationType
@@ -58,6 +60,7 @@ class GuidanceGenerationService {
                 situation: situation,
                 childContext: childContext,
                 keyInsights: keyInsights,
+                copingStrategies: copingStrategies,
                 apiKey: apiKey,
                 activeFramework: activeFramework,
                 situationType: situationType
@@ -68,6 +71,7 @@ class GuidanceGenerationService {
                 situation: situation,
                 childContext: childContext,
                 keyInsights: keyInsights,
+                copingStrategies: copingStrategies,
                 apiKey: apiKey,
                 activeFramework: activeFramework,
                 situationType: situationType
@@ -80,6 +84,7 @@ class GuidanceGenerationService {
         situation: String,
         childContext: String? = nil,
         keyInsights: String? = nil,
+        copingStrategies: String? = nil,
         apiKey: String,
         activeFramework: FrameworkRecommendation? = nil,
         situationType: SituationType = .imJustWondering,
@@ -94,6 +99,7 @@ class GuidanceGenerationService {
                         situation: situation,
                         childContext: childContext,
                         keyInsights: keyInsights,
+                        copingStrategies: copingStrategies,
                         apiKey: apiKey,
                         activeFramework: activeFramework,
                         situationType: situationType,
@@ -106,6 +112,7 @@ class GuidanceGenerationService {
                         situation: situation,
                         childContext: childContext,
                         keyInsights: keyInsights,
+                        copingStrategies: copingStrategies,
                         apiKey: apiKey,
                         activeFramework: activeFramework,
                         situationType: situationType
@@ -125,6 +132,7 @@ class GuidanceGenerationService {
         situation: String,
         childContext: String?,
         keyInsights: String?,
+        copingStrategies: String?,
         apiKey: String,
         activeFramework: FrameworkRecommendation?,
         situationType: SituationType,
@@ -149,6 +157,7 @@ class GuidanceGenerationService {
                 situation: situation,
                 childContext: childContext,
                 keyInsights: keyInsights,
+                copingStrategies: copingStrategies,
                 activeFramework: activeFramework,
                 structureMode: structureMode,
                 guidanceStyle: guidanceStyle,
@@ -184,6 +193,7 @@ class GuidanceGenerationService {
         situation: String,
         childContext: String?,
         keyInsights: String?,
+        copingStrategies: String?,
         apiKey: String,
         activeFramework: FrameworkRecommendation?,
         situationType: SituationType
@@ -206,6 +216,7 @@ class GuidanceGenerationService {
                 situation: situation,
                 childContext: childContext,
                 keyInsights: keyInsights,
+                copingStrategies: copingStrategies,
                 activeFramework: activeFramework,
                 structureMode: structureMode,
                 guidanceStyle: guidanceStyle,
@@ -233,6 +244,7 @@ class GuidanceGenerationService {
         situation: String,
         childContext: String?,
         keyInsights: String?,
+        copingStrategies: String?,
         apiKey: String,
         activeFramework: FrameworkRecommendation?,
         situationType: SituationType
@@ -242,6 +254,7 @@ class GuidanceGenerationService {
             situation: situation,
             childContext: childContext,
             keyInsights: keyInsights,
+            copingStrategies: copingStrategies,
             apiKey: apiKey,
             activeFramework: activeFramework,
             situationType: situationType
@@ -255,6 +268,7 @@ class GuidanceGenerationService {
         situation: String,
         childContext: String?,
         keyInsights: String?,
+        copingStrategies: String?,
         apiKey: String,
         activeFramework: FrameworkRecommendation?,
         situationType: SituationType
@@ -292,6 +306,9 @@ class GuidanceGenerationService {
                 if let keyInsights = keyInsights, !keyInsights.isEmpty {
                     variables["key_insights"] = keyInsights
                 }
+                if let copingStrategies = copingStrategies, !copingStrategies.isEmpty {
+                    variables["coping_strategies_home_consequences"] = copingStrategies
+                }
                 
                 return (
                     "pmpt_68516f961dc08190aceb4f591ee010050a454989b0581453",
@@ -311,6 +328,9 @@ class GuidanceGenerationService {
                 }
                 if let keyInsights = keyInsights, !keyInsights.isEmpty {
                     variables["key_insights"] = keyInsights
+                }
+                if let copingStrategies = copingStrategies, !copingStrategies.isEmpty {
+                    variables["coping_strategies_home_consequences"] = copingStrategies
                 }
                 
                 return (

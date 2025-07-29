@@ -1,3 +1,10 @@
-Add Child Context and Key Observations to Dynamic guidance templates
-Updated Dynamic prompt templates to include Child Context and Key Observations sections, bringing feature parity with   Fixed structure mode. Modified both Warm Practical and Analytical Scientific Dynamic templates to accept child_context   and key_insights variables, and updated their variable declarations accordingly.
-This ensures users can benefit from psychologist notes and regulatory insights regardless of their chosen guidance   structure mode, while maintaining existing toggle controls for granular feature management.
+Add coping strategies toggle to Guidance Structure settings
+
+Implemented a new toggle in the Guidance Structure section that allows users to control whether existing coping 
+strategies are included in AI guidance generation. When enabled, the app fetches previously identified coping strategies 
+from the database and includes them as context in all prompt templates.
+
+Added the toggle UI with localization, updated all 8 prompt templates to include the new 
+coping_strategies_home_consequences variable, and integrated data fetching throughout the service layer. The feature 
+respects user preferences and only includes coping strategies data when the toggle is enabled, providing more contextual 
+and personalized parenting guidance.

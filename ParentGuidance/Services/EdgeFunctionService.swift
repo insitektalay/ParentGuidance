@@ -221,6 +221,36 @@ class EdgeFunctionService {
         )
     }
     
+    /// Extract overall recommendation from guidance content (non-streaming)
+    func extractOverallRecommendation(
+        guidanceContent: String,
+        apiKey: String
+    ) async throws -> String {
+        print("🔄 [EdgeFunction] ===== OVERALL RECOMMENDATION EXTRACTION =====")
+        print("   → Operation: extract_overall_recommendation")
+        print("   → Source content length: \(guidanceContent.count) characters")
+        print("   → Source content preview: \(String(guidanceContent.prefix(300)))...")
+        print("   → Edge Function URL: \(baseURL)")
+        print("   → Using API key: \(apiKey.prefix(10))...")
+        
+        do {
+            let result = try await jsonRequest(
+                operation: "extract_overall_recommendation",
+                variables: ["source_text": guidanceContent],
+                apiKey: apiKey
+            )
+            print("✅ [EdgeFunction] Recommendation extraction successful")
+            print("   → Raw response: \(result)")
+            print("🔄 [EdgeFunction] ========================================")
+            return result
+        } catch {
+            print("❌ [EdgeFunction] Recommendation extraction FAILED: \(error)")
+            print("   → Error details: \(error.localizedDescription)")
+            print("🔄 [EdgeFunction] ========================================")
+            throw error
+        }
+    }
+    
     // MARK: - Private Methods
     
     /// Make a streaming request to the edge function

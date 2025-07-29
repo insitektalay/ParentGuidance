@@ -83,7 +83,8 @@ class OpenAIService {
             actionSteps: extractedSections.actionSteps ?? "Recommended action steps",
             phrasesToTry: extractedSections.phrasesToTry ?? "Suggested phrases",
             quickComebacks: extractedSections.quickComebacks ?? "Quick response ideas",
-            support: extractedSections.support ?? "Additional support information"
+            support: extractedSections.support ?? "Additional support information",
+            overallRecommendation: nil
         )
         
         print("✅ Parsing completed. Title: '\(result.title)'")
@@ -180,6 +181,7 @@ struct GuidanceResponse {
     let phrasesToTry: String
     let quickComebacks: String
     let support: String
+    let overallRecommendation: String?
 }
 
 struct OpenAIResponse: Codable {

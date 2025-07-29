@@ -12,11 +12,13 @@ struct DynamicGuidanceResponse {
     let title: String
     let sections: [GuidanceSection]
     let totalSections: Int
+    let overallRecommendation: String?
     
-    init(title: String, sections: [GuidanceSection]) {
+    init(title: String, sections: [GuidanceSection], overallRecommendation: String? = nil) {
         self.title = title
         self.sections = sections.sorted { $0.order < $1.order }
         self.totalSections = sections.count
+        self.overallRecommendation = overallRecommendation
     }
 }
 
@@ -40,6 +42,7 @@ protocol GuidanceResponseProtocol {
     var title: String { get }
     var displaySections: [GuidanceSection] { get }
     var sectionCount: Int { get }
+    var overallRecommendation: String? { get }
 }
 
 // MARK: - Protocol Extensions

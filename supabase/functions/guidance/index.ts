@@ -9,7 +9,7 @@ const corsHeaders = {
 }
 
 interface RequestBody {
-  operation: 'guidance' | 'analyze' | 'framework' | 'context' | 'translate' | 'psychologists_note_context' | 'psychologists_note_traits' | 'transcribe' | 'validate_key' | 'coping_strategies'
+  operation: 'guidance' | 'analyze' | 'framework' | 'context' | 'translate' | 'psychologists_note_context' | 'psychologists_note_traits' | 'transcribe' | 'validate_key' | 'coping_strategies' | 'extract_overall_recommendation'
   variables: Record<string, any>
   apiKey: string
   provider?: 'openai' | 'anthropic' | 'xai' | 'google' // Provider override
@@ -167,6 +167,9 @@ serve(async (req) => {
       
       case 'coping_strategies':
         return await handleCopingStrategiesOperation(apiKey, variables, detectedProvider)
+      
+      case 'extract_overall_recommendation':
+        return await handleExtractOverallRecommendationOperation(apiKey, variables, detectedProvider)
       
       default:
         return new Response(
@@ -1027,6 +1030,102 @@ async function handlePsychologistNoteTraitsOperation(apiKey: string, variables: 
 */
 
 // ================== AUDIO TRANSCRIPTION HANDLER ==================
+
+// Handle overall recommendation extraction
+async function handleExtractOverallRecommendationOperation(apiKey: string, variables: any, provider: string) {
+  const { source_text } = variables
+  console.log(`[DEBUG] Extract overall recommendation operation - text length: ${source_text?.length || 0}`)
+
+  try {
+    // Prepare variables for interpolation
+    const promptVariables = {
+      source_text: source_text
+    }
+
+    // Get the system prompt and interpolate variables
+    const systemPrompt = interpolatePrompt(promptTemplates.extract_overall_recomendation.systemPromptText, promptVariables)
+
+    // Use direct API calls for multi-provider support
+    const config = getProviderConfig(provider)
+    
+    console.log(`[DEBUG] Extract overall recommendation using ${provider} with model: ${config.model}`)
+    
+    // Prepare request body based on provider
+    let requestBody
+    if (provider === 'anthropic') {
+      requestBody = {
+        model: config.model,
+        max_tokens: 500,
+        temperature: 0.3,
+        messages: [
+          { role: 'user', content: systemPrompt }
+        ]
+      }
+    } else if (provider === 'google') {
+      requestBody = {
+        contents: [{
+          parts: [{ text: systemPrompt }]
+        }],
+        generationConfig: {
+          maxOutputTokens: 500,
+          temperature: 0.3
+        }
+      }
+    } else {
+      // OpenAI and xAI use the same format
+      requestBody = {
+        model: config.model,
+        messages: [
+          { role: 'system', content: systemPrompt }
+        ],
+        temperature: 0.3,
+        max_tokens: 500
+      }
+    }
+    
+    // Make API request
+    const url = config.keyParam ? `${config.endpoint}?${config.keyParam}=${apiKey}` : config.endpoint
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: config.headers(apiKey),
+      body: JSON.stringify(requestBody)
+    })
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error(`[ERROR] Extract overall recommendation ${provider} API error: ${response.status}`)
+      throw new Error(`${provider} API error: ${response.status} - ${errorText}`)
+    }
+    
+    const data = await response.json()
+    console.log(`[DEBUG] Extract overall recommendation response received from ${provider}`)
+    
+    // Extract response text based on provider
+    let responseText
+    if (provider === 'anthropic') {
+      responseText = data.content?.[0]?.text || ''
+    } else if (provider === 'google') {
+      responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || ''
+    } else {
+      // OpenAI and xAI
+      responseText = data.choices?.[0]?.message?.content || ''
+    }
+    
+    console.log(`[DEBUG] Extracted overall recommendation: ${responseText}`)
+    
+    return new Response(
+      JSON.stringify({ success: true, data: responseText }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+    
+  } catch (error) {
+    console.error('[ERROR] Extract overall recommendation operation failed:', error)
+    return new Response(
+      JSON.stringify({ error: 'Overall recommendation extraction failed', details: error.message }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  }
+}
 
 async function handleTranscribeOperation(
   apiKey: string, 

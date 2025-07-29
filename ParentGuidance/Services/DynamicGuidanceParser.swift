@@ -14,6 +14,10 @@ class DynamicGuidanceParser {
     
     func parseDynamicGuidanceResponse(_ content: String) -> DynamicGuidanceResponse? {
         print("🔍 Dynamic Parser: Parsing content with dynamic section extraction...")
+        print("📄 Full content for debugging:")
+        print("================== START CONTENT ==================")
+        print(content)
+        print("================== END CONTENT ==================")
         print("📄 Content preview: \(String(content.prefix(200)))...")
         
         // Extract title first
@@ -23,7 +27,7 @@ class DynamicGuidanceParser {
         }
         
         // Extract all dynamic sections
-        let sections = extractAllSections(from: content)
+        let sections = extractAllSections(from: content, excludingTitle: title)
         
         // Validate section count (3-8 as per requirements)
         guard sections.count >= 3 && sections.count <= 8 else {
@@ -40,38 +44,112 @@ class DynamicGuidanceParser {
     }
     
     private func extractTitle(from content: String) -> String? {
-        // Look for [TITLE] section
-        let pattern = "\\[TITLE\\]\\s*\\n([\\s\\S]*?)(?=\\n\\s*\\[|$)"
-        let regex = try? NSRegularExpression(pattern: pattern, options: [])
-        let range = NSRange(content.startIndex..., in: content)
+        print("🔍 [DynamicParser] ===== TITLE EXTRACTION DEBUG =====")
+        print("🔍 [DynamicParser] Content length: \(content.count) characters")
+        print("🔍 [DynamicParser] Content preview (first 500 chars):")
+        print("🔍 [DynamicParser] \(String(content.prefix(500)))")
+        print("🔍 [DynamicParser] =====================================")
         
-        if let match = regex?.firstMatch(in: content, options: [], range: range) {
-            if let swiftRange = Range(match.range(at: 1), in: content) {
-                let title = String(content[swiftRange]).trimmingCharacters(in: .whitespacesAndNewlines)
-                print("✅ Dynamic Parser: Extracted title: '\(title)'")
-                return title
+        // Try multiple patterns for [TITLE] section extraction
+        // Based on promptTemplates.ts: "[TITLE]  \nA concise, parent-friendly title here"
+        let patterns = [
+            "\\[TITLE\\]\\s*\\n([^\\[\\n]+)",                // [TITLE] followed by newline, then title until newline or bracket
+            "\\[TITLE\\]\\s+([^\\[\\n]+)",                   // [TITLE] followed by spaces, then title until newline or bracket  
+            "\\[TITLE\\]\\s*([^\\[]+?)(?=\\n\\s*\\[|$)",     // [TITLE] followed by optional spaces, then content until next section
+            "\\[TITLE\\]\\s*\\n([\\s\\S]*?)(?=\\n\\s*\\[|$)" // Original pattern as fallback
+        ]
+        
+        for (patternIndex, pattern) in patterns.enumerated() {
+            print("🔍 [DynamicParser] Trying pattern \(patternIndex + 1): \(pattern)")
+            
+            let regex = try? NSRegularExpression(pattern: pattern, options: [])
+            let range = NSRange(content.startIndex..., in: content)
+            
+            if let match = regex?.firstMatch(in: content, options: [], range: range) {
+                print("✅ [DynamicParser] Found [TITLE] match with pattern \(patternIndex + 1)!")
+                if let swiftRange = Range(match.range(at: 1), in: content) {
+                    let title = String(content[swiftRange]).trimmingCharacters(in: .whitespacesAndNewlines)
+                    print("✅ [DynamicParser] Raw extracted title: '\(title)'")
+                    print("✅ [DynamicParser] Title length: \(title.count)")
+                    print("✅ [DynamicParser] Title is empty: \(title.isEmpty)")
+                    if !title.isEmpty && title.count > 3 && title.count < 100 {
+                        print("✅ [DynamicParser] Successfully extracted title from [TITLE] section: '\(title)'")
+                        return title
+                    } else if title.isEmpty {
+                        print("⚠️ [DynamicParser] Title extracted but empty after trimming")
+                    } else {
+                        print("⚠️ [DynamicParser] Title extracted but invalid length: \(title.count)")
+                    }
+                } else {
+                    print("❌ [DynamicParser] Could not convert NSRange to Swift Range")
+                }
             }
         }
         
-        // Fallback: try to find first line that looks like a title
+        print("❌ [DynamicParser] No [TITLE] section match found with any pattern")
+        
+        // Check if [TITLE] exists at all in the content
+        if content.contains("[TITLE]") {
+            print("🔍 [DynamicParser] [TITLE] found in content but all regex patterns failed")
+            if let titleIndex = content.firstIndex(of: "[") {
+                let startIndex = max(content.startIndex, content.index(titleIndex, offsetBy: -50))
+                let endIndex = min(content.endIndex, content.index(titleIndex, offsetBy: 200))
+                let surroundingContext = String(content[startIndex..<endIndex])
+                print("🔍 [DynamicParser] Context around [TITLE]: \(surroundingContext)")
+            }
+        } else {
+            print("❌ [DynamicParser] [TITLE] not found anywhere in content")
+        }
+        
+        print("🔄 [DynamicParser] Attempting fallback title extraction...")
+        
+        // Fallback: look for first meaningful line
         let lines = content.components(separatedBy: .newlines)
-        for line in lines.prefix(5) {
+        print("🔍 [DynamicParser] Total lines in content: \(lines.count)")
+        
+        for (index, line) in lines.prefix(10).enumerated() {
             let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
+            print("🔍 [DynamicParser] Line \(index): '\(trimmed)' (length: \(trimmed.count), contains bracket: \(trimmed.contains("[")))")
             if !trimmed.isEmpty && !trimmed.contains("[") && trimmed.count > 10 && trimmed.count < 50 {
-                print("✅ Dynamic Parser: Fallback title: '\(trimmed)'")
+                print("✅ [DynamicParser] Found fallback title: '\(trimmed)'")
                 return trimmed
             }
         }
         
-        print("❌ Dynamic Parser: Could not extract title")
+        // NEW: If no [TITLE] section found, try to use the first section name as title
+        print("🔄 [DynamicParser] No [TITLE] section found. Trying to extract first section name as title...")
+        
+        // Pattern to find first bracketed section name
+        let firstSectionPattern = "^\\s*\\[([^\\]]+)\\]"
+        if let firstSectionRegex = try? NSRegularExpression(pattern: firstSectionPattern, options: []) {
+            let range = NSRange(content.startIndex..., in: content)
+            if let match = firstSectionRegex.firstMatch(in: content, options: [], range: range) {
+                if let titleRange = Range(match.range(at: 1), in: content) {
+                    let sectionTitle = String(content[titleRange]).trimmingCharacters(in: .whitespacesAndNewlines)
+                    print("✅ [DynamicParser] Found first section as title: '\(sectionTitle)'")
+                    return sectionTitle
+                }
+            }
+        }
+        
+        print("❌ [DynamicParser] Could not extract any title, using default fallback")
         return "Parenting Situation"
     }
     
-    private func extractAllSections(from content: String) -> [GuidanceSection] {
+    private func extractAllSections(from content: String, excludingTitle: String? = nil) -> [GuidanceSection] {
         var sections: [GuidanceSection] = []
+        var skipFirstSection = false
+        
+        // Check if we need to skip the first section (if it was used as title)
+        if let title = excludingTitle, !content.contains("[TITLE]") {
+            // If there's no [TITLE] section and we have a title, it likely came from first section
+            skipFirstSection = true
+            print("🔍 Dynamic Parser: Will skip first section as it was used for title")
+        }
         
         // Find all [SECTION_NAME] patterns
-        let sectionPattern = "\\[([^\\]]+)\\]\\s*\\n([\\s\\S]*?)(?=\\n\\s*\\[|$)"
+        // Updated to handle sections that may have content on same line or next line
+        let sectionPattern = "\\[([^\\]]+)\\]\\s*\\n?([\\s\\S]*?)(?=\\n\\s*\\[|$)"
         guard let regex = try? NSRegularExpression(pattern: sectionPattern, options: []) else {
             print("❌ Dynamic Parser: Failed to create regex")
             return sections
@@ -87,6 +165,13 @@ class DynamicGuidanceParser {
             
             // Skip TITLE section as it's handled separately
             if sectionTitle.uppercased() == "TITLE" {
+                continue
+            }
+            
+            // Skip first section if it was used as the title
+            if skipFirstSection && index == 0 {
+                print("🔍 Dynamic Parser: Skipping first section '\(sectionTitle)' as it was used for title")
+                skipFirstSection = false // Reset flag
                 continue
             }
             
@@ -173,7 +258,8 @@ extension DynamicGuidanceParser {
             actionSteps: actionSteps,
             phrasesToTry: phrasesToTry,
             quickComebacks: quickComebacks,
-            support: support
+            support: support,
+            overallRecommendation: nil
         )
     }
     

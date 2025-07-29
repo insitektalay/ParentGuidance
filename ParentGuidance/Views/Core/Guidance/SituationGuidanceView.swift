@@ -10,6 +10,7 @@ struct SituationGuidanceView: View {
     @State private var displayResults: [ContentDisplayResult<Guidance>] = []
     @State private var showingLanguagePicker = false
     @State private var canSwitchLanguage = false
+    @State private var overallRecommendation: String? = nil
     let situation: Situation?
     
     init(situation: Situation? = nil) {
@@ -112,91 +113,138 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
     }
     
     private var guidanceContent: some View {
-        VStack(spacing: 0) {
-            // Header with back button
-            HStack(alignment: .center, spacing: 12) {
-                Button(action: {
-                    dismiss()
-                }) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(ColorPalette.white.opacity(0.9))
-                }
-                
-                Spacer()
-                
-                // Language switch button if available
-                if canSwitchLanguage {
+        ScrollView {
+            VStack(spacing: 0) {
+                // Header with back button
+                HStack(alignment: .center, spacing: 12) {
                     Button(action: {
-                        switchLanguage()
+                        dismiss()
                     }) {
-                        HStack(spacing: 4) {
-                            Image(systemName: "globe")
-                                .font(.system(size: 16, weight: .medium))
-                            Text(getCurrentLanguageCode())
-                                .font(.system(size: 14, weight: .medium))
-                                .textCase(.uppercase)
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 18, weight: .medium))
+                            .foregroundColor(ColorPalette.white.opacity(0.9))
+                    }
+                    
+                    Spacer()
+                    
+                    // Language switch button if available
+                    if canSwitchLanguage {
+                        Button(action: {
+                            switchLanguage()
+                        }) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "globe")
+                                    .font(.system(size: 16, weight: .medium))
+                                Text(getCurrentLanguageCode())
+                                    .font(.system(size: 14, weight: .medium))
+                                    .textCase(.uppercase)
+                            }
+                            .foregroundColor(ColorPalette.white.opacity(0.9))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(ColorPalette.white.opacity(0.1))
+                            .cornerRadius(8)
                         }
-                        .foregroundColor(ColorPalette.white.opacity(0.9))
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(ColorPalette.white.opacity(0.1))
-                        .cornerRadius(8)
                     }
                 }
-            }
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
-            .padding(.bottom, 12)
-            
-            // Title
-            HStack {
-                Text(situation?.title ?? "Situation Guidance")
-                    .font(.system(size: 24, weight: .semibold))
-                    .foregroundColor(ColorPalette.white.opacity(0.9))
-                    .padding(.horizontal, 16)
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
+                .padding(.bottom, 12)
                 
-                Spacer()
-            }
-            .padding(.bottom, 16)
-            
-            // Guidance cards
-            TabView(selection: $currentPage) {
-                ForEach(0..<categories.count, id: \.self) { index in
-                    GuidanceCard(
-                        title: categories[index].title,
-                        content: categories[index].content,
-                        isActive: index == currentPage,
-                        translationStatus: getTranslationStatus(),
-                        selectedLanguage: getCurrentLanguageCode(),
-                        originalLanguage: getOriginalLanguageCode(),
-                        canSwitchLanguage: canSwitchLanguage,
-                        onLanguageSwitch: canSwitchLanguage ? switchLanguage : nil,
-                        isShowingOriginal: isShowingOriginalLanguage(),
-                        translationProgress: getTranslationProgress(),
-                        onRetryTranslation: canRetryTranslation() ? retryTranslation : nil
-                    )
-                    .tag(index)
+                // Title
+                HStack {
+                    Text(situation?.title ?? "Situation Guidance")
+                        .font(.system(size: 24, weight: .semibold))
+                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                        .padding(.horizontal, 16)
+                    
+                    Spacer()
                 }
-            }
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-            .padding(.horizontal, 16)
-            
-            // Page indicators
-            HStack(spacing: 8) {
-                ForEach(0..<categories.count, id: \.self) { index in
-                    Circle()
-                        .fill(index == currentPage ? ColorPalette.terracotta : ColorPalette.white.opacity(0.3))
-                        .frame(width: 8, height: 8)
-                        .animation(.easeInOut(duration: 0.2), value: currentPage)
+                .padding(.bottom, 16)
+                
+                // Overall Recommendation Section
+                if let recommendation = overallRecommendation {
+                    overallRecommendationView(recommendation: recommendation)
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 20)
                 }
+                
+                // Guidance cards - maintain natural height
+                TabView(selection: $currentPage) {
+                    ForEach(0..<categories.count, id: \.self) { index in
+                        GuidanceCard(
+                            title: categories[index].title,
+                            content: categories[index].content,
+                            isActive: index == currentPage,
+                            translationStatus: getTranslationStatus(),
+                            selectedLanguage: getCurrentLanguageCode(),
+                            originalLanguage: getOriginalLanguageCode(),
+                            canSwitchLanguage: canSwitchLanguage,
+                            onLanguageSwitch: canSwitchLanguage ? switchLanguage : nil,
+                            isShowingOriginal: isShowingOriginalLanguage(),
+                            translationProgress: getTranslationProgress(),
+                            onRetryTranslation: canRetryTranslation() ? retryTranslation : nil
+                        )
+                        .tag(index)
+                    }
+                }
+                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                .frame(height: 400) // Set explicit height for cards to prevent compression
+                .padding(.horizontal, 16)
+                
+                // Page indicators
+                HStack(spacing: 8) {
+                    ForEach(0..<categories.count, id: \.self) { index in
+                        Circle()
+                            .fill(index == currentPage ? ColorPalette.terracotta : ColorPalette.white.opacity(0.3))
+                            .frame(width: 8, height: 8)
+                            .animation(.easeInOut(duration: 0.2), value: currentPage)
+                    }
+                }
+                .padding(.top, 16)
+                .padding(.bottom, 100) // Extra space for scrolling
             }
-            .padding(.top, 16)
-            .padding(.bottom, 10) // Space for tab bar
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(ColorPalette.navy)
         .navigationBarHidden(true)
+    }
+    
+    // MARK: - Overall Recommendation View
+    
+    @ViewBuilder
+    private func overallRecommendationView(recommendation: String) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // Header with icon
+            HStack(spacing: 8) {
+                Image(systemName: "lightbulb.fill")
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundColor(ColorPalette.terracotta)
+                
+                Text("Overall Recommendation")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(ColorPalette.white.opacity(0.9))
+                
+                Spacer()
+            }
+            
+            // Recommendation content
+            Text(recommendation)
+                .font(.system(size: 16))
+                .foregroundColor(ColorPalette.white.opacity(0.8))
+                .lineSpacing(4)
+                .fixedSize(horizontal: false, vertical: true)
+                .multilineTextAlignment(.leading)
+        }
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(ColorPalette.terracotta.opacity(0.15))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(ColorPalette.terracotta.opacity(0.3), lineWidth: 1)
+                )
+        )
     }
     
     // MARK: - Guidance Loading
@@ -237,7 +285,9 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
                         
                         await MainActor.run {
                             self.displayResults = displayResults
-                            self.categories = parseMultilingualGuidanceContent(from: displayResults)
+                            let (categories, recommendation) = parseMultilingualGuidanceContentWithRecommendation(from: displayResults)
+                            self.categories = categories
+                            self.overallRecommendation = recommendation
                             self.canSwitchLanguage = displayResults.first?.canSwitchLanguage ?? false
                             self.isLoading = false
                         }
@@ -291,9 +341,9 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
         }
     }
     
-    private func parseFixedGuidanceContent(from fullContent: String) -> [GuidanceCategory] {
+    private func parseFixedGuidanceContentWithRecommendation(from fullContent: String) -> ([GuidanceCategory], String?) {
         // Extract the 6 fixed categories
-        return [
+        let categories = [
             GuidanceCategory(
                 title: "Situation",
                 content: extractSection(from: fullContent, title: "Situation") ?? "No situation description available."
@@ -319,6 +369,17 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
                 content: extractSection(from: fullContent, title: "Support") ?? "No support information available."
             )
         ]
+        
+        // Try to extract overall recommendation from existing content
+        let overallRecommendation = extractSection(from: fullContent, title: "Overall Recommendation")
+        print("🔍 [SituationGuidanceView] Legacy guidance recommendation extraction: \(overallRecommendation != nil ? "found" : "not found")")
+        
+        return (categories, overallRecommendation)
+    }
+    
+    private func parseFixedGuidanceContent(from fullContent: String) -> [GuidanceCategory] {
+        let (categories, _) = parseFixedGuidanceContentWithRecommendation(from: fullContent)
+        return categories
     }
     
     private func extractSection(from content: String, title: String) -> String? {
@@ -337,6 +398,8 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
             bracketTitle = "QUICK COMEBACKS"
         case "Support":
             bracketTitle = "SUPPORT"
+        case "Overall Recommendation":
+            bracketTitle = "Overall Recommendation"
         default:
             print("❌ Unknown section title: \(title)")
             return nil
@@ -357,6 +420,36 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
     }
     
     // MARK: - Multilingual Support
+    
+    private func parseMultilingualGuidanceContentWithRecommendation(from displayResults: [ContentDisplayResult<Guidance>]) -> ([GuidanceCategory], String?) {
+        // Combine all guidance content using the selected language display text
+        let fullContent = displayResults.map { $0.displayText }.joined(separator: "\n\n")
+        
+        print("🌐 [DEBUG] SituationGuidanceView: Parsing multilingual guidance content with recommendation")
+        print("   - Language: \(displayResults.first?.selectedLanguage ?? "unknown")")
+        print("   - Can switch: \(displayResults.first?.canSwitchLanguage ?? false)")
+        print("   - Content length: \(fullContent.count) characters")
+        
+        // Parse based on user preference
+        if guidanceStructureSettings.isUsingDynamicStructure {
+            print("🔄 [DEBUG] SituationGuidanceView: Using DYNAMIC parsing for multilingual content")
+            if let dynamicResponse = DynamicGuidanceParser.shared.parseWithFallback(fullContent) {
+                print("✅ [DEBUG] Dynamic parsing SUCCESS - \(dynamicResponse.displaySections.count) sections")
+                let categories = dynamicResponse.displaySections.map { section in
+                    GuidanceCategory(title: section.title, content: section.content)
+                }
+                return (categories, dynamicResponse.overallRecommendation)
+            } else {
+                print("❌ [DEBUG] Dynamic parsing FAILED, falling back to fixed")
+                let (categories, recommendation) = parseFixedGuidanceContentWithRecommendation(from: fullContent)
+                return (categories, recommendation)
+            }
+        } else {
+            print("🔄 [DEBUG] SituationGuidanceView: Using FIXED parsing for multilingual content")
+            let (categories, recommendation) = parseFixedGuidanceContentWithRecommendation(from: fullContent)
+            return (categories, recommendation)
+        }
+    }
     
     private func parseMultilingualGuidanceContent(from displayResults: [ContentDisplayResult<Guidance>]) -> [GuidanceCategory] {
         // Combine all guidance content using the selected language display text
@@ -439,7 +532,9 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
                 
                 await MainActor.run {
                     self.displayResults = displayResults
-                    self.categories = parseMultilingualGuidanceContent(from: displayResults)
+                    let (categories, recommendation) = parseMultilingualGuidanceContentWithRecommendation(from: displayResults)
+                    self.categories = categories
+                    self.overallRecommendation = recommendation
                     print("✅ Translation retry completed")
                 }
             } catch {
@@ -464,7 +559,9 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
             
             await MainActor.run {
                 self.displayResults = switchedResults
-                self.categories = parseMultilingualGuidanceContent(from: switchedResults)
+                let (categories, recommendation) = parseMultilingualGuidanceContentWithRecommendation(from: switchedResults)
+                self.categories = categories
+                self.overallRecommendation = recommendation
                 print("🌐 Switched guidance display to language: \(switchedResults.first?.selectedLanguage ?? "unknown")")
             }
         }

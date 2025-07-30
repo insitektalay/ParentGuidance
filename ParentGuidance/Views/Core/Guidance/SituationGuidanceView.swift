@@ -234,7 +234,7 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
                     .font(.system(size: 18, weight: .medium))
                     .foregroundColor(ColorPalette.terracotta)
                 
-                Text("Overall Recommendation")
+                Text(String(localized: "guidance.overallRecommendation.title"))
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(ColorPalette.white.opacity(0.9))
                 
@@ -443,6 +443,10 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
         print("   - Can switch: \(displayResults.first?.canSwitchLanguage ?? false)")
         print("   - Content length: \(fullContent.count) characters")
         
+        // First, try to get overall recommendation from database field
+        let databaseRecommendation = displayResults.first?.content.overallRecommendation
+        print("   - Database recommendation: \(databaseRecommendation != nil ? "found" : "not found")")
+        
         // Parse based on user preference
         if guidanceStructureSettings.isUsingDynamicStructure {
             print("🔄 [DEBUG] SituationGuidanceView: Using DYNAMIC parsing for multilingual content")
@@ -451,16 +455,25 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
                 let categories = dynamicResponse.displaySections.map { section in
                     GuidanceCategory(title: section.title, content: section.content)
                 }
-                return (categories, dynamicResponse.overallRecommendation)
+                // Use database recommendation if available, otherwise use parsed recommendation
+                let finalRecommendation = databaseRecommendation ?? dynamicResponse.overallRecommendation
+                print("   - Final recommendation source: \(databaseRecommendation != nil ? "database" : "parsed")")
+                return (categories, finalRecommendation)
             } else {
                 print("❌ [DEBUG] Dynamic parsing FAILED, falling back to fixed")
-                let (categories, recommendation) = parseFixedGuidanceContentWithRecommendation(from: fullContent)
-                return (categories, recommendation)
+                let (categories, parsedRecommendation) = parseFixedGuidanceContentWithRecommendation(from: fullContent)
+                // Use database recommendation if available, otherwise use parsed recommendation
+                let finalRecommendation = databaseRecommendation ?? parsedRecommendation
+                print("   - Final recommendation source: \(databaseRecommendation != nil ? "database" : "parsed fallback")")
+                return (categories, finalRecommendation)
             }
         } else {
             print("🔄 [DEBUG] SituationGuidanceView: Using FIXED parsing for multilingual content")
-            let (categories, recommendation) = parseFixedGuidanceContentWithRecommendation(from: fullContent)
-            return (categories, recommendation)
+            let (categories, parsedRecommendation) = parseFixedGuidanceContentWithRecommendation(from: fullContent)
+            // Use database recommendation if available, otherwise use parsed recommendation
+            let finalRecommendation = databaseRecommendation ?? parsedRecommendation
+            print("   - Final recommendation source: \(databaseRecommendation != nil ? "database" : "parsed")")
+            return (categories, finalRecommendation)
         }
     }
     

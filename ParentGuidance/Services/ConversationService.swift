@@ -97,7 +97,8 @@ class ConversationService: ObservableObject {
     func saveGuidance(
         situationId: String,
         content: String,
-        category: String? = nil
+        category: String? = nil,
+        overallRecommendation: String? = nil
     ) async throws -> String {
         print("🔍 [DEBUG] Starting saveGuidance method")
         print("🔍 [DEBUG] Input parameters:")
@@ -105,6 +106,7 @@ class ConversationService: ObservableObject {
         print("   - content length: \(content.count) characters")
         print("   - content preview: \(content.prefix(100))...")
         print("   - category: \(category ?? "nil")")
+        print("   - overallRecommendation: \(overallRecommendation != nil ? "provided" : "nil")")
         
         let guidanceId = UUID().uuidString
         let currentDate = ISO8601DateFormatter().string(from: Date())
@@ -118,6 +120,7 @@ class ConversationService: ObservableObject {
             situationId: situationId,
             content: content,
             category: category,
+            overallRecommendation: overallRecommendation,
             createdAt: currentDate,
             updatedAt: currentDate
         )

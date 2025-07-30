@@ -1,11 +1,21 @@
-Fix scrolling conflict in guidance views by removing nested ScrollViews
+Fix scrolling conflicts and missing overall recommendations in guidance views
 
-Resolved gesture ambiguity between card content and main screen scrolling by:
-  - Removed internal ScrollView from GuidanceCard component
-  - Restructured SituationGuidanceView to use single card display with swipe gestures instead of TabView
-  - Moved page indicators above guidance content for better visibility
-  - Removed fixed height constraints to allow natural content flow
-  - Applied same fixes to SituationDetailView for consistency
+Resolved two critical UX issues in guidance display across the application:
 
-Users can now scroll the entire screen vertically without conflicts, while horizontal swipes navigate between guidance
-sections.
+Scrolling Conflict Resolution:
+- Removed nested ScrollView from GuidanceCard component to eliminate gesture conflicts between card content scrolling and
+  main screen scrolling
+- Replaced TabView with single card display and manual swipe gestures for cleaner interaction
+- Moved page indicators above guidance content for improved visual hierarchy
+- Applied consistent layout fixes across SituationGuidanceView and SituationDetailView
+
+Overall Recommendation Display Fix:
+- Updated SituationGuidanceView's parseMultilingualGuidanceContentWithRecommendation to prioritize database field over
+  content parsing
+- Added fallback logic for backward compatibility with existing parsed content
+- Ensured overall recommendations now display consistently in both Today Timeline (via RoutineCard) and Library views
+- Maintained multilingual support and dynamic/fixed parsing modes
+
+These changes provide a smoother user experience with single vertical scroll areas, reliable horizontal swipe gestures,
+and consistent overall recommendation visibility across all guidance views.
+

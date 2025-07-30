@@ -16,6 +16,7 @@ struct Guidance: Codable {
     let originalLanguage: String
     let secondaryContent: String?
     let secondaryLanguage: String?
+    let overallRecommendation: String?
     let createdAt: String
     let updatedAt: String
     
@@ -27,12 +28,13 @@ struct Guidance: Codable {
         case originalLanguage = "original_language"
         case secondaryContent = "secondary_content"
         case secondaryLanguage = "secondary_language"
+        case overallRecommendation = "overall_recommendation"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
     }
     
     // Standard initializer for creating new guidance (backwards compatible)
-    init(id: String = UUID().uuidString, situationId: String, content: String, category: String? = nil, createdAt: String? = nil, updatedAt: String? = nil, originalLanguage: String = "en") {
+    init(id: String = UUID().uuidString, situationId: String, content: String, category: String? = nil, overallRecommendation: String? = nil, createdAt: String? = nil, updatedAt: String? = nil, originalLanguage: String = "en") {
         self.id = id
         self.situationId = situationId
         self.content = content
@@ -40,6 +42,7 @@ struct Guidance: Codable {
         self.originalLanguage = originalLanguage
         self.secondaryContent = nil
         self.secondaryLanguage = nil
+        self.overallRecommendation = overallRecommendation
         
         let currentDate = ISO8601DateFormatter().string(from: Date())
         self.createdAt = createdAt ?? currentDate
@@ -61,6 +64,7 @@ struct Guidance: Codable {
         originalLanguage = (try? container.decode(String.self, forKey: .originalLanguage)) ?? "en"
         secondaryContent = try? container.decodeIfPresent(String.self, forKey: .secondaryContent)
         secondaryLanguage = try? container.decodeIfPresent(String.self, forKey: .secondaryLanguage)
+        overallRecommendation = try? container.decodeIfPresent(String.self, forKey: .overallRecommendation)
     }
     
     // MARK: - Language Support Methods

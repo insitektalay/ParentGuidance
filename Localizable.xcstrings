@@ -1888,6 +1888,16 @@
         }
       }
     },
+    "guidance.overallRecommendation.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Overall Recommendation"
+          }
+        }
+      }
+    },
     "guidance.translation.error.description" : {
 
     },

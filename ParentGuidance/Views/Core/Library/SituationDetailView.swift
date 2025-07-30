@@ -137,6 +137,12 @@ struct SituationDetailView: View {
                                 if let categories = parsedCategories, !categories.isEmpty {
                                     // Use the same card system as SituationGuidanceView
                                     VStack(spacing: 16) {
+                                        // Overall Recommendation Section
+                                        if let recommendation = firstGuidance.overallRecommendation {
+                                            overallRecommendationView(recommendation: recommendation)
+                                                .padding(.bottom, 20)
+                                        }
+                                        
                                         // Page indicators - moved above guidance cards
                                         HStack(spacing: 8) {
                                             ForEach(0..<categories.count, id: \.self) { index in
@@ -364,6 +370,43 @@ struct SituationDetailView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             showCopyConfirmation = false
         }
+    }
+    
+    // MARK: - Overall Recommendation View
+    
+    @ViewBuilder
+    private func overallRecommendationView(recommendation: String) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // Header with icon
+            HStack(spacing: 8) {
+                Image(systemName: "lightbulb.fill")
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundColor(ColorPalette.terracotta)
+                
+                Text(String(localized: "guidance.overallRecommendation.title"))
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(ColorPalette.white.opacity(0.9))
+                
+                Spacer()
+            }
+            
+            // Recommendation content
+            Text(recommendation)
+                .font(.system(size: 16))
+                .foregroundColor(ColorPalette.white.opacity(0.8))
+                .lineSpacing(4)
+                .fixedSize(horizontal: false, vertical: true)
+                .multilineTextAlignment(.leading)
+        }
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(ColorPalette.terracotta.opacity(0.15))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(ColorPalette.terracotta.opacity(0.3), lineWidth: 1)
+                )
+        )
     }
 }
 

@@ -201,7 +201,8 @@ struct NewSituationView: View {
                 let guidanceId = try await ConversationService.shared.saveGuidance(
                     situationId: situationId,
                     content: rawContent, // Use raw bracket-delimited content
-                    category: "parenting_guidance"
+                    category: "parenting_guidance",
+                    overallRecommendation: guidance.overallRecommendation
                 )
             } catch {
                 print("❌ [CRITICAL] Failed to save guidance in handleChatMessage!")
@@ -420,7 +421,8 @@ struct NewSituationView: View {
                 let guidanceId = try await ConversationService.shared.saveGuidance(
                     situationId: situationId,
                     content: rawContent, // Use raw bracket-delimited content
-                    category: "parenting_guidance"
+                    category: "parenting_guidance",
+                    overallRecommendation: guidance.overallRecommendation
                 )
             } catch {
                 print("❌ [CRITICAL] Failed to save guidance in handleSendMessage!")

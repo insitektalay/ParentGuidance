@@ -14,73 +14,67 @@ struct GuidanceCard: View {
     var onRetryTranslation: (() -> Void)? = nil
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            // Card container
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    // Category title with enhanced language controls
-                    HStack {
-                        Text(title)
-                            .font(.system(size: 20, weight: .medium))
-                            .foregroundColor(ColorPalette.white.opacity(0.9))
-                        
-                        Spacer()
-                        
-                        // Enhanced translation status and language controls
-                        HStack(spacing: 8) {
-                            // Translation progress indicator
-                            if let progress = translationProgress {
-                                translationProgressIndicator(progress: progress)
-                            }
-                            
-                            // Translation status indicator
-                            if let status = translationStatus {
-                                translationStatusIndicator(status: status)
-                            }
-                            
-                            // Current language indicator
-                            if let language = selectedLanguage {
-                                languageIndicator(language: language, isOriginal: isShowingOriginal)
-                            }
-                            
-                            // Language toggle button (enhanced)
-                            if canSwitchLanguage, let onLanguageSwitch = onLanguageSwitch {
-                                languageToggleButton(onSwitch: onLanguageSwitch)
-                            }
-                        }
+        VStack(alignment: .leading, spacing: 16) {
+            // Category title with enhanced language controls
+            HStack {
+                Text(title)
+                    .font(.system(size: 20, weight: .medium))
+                    .foregroundColor(ColorPalette.white.opacity(0.9))
+                
+                Spacer()
+                
+                // Enhanced translation status and language controls
+                HStack(spacing: 8) {
+                    // Translation progress indicator
+                    if let progress = translationProgress {
+                        translationProgressIndicator(progress: progress)
                     }
                     
-                    // Language toggle banner (for prominent display)
-                    if canSwitchLanguage && !isShowingOriginal {
-                        languageToggleBanner
+                    // Translation status indicator
+                    if let status = translationStatus {
+                        translationStatusIndicator(status: status)
                     }
                     
-                    // Translation error banner
-                    if let status = translationStatus, status == .failed {
-                        translationErrorBanner
+                    // Current language indicator
+                    if let language = selectedLanguage {
+                        languageIndicator(language: language, isOriginal: isShowingOriginal)
                     }
                     
-                    // Content text
-                    Text(content)
-                        .font(.system(size: 16))
-                        .foregroundColor(ColorPalette.white.opacity(0.7))
-                        .lineSpacing(4)
-                        .fixedSize(horizontal: false, vertical: true)
+                    // Language toggle button (enhanced)
+                    if canSwitchLanguage, let onLanguageSwitch = onLanguageSwitch {
+                        languageToggleButton(onSwitch: onLanguageSwitch)
+                    }
                 }
-                .padding(24)
-                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .background(Color.clear)
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(
-                        isActive ? ColorPalette.terracotta.opacity(0.3) : ColorPalette.white.opacity(0.1),
-                        lineWidth: 1
-                    )
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            
+            // Language toggle banner (for prominent display)
+            if canSwitchLanguage && !isShowingOriginal {
+                languageToggleBanner
+            }
+            
+            // Translation error banner
+            if let status = translationStatus, status == .failed {
+                translationErrorBanner
+            }
+            
+            // Content text
+            Text(content)
+                .font(.system(size: 16))
+                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .lineSpacing(4)
+                .fixedSize(horizontal: false, vertical: true)
         }
-        .frame(maxWidth: .infinity)
+        .padding(24)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.clear)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(
+                    isActive ? ColorPalette.terracotta.opacity(0.3) : ColorPalette.white.opacity(0.1),
+                    lineWidth: 1
+                )
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 16))
         .padding(.horizontal, 8)
     }
     

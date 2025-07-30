@@ -169,30 +169,7 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
                         .padding(.bottom, 20)
                 }
                 
-                // Guidance cards - maintain natural height
-                TabView(selection: $currentPage) {
-                    ForEach(0..<categories.count, id: \.self) { index in
-                        GuidanceCard(
-                            title: categories[index].title,
-                            content: categories[index].content,
-                            isActive: index == currentPage,
-                            translationStatus: getTranslationStatus(),
-                            selectedLanguage: getCurrentLanguageCode(),
-                            originalLanguage: getOriginalLanguageCode(),
-                            canSwitchLanguage: canSwitchLanguage,
-                            onLanguageSwitch: canSwitchLanguage ? switchLanguage : nil,
-                            isShowingOriginal: isShowingOriginalLanguage(),
-                            translationProgress: getTranslationProgress(),
-                            onRetryTranslation: canRetryTranslation() ? retryTranslation : nil
-                        )
-                        .tag(index)
-                    }
-                }
-                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                .frame(height: 400) // Set explicit height for cards to prevent compression
-                .padding(.horizontal, 16)
-                
-                // Page indicators
+                // Page indicators - moved above guidance cards
                 HStack(spacing: 8) {
                     ForEach(0..<categories.count, id: \.self) { index in
                         Circle()
@@ -201,8 +178,44 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
                             .animation(.easeInOut(duration: 0.2), value: currentPage)
                     }
                 }
-                .padding(.top, 16)
-                .padding(.bottom, 100) // Extra space for scrolling
+                .padding(.bottom, 16)
+                
+                // Guidance cards - dynamic height without scrolling
+                if currentPage < categories.count {
+                    GuidanceCard(
+                        title: categories[currentPage].title,
+                        content: categories[currentPage].content,
+                        isActive: true,
+                        translationStatus: getTranslationStatus(),
+                        selectedLanguage: getCurrentLanguageCode(),
+                        originalLanguage: getOriginalLanguageCode(),
+                        canSwitchLanguage: canSwitchLanguage,
+                        onLanguageSwitch: canSwitchLanguage ? switchLanguage : nil,
+                        isShowingOriginal: isShowingOriginalLanguage(),
+                        translationProgress: getTranslationProgress(),
+                        onRetryTranslation: canRetryTranslation() ? retryTranslation : nil
+                    )
+                    .padding(.horizontal, 16)
+                    .gesture(
+                        DragGesture()
+                            .onEnded { value in
+                                // Swipe left to go to next
+                                if value.translation.width < -50 && currentPage < categories.count - 1 {
+                                    withAnimation {
+                                        currentPage += 1
+                                    }
+                                }
+                                // Swipe right to go to previous
+                                else if value.translation.width > 50 && currentPage > 0 {
+                                    withAnimation {
+                                        currentPage -= 1
+                                    }
+                                }
+                            }
+                    )
+                }
+                
+                Spacer(minLength: 100) // Extra space for scrolling
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

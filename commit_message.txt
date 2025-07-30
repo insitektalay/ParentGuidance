@@ -1,1 +1,11 @@
-Before fixing scroll ise on swipable cards
+Fix scrolling conflict in guidance views by removing nested ScrollViews
+
+Resolved gesture ambiguity between card content and main screen scrolling by:
+  - Removed internal ScrollView from GuidanceCard component
+  - Restructured SituationGuidanceView to use single card display with swipe gestures instead of TabView
+  - Moved page indicators above guidance content for better visibility
+  - Removed fixed height constraints to allow natural content flow
+  - Applied same fixes to SituationDetailView for consistency
+
+Users can now scroll the entire screen vertically without conflicts, while horizontal swipes navigate between guidance
+sections.

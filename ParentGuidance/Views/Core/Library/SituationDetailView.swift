@@ -137,21 +137,7 @@ struct SituationDetailView: View {
                                 if let categories = parsedCategories, !categories.isEmpty {
                                     // Use the same card system as SituationGuidanceView
                                     VStack(spacing: 16) {
-                                        // Guidance cards
-                                        TabView(selection: $currentGuidancePage) {
-                                            ForEach(0..<categories.count, id: \.self) { index in
-                                                GuidanceCard(
-                                                    title: categories[index].title,
-                                                    content: categories[index].content,
-                                                    isActive: index == currentGuidancePage
-                                                )
-                                                .tag(index)
-                                            }
-                                        }
-                                        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                                        .frame(height: 600)
-                                        
-                                        // Page indicators
+                                        // Page indicators - moved above guidance cards
                                         HStack(spacing: 8) {
                                             ForEach(0..<categories.count, id: \.self) { index in
                                                 Circle()
@@ -159,6 +145,32 @@ struct SituationDetailView: View {
                                                     .frame(width: 8, height: 8)
                                                     .animation(.easeInOut(duration: 0.2), value: currentGuidancePage)
                                             }
+                                        }
+                                        
+                                        // Guidance cards - dynamic height without scrolling
+                                        if currentGuidancePage < categories.count {
+                                            GuidanceCard(
+                                                title: categories[currentGuidancePage].title,
+                                                content: categories[currentGuidancePage].content,
+                                                isActive: true
+                                            )
+                                            .gesture(
+                                                DragGesture()
+                                                    .onEnded { value in
+                                                        // Swipe left to go to next
+                                                        if value.translation.width < -50 && currentGuidancePage < categories.count - 1 {
+                                                            withAnimation {
+                                                                currentGuidancePage += 1
+                                                            }
+                                                        }
+                                                        // Swipe right to go to previous
+                                                        else if value.translation.width > 50 && currentGuidancePage > 0 {
+                                                            withAnimation {
+                                                                currentGuidancePage -= 1
+                                                            }
+                                                        }
+                                                    }
+                                            )
                                         }
                                     }
                                     .padding(.horizontal, 16)

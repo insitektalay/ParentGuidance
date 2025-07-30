@@ -47,6 +47,16 @@ struct ContextCategoryView: View {
                     }
                     
                     Spacer()
+                    
+                    // Deleted insights link
+                    NavigationLink(destination: DeletedContextualInsightsView(
+                        familyId: familyId,
+                        category: category
+                    )) {
+                        Image(systemName: "trash")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(ColorPalette.white.opacity(0.7))
+                    }
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 12)

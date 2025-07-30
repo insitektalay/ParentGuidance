@@ -683,6 +683,12 @@
     "Are you sure you want to delete your %@ API key? This action cannot be undone." : {
 
     },
+    "Are you sure you want to permanently delete this insight? This action cannot be undone." : {
+
+    },
+    "Are you sure you want to restore this insight? It will be moved back to your active insights." : {
+
+    },
     "auth.continueWithApple" : {
       "localizations" : {
         "en" : {
@@ -1430,7 +1436,13 @@
     "Delete API Key" : {
 
     },
+    "Delete Forever" : {
+
+    },
     "Delete Insight" : {
+
+    },
+    "Deleted" : {
 
     },
     "Deleted %@" : {
@@ -2215,6 +2227,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Delete Situation"
+          }
+        }
+      }
+    },
+    "library.deleted.action.permanentDelete" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Forever"
+          }
+        }
+      }
+    },
+    "library.deleted.action.restore" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore"
+          }
+        }
+      }
+    },
+    "library.deleted.contextual.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deleted Insights"
+          }
+        }
+      }
+    },
+    "library.deleted.empty.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deleted insights will appear here when you remove them from your library."
+          }
+        }
+      }
+    },
+    "library.deleted.empty.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Deleted Insights"
+          }
+        }
+      }
+    },
+    "library.deleted.error.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please try again later."
+          }
+        }
+      }
+    },
+    "library.deleted.error.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error Loading Deleted Insights"
+          }
+        }
+      }
+    },
+    "library.deleted.loading" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading deleted insights..."
           }
         }
       }
@@ -3429,6 +3521,9 @@
         }
       }
     },
+    "Reason: %@" : {
+
+    },
     "regulation.archive.button.viewDeleted" : {
       "localizations" : {
         "en" : {
@@ -3744,6 +3839,9 @@
 
     },
     "Restore Coping Strategy" : {
+
+    },
+    "Restore Insight" : {
 
     },
     "Retry" : {

@@ -1314,18 +1314,152 @@ class ContextualInsightService {
     }
     
     func deleteInsight(id: String) async throws {
-        print("🗑️ Deleting insight: \(id)")
+        print("🗑️ Deleting contextual insight: \(id)")
         
         do {
+            print("🔍 Fetching insight details for archiving: \(id)")
+            // First, get the insight to archive it
+            let insight: ContextualInsight = try await SupabaseManager.shared.client
+                .from("contextual_insights")
+                .select("*")
+                .eq("id", value: id)
+                .single()
+                .execute()
+                .value
+            
+            print("✅ Found insight with category: \(insight.category.displayName)")
+            
+            // Archive the insight before deletion
+            print("📦 Archiving contextual insight before deletion")
+            let deletedInsight = DeletedContextualInsight(from: insight)
+            try await saveDeletedContextualInsight(deletedInsight)
+            print("📦 Archived contextual insight before deletion: \(id)")
+            
+            print("🗑️ Now deleting from main table...")
+            // Then delete from main table
             try await SupabaseManager.shared.client
                 .from("contextual_insights")
                 .delete()
                 .eq("id", value: id)
                 .execute()
             
-            print("✅ Successfully deleted insight: \(id)")
+            print("✅ Successfully deleted contextual insight: \(id)")
         } catch {
-            print("❌ Error deleting insight: \(error)")
+            print("❌ Error deleting contextual insight: \(error)")
+            print("❌ Error details: \(error.localizedDescription)")
+            throw ContextualInsightError.databaseError(error)
+        }
+    }
+    
+    // MARK: - Deleted Contextual Insights Management
+    
+    /// Save a deleted contextual insight to the archive table
+    private func saveDeletedContextualInsight(_ deletedInsight: DeletedContextualInsight) async throws {
+        print("📦 Saving deleted contextual insight to archive: \(deletedInsight.id)")
+        
+        try await SupabaseManager.shared.client
+            .from("deleted_contextual_insights")
+            .insert(deletedInsight)
+            .execute()
+        
+        print("✅ Successfully archived deleted contextual insight")
+    }
+    
+    /// Get all deleted contextual insights for a family
+    func getAllDeletedContextualInsights(familyId: String) async throws -> [DeletedContextualInsight] {
+        print("📋 Fetching all deleted contextual insights for family: \(familyId)")
+        
+        do {
+            let deletedInsights: [DeletedContextualInsight] = try await SupabaseManager.shared.client
+                .from("deleted_contextual_insights")
+                .select("*")
+                .eq("family_id", value: familyId.lowercased())
+                .order("deleted_at", ascending: false)
+                .execute()
+                .value
+            
+            print("✅ Found \(deletedInsights.count) deleted contextual insights for family: \(familyId)")
+            return deletedInsights
+        } catch {
+            print("❌ Error fetching deleted contextual insights: \(error)")
+            throw ContextualInsightError.databaseError(error)
+        }
+    }
+    
+    /// Get deleted contextual insights for a family filtered by category
+    func getDeletedContextualInsights(familyId: String, category: ContextCategory? = nil) async throws -> [DeletedContextualInsight] {
+        let categoryFilter = category?.rawValue ?? "all"
+        print("📋 Fetching deleted contextual insights for family: \(familyId), category: \(categoryFilter)")
+        
+        do {
+            var query = SupabaseManager.shared.client
+                .from("deleted_contextual_insights")
+                .select("*")
+                .eq("family_id", value: familyId.lowercased())
+            
+            if let category = category {
+                query = query.eq("category", value: category.rawValue)
+            }
+            
+            let deletedInsights: [DeletedContextualInsight] = try await query
+                .order("deleted_at", ascending: false)
+                .execute()
+                .value
+            
+            print("✅ Found \(deletedInsights.count) deleted contextual insights for family: \(familyId), category: \(categoryFilter)")
+            return deletedInsights
+        } catch {
+            print("❌ Error fetching deleted contextual insights: \(error)")
+            throw ContextualInsightError.databaseError(error)
+        }
+    }
+    
+    /// Restore a deleted contextual insight back to the main table
+    func restoreDeletedContextualInsight(id: String) async throws {
+        print("♻️ Restoring deleted contextual insight: \(id)")
+        
+        do {
+            // Get the deleted insight
+            let deletedInsight: DeletedContextualInsight = try await SupabaseManager.shared.client
+                .from("deleted_contextual_insights")
+                .select("*")
+                .eq("id", value: id)
+                .single()
+                .execute()
+                .value
+            
+            // Convert back to ContextualInsight and save
+            let restoredInsight = deletedInsight.toContextualInsight()
+            try await saveContextInsights([restoredInsight])
+            
+            // Remove from deleted table
+            try await SupabaseManager.shared.client
+                .from("deleted_contextual_insights")
+                .delete()
+                .eq("id", value: id)
+                .execute()
+            
+            print("✅ Successfully restored contextual insight: \(id)")
+        } catch {
+            print("❌ Error restoring deleted contextual insight: \(error)")
+            throw ContextualInsightError.databaseError(error)
+        }
+    }
+    
+    /// Permanently delete a contextual insight from the deleted archive
+    func permanentlyDeleteContextualInsight(id: String) async throws {
+        print("🗑️ Permanently deleting contextual insight from archive: \(id)")
+        
+        do {
+            try await SupabaseManager.shared.client
+                .from("deleted_contextual_insights")
+                .delete()
+                .eq("id", value: id)
+                .execute()
+            
+            print("✅ Successfully permanently deleted contextual insight: \(id)")
+        } catch {
+            print("❌ Error permanently deleting contextual insight: \(error)")
             throw ContextualInsightError.databaseError(error)
         }
     }

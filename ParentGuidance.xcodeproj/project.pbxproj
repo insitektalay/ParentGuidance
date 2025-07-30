@@ -148,6 +148,9 @@
 		94BC2DD32E3A11E200B35676 /* DeletedEmotionalRegulationCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DD22E3A11E100B35676 /* DeletedEmotionalRegulationCard.swift */; };
 		94BC2DD52E3A11EC00B35676 /* DeletedAttentionFocusCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DD42E3A11EA00B35676 /* DeletedAttentionFocusCard.swift */; };
 		94BC2DD72E3A11F500B35676 /* DeletedFlexibilitySocialCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DD62E3A11F400B35676 /* DeletedFlexibilitySocialCard.swift */; };
+		94BC2DD92E3A196000B35676 /* DeletedContextualInsight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DD82E3A195F00B35676 /* DeletedContextualInsight.swift */; };
+		94BC2DDB2E3A196F00B35676 /* DeletedContextualInsightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DDA2E3A196D00B35676 /* DeletedContextualInsightsView.swift */; };
+		94BC2DDD2E3A197C00B35676 /* DeletedContextualInsightCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DDC2E3A197A00B35676 /* DeletedContextualInsightCard.swift */; };
 		94CBD5152E20F80C0014C22A /* FakeFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94CBD5142E20F80C0014C22A /* FakeFile.swift */; };
 		94FA10C42E056247003EC1E9 /* ParentGuidanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA10C32E056247003EC1E9 /* ParentGuidanceApp.swift */; };
 		94FA10C62E056247003EC1E9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA10C52E056247003EC1E9 /* ContentView.swift */; };
@@ -356,6 +359,10 @@
 		94BC2DD22E3A11E100B35676 /* DeletedEmotionalRegulationCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedEmotionalRegulationCard.swift; sourceTree = "<group>"; };
 		94BC2DD42E3A11EA00B35676 /* DeletedAttentionFocusCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedAttentionFocusCard.swift; sourceTree = "<group>"; };
 		94BC2DD62E3A11F400B35676 /* DeletedFlexibilitySocialCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedFlexibilitySocialCard.swift; sourceTree = "<group>"; };
+		94BC2DD82E3A195F00B35676 /* DeletedContextualInsight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedContextualInsight.swift; sourceTree = "<group>"; };
+		94BC2DDA2E3A196D00B35676 /* DeletedContextualInsightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedContextualInsightsView.swift; sourceTree = "<group>"; };
+		94BC2DDC2E3A197A00B35676 /* DeletedContextualInsightCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedContextualInsightCard.swift; sourceTree = "<group>"; };
+		94BC2DDE2E3A1A8B00B35676 /* Untitled.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Untitled.swift; sourceTree = "<group>"; };
 		94CBD5142E20F80C0014C22A /* FakeFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FakeFile.swift; sourceTree = "<group>"; };
 		94FA10C02E056247003EC1E9 /* ParentGuidance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ParentGuidance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		94FA10C32E056247003EC1E9 /* ParentGuidanceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentGuidanceApp.swift; sourceTree = "<group>"; };
@@ -683,6 +690,7 @@
 		94FA10EF2E056303003EC1E9 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				94BC2DD82E3A195F00B35676 /* DeletedContextualInsight.swift */,
 				94BC2DCA2E3A11AC00B35676 /* DeletedFlexibilitySocialInsight.swift */,
 				94BC2DC82E3A11A000B35676 /* DeletedAttentionFocusInsight.swift */,
 				94BC2DC62E3A118A00B35676 /* DeletedEmotionalRegulationInsight.swift */,
@@ -853,6 +861,8 @@
 		94FA111A2E05C8E7003EC1E9 /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				94BC2DDE2E3A1A8B00B35676 /* Untitled.swift */,
+				94BC2DDA2E3A196D00B35676 /* DeletedContextualInsightsView.swift */,
 				94BC2DD02E3A11D400B35676 /* DeletedFlexibilitySocialView.swift */,
 				94BC2DCE2E3A11CA00B35676 /* DeletedAttentionFocusView.swift */,
 				94BC2DCC2E3A11C000B35676 /* DeletedEmotionalRegulationView.swift */,
@@ -939,6 +949,7 @@
 		94FA11422E05CCC0003EC1E9 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				94BC2DDC2E3A197A00B35676 /* DeletedContextualInsightCard.swift */,
 				94BC2DD62E3A11F400B35676 /* DeletedFlexibilitySocialCard.swift */,
 				94BC2DD42E3A11EA00B35676 /* DeletedAttentionFocusCard.swift */,
 				94BC2DD22E3A11E100B35676 /* DeletedEmotionalRegulationCard.swift */,
@@ -1153,6 +1164,7 @@
 				943DFD912E1A858D004F8043 /* Situation.swift in Sources */,
 				943BC97B2E35D7770056EFF9 /* VoiceRecorderViewModel.swift in Sources */,
 				943BC97C2E35D7770056EFF9 /* MultiProviderApiKeyService.swift in Sources */,
+				94BC2DD92E3A196000B35676 /* DeletedContextualInsight.swift in Sources */,
 				94BC2DC02E39F19800B35676 /* DeletedCopingStrategiesView.swift in Sources */,
 				94BC2DC92E3A11A100B35676 /* DeletedAttentionFocusInsight.swift in Sources */,
 				94BC2DC22E39F1AC00B35676 /* DeletedCopingStrategyCard.swift in Sources */,
@@ -1180,6 +1192,7 @@
 				948156722E2A1D9800C28273 /* SearchSituationsCard.swift in Sources */,
 				9481565C2E29019600C28273 /* ContextualInsight.swift in Sources */,
 				948605D12E133149008D92DE /* SupabaseManager.swift in Sources */,
+				94BC2DDB2E3A196F00B35676 /* DeletedContextualInsightsView.swift in Sources */,
 				948605D52E133250008D92DE /* AuthService.swift in Sources */,
 				944EA20D2E2E125F00C110AF /* SettingsDataService.swift in Sources */,
 				9481565E2E29023B00C28273 /* ContextualInsightService.swift in Sources */,
@@ -1249,6 +1262,7 @@
 				948156702E2A12C700C28273 /* RegulationInsightCard.swift in Sources */,
 				94CBD5152E20F80C0014C22A /* FakeFile.swift in Sources */,
 				944EA21F2E30ACA700C110AF /* ChatMessage.swift in Sources */,
+				94BC2DDD2E3A197C00B35676 /* DeletedContextualInsightCard.swift in Sources */,
 				943BC9872E35D9310056EFF9 /* UserApiKey.swift in Sources */,
 				943BC9882E35D9310056EFF9 /* ApiKeyProvider.swift in Sources */,
 				943792A92E1C2B610089F512 /* TabNavigationManager.swift in Sources */,

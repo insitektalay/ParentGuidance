@@ -34,6 +34,16 @@ struct ContextualKnowledgeBaseView: View {
                         .foregroundColor(ColorPalette.white.opacity(0.9))
                     
                     Spacer()
+                    
+                    // Deleted insights link - show all deleted insights
+                    NavigationLink(destination: DeletedContextualInsightsView(
+                        familyId: familyId,
+                        category: nil
+                    )) {
+                        Image(systemName: "trash")
+                            .font(.system(size: 18, weight: .medium))
+                            .foregroundColor(ColorPalette.white.opacity(0.7))
+                    }
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 12)

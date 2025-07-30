@@ -1,11 +1,1 @@
-Fix title extraction for dynamic guidance with overall recommendation feature
-Enhanced DynamicGuidanceParser to handle AI responses that don't follow the expected [TITLE] format. The AI was returning
-the title as the first section name instead of in a dedicated [TITLE] section, causing "Parenting Situation" fallback to
-display.
-Changes:
-- Added fallback logic to extract first bracketed section as title when no [TITLE] section exists
-- Updated section extraction to skip first section if it was used as the title
-- Added comprehensive logging to capture full AI response content for debugging
-- Maintains backward compatibility with proper [TITLE] formatted responses
-This ensures the overall recommendation feature displays correct guidance titles like "Talking to Your Child About
-Staying for After-School Activities" instead of generic fallbacks.
+Before fixing scroll ise on swipable cards

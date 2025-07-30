@@ -675,49 +675,7 @@ Output:
 `
 },
     
-psychologists_note_traits: {
-  id: "pmpt_psych_note_traits",
-  version: "1",
-  variables: ["current_situation"],
-  systemPromptText: `
 
-System Instruction:
-
-You are a classifier that analyzes parent-submitted text describing a parenting situation. Your job is to infer which of the following 7 predefined categories best matches the intent and nature of the input. Return only the most likely category name from the list below, without explanation.
-
-Category Definitions:
-Crisis Now
- The parent is describing something happening right now — a meltdown, refusal, or intense challenge needing immediate help.
-
-What Just Happened?
- The parent is describing something that already happened and wants help understanding what went wrong, what the child was feeling, or how they could have responded better.
-
-Foundational Work
- The parent is surfacing a long-term emotional trait or deep-seated issue (e.g. shame, dysregulation, anxiety) that they want to work on over time.
-
-Teach Me a Tactic
- The parent wants help solving a repeating practical challenge — like brushing teeth, getting dressed, or leaving the house — that happens frequently and predictably.
-
-Know My Child
- The parent is giving background about their child — temperament, personality, sensitivities, history — to help improve future guidance.
-
-Rebuild Connection
- The parent wants to reconnect or repair their relationship with their child after a conflict, rupture, or emotionally charged event.
-
-I’m Just Wondering
- The parent is asking a general question or raising a curiosity. It is not urgent and does not describe a specific event.
-
-Output Format:
-
-Return exactly one of the following category names:
-Crisis Now, What Just Happened?, Foundational Work, Teach Me a Tactic, Know My Child, Rebuild Connection, I’m Just Wondering
-
-Input:
-{{current_situation}}
-
-Output:
-<category name>
-`
   },
 
   child_coping_strategies: {

@@ -82,7 +82,7 @@ The project includes automation hooks in `settings.json` for Claude Code:
 - **ConversationService**: AI-powered conversation management with feature flag for EdgeFunction vs direct API
 - **FrameworkGenerationService**: AI-powered generation of parenting frameworks with EdgeFunction integration
 - **FrameworkStorageService**: Persistence and management of framework recommendations
-- **ContextualInsightService**: Automatic context extraction and categorization with EdgeFunction support
+- **ContextualInsightService**: Automatic context extraction and categorization with EdgeFunction support (11 categories: Family Context, Regulation Tools, Medical/Health, etc.)
 - **EdgeFunctionService**: Unified service for all AI operations via Supabase Edge Functions
 - **TranslationService**: Content translation with EdgeFunction vs direct API feature flag
 - **OnboardingManager**: Coordinates multi-step onboarding process
@@ -92,12 +92,15 @@ The project includes automation hooks in `settings.json` for Claude Code:
 #### AI Integration Architecture
 - **Primary Integration**: Supabase Edge Functions (`/functions/v1/guidance`) with fallback to direct OpenAI API
 - **Feature Flag System**: All AI services support EdgeFunction vs Direct API modes via UserDefaults
-- **Unified Edge Function**: Single function handling 4 operations: guidance, analyze, context, framework
+- **Unified Edge Function**: Single function handling 8+ operations: guidance, analyze, context, framework, translate, transcribe, coping_strategies, extract_overall_recommendation
 - **Prompt Templates**: Centralized in `supabase/prompts/promptTemplates.ts` with variable interpolation
   - Main guidance: 4 style/mode combinations (Warm Practical, Analytical Scientific × Fixed, Dynamic)
   - Situation analysis: Category classification and incident detection
   - Framework generation: AI-powered parenting framework recommendations
-  - Context extraction: General (11 categories) and regulation-specific insights
+  - Context extraction: General (11 categories) and regulation-specific insights  
+  - Coping strategies: Home consequences and regulation support
+  - Audio transcription: Whisper-powered voice-to-text
+  - Psychologist notes: Clinical insights from context and pattern data
 - **Response Parsing**: Maintained bracket-delimited format compatibility with existing parsers
 - **Streaming Support**: EdgeFunction provides streaming for guidance and translation operations
 - **Legacy Support**: Direct OpenAI Prompts API maintained as fallback option
@@ -111,6 +114,7 @@ The project includes automation hooks in `settings.json` for Claude Code:
 - **Child.swift**: Child profile and preferences (in `Models/` directory)
 - **FrameworkRecommendation**: AI-generated parenting framework recommendations
 - **ContextualInsight**: Automatic insight extraction with 11 categories (Family Context, Regulation Tools, Medical/Health, etc.)
+- **PsychologistNote**: Clinical insights generated from accumulated context and pattern data
 - **OpenAI Response Models**: `PromptResponse`, `GuidanceResponse`, `FrameworkAPIResponse` for API parsing
 - **Error Handling**: Custom error enums (`FrameworkGenerationError`, `FrameworkStorageError`, `OpenAIError`)
 - **Additional Models**: Various view-specific models throughout the app
@@ -125,7 +129,7 @@ Enum-driven coordinator pattern through these steps:
 Multi-state input system for parenting situations:
 - **SituationInputIdleView**: Default state with text/voice input
 - **SituationTypingView**: Active text input state  
-- **SituationVoiceView**: Voice recording state
+- **SituationVoiceView**: Voice recording state (uses EdgeFunction transcription)
 - **SituationFollowUpView**: Follow-up questions state
 - **SituationOrganizingView**: AI processing state
 - **Components**: `MicButton`, `SendButton`, `InputGuidanceFooter`
@@ -133,7 +137,7 @@ Multi-state input system for parenting situations:
 #### Main Tab Views (`Views/Core/`)
 - **Today**: Timeline view with empty state (`TodayViewController`, `TodayTimelineView`, `TodayEmptyView`)
 - **New**: Primary situation input (`NewSituationView`) with OpenAI integration, background context extraction, and chat-style interface option (`ChatConversationView`, `ChatInputBar`)
-- **Library**: Search and browse past situations (`LibraryView`) with comprehensive filtering, selection management (`LibrarySelectionManager`), and contextual knowledge base (`YourChildsWorldCard`, `ContextualKnowledgeBaseView`)
+- **Library**: Search and browse past situations (`LibraryView`) with comprehensive filtering, selection management (`LibrarySelectionManager`), contextual knowledge base (`YourChildsWorldCard`, `ContextualKnowledgeBaseView`), and psychologist notes (`PsychologistNoteView`)
 - **Alerts**: Notification management (`AlertView`) with framework recommendations (`FrameworkRecommendationView`)
 - **Settings**: User preferences and account management (`SettingsView`)
 
@@ -148,6 +152,7 @@ The app uses Supabase with these core tables:
 - **situations**: User-submitted parenting scenarios with JSONB context fields
 - **guidance**: AI-generated responses linked to situations
 - **contextual_insights**: Automatically extracted insights categorized into 11 types
+- **psychologist_notes**: Clinical insights generated from accumulated context and pattern data
 - **families**: Family group management
 - **children**: Child profiles and characteristics
 - **framework_recommendations**: AI-generated parenting frameworks
@@ -163,6 +168,10 @@ The app uses Supabase with these core tables:
 - ✅ Framework generation and recommendation system
 - ✅ EdgeFunction migration completed for all AI operations
 - ✅ Chat-style interface option for situation input
+- ✅ Audio transcription with Whisper integration
+- ✅ Psychologist notes generation from accumulated insights
+- ✅ Coping strategies extraction and management
+- ✅ AI Processing Features toggle controls for cost management
 - ⚠️ Testing implementation is minimal (placeholder tests only)
 - ⚠️ Error handling and edge cases need enhancement
 
@@ -178,7 +187,8 @@ The app uses Supabase with these core tables:
 ### API Integration Patterns
 - **EdgeFunction Integration** (Primary):
   - **Unified Endpoint**: `/functions/v1/guidance` handles all AI operations
-  - **Operations**: guidance, analyze, context (general/regulation), framework, translate
+  - **Operations**: guidance, analyze, context (general/regulation), framework, translate, transcribe, coping_strategies, extract_overall_recommendation, psychologist_note (context/traits)
+  - **Multi-Provider Support**: OpenAI, Anthropic Claude, xAI Grok, Google Gemini
   - **Authentication**: Uses Supabase session tokens for secure access
   - **Prompt Templates**: Server-side interpolation from `promptTemplates.ts`
   - **Streaming**: SSE format for real-time guidance and translation
@@ -210,6 +220,16 @@ The app uses Supabase with these core tables:
 
 ### Supabase Edge Functions
 - **Location**: `supabase/functions/guidance/`
-- **Main Function**: Unified AI operations handler supporting guidance, analyze, context, framework, and translate operations
-- **Prompt Templates**: Centralized in `supabase/prompts/promptTemplates.ts` with variable interpolation
+- **Main Function**: Unified AI operations handler supporting 11+ operations (guidance, analyze, context, framework, translate, transcribe, coping_strategies, extract_overall_recommendation, psychologist_note variants, validate_key)
+- **Multi-Provider Architecture**: Automatic provider detection from API keys (OpenAI, Anthropic, xAI, Google)
+- **Prompt Templates**: Centralized in `supabase/prompts/promptTemplates.ts` with variable interpolation system
 - **Local Development**: Use `supabase functions serve` for local testing
+- **Audio Processing**: Whisper integration for voice transcription with base64 encoding
+
+### Recent Feature Additions (2025)
+- **AI Processing Controls**: Individual toggles for Situation Analysis, Context Extraction, Regulation Insights, and Coping Strategies to manage API costs
+- **Multi-Provider AI Support**: Full integration with OpenAI, Anthropic Claude, xAI Grok, and Google Gemini through EdgeFunction architecture
+- **Coping Strategies System**: Automated extraction and management of child regulation support strategies
+- **Overall Recommendation Feature**: Dynamic guidance parsing with fallback title extraction for better user experience
+- **Psychologist Notes**: Clinical insight generation from accumulated context data and behavioral patterns
+- **Enhanced Voice Input**: Improved transcription accuracy with Whisper-1 model integration

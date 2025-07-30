@@ -135,6 +135,9 @@
 		949600D42E20F2B1008EC0C0 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949600D22E20F2B1008EC0C0 /* LoadingView.swift */; };
 		949600D52E20F2B1008EC0C0 /* AppCoordinatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949600D32E20F2B1008EC0C0 /* AppCoordinatorView.swift */; };
 		94B3D79C2E16C45B000F1D65 /* TodayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B3D79B2E16C45B000F1D65 /* TodayViewController.swift */; };
+		94BC2DBE2E39EF6000B35676 /* DeletedCopingStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DBD2E39EF5D00B35676 /* DeletedCopingStrategy.swift */; };
+		94BC2DC02E39F19800B35676 /* DeletedCopingStrategiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DBF2E39F19700B35676 /* DeletedCopingStrategiesView.swift */; };
+		94BC2DC22E39F1AC00B35676 /* DeletedCopingStrategyCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DC12E39F1AB00B35676 /* DeletedCopingStrategyCard.swift */; };
 		94CBD5152E20F80C0014C22A /* FakeFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94CBD5142E20F80C0014C22A /* FakeFile.swift */; };
 		94FA10C42E056247003EC1E9 /* ParentGuidanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA10C32E056247003EC1E9 /* ParentGuidanceApp.swift */; };
 		94FA10C62E056247003EC1E9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA10C52E056247003EC1E9 /* ContentView.swift */; };
@@ -329,6 +332,9 @@
 		949600D22E20F2B1008EC0C0 /* LoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		949600D32E20F2B1008EC0C0 /* AppCoordinatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppCoordinatorView.swift; sourceTree = "<group>"; };
 		94B3D79B2E16C45B000F1D65 /* TodayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayViewController.swift; sourceTree = "<group>"; };
+		94BC2DBD2E39EF5D00B35676 /* DeletedCopingStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedCopingStrategy.swift; sourceTree = "<group>"; };
+		94BC2DBF2E39F19700B35676 /* DeletedCopingStrategiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedCopingStrategiesView.swift; sourceTree = "<group>"; };
+		94BC2DC12E39F1AB00B35676 /* DeletedCopingStrategyCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedCopingStrategyCard.swift; sourceTree = "<group>"; };
 		94CBD5142E20F80C0014C22A /* FakeFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FakeFile.swift; sourceTree = "<group>"; };
 		94FA10C02E056247003EC1E9 /* ParentGuidance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ParentGuidance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		94FA10C32E056247003EC1E9 /* ParentGuidanceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentGuidanceApp.swift; sourceTree = "<group>"; };
@@ -656,6 +662,7 @@
 		94FA10EF2E056303003EC1E9 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				94BC2DBD2E39EF5D00B35676 /* DeletedCopingStrategy.swift */,
 				943BC9852E35D9310056EFF9 /* ApiKeyProvider.swift */,
 				943BC9862E35D9310056EFF9 /* UserApiKey.swift */,
 				943DFD8D2E1A856E004F8043 /* Child.swift */,
@@ -820,6 +827,7 @@
 		94FA111A2E05C8E7003EC1E9 /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				94BC2DBF2E39F19700B35676 /* DeletedCopingStrategiesView.swift */,
 				943792A12E1BE9750089F512 /* Managers */,
 				943DFD752E18238E004F8043 /* Models */,
 				943DFD732E180D40004F8043 /* SituationDetailView.swift */,
@@ -902,6 +910,7 @@
 		94FA11422E05CCC0003EC1E9 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				94BC2DC12E39F1AB00B35676 /* DeletedCopingStrategyCard.swift */,
 				948156612E2904B100C28273 /* YourChildsWorldCard.swift */,
 				94FA113D2E05CC91003EC1E9 /* SearchBar.swift */,
 				94FA113F2E05CCA1003EC1E9 /* FoundationToolCard.swift */,
@@ -1109,6 +1118,8 @@
 				943DFD912E1A858D004F8043 /* Situation.swift in Sources */,
 				943BC97B2E35D7770056EFF9 /* VoiceRecorderViewModel.swift in Sources */,
 				943BC97C2E35D7770056EFF9 /* MultiProviderApiKeyService.swift in Sources */,
+				94BC2DC02E39F19800B35676 /* DeletedCopingStrategiesView.swift in Sources */,
+				94BC2DC22E39F1AC00B35676 /* DeletedCopingStrategyCard.swift in Sources */,
 				94FA112C2E05CC08003EC1E9 /* MicButton.swift in Sources */,
 				94FA11122E05C898003EC1E9 /* NewSituationView.swift in Sources */,
 				944EA2292E320C1B00C110AF /* SituationType.swift in Sources */,
@@ -1146,6 +1157,7 @@
 				943DFD722E17CBE3004F8043 /* LibraryViewController.swift in Sources */,
 				944EA20F2E2E126B00C110AF /* SettingsAccountService.swift in Sources */,
 				943DFD832E182676004F8043 /* FilterButton.swift in Sources */,
+				94BC2DBE2E39EF6000B35676 /* DeletedCopingStrategy.swift in Sources */,
 				944EA1FF2E2E018B00C110AF /* FrameworkCard.swift in Sources */,
 				944EA2132E2E128100C110AF /* SettingsUtilityService.swift in Sources */,
 				944EA1E92E2DE4A900C110AF /* SettingsFrameworkState.swift in Sources */,

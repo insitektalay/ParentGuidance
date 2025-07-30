@@ -825,6 +825,30 @@ class ContextualInsightService {
         print("🗑️ Deleting child regulation insight: \(id)")
         
         do {
+            print("🔍 Fetching insight details for ID: \(id)")
+            // First, check if this is a coping strategy - if so, archive it
+            let insight: ChildRegulationInsight = try await SupabaseManager.shared.client
+                .from("insight_bullet_points")
+                .select("*")
+                .eq("id", value: id)
+                .single()
+                .execute()
+                .value
+            
+            print("✅ Found insight with category: \(insight.category.rawValue)")
+            
+            // If it's a coping strategy, save to deleted archive first
+            if insight.category == .copingStrategies {
+                print("🎯 This is a coping strategy - archiving before deletion")
+                let deletedStrategy = DeletedCopingStrategy(from: insight)
+                try await saveDeletedCopingStrategy(deletedStrategy)
+                print("📦 Archived coping strategy before deletion: \(id)")
+            } else {
+                print("ℹ️ Not a coping strategy (\(insight.category.rawValue)) - skipping archive")
+            }
+            
+            print("🗑️ Now deleting from main table...")
+            // Then delete from main table
             try await SupabaseManager.shared.client
                 .from("insight_bullet_points")
                 .delete()
@@ -834,6 +858,107 @@ class ContextualInsightService {
             print("✅ Successfully deleted child regulation insight: \(id)")
         } catch {
             print("❌ Error deleting child regulation insight: \(error)")
+            print("❌ Error details: \(error.localizedDescription)")
+            throw ContextualInsightError.databaseError(error)
+        }
+    }
+    
+    // MARK: - Deleted Coping Strategies Management
+    
+    /// Save a deleted coping strategy to the archive table
+    private func saveDeletedCopingStrategy(_ deletedStrategy: DeletedCopingStrategy) async throws {
+        print("📦 Saving deleted coping strategy to archive: \(deletedStrategy.id)")
+        
+        try await SupabaseManager.shared.client
+            .from("deleted_coping_strategies")
+            .insert(deletedStrategy)
+            .execute()
+        
+        print("✅ Successfully archived deleted coping strategy")
+    }
+    
+    /// Get all deleted coping strategies for a family
+    func getDeletedCopingStrategies(familyId: String) async throws -> [DeletedCopingStrategy] {
+        print("📋 Fetching deleted coping strategies for family: \(familyId)")
+        print("🔍 Searching for family_id: '\(familyId)'")
+        
+        do {
+            // First, let's see what's actually in the table
+            let allRecords: [DeletedCopingStrategy] = try await SupabaseManager.shared.client
+                .from("deleted_coping_strategies")
+                .select("*")
+                .execute()
+                .value
+            
+            print("📊 Total records in deleted_coping_strategies table: \(allRecords.count)")
+            for (index, record) in allRecords.enumerated() {
+                print("   Record \(index + 1): family_id='\(record.familyId)', content='\(record.content.prefix(50))...', deleted_at=\(record.deletedAt)")
+            }
+            
+            // Now try the specific family query (use lowercase for consistency)
+            let deletedStrategies: [DeletedCopingStrategy] = try await SupabaseManager.shared.client
+                .from("deleted_coping_strategies")
+                .select("*")
+                .eq("family_id", value: familyId.lowercased())
+                .order("deleted_at", ascending: false)
+                .execute()
+                .value
+            
+            print("✅ Found \(deletedStrategies.count) deleted coping strategies for family: \(familyId)")
+            return deletedStrategies
+        } catch {
+            print("❌ Error fetching deleted coping strategies: \(error)")
+            print("❌ Error details: \(error.localizedDescription)")
+            throw ContextualInsightError.databaseError(error)
+        }
+    }
+    
+    /// Restore a deleted coping strategy back to the main table
+    func restoreDeletedCopingStrategy(id: String) async throws {
+        print("♻️ Restoring deleted coping strategy: \(id)")
+        
+        do {
+            // Get the deleted strategy
+            let deletedStrategy: DeletedCopingStrategy = try await SupabaseManager.shared.client
+                .from("deleted_coping_strategies")
+                .select("*")
+                .eq("id", value: id)
+                .single()
+                .execute()
+                .value
+            
+            // Convert back to ChildRegulationInsight and save
+            let restoredInsight = deletedStrategy.toChildRegulationInsight()
+            try await saveChildRegulationInsights([restoredInsight])
+            
+            // Remove from deleted table
+            try await SupabaseManager.shared.client
+                .from("deleted_coping_strategies")
+                .delete()
+                .eq("id", value: id)
+                .execute()
+            
+            print("✅ Successfully restored coping strategy: \(id)")
+        } catch {
+            print("❌ Error restoring deleted coping strategy: \(error)")
+            throw ContextualInsightError.databaseError(error)
+        }
+    }
+    
+    /// Permanently delete a coping strategy from the deleted archive
+    func permanentlyDeleteCopingStrategy(id: String) async throws {
+        print("🗑️ Permanently deleting coping strategy from archive: \(id)")
+        
+        do {
+            try await SupabaseManager.shared.client
+                .from("deleted_coping_strategies")
+                .delete()
+                .eq("id", value: id)
+                .execute()
+            
+            print("✅ Successfully permanently deleted coping strategy: \(id)")
+        } catch {
+            print("❌ Error permanently deleting coping strategy: \(error)")
             throw ContextualInsightError.databaseError(error)
         }
     }

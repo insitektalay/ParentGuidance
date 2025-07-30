@@ -20,6 +20,16 @@
         }
       }
     },
+    "%lld item%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld item%2$@"
+          }
+        }
+      }
+    },
     "%lld members" : {
 
     },
@@ -1423,6 +1433,15 @@
     "Delete Insight" : {
 
     },
+    "Deleted %@" : {
+
+    },
+    "Deleted Coping Strategies" : {
+
+    },
+    "Deleted coping strategies will appear here so you can restore them if needed." : {
+
+    },
     "Describe what's happening with %@..." : {
 
     },
@@ -1533,6 +1552,9 @@
 
     },
     "Error" : {
+
+    },
+    "Error Loading Deleted Items" : {
 
     },
     "error.loading.insights" : {
@@ -2748,6 +2770,9 @@
         }
       }
     },
+    "Loading deleted strategies..." : {
+
+    },
     "Loading insights..." : {
 
     },
@@ -2755,6 +2780,9 @@
 
     },
     "More details mean better guidance." : {
+
+    },
+    "No Deleted Strategies" : {
 
     },
     "No insights collected yet" : {
@@ -2946,6 +2974,9 @@
           }
         }
       }
+    },
+    "Permanently Delete" : {
+
     },
     "placeholder.describeSituation" : {
       "extractionState" : "stale",
@@ -3488,6 +3519,15 @@
           }
         }
       }
+    },
+    "Restore" : {
+
+    },
+    "Restore Coping Strategy" : {
+
+    },
+    "Retry" : {
+
     },
     "Save" : {
 
@@ -5455,7 +5495,13 @@
     "Test API Key" : {
 
     },
+    "This will permanently delete this coping strategy. This action cannot be undone." : {
+
+    },
     "This will replace your current active provider" : {
+
+    },
+    "This will restore the coping strategy back to your active strategies." : {
 
     },
     "today.empty.createButton" : {
@@ -5559,6 +5605,9 @@
 
     },
     "Validation failed" : {
+
+    },
+    "View Deleted Items" : {
 
     },
     "Visit %@'s API key page" : {

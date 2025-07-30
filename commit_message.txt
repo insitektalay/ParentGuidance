@@ -1,21 +1,16 @@
-Fix scrolling conflicts and missing overall recommendations in guidance views
+Add deleted coping strategies archive and recovery system
 
-Resolved two critical UX issues in guidance display across the application:
+Implement comprehensive archive system for deleted coping strategy cards to prevent accidental data loss and enable
+recovery. When users delete coping strategies in the Library section, items are automatically saved to a new archive
+table before deletion, allowing users to browse and restore them later.
 
-Scrolling Conflict Resolution:
-- Removed nested ScrollView from GuidanceCard component to eliminate gesture conflicts between card content scrolling and
-  main screen scrolling
-- Replaced TabView with single card display and manual swipe gestures for cleaner interaction
-- Moved page indicators above guidance content for improved visual hierarchy
-- Applied consistent layout fixes across SituationGuidanceView and SituationDetailView
+Key features:
+- Database: Created deleted_coping_strategies table with proper RLS policies
+- Swift Model: Added DeletedCopingStrategy with conversion utilities
+- Service Layer: Enhanced ContextualInsightService with archive, restore, and permanent delete operations
+- UI Components: Built DeletedCopingStrategiesView and DeletedCopingStrategyCard with restore/delete actions
+- Navigation: Added "View Deleted Items" link in Coping Strategies section
+- Error Handling: Comprehensive logging and UUID case sensitivity fixes
 
-Overall Recommendation Display Fix:
-- Updated SituationGuidanceView's parseMultilingualGuidanceContentWithRecommendation to prioritize database field over
-  content parsing
-- Added fallback logic for backward compatibility with existing parsed content
-- Ensured overall recommendations now display consistently in both Today Timeline (via RoutineCard) and Library views
-- Maintained multilingual support and dynamic/fixed parsing modes
-
-These changes provide a smoother user experience with single vertical scroll areas, reliable horizontal swipe gestures,
-and consistent overall recommendation visibility across all guidance views.
-
+Users can now safely delete coping strategies knowing they can recover them through the "View Deleted Items" interface,
+with options to restore to active use or permanently remove from archive.

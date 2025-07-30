@@ -1,19 +1,17 @@
 //
-//  RegulationCategoryView.swift
+//  DeletedCopingStrategiesView.swift
 //  ParentGuidance
 //
-//  Created by alex kerss on 18/07/2025.
+//  Created by alex kerss on 30/07/2025.
 //
 
 import SwiftUI
 
-struct RegulationCategoryView: View {
+struct DeletedCopingStrategiesView: View {
     let familyId: String
-    let category: RegulationCategory
-    let insightCount: Int
     
     @Environment(\.dismiss) private var dismiss
-    @State private var insights: [ChildRegulationInsight] = []
+    @State private var deletedStrategies: [DeletedCopingStrategy] = []
     @State private var isLoading = true
     @State private var hasError = false
     @State private var errorMessage = ""
@@ -34,12 +32,12 @@ struct RegulationCategoryView: View {
                     Spacer()
                     
                     VStack(spacing: 4) {
-                        Text(category.parentFriendlyName)
+                        Text("Deleted Coping Strategies")
                             .font(.system(size: 20, weight: .semibold))
                             .foregroundColor(ColorPalette.white.opacity(0.9))
                         
-                        if insightCount > 0 {
-                            Text("\(insightCount) insight\(insightCount == 1 ? "" : "s")")
+                        if !deletedStrategies.isEmpty {
+                            Text("\(deletedStrategies.count) item\(deletedStrategies.count == 1 ? "" : "s")")
                                 .font(.system(size: 14))
                                 .foregroundColor(ColorPalette.white.opacity(0.7))
                         }
@@ -51,34 +49,15 @@ struct RegulationCategoryView: View {
                 .padding(.top, 12)
                 .padding(.bottom, 16)
                 
-                // Deleted items navigation (only for coping strategies)
-                if category == .copingStrategies {
-                    HStack {
-                        Spacer()
-                        NavigationLink(destination: DeletedCopingStrategiesView(familyId: familyId)) {
-                            HStack(spacing: 6) {
-                                Image(systemName: "archivebox")
-                                    .font(.system(size: 14, weight: .medium))
-                                Text("View Deleted Items")
-                                    .font(.system(size: 14, weight: .medium))
-                            }
-                            .foregroundColor(ColorPalette.brightBlue)
-                        }
-                        Spacer()
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 16)
-                }
-                
                 // Content
                 if isLoading {
                     loadingView
                 } else if hasError {
                     errorView
-                } else if insights.isEmpty {
+                } else if deletedStrategies.isEmpty {
                     emptyView
                 } else {
-                    insightListView
+                    strategiesListView
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -87,7 +66,7 @@ struct RegulationCategoryView: View {
         }
         .onAppear {
             Task {
-                await loadInsights()
+                await loadDeletedStrategies()
             }
         }
     }
@@ -98,7 +77,7 @@ struct RegulationCategoryView: View {
                 .scaleEffect(1.5)
                 .foregroundColor(ColorPalette.white.opacity(0.8))
             
-            Text("Loading insights...")
+            Text("Loading deleted strategies...")
                 .font(.system(size: 16))
                 .foregroundColor(ColorPalette.white.opacity(0.7))
         }
@@ -107,18 +86,22 @@ struct RegulationCategoryView: View {
     
     private var errorView: some View {
         VStack(spacing: 16) {
-            Text(String(localized: "error.loading.insights"))
+            Image(systemName: "exclamationmark.triangle")
+                .font(.system(size: 48, weight: .light))
+                .foregroundColor(ColorPalette.white.opacity(0.4))
+            
+            Text("Error Loading Deleted Items")
                 .font(.system(size: 18, weight: .medium))
                 .foregroundColor(ColorPalette.white.opacity(0.9))
             
-            Text(errorMessage.isEmpty ? String(localized: "error.tryAgainLater") : errorMessage)
+            Text(errorMessage.isEmpty ? "Please try again later." : errorMessage)
                 .font(.system(size: 14))
                 .foregroundColor(ColorPalette.white.opacity(0.7))
                 .multilineTextAlignment(.center)
             
-            Button(String(localized: "common.button.retry")) {
+            Button("Retry") {
                 Task {
-                    await loadInsights()
+                    await loadDeletedStrategies()
                 }
             }
             .foregroundColor(ColorPalette.terracotta)
@@ -130,15 +113,15 @@ struct RegulationCategoryView: View {
     
     private var emptyView: some View {
         VStack(spacing: 16) {
-            Image(systemName: category.iconName)
+            Image(systemName: "archivebox")
                 .font(.system(size: 48, weight: .light))
                 .foregroundColor(ColorPalette.white.opacity(0.4))
             
-            Text(String(localized: "regulation.empty.title"))
+            Text("No Deleted Strategies")
                 .font(.system(size: 18, weight: .medium))
                 .foregroundColor(ColorPalette.white.opacity(0.9))
             
-            Text(String(localized: "regulation.empty.description", defaultValue: "Insights for \(category.parentFriendlyName.lowercased()) will appear here as you add more situations."))
+            Text("Deleted coping strategies will appear here so you can restore them if needed.")
                 .font(.system(size: 14))
                 .foregroundColor(ColorPalette.white.opacity(0.7))
                 .multilineTextAlignment(.center)
@@ -147,15 +130,23 @@ struct RegulationCategoryView: View {
         .padding(.horizontal, 32)
     }
     
-    private var insightListView: some View {
+    private var strategiesListView: some View {
         ScrollView {
             LazyVStack(spacing: 12) {
-                ForEach(insights, id: \.id) { insight in
-                    RegulationInsightCard(insight: insight) {
-                        Task {
-                            await deleteInsight(insight)
+                ForEach(deletedStrategies, id: \.id) { deletedStrategy in
+                    DeletedCopingStrategyCard(
+                        deletedStrategy: deletedStrategy,
+                        onRestore: {
+                            Task {
+                                await restoreStrategy(deletedStrategy)
+                            }
+                        },
+                        onPermanentDelete: {
+                            Task {
+                                await permanentlyDeleteStrategy(deletedStrategy)
+                            }
                         }
-                    }
+                    )
                 }
             }
             .padding(.horizontal, 16)
@@ -164,19 +155,16 @@ struct RegulationCategoryView: View {
     }
     
     @MainActor
-    private func loadInsights() async {
+    private func loadDeletedStrategies() async {
         isLoading = true
         hasError = false
         errorMessage = ""
         
         do {
-            insights = try await ContextualInsightService.shared.getChildRegulationInsights(
-                familyId: familyId,
-                category: category
-            )
-            print("✅ Loaded \(insights.count) regulation insights for category: \(category.parentFriendlyName)")
+            deletedStrategies = try await ContextualInsightService.shared.getDeletedCopingStrategies(familyId: familyId)
+            print("✅ Loaded \(deletedStrategies.count) deleted coping strategies")
         } catch {
-            print("❌ Failed to load regulation insights: \(error)")
+            print("❌ Failed to load deleted coping strategies: \(error)")
             hasError = true
             errorMessage = error.localizedDescription
         }
@@ -185,22 +173,30 @@ struct RegulationCategoryView: View {
     }
     
     @MainActor
-    private func deleteInsight(_ insight: ChildRegulationInsight) async {
+    private func restoreStrategy(_ deletedStrategy: DeletedCopingStrategy) async {
         do {
-            try await ContextualInsightService.shared.deleteChildRegulationInsight(id: insight.id.uuidString)
-            insights.removeAll { $0.id == insight.id }
-            print("✅ Deleted regulation insight: \(insight.id)")
+            try await ContextualInsightService.shared.restoreDeletedCopingStrategy(id: deletedStrategy.id.uuidString)
+            deletedStrategies.removeAll { $0.id == deletedStrategy.id }
+            print("✅ Restored coping strategy: \(deletedStrategy.id)")
         } catch {
-            print("❌ Failed to delete regulation insight: \(error)")
+            print("❌ Failed to restore coping strategy: \(error)")
+            // Could show an error alert here if needed
+        }
+    }
+    
+    @MainActor
+    private func permanentlyDeleteStrategy(_ deletedStrategy: DeletedCopingStrategy) async {
+        do {
+            try await ContextualInsightService.shared.permanentlyDeleteCopingStrategy(id: deletedStrategy.id.uuidString)
+            deletedStrategies.removeAll { $0.id == deletedStrategy.id }
+            print("✅ Permanently deleted coping strategy: \(deletedStrategy.id)")
+        } catch {
+            print("❌ Failed to permanently delete coping strategy: \(error)")
             // Could show an error alert here if needed
         }
     }
 }
 
 #Preview {
-    RegulationCategoryView(
-        familyId: "preview-family-id",
-        category: .core,
-        insightCount: 5
-    )
+    DeletedCopingStrategiesView(familyId: "preview-family-id")
 }

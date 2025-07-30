@@ -138,6 +138,16 @@
 		94BC2DBE2E39EF6000B35676 /* DeletedCopingStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DBD2E39EF5D00B35676 /* DeletedCopingStrategy.swift */; };
 		94BC2DC02E39F19800B35676 /* DeletedCopingStrategiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DBF2E39F19700B35676 /* DeletedCopingStrategiesView.swift */; };
 		94BC2DC22E39F1AC00B35676 /* DeletedCopingStrategyCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DC12E39F1AB00B35676 /* DeletedCopingStrategyCard.swift */; };
+		94BC2DC52E3A118100B35676 /* Guidance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DC42E3A118100B35676 /* Guidance.swift */; };
+		94BC2DC72E3A118A00B35676 /* DeletedEmotionalRegulationInsight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DC62E3A118A00B35676 /* DeletedEmotionalRegulationInsight.swift */; };
+		94BC2DC92E3A11A100B35676 /* DeletedAttentionFocusInsight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DC82E3A11A000B35676 /* DeletedAttentionFocusInsight.swift */; };
+		94BC2DCB2E3A11AE00B35676 /* DeletedFlexibilitySocialInsight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DCA2E3A11AC00B35676 /* DeletedFlexibilitySocialInsight.swift */; };
+		94BC2DCD2E3A11C200B35676 /* DeletedEmotionalRegulationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DCC2E3A11C000B35676 /* DeletedEmotionalRegulationView.swift */; };
+		94BC2DCF2E3A11CB00B35676 /* DeletedAttentionFocusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DCE2E3A11CA00B35676 /* DeletedAttentionFocusView.swift */; };
+		94BC2DD12E3A11D500B35676 /* DeletedFlexibilitySocialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DD02E3A11D400B35676 /* DeletedFlexibilitySocialView.swift */; };
+		94BC2DD32E3A11E200B35676 /* DeletedEmotionalRegulationCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DD22E3A11E100B35676 /* DeletedEmotionalRegulationCard.swift */; };
+		94BC2DD52E3A11EC00B35676 /* DeletedAttentionFocusCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DD42E3A11EA00B35676 /* DeletedAttentionFocusCard.swift */; };
+		94BC2DD72E3A11F500B35676 /* DeletedFlexibilitySocialCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DD62E3A11F400B35676 /* DeletedFlexibilitySocialCard.swift */; };
 		94CBD5152E20F80C0014C22A /* FakeFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94CBD5142E20F80C0014C22A /* FakeFile.swift */; };
 		94FA10C42E056247003EC1E9 /* ParentGuidanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA10C32E056247003EC1E9 /* ParentGuidanceApp.swift */; };
 		94FA10C62E056247003EC1E9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA10C52E056247003EC1E9 /* ContentView.swift */; };
@@ -335,6 +345,17 @@
 		94BC2DBD2E39EF5D00B35676 /* DeletedCopingStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedCopingStrategy.swift; sourceTree = "<group>"; };
 		94BC2DBF2E39F19700B35676 /* DeletedCopingStrategiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedCopingStrategiesView.swift; sourceTree = "<group>"; };
 		94BC2DC12E39F1AB00B35676 /* DeletedCopingStrategyCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedCopingStrategyCard.swift; sourceTree = "<group>"; };
+		94BC2DC32E3A116600B35676 /* Untitled.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Untitled.swift; sourceTree = "<group>"; };
+		94BC2DC42E3A118100B35676 /* Guidance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Guidance.swift; sourceTree = "<group>"; };
+		94BC2DC62E3A118A00B35676 /* DeletedEmotionalRegulationInsight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedEmotionalRegulationInsight.swift; sourceTree = "<group>"; };
+		94BC2DC82E3A11A000B35676 /* DeletedAttentionFocusInsight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedAttentionFocusInsight.swift; sourceTree = "<group>"; };
+		94BC2DCA2E3A11AC00B35676 /* DeletedFlexibilitySocialInsight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedFlexibilitySocialInsight.swift; sourceTree = "<group>"; };
+		94BC2DCC2E3A11C000B35676 /* DeletedEmotionalRegulationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedEmotionalRegulationView.swift; sourceTree = "<group>"; };
+		94BC2DCE2E3A11CA00B35676 /* DeletedAttentionFocusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedAttentionFocusView.swift; sourceTree = "<group>"; };
+		94BC2DD02E3A11D400B35676 /* DeletedFlexibilitySocialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedFlexibilitySocialView.swift; sourceTree = "<group>"; };
+		94BC2DD22E3A11E100B35676 /* DeletedEmotionalRegulationCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedEmotionalRegulationCard.swift; sourceTree = "<group>"; };
+		94BC2DD42E3A11EA00B35676 /* DeletedAttentionFocusCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedAttentionFocusCard.swift; sourceTree = "<group>"; };
+		94BC2DD62E3A11F400B35676 /* DeletedFlexibilitySocialCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedFlexibilitySocialCard.swift; sourceTree = "<group>"; };
 		94CBD5142E20F80C0014C22A /* FakeFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FakeFile.swift; sourceTree = "<group>"; };
 		94FA10C02E056247003EC1E9 /* ParentGuidance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ParentGuidance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		94FA10C32E056247003EC1E9 /* ParentGuidanceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentGuidanceApp.swift; sourceTree = "<group>"; };
@@ -662,6 +683,11 @@
 		94FA10EF2E056303003EC1E9 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				94BC2DCA2E3A11AC00B35676 /* DeletedFlexibilitySocialInsight.swift */,
+				94BC2DC82E3A11A000B35676 /* DeletedAttentionFocusInsight.swift */,
+				94BC2DC62E3A118A00B35676 /* DeletedEmotionalRegulationInsight.swift */,
+				94BC2DC42E3A118100B35676 /* Guidance.swift */,
+				94BC2DC32E3A116600B35676 /* Untitled.swift */,
 				94BC2DBD2E39EF5D00B35676 /* DeletedCopingStrategy.swift */,
 				943BC9852E35D9310056EFF9 /* ApiKeyProvider.swift */,
 				943BC9862E35D9310056EFF9 /* UserApiKey.swift */,
@@ -827,6 +853,9 @@
 		94FA111A2E05C8E7003EC1E9 /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				94BC2DD02E3A11D400B35676 /* DeletedFlexibilitySocialView.swift */,
+				94BC2DCE2E3A11CA00B35676 /* DeletedAttentionFocusView.swift */,
+				94BC2DCC2E3A11C000B35676 /* DeletedEmotionalRegulationView.swift */,
 				94BC2DBF2E39F19700B35676 /* DeletedCopingStrategiesView.swift */,
 				943792A12E1BE9750089F512 /* Managers */,
 				943DFD752E18238E004F8043 /* Models */,
@@ -910,6 +939,9 @@
 		94FA11422E05CCC0003EC1E9 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				94BC2DD62E3A11F400B35676 /* DeletedFlexibilitySocialCard.swift */,
+				94BC2DD42E3A11EA00B35676 /* DeletedAttentionFocusCard.swift */,
+				94BC2DD22E3A11E100B35676 /* DeletedEmotionalRegulationCard.swift */,
 				94BC2DC12E39F1AB00B35676 /* DeletedCopingStrategyCard.swift */,
 				948156612E2904B100C28273 /* YourChildsWorldCard.swift */,
 				94FA113D2E05CC91003EC1E9 /* SearchBar.swift */,
@@ -1084,6 +1116,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				94FA11142E05C8A7003EC1E9 /* LibraryView.swift in Sources */,
+				94BC2DC72E3A118A00B35676 /* DeletedEmotionalRegulationInsight.swift in Sources */,
 				944EA1F82E2DF94600C110AF /* AccountSection.swift in Sources */,
 				9481566A2E2A108900C28273 /* NoticingWhatMattersCard.swift in Sources */,
 				943DFD872E182690004F8043 /* BulkActionBar.swift in Sources */,
@@ -1108,8 +1141,10 @@
 				94FA11052E056CCA003EC1E9 /* PlanSelectionView.swift in Sources */,
 				944EA2152E2E302D00C110AF /* PsychologistNote.swift in Sources */,
 				943792A52E1BE9970089F512 /* FrameworkRecommendationView.swift in Sources */,
+				94BC2DD12E3A11D500B35676 /* DeletedFlexibilitySocialView.swift in Sources */,
 				944EA1B42E2B6BBE00C110AF /* JoinFamilyView.swift in Sources */,
 				943DFD7F2E18265C004F8043 /* SearchStatesView.swift in Sources */,
+				94BC2DD52E3A11EC00B35676 /* DeletedAttentionFocusCard.swift in Sources */,
 				943DFD972E1A85B9004F8043 /* AppCoordinator.swift in Sources */,
 				94FA112E2E05CC15003EC1E9 /* SendButton.swift in Sources */,
 				944EA1FD2E2DFEDB00C110AF /* GuidanceModeCard.swift in Sources */,
@@ -1119,6 +1154,7 @@
 				943BC97B2E35D7770056EFF9 /* VoiceRecorderViewModel.swift in Sources */,
 				943BC97C2E35D7770056EFF9 /* MultiProviderApiKeyService.swift in Sources */,
 				94BC2DC02E39F19800B35676 /* DeletedCopingStrategiesView.swift in Sources */,
+				94BC2DC92E3A11A100B35676 /* DeletedAttentionFocusInsight.swift in Sources */,
 				94BC2DC22E39F1AC00B35676 /* DeletedCopingStrategyCard.swift in Sources */,
 				94FA112C2E05CC08003EC1E9 /* MicButton.swift in Sources */,
 				94FA11122E05C898003EC1E9 /* NewSituationView.swift in Sources */,
@@ -1163,12 +1199,14 @@
 				944EA1E92E2DE4A900C110AF /* SettingsFrameworkState.swift in Sources */,
 				948156542E253D4400C28273 /* VoiceRecorderDelegate.swift in Sources */,
 				943DFD742E180D40004F8043 /* SituationDetailView.swift in Sources */,
+				94BC2DC52E3A118100B35676 /* Guidance.swift in Sources */,
 				944EA20B2E2E0FDE00C110AF /* DeleteConfirmationTextField.swift in Sources */,
 				9481565A2E2773FC00C28273 /* DynamicGuidanceParser.swift in Sources */,
 				94FA11102E05C88A003EC1E9 /* TodayView.swift in Sources */,
 				94FA110B2E056D40003EC1E9 /* APIKeyView.swift in Sources */,
 				943DFD9B2E1A85EE004F8043 /* ConversationService.swift in Sources */,
 				943BC98C2E38A2000056EFF9 /* AIProcessingSection.swift in Sources */,
+				94BC2DCB2E3A11AE00B35676 /* DeletedFlexibilitySocialInsight.swift in Sources */,
 				944EA1AA2E2B566400C110AF /* FamilyLanguageService.swift in Sources */,
 				943DFD892E18269D004F8043 /* ExportSheet.swift in Sources */,
 				944EA1AE2E2B652D00C110AF /* TranslationService.swift in Sources */,
@@ -1179,16 +1217,19 @@
 				94FA11322E05CC30003EC1E9 /* ChildHeader.swift in Sources */,
 				944EA1EB2E2DE6A800C110AF /* SettingsViewState.swift in Sources */,
 				948156662E2904E100C28273 /* ContextInsightCard.swift in Sources */,
+				94BC2DD72E3A11F500B35676 /* DeletedFlexibilitySocialCard.swift in Sources */,
 				949600D52E20F2B1008EC0C0 /* AppCoordinatorView.swift in Sources */,
 				948156522E25370900C28273 /* VoiceRecorderService.swift in Sources */,
 				94FA11332E05CC40003EC1E9 /* RoutineCard.swift in Sources */,
 				944EA1B02E2B653D00C110AF /* FamilyInvitationService.swift in Sources */,
 				944EA1B62E2B70AC00C110AF /* TranslationQueueManager.swift in Sources */,
+				94BC2DCD2E3A11C200B35676 /* DeletedEmotionalRegulationView.swift in Sources */,
 				944EA2072E2E0E6E00C110AF /* SignOutConfirmationView.swift in Sources */,
 				948605CE2E115CB2008D92DE /* AlertView.swift in Sources */,
 				944EA2012E2E02B300C110AF /* LanguageSelectionView.swift in Sources */,
 				943DFDA22E1A86A4004F8043 /* OnboardingManager.swift in Sources */,
 				943DFD7D2E182650004F8043 /* CategoryFilterChips.swift in Sources */,
+				94BC2DD32E3A11E200B35676 /* DeletedEmotionalRegulationCard.swift in Sources */,
 				9481566C2E2A11E200C28273 /* RegulationInsightsView.swift in Sources */,
 				944EA2092E2E0EDB00C110AF /* DeleteAccountConfirmationView.swift in Sources */,
 				943792AB2E1C34520089F512 /* FrameworkGeneratingView.swift in Sources */,
@@ -1212,6 +1253,7 @@
 				943BC9882E35D9310056EFF9 /* ApiKeyProvider.swift in Sources */,
 				943792A92E1C2B610089F512 /* TabNavigationManager.swift in Sources */,
 				943BC9822E35D85A0056EFF9 /* ApiKeyProviderCard.swift in Sources */,
+				94BC2DCF2E3A11CB00B35676 /* DeletedAttentionFocusView.swift in Sources */,
 				943BC9832E35D85A0056EFF9 /* AddApiKeySheet.swift in Sources */,
 				94FA113E2E05CCA0003EC1E9 /* FoundationToolCard.swift in Sources */,
 				943BC98E2E38A2150056EFF9 /* AIProcessingSettings.swift in Sources */,

@@ -3429,6 +3429,226 @@
         }
       }
     },
+    "regulation.archive.button.viewDeleted" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View Deleted Items"
+          }
+        }
+      }
+    },
+    "regulation.archive.deleted.date" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deleted %@"
+          }
+        }
+      }
+    },
+    "regulation.archive.error.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error Loading Deleted Items"
+          }
+        }
+      }
+    },
+    "regulation.archive.loading" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading deleted items..."
+          }
+        }
+      }
+    },
+    "regulation.archive.permanentDelete.button" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permanently Delete"
+          }
+        }
+      }
+    },
+    "regulation.archive.permanentDelete.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This will permanently delete this insight. This action cannot be undone."
+          }
+        }
+      }
+    },
+    "regulation.archive.permanentDelete.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permanently Delete"
+          }
+        }
+      }
+    },
+    "regulation.archive.restore.button" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore"
+          }
+        }
+      }
+    },
+    "regulation.archive.restore.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This will restore the insight back to your active insights."
+          }
+        }
+      }
+    },
+    "regulation.archive.restore.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore Item"
+          }
+        }
+      }
+    },
+    "regulation.deleted.attention.count" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld item%@"
+          }
+        }
+      }
+    },
+    "regulation.deleted.attention.empty.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deleted attention & focus insights will appear here so you can restore them if needed."
+          }
+        }
+      }
+    },
+    "regulation.deleted.attention.empty.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Deleted Items"
+          }
+        }
+      }
+    },
+    "regulation.deleted.attention.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deleted Attention & Focus"
+          }
+        }
+      }
+    },
+    "regulation.deleted.emotional.count" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld item%@"
+          }
+        }
+      }
+    },
+    "regulation.deleted.emotional.empty.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deleted emotional regulation insights will appear here so you can restore them if needed."
+          }
+        }
+      }
+    },
+    "regulation.deleted.emotional.empty.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Deleted Items"
+          }
+        }
+      }
+    },
+    "regulation.deleted.emotional.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deleted Emotional Regulation"
+          }
+        }
+      }
+    },
+    "regulation.deleted.flexibility.count" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld item%@"
+          }
+        }
+      }
+    },
+    "regulation.deleted.flexibility.empty.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deleted flexibility & social insights will appear here so you can restore them if needed."
+          }
+        }
+      }
+    },
+    "regulation.deleted.flexibility.empty.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Deleted Items"
+          }
+        }
+      }
+    },
+    "regulation.deleted.flexibility.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deleted Flexibility & Social"
+          }
+        }
+      }
+    },
     "regulation.empty.description" : {
       "localizations" : {
         "en" : {
@@ -5605,9 +5825,6 @@
 
     },
     "Validation failed" : {
-
-    },
-    "View Deleted Items" : {
 
     },
     "Visit %@'s API key page" : {

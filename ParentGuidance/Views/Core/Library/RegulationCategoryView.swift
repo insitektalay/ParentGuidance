@@ -51,24 +51,60 @@ struct RegulationCategoryView: View {
                 .padding(.top, 12)
                 .padding(.bottom, 16)
                 
-                // Deleted items navigation (only for coping strategies)
-                if category == .copingStrategies {
-                    HStack {
-                        Spacer()
+                // Deleted items navigation for all categories
+                HStack {
+                    Spacer()
+                    
+                    switch category {
+                    case .copingStrategies:
                         NavigationLink(destination: DeletedCopingStrategiesView(familyId: familyId)) {
                             HStack(spacing: 6) {
                                 Image(systemName: "archivebox")
                                     .font(.system(size: 14, weight: .medium))
-                                Text("View Deleted Items")
+                                Text(String(localized: "regulation.archive.button.viewDeleted"))
                                     .font(.system(size: 14, weight: .medium))
                             }
                             .foregroundColor(ColorPalette.brightBlue)
                         }
-                        Spacer()
+                        
+                    case .core:
+                        NavigationLink(destination: DeletedEmotionalRegulationView(familyId: familyId)) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "archivebox")
+                                    .font(.system(size: 14, weight: .medium))
+                                Text(String(localized: "regulation.archive.button.viewDeleted"))
+                                    .font(.system(size: 14, weight: .medium))
+                            }
+                            .foregroundColor(ColorPalette.brightBlue)
+                        }
+                        
+                    case .adhd:
+                        NavigationLink(destination: DeletedAttentionFocusView(familyId: familyId)) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "archivebox")
+                                    .font(.system(size: 14, weight: .medium))
+                                Text(String(localized: "regulation.archive.button.viewDeleted"))
+                                    .font(.system(size: 14, weight: .medium))
+                            }
+                            .foregroundColor(ColorPalette.brightBlue)
+                        }
+                        
+                    case .mildAutism:
+                        NavigationLink(destination: DeletedFlexibilitySocialView(familyId: familyId)) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "archivebox")
+                                    .font(.system(size: 14, weight: .medium))
+                                Text(String(localized: "regulation.archive.button.viewDeleted"))
+                                    .font(.system(size: 14, weight: .medium))
+                            }
+                            .foregroundColor(ColorPalette.brightBlue)
+                        }
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 16)
+                    
+                    Spacer()
                 }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 16)
                 
                 // Content
                 if isLoading {

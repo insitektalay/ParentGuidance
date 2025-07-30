@@ -592,7 +592,7 @@ Core, ADHD, and Mild Autism.
 
 Each bullet point must:
 
-Be 1 sentence only
+Be short and concise — avoid full sentences or elaboration.
 
 Avoid speculation or inference beyond what is supported by the text
 
@@ -674,10 +674,6 @@ Output:
 <free-text narrative summary>
 `
 },
-    
-
-  },
-
   child_coping_strategies: {
     id: "pmpt_coping_strat",
     version: "1",
@@ -699,10 +695,6 @@ Extract a short, simple list of the child's main coping strategies from the foll
 
       {{source_text}}
   `
-    },
-    
-    
-    
-    
-  }
+    }
+  };
   

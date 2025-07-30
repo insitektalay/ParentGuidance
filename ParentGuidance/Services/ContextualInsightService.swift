@@ -837,14 +837,31 @@ class ContextualInsightService {
             
             print("✅ Found insight with category: \(insight.category.rawValue)")
             
-            // If it's a coping strategy, save to deleted archive first
-            if insight.category == .copingStrategies {
+            // Archive to appropriate deleted table based on category
+            switch insight.category {
+            case .copingStrategies:
                 print("🎯 This is a coping strategy - archiving before deletion")
                 let deletedStrategy = DeletedCopingStrategy(from: insight)
                 try await saveDeletedCopingStrategy(deletedStrategy)
                 print("📦 Archived coping strategy before deletion: \(id)")
-            } else {
-                print("ℹ️ Not a coping strategy (\(insight.category.rawValue)) - skipping archive")
+                
+            case .core:
+                print("🎯 This is an emotional regulation insight - archiving before deletion")
+                let deletedInsight = DeletedEmotionalRegulationInsight(from: insight)
+                try await saveDeletedEmotionalRegulationInsight(deletedInsight)
+                print("📦 Archived emotional regulation insight before deletion: \(id)")
+                
+            case .adhd:
+                print("🎯 This is an attention focus insight - archiving before deletion")
+                let deletedInsight = DeletedAttentionFocusInsight(from: insight)
+                try await saveDeletedAttentionFocusInsight(deletedInsight)
+                print("📦 Archived attention focus insight before deletion: \(id)")
+                
+            case .mildAutism:
+                print("🎯 This is a flexibility social insight - archiving before deletion")
+                let deletedInsight = DeletedFlexibilitySocialInsight(from: insight)
+                try await saveDeletedFlexibilitySocialInsight(deletedInsight)
+                print("📦 Archived flexibility social insight before deletion: \(id)")
             }
             
             print("🗑️ Now deleting from main table...")
@@ -875,6 +892,42 @@ class ContextualInsightService {
             .execute()
         
         print("✅ Successfully archived deleted coping strategy")
+    }
+    
+    /// Save a deleted emotional regulation insight to the archive table
+    private func saveDeletedEmotionalRegulationInsight(_ deletedInsight: DeletedEmotionalRegulationInsight) async throws {
+        print("📦 Saving deleted emotional regulation insight to archive: \(deletedInsight.id)")
+        
+        try await SupabaseManager.shared.client
+            .from("deleted_emotional_regulation_insights")
+            .insert(deletedInsight)
+            .execute()
+        
+        print("✅ Successfully archived deleted emotional regulation insight")
+    }
+    
+    /// Save a deleted attention focus insight to the archive table
+    private func saveDeletedAttentionFocusInsight(_ deletedInsight: DeletedAttentionFocusInsight) async throws {
+        print("📦 Saving deleted attention focus insight to archive: \(deletedInsight.id)")
+        
+        try await SupabaseManager.shared.client
+            .from("deleted_attention_focus_insights")
+            .insert(deletedInsight)
+            .execute()
+        
+        print("✅ Successfully archived deleted attention focus insight")
+    }
+    
+    /// Save a deleted flexibility social insight to the archive table
+    private func saveDeletedFlexibilitySocialInsight(_ deletedInsight: DeletedFlexibilitySocialInsight) async throws {
+        print("📦 Saving deleted flexibility social insight to archive: \(deletedInsight.id)")
+        
+        try await SupabaseManager.shared.client
+            .from("deleted_flexibility_social_insights")
+            .insert(deletedInsight)
+            .execute()
+        
+        print("✅ Successfully archived deleted flexibility social insight")
     }
     
     /// Get all deleted coping strategies for a family
@@ -959,6 +1012,225 @@ class ContextualInsightService {
             print("✅ Successfully permanently deleted coping strategy: \(id)")
         } catch {
             print("❌ Error permanently deleting coping strategy: \(error)")
+            throw ContextualInsightError.databaseError(error)
+        }
+    }
+    
+    // MARK: - Deleted Emotional Regulation Insights Management
+    
+    /// Get all deleted emotional regulation insights for a family
+    func getDeletedEmotionalRegulationInsights(familyId: String) async throws -> [DeletedEmotionalRegulationInsight] {
+        print("📋 Fetching deleted emotional regulation insights for family: \(familyId)")
+        
+        do {
+            let deletedInsights: [DeletedEmotionalRegulationInsight] = try await SupabaseManager.shared.client
+                .from("deleted_emotional_regulation_insights")
+                .select("*")
+                .eq("family_id", value: familyId.lowercased())
+                .order("deleted_at", ascending: false)
+                .execute()
+                .value
+            
+            print("✅ Found \(deletedInsights.count) deleted emotional regulation insights for family: \(familyId)")
+            return deletedInsights
+        } catch {
+            print("❌ Error fetching deleted emotional regulation insights: \(error)")
+            throw ContextualInsightError.databaseError(error)
+        }
+    }
+    
+    /// Restore a deleted emotional regulation insight back to the main table
+    func restoreDeletedEmotionalRegulationInsight(id: String) async throws {
+        print("♻️ Restoring deleted emotional regulation insight: \(id)")
+        
+        do {
+            // Get the deleted insight
+            let deletedInsight: DeletedEmotionalRegulationInsight = try await SupabaseManager.shared.client
+                .from("deleted_emotional_regulation_insights")
+                .select("*")
+                .eq("id", value: id)
+                .single()
+                .execute()
+                .value
+            
+            // Convert back to ChildRegulationInsight and save
+            let restoredInsight = deletedInsight.toChildRegulationInsight()
+            try await saveChildRegulationInsights([restoredInsight])
+            
+            // Remove from deleted table
+            try await SupabaseManager.shared.client
+                .from("deleted_emotional_regulation_insights")
+                .delete()
+                .eq("id", value: id)
+                .execute()
+            
+            print("✅ Successfully restored emotional regulation insight: \(id)")
+        } catch {
+            print("❌ Error restoring deleted emotional regulation insight: \(error)")
+            throw ContextualInsightError.databaseError(error)
+        }
+    }
+    
+    /// Permanently delete an emotional regulation insight from the deleted archive
+    func permanentlyDeleteEmotionalRegulationInsight(id: String) async throws {
+        print("🗑️ Permanently deleting emotional regulation insight from archive: \(id)")
+        
+        do {
+            try await SupabaseManager.shared.client
+                .from("deleted_emotional_regulation_insights")
+                .delete()
+                .eq("id", value: id)
+                .execute()
+            
+            print("✅ Successfully permanently deleted emotional regulation insight: \(id)")
+        } catch {
+            print("❌ Error permanently deleting emotional regulation insight: \(error)")
+            throw ContextualInsightError.databaseError(error)
+        }
+    }
+    
+    // MARK: - Deleted Attention Focus Insights Management
+    
+    /// Get all deleted attention focus insights for a family
+    func getDeletedAttentionFocusInsights(familyId: String) async throws -> [DeletedAttentionFocusInsight] {
+        print("📋 Fetching deleted attention focus insights for family: \(familyId)")
+        
+        do {
+            let deletedInsights: [DeletedAttentionFocusInsight] = try await SupabaseManager.shared.client
+                .from("deleted_attention_focus_insights")
+                .select("*")
+                .eq("family_id", value: familyId.lowercased())
+                .order("deleted_at", ascending: false)
+                .execute()
+                .value
+            
+            print("✅ Found \(deletedInsights.count) deleted attention focus insights for family: \(familyId)")
+            return deletedInsights
+        } catch {
+            print("❌ Error fetching deleted attention focus insights: \(error)")
+            throw ContextualInsightError.databaseError(error)
+        }
+    }
+    
+    /// Restore a deleted attention focus insight back to the main table
+    func restoreDeletedAttentionFocusInsight(id: String) async throws {
+        print("♻️ Restoring deleted attention focus insight: \(id)")
+        
+        do {
+            // Get the deleted insight
+            let deletedInsight: DeletedAttentionFocusInsight = try await SupabaseManager.shared.client
+                .from("deleted_attention_focus_insights")
+                .select("*")
+                .eq("id", value: id)
+                .single()
+                .execute()
+                .value
+            
+            // Convert back to ChildRegulationInsight and save
+            let restoredInsight = deletedInsight.toChildRegulationInsight()
+            try await saveChildRegulationInsights([restoredInsight])
+            
+            // Remove from deleted table
+            try await SupabaseManager.shared.client
+                .from("deleted_attention_focus_insights")
+                .delete()
+                .eq("id", value: id)
+                .execute()
+            
+            print("✅ Successfully restored attention focus insight: \(id)")
+        } catch {
+            print("❌ Error restoring deleted attention focus insight: \(error)")
+            throw ContextualInsightError.databaseError(error)
+        }
+    }
+    
+    /// Permanently delete an attention focus insight from the deleted archive
+    func permanentlyDeleteAttentionFocusInsight(id: String) async throws {
+        print("🗑️ Permanently deleting attention focus insight from archive: \(id)")
+        
+        do {
+            try await SupabaseManager.shared.client
+                .from("deleted_attention_focus_insights")
+                .delete()
+                .eq("id", value: id)
+                .execute()
+            
+            print("✅ Successfully permanently deleted attention focus insight: \(id)")
+        } catch {
+            print("❌ Error permanently deleting attention focus insight: \(error)")
+            throw ContextualInsightError.databaseError(error)
+        }
+    }
+    
+    // MARK: - Deleted Flexibility Social Insights Management
+    
+    /// Get all deleted flexibility social insights for a family
+    func getDeletedFlexibilitySocialInsights(familyId: String) async throws -> [DeletedFlexibilitySocialInsight] {
+        print("📋 Fetching deleted flexibility social insights for family: \(familyId)")
+        
+        do {
+            let deletedInsights: [DeletedFlexibilitySocialInsight] = try await SupabaseManager.shared.client
+                .from("deleted_flexibility_social_insights")
+                .select("*")
+                .eq("family_id", value: familyId.lowercased())
+                .order("deleted_at", ascending: false)
+                .execute()
+                .value
+            
+            print("✅ Found \(deletedInsights.count) deleted flexibility social insights for family: \(familyId)")
+            return deletedInsights
+        } catch {
+            print("❌ Error fetching deleted flexibility social insights: \(error)")
+            throw ContextualInsightError.databaseError(error)
+        }
+    }
+    
+    /// Restore a deleted flexibility social insight back to the main table
+    func restoreDeletedFlexibilitySocialInsight(id: String) async throws {
+        print("♻️ Restoring deleted flexibility social insight: \(id)")
+        
+        do {
+            // Get the deleted insight
+            let deletedInsight: DeletedFlexibilitySocialInsight = try await SupabaseManager.shared.client
+                .from("deleted_flexibility_social_insights")
+                .select("*")
+                .eq("id", value: id)
+                .single()
+                .execute()
+                .value
+            
+            // Convert back to ChildRegulationInsight and save
+            let restoredInsight = deletedInsight.toChildRegulationInsight()
+            try await saveChildRegulationInsights([restoredInsight])
+            
+            // Remove from deleted table
+            try await SupabaseManager.shared.client
+                .from("deleted_flexibility_social_insights")
+                .delete()
+                .eq("id", value: id)
+                .execute()
+            
+            print("✅ Successfully restored flexibility social insight: \(id)")
+        } catch {
+            print("❌ Error restoring deleted flexibility social insight: \(error)")
+            throw ContextualInsightError.databaseError(error)
+        }
+    }
+    
+    /// Permanently delete a flexibility social insight from the deleted archive
+    func permanentlyDeleteFlexibilitySocialInsight(id: String) async throws {
+        print("🗑️ Permanently deleting flexibility social insight from archive: \(id)")
+        
+        do {
+            try await SupabaseManager.shared.client
+                .from("deleted_flexibility_social_insights")
+                .delete()
+                .eq("id", value: id)
+                .execute()
+            
+            print("✅ Successfully permanently deleted flexibility social insight: \(id)")
+        } catch {
+            print("❌ Error permanently deleting flexibility social insight: \(error)")
             throw ContextualInsightError.databaseError(error)
         }
     }

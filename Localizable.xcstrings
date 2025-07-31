@@ -2562,6 +2562,117 @@
         }
       }
     },
+    "library.regenerate.button" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regenerate"
+          }
+        }
+      }
+    },
+    "library.regenerate.confirmation.action" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regenerate All"
+          }
+        }
+      }
+    },
+    "library.regenerate.confirmation.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This will delete all existing insights and regenerate them from your situations. This action cannot be undone."
+          }
+        }
+      }
+    },
+    "library.regenerate.confirmation.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regenerate All Insights"
+          }
+        }
+      }
+    },
+    "library.regenerate.error.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to regenerate insights. Please try again."
+          }
+        }
+      }
+    },
+    "library.regenerate.error.noApiKey" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API key not found. Please check your settings."
+          }
+        }
+      }
+    },
+    "library.regenerate.error.noFamily" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Family ID not available."
+          }
+        }
+      }
+    },
+    "library.regenerate.error.noUser" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "User authentication required."
+          }
+        }
+      }
+    },
+    "library.regenerate.error.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regeneration Failed"
+          }
+        }
+      }
+    },
+    "library.regenerate.success.message %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Successfully regenerated %lld insights from your situations."
+          }
+        }
+      }
+    },
+    "library.regenerate.success.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regeneration Complete"
+          }
+        }
+      }
+    },
     "library.search.empty.subtitle" : {
       "localizations" : {
         "en" : {

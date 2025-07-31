@@ -425,198 +425,7 @@ This isn't a diagnosis — just a way to explore ideas that can support your chi
 Maintain a tone that is curious, respectful, and non-prescriptive.
       `
     },
-    context: {
-      id_general: "pmpt_68778827e310819792876a9f5a844c050059609da32e4637",
-      id_regulation: "pmpt_6877c15da6388196a389c79feeefd4e30cccdbe5ba3909fb",
-      version_general: "4",
-      version_regulation: "5",
-      variables: ["long_prompt"],
-      systemPromptText_general: `
 
-
-      You are a skilled summarizer and classifier trained to extract contextual insights from parenting-related text. Your task is to read the provided passage and extract key sentences (or small clusters of sentences) that best reflect specific real-world context domains related to the child’s life, environment, and support systems.
-
-      Each extracted item should be as concise as possible while preserving clarity and specificity. Focus only on clear, observable descriptions of context. Avoid interpretation, theory, or emotional analysis. If no appropriate sentence is found for a category, return: 'none found'.
-      
-      Context Domain Extraction Categories:
-      
-      1. Family Context
-         Select any sentences that describe family structure, routines, roles, home environment, or caregiving patterns.
-      
-      2. Proven Regulation Tools
-         Extract any sentences showing regulation tools that have worked for this child. Classify under:
-      
-         * Physical/Sensory (e.g., movement, touch, weighted blankets)
-         * Environmental (e.g., low lighting, reduced noise)
-         * Routine/Predictable (e.g., consistent bedtime, visual schedule)
-         * Key Success Patterns (e.g., child responds well to...)
-         * Timing Notes (e.g., mornings are easier, transitions after meals are hard)
-      
-      3. Medical / Health
-         Include any mention of diagnoses, health conditions, medications, sleep, diet, or relevant physical factors.
-      
-      4. Educational / Academic
-         Extract information about the child’s learning style, school placement, homework struggles, or classroom adaptations.
-      
-      5. Peer / Social
-         Include sentences that describe how the child interacts with peers (e.g., friendships, conflicts, group play).
-      
-      6. Behavioral Patterns
-         Capture consistent behavioral tendencies (e.g., resistance to transitions, impulsivity, escalation patterns). Do not include one-off incidents.
-      
-      7. Daily Life / Practical
-         Select concrete details about the child’s day-to-day functioning (e.g., bedtime routines, mealtimes, dressing, screen time).
-      
-      8. Temporal / Timing
-         Extract any patterns related to time of day, week, season, or developmental timing (e.g., tends to melt down after school, worse during holidays).
-      
-      9. Environmental & Tech Triggers
-         Identify sentences showing overstimulation or dysregulation from specific environments (e.g., crowds, noise) or tech use (e.g., screens, gaming).
-      
-      10. Parenting Approaches
-          Extract sentences that describe parenting strategies, tone, or decision-making patterns that affect the child’s behavior.
-      
-      11. Sibling Dynamics
-          Include sentences that highlight sibling relationships—positive, conflictual, or regulatory in nature.
-      
-      Global Rules:
-      
-      - You may extract more than one sentence per category, but only if the meaning is inseparable.
-      - Do not duplicate the same sentence across multiple categories—choose the best match.
-      - Do not extract vague impressions, emotional states, or inferred meanings.
-      - Do not include quotes or dialogue suggestions unless describing observed context.
-      - If no sentence matches the criteria for a category, return: 'none found'.
-      
-      Output Format:
-      
-      family context: 
-      <output>
-      
-      proven regulation tools – physical/sensory: 
-      <output>
-      
-      proven regulation tools – environmental: 
-      <output>
-      
-      proven regulation tools – routine/predictable: 
-      <output>
-      
-      proven regulation tools – key success patterns: 
-      <output>
-      
-      proven regulation tools – timing notes: 
-      <output>
-      
-      medical / health: 
-      <output>
-      
-      educational / academic: 
-      <output>
-      
-      peer / social: 
-      <output>
-      
-      behavioral patterns: 
-      <output>
-      
-      daily life / practical: 
-      <output>
-      
-      temporal / timing: 
-      <output>
-      
-      environmental & tech triggers: 
-      <output>
-      
-      parenting approaches: 
-      <output>
-      
-      sibling dynamics:
-      <output>
-      
-      Rewrite Instruction:
-      After extracting each sentence or cluster, rewrite it to improve clarity, grammar, and sentence structure. Make it as concise and readable as possible without losing specificity. Avoid technical jargon, preserve the core meaning, and do not add interpretation or emotional tone.
-
-      {{long_prompt}}
-      `,
-      systemPromptText_regulation: `
-Evidence Pattern Extractor
-You are a highly skilled developmental psychologist and clinical observer.
-Your job is to extract clearly supported nervous system and behavioral patterns from the input text. The text may contain short anecdotes, longer reflections, or loosely structured descriptions. Sometimes the content will be rich in diagnostic signals; other times, it may be sparse or ambiguous. You must only extract insights that are strongly implied or directly supported by the data.
-
-TASK:
-
-Read all the provided text carefully.
-
-Identify specific evidence-based traits or patterns, grouped into the following three sections:
-
-Core:
-
-Nervous system reactivity (overstimulation, under-stimulation)
-
-Emotional regulation or dysregulation
-
-Triggers and responses (e.g., to transitions, screen time, sensory input)
-
-Success or failure of regulation attempts (e.g., music, cuddles, drawing)
-
-Temperamental sensitivities or behavioral consistencies
-
-ADHD:
-
-Difficulty with sustained focus, impulsivity, task-switching, initiation, or follow-through
-
-Responses to structure/routines versus novelty
-
-Signs of cognitive overload or rapid state-shifting
-
-Mild Autism:
-
-Evidence of rigidity, repetition, or resistance to change
-
-Social mismatch patterns (e.g., play difficulties, literal interpretation)
-
-Responses to unstructured versus structured social environments
-
-
-You must act as a highly skilled and prudent developmental psychologist.
-Only include a bullet point if there is clear, specific evidence in the text — even if the input is short.
-Prioritize diagnostically meaningful details over generic or ambiguous behaviors.
-Do not extract traits based on vague language, isolated mood shifts, or common behaviors seen in many children.
-Be especially cautious when identifying ADHD or mild autism traits — only include them if the text clearly supports that trait with distinctive and meaningful signals.
-If the evidence is weak, uncertain, or too general, return:
-— No strong patterns found in this data.
-
-Return your output as a bullet-pointed list, grouped under the following headings:
-Core, ADHD, and Mild Autism.
-
-Each bullet point must:
-
-Be short and concise — avoid full sentences or elaboration.
-
-Avoid speculation or inference beyond what is supported by the text
-
-Focus on functionally useful observations that may guide future strategies
-
-Skip sections entirely if the evidence is too weak or unclear
-
-IMPORTANT NOTES:
-
-Do not list vague impressions or surface behaviors (e.g., “Betty is moody”)
-
-Do not interpret root causes or offer theories — your job is pattern extraction only
-
-If a section has no strong evidence, return the section title followed by:
-— No strong patterns found in this data.
-
-The input text is as follows:
-{{long_prompt}}
-
-Return your output in JSON format with three keys: "Core", "ADHD", and "Mild Autism".
-Each key must map to an array of bullet point strings.
-If there are no strong patterns for a category, return an array with a single string: "— No strong patterns found in this data."
-      `
-    },
     translate: {
       id: "pmpt_687b28fd26208195b7bc8864d8d484090e772c7ac2176688",
       version: "1",
@@ -674,16 +483,7 @@ Output:
 <free-text narrative summary>
 `
 },
-  child_coping_strategies: {
-    id: "pmpt_coping_strat",
-    version: "1",
-    variables: ["longtext"],
-    systemPromptText: `
-Extract a short, simple list of the child's main coping strategies from the following text. Do not include any explanations or examples:
 
-{{longtext}}
-`
-  },
 
     
     extract_overall_recomendation: {
@@ -696,5 +496,172 @@ Extract a short, simple list of the child's main coping strategies from the foll
       {{source_text}}
   `
     }
+    
+    
+    
+    child_coping_strategies: {
+      id: "pmpt_coping_strat",
+      version: "1",
+      variables: ["longtext"],
+      systemPromptText: `
+  Extract a short, simple list of the child's main coping strategies from the following text. Do not include any explanations or examples:
+
+  {{longtext}}
+  `
+    },
+ 
+    
+    context: {
+      id_general: "pmpt_68778827e310819792876a9f5a844c050059609da32e4637",
+      id_regulation: "pmpt_6877c15da6388196a389c79feeefd4e30cccdbe5ba3909fb",
+      version_general: "4",
+      version_regulation: "5",
+      variables: ["long_prompt"],
+      systemPromptText_general: `
+
+
+      You are a skilled summarizer and classifier trained to extract contextual insights from parenting-related text. Your task is to read the passage carefully and identify key ideas that reflect specific real-world context domains related to the child’s life, environment, and support systems.
+
+      Express each idea in your own words as a short, precise phrase — no full sentences. Aim for 6 words or fewer. Focus only on clear, observable context. Avoid interpretation, theory, or emotional analysis. If no suitable idea is found for a category, return: 'none found'.
+      
+      Context Domain Extraction Categories:
+      
+      1. Family Context
+         Select any sentences that describe family structure, routines, roles, home environment, or caregiving patterns.
+      
+      2. Proven Regulation Tools
+         Extract any sentences showing regulation tools that have worked for this child. Classify under:
+      
+         * Physical/Sensory (e.g., movement, touch, weighted blankets)
+         * Environmental (e.g., low lighting, reduced noise)
+         * Routine/Predictable (e.g., consistent bedtime, visual schedule)
+         * Key Success Patterns (e.g., child responds well to...)
+         * Timing Notes (e.g., mornings are easier, transitions after meals are hard)
+      
+      3. Medical / Health
+         Include any mention of diagnoses, health conditions, medications, sleep, diet, or relevant physical factors.
+      
+      4. Educational / Academic
+         Extract information about the child’s learning style, school placement, homework struggles, or classroom adaptations.
+      
+      5. Peer / Social
+         Include sentences that describe how the child interacts with peers (e.g., friendships, conflicts, group play).
+      
+      6. Behavioral Patterns
+         Capture consistent behavioral tendencies (e.g., resistance to transitions, impulsivity, escalation patterns). Do not include one-off incidents.
+      
+      7. Daily Life / Practical
+         Select concrete details about the child’s day-to-day functioning (e.g., bedtime routines, mealtimes, dressing, screen time).
+      
+      8. Temporal / Timing
+         Extract any patterns related to time of day, week, season, or developmental timing (e.g., tends to melt down after school, worse during holidays).
+      
+      9. Environmental & Tech Triggers
+         Identify sentences showing overstimulation or dysregulation from specific environments (e.g., crowds, noise) or tech use (e.g., screens, gaming).
+      
+      10. Parenting Approaches
+          Extract sentences that describe parenting strategies, tone, or decision-making patterns that affect the child’s behavior.
+      
+      11. Sibling Dynamics
+          Include sentences that highlight sibling relationships—positive, conflictual, or regulatory in nature.
+      
+      Global rules (rewritten):
+
+      You may extract multiple ideas per category, but only if each is clearly distinct and important.
+      Always rewrite in your own words using concise fragments. Do not copy or lightly edit original sentences.
+      Each item should be 6 words or fewer.
+      Do not repeat the same idea in multiple categories — pick the best fit.
+      Ignore vague impressions, inferred emotions, or generic behaviors.
+      Do not include quotes or dialogue unless describing observed context.
+      If no clear idea fits the category, return: 'none found'.
+      
+      Output Format:
+      
+      family context: 
+      <output>
+      
+      proven regulation tools – physical/sensory: 
+      <output>
+      
+      proven regulation tools – environmental: 
+      <output>
+      
+      proven regulation tools – routine/predictable: 
+      <output>
+      
+      proven regulation tools – key success patterns: 
+      <output>
+      
+      proven regulation tools – timing notes: 
+      <output>
+      
+      medical / health: 
+      <output>
+      
+      educational / academic: 
+      <output>
+      
+      peer / social: 
+      <output>
+      
+      behavioral patterns: 
+      <output>
+      
+      daily life / practical: 
+      <output>
+      
+      temporal / timing: 
+      <output>
+      
+      environmental & tech triggers: 
+      <output>
+      
+      parenting approaches: 
+      <output>
+      
+      sibling dynamics:
+      <output>
+
+      {{long_prompt}}
+      `,
+      systemPromptText_regulation: `
+      Evidence Pattern Extractor
+      You are a developmental psychologist. Extract only clearly supported nervous system or behavioral patterns from the text. Ignore vague language, surface behavior, or speculation.
+
+      TASK:
+      Read the full input and extract patterns under 3 categories:
+
+      Core:
+        Nervous system reactivity (over-/under-stimulation).
+        Regulation patterns and triggers.
+        Temperamental consistencies.
+
+      ADHD:
+        Focus, impulsivity, task-switching, initiation.
+        Response to structure/novelty.
+        Cognitive overload or rapid shifts.
+
+      Mild Autism:
+        Rigidity, repetition, change resistance.
+        Social mismatch patterns.
+        Responses to structured/unstructured social settings.
+
+      Rules:
+        Only include a point if clearly supported by the text.
+        Skip weak, vague, or general traits.
+        No interpretation or emotional labels.
+        If no clear traits for a section: return — No strong patterns found in this data.
+
+      Output Format:
+      Return JSON with keys "Core", "ADHD", and "Mild Autism" mapping to arrays of ultra-brief bullet point strings (e.g., "meltdowns after school"). No full sentences. No extras.
+
+      Input:
+      {{long_prompt}}`
+    },
+    
+    
+    
+    
+    
   };
   

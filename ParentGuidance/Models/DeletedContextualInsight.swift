@@ -17,7 +17,7 @@ struct DeletedContextualInsight: Codable, Identifiable {
     let category: ContextCategory
     let subcategory: ContextSubcategory?
     let content: String
-    let sourceSituationId: String
+    let sourceSituationId: String?
     let deletedAt: Date
     let deletedReason: String?
     let createdAt: String

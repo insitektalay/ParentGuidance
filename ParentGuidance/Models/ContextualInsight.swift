@@ -116,7 +116,9 @@ struct ContextualInsight: Codable {
     let category: ContextCategory
     let subcategory: ContextSubcategory?
     let content: String
-    let sourceSituationId: String
+    /// References the situation this insight was extracted from.
+    /// Can be nil for insights generated during bulk regeneration from multiple situations.
+    let sourceSituationId: String?
     let createdAt: String
     let updatedAt: String
     
@@ -138,7 +140,7 @@ struct ContextualInsight: Codable {
         category: ContextCategory,
         subcategory: ContextSubcategory? = nil,
         content: String,
-        sourceSituationId: String
+        sourceSituationId: String? = nil
     ) {
         self.id = UUID().uuidString
         self.familyId = familyId
@@ -158,7 +160,7 @@ struct ContextualInsight: Codable {
         familyId = try container.decode(String.self, forKey: .familyId)
         childId = try container.decodeIfPresent(String.self, forKey: .childId)
         content = try container.decode(String.self, forKey: .content)
-        sourceSituationId = try container.decode(String.self, forKey: .sourceSituationId)
+        sourceSituationId = try container.decodeIfPresent(String.self, forKey: .sourceSituationId)
         createdAt = try container.decode(String.self, forKey: .createdAt)
         updatedAt = try container.decode(String.self, forKey: .updatedAt)
         

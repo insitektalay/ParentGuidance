@@ -12,7 +12,8 @@ class ContextualInsightService {
     static let shared = ContextualInsightService()
     
     /// Feature flag to use Edge Function instead of direct OpenAI API
-    private let useEdgeFunction = UserDefaults.standard.bool(forKey: "context_use_edge_function")
+    /// Default to true to support multi-provider API keys
+    private let useEdgeFunction = UserDefaults.standard.object(forKey: "context_use_edge_function") as? Bool ?? true
     
     private init() {}
     
@@ -36,9 +37,9 @@ class ContextualInsightService {
         apiKey: String,
         familyId: String,
         childId: String? = nil,
-        situationId: String
+        situationId: String? = nil
     ) async throws -> [ChildRegulationInsight] {
-        print("🧠 Starting child regulation insights extraction for situation: \(situationId)")
+        print("🧠 Starting child regulation insights extraction for situation: \(situationId ?? "regeneration")")
         print("📝 Situation text: \(situationText.prefix(100))...")
         
         // Choose implementation based on feature flag
@@ -75,9 +76,9 @@ class ContextualInsightService {
         apiKey: String,
         familyId: String,
         childId: String? = nil,
-        situationId: String
+        situationId: String? = nil
     ) async throws -> [ChildRegulationInsight] {
-        print("🧠 Starting coping strategies extraction for situation: \(situationId)")
+        print("🧠 Starting coping strategies extraction for situation: \(situationId ?? "regeneration")")
         print("📝 Situation text: \(situationText.prefix(100))...")
         
         // Choose implementation based on feature flag
@@ -209,7 +210,16 @@ class ContextualInsightService {
             )
             
             print("✅ Child regulation insights extracted via Edge Function")
-            return response
+            print("🔍 Validating response encoding before returning...")
+            
+            // Double-check that the response is valid UTF-8
+            if response.data(using: .utf8) != nil {
+                print("✅ Response is valid UTF-8, safe to proceed")
+                return response
+            } else {
+                print("❌ Response contains invalid UTF-8 characters from Edge Function!")
+                throw ContextualInsightError.parsingError(NSError(domain: "UTF8ValidationError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Response from Edge Function contains invalid UTF-8 characters"]))
+            }
             
         } catch {
             print("❌ Edge Function regulation insights extraction failed: \(error)")
@@ -286,9 +296,9 @@ class ContextualInsightService {
         apiKey: String,
         familyId: String,
         childId: String? = nil,
-        situationId: String
+        situationId: String? = nil
     ) async throws -> [ContextualInsight] {
-        print("🔍 Starting context extraction for situation: \(situationId)")
+        print("🔍 Starting context extraction for situation: \(situationId ?? "regeneration")")
         print("📝 Situation text: \(situationText.prefix(100))...")
         
         // Choose implementation based on feature flag
@@ -307,6 +317,13 @@ class ContextualInsightService {
             )
         }
         
+        // Debug: Log the full response content for analysis
+        print("🔍 [DEBUG] Full context response content:")
+        print("📝 Response length: \(content.count) characters")
+        print("📝 Response preview (first 1000 chars): \(content.prefix(1000))")
+        print("📝 Response sample (last 500 chars): \(content.suffix(500))")
+        print("🔍 [DEBUG] =====================================")
+        
         // Parse the 14-section response into contextual insights using existing logic
         let insights = parseContextResponse(
             content: content,
@@ -315,7 +332,11 @@ class ContextualInsightService {
             situationId: situationId
         )
         
-        print("✅ Parsed \(insights.count) contextual insights")
+        print("✅ Parsed \(insights.count) contextual insights from \(content.count) chars")
+        if insights.isEmpty {
+            print("⚠️ WARNING: Zero insights parsed! This suggests a format mismatch.")
+            print("⚠️ Check the Edge Function response format above.")
+        }
         return insights
     }
     
@@ -334,10 +355,25 @@ class ContextualInsightService {
             )
             
             print("✅ Context extracted via Edge Function")
-            return response
+            print("🔍 Response preview: \(response.prefix(200))...")
+            print("🔍 Response length: \(response.count)")
+            print("🔍 Validating response encoding before returning...")
+            
+            // Double-check that the response is valid UTF-8
+            if response.data(using: .utf8) != nil {
+                print("✅ Response is valid UTF-8, safe to proceed")
+                return response
+            } else {
+                print("❌ Response contains invalid UTF-8 characters from Edge Function!")
+                throw ContextualInsightError.parsingError(NSError(domain: "UTF8ValidationError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Context response from Edge Function contains invalid UTF-8 characters"]))
+            }
             
         } catch {
             print("❌ Edge Function context extraction failed: \(error)")
+            print("❌ Error details: \(error.localizedDescription)")
+            if let errorData = error as? EdgeFunctionError {
+                print("❌ EdgeFunctionError: \(errorData)")
+            }
             throw ContextualInsightError.apiError(0)
         }
     }
@@ -412,7 +448,7 @@ class ContextualInsightService {
         content: String,
         familyId: String,
         childId: String?,
-        situationId: String
+        situationId: String?
     ) throws -> [ChildRegulationInsight] {
         print("🧠 Parsing coping strategies response...")
         
@@ -460,13 +496,18 @@ class ContextualInsightService {
         content: String,
         familyId: String,
         childId: String?,
-        situationId: String
+        situationId: String?
     ) throws -> [ChildRegulationInsight] {
         print("🧠 Parsing regulation insights JSON response...")
         
         // Try to parse as JSON first
+        print("🔍 Attempting to parse regulation response content:")
+        print("🔍 Content preview: \(content.prefix(300))...")
+        print("🔍 Content length: \(content.count)")
+        
         guard let jsonData = content.data(using: .utf8) else {
             print("❌ Could not convert response to data")
+            print("❌ Content appears to be invalid UTF-8")
             throw ContextualInsightError.parsingError(NSError(domain: "JSONParsingError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Could not convert response to data"]))
         }
         
@@ -505,7 +546,7 @@ class ContextualInsightService {
         content: String,
         familyId: String,
         childId: String?,
-        situationId: String
+        situationId: String?
     ) -> [ChildRegulationInsight] {
         print("🔄 Using fallback parsing for regulation insights...")
         
@@ -598,7 +639,7 @@ class ContextualInsightService {
         content: String,
         familyId: String,
         childId: String?,
-        situationId: String
+        situationId: String?
     ) -> [ContextualInsight] {
         print("🔍 Parsing context response into structured insights...")
         
@@ -624,14 +665,19 @@ class ContextualInsightService {
         ]
         
         for sectionKey in sections {
+            print("🔍 [PARSING] Looking for section: '\(sectionKey)'")
             if let extractedContent = extractSectionContent(from: content, sectionKey: sectionKey) {
+                print("✅ [PARSING] Found content for '\(sectionKey)': \(extractedContent.prefix(100))...")
+                
                 // Skip "none found" responses
                 if extractedContent.lowercased().contains("none found") {
+                    print("⚠️ [PARSING] Skipping '\(sectionKey)' - contains 'none found'")
                     continue
                 }
                 
                 // Split multiple insights if separated by newlines or bullets
                 let individualInsights = splitInsights(extractedContent)
+                print("📝 [PARSING] Split into \(individualInsights.count) individual insights")
                 
                 for insightText in individualInsights {
                     if let insight = createInsight(
@@ -642,8 +688,13 @@ class ContextualInsightService {
                         situationId: situationId
                     ) {
                         insights.append(insight)
+                        print("✅ [PARSING] Created insight: \(insightText.prefix(50))...")
+                    } else {
+                        print("❌ [PARSING] Failed to create insight from: \(insightText.prefix(50))...")
                     }
                 }
+            } else {
+                print("❌ [PARSING] No content extracted for section: '\(sectionKey)'")
             }
         }
         
@@ -694,7 +745,7 @@ class ContextualInsightService {
         sectionKey: String,
         familyId: String,
         childId: String?,
-        situationId: String
+        situationId: String?
     ) -> ContextualInsight? {
         guard let category = ContextCategory.from(apiResponseKey: sectionKey) else {
             print("❌ Unable to map section key to category: \(sectionKey)")
@@ -1556,6 +1607,232 @@ class ContextualInsightService {
             print("✅ Successfully permanently deleted all flexibility social insights")
         } catch {
             print("❌ Error permanently deleting all flexibility social insights: \(error)")
+            throw ContextualInsightError.databaseError(error)
+        }
+    }
+    
+    // MARK: - Insight Regeneration Methods
+    
+    /// Regenerate all regulation insights from all user situations
+    func regenerateAllRegulationInsights(familyId: String, apiKey: String) async throws -> (emotional: Int, attention: Int, flexibility: Int, coping: Int) {
+        print("🔄 Starting batched regeneration of all regulation insights for family: \(familyId)")
+        
+        // 1. Fetch all situations for this family
+        let situations = try await ConversationService.shared.getAllSituations(familyId: familyId)
+        guard !situations.isEmpty else {
+            print("⚠️ No situations found for family: \(familyId)")
+            return (0, 0, 0, 0)
+        }
+        
+        // 2. Filter out empty situations
+        let validSituations = situations.filter { 
+            !$0.description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty 
+        }
+        
+        guard !validSituations.isEmpty else {
+            print("⚠️ No valid situation content found for family: \(familyId)")
+            return (0, 0, 0, 0)
+        }
+        
+        print("📝 Processing \(validSituations.count) valid situations")
+        
+        // 3. Clear existing regulation insights (not deleted ones)
+        try await clearActiveRegulationInsights(familyId: familyId)
+        
+        // 4. Process situations in batches to avoid API limits
+        let batchSize = 10 // Process 10 situations at a time to stay within API limits
+        var allRegulationInsights: [ChildRegulationInsight] = []
+        var allCopingInsights: [ChildRegulationInsight] = []
+        
+        for batchIndex in stride(from: 0, to: validSituations.count, by: batchSize) {
+            let endIndex = min(batchIndex + batchSize, validSituations.count)
+            let batch = Array(validSituations[batchIndex..<endIndex])
+            
+            print("🔄 Processing regulation batch \(batchIndex/batchSize + 1) of \(Int(ceil(Double(validSituations.count)/Double(batchSize)))): \(batch.count) situations")
+            
+            // Combine situations in this batch
+            let batchText = batch
+                .map { $0.description }
+                .joined(separator: "\n\n---\n\n")
+            
+            print("📝 Batch text length: \(batchText.count) characters")
+            
+            // Process this batch for regulation insights
+            do {
+                let batchRegulationInsights = try await extractChildRegulationInsights(
+                    situationText: batchText,
+                    apiKey: apiKey,
+                    familyId: familyId,
+                    childId: nil,
+                    situationId: nil
+                )
+                
+                allRegulationInsights.append(contentsOf: batchRegulationInsights)
+                print("✅ Regulation batch \(batchIndex/batchSize + 1) completed: \(batchRegulationInsights.count) insights extracted")
+                
+                // Also extract coping strategies from this batch
+                let batchCopingInsights = try await extractCopingStrategies(
+                    situationText: batchText,
+                    apiKey: apiKey,
+                    familyId: familyId,
+                    childId: nil,
+                    situationId: nil
+                )
+                
+                allCopingInsights.append(contentsOf: batchCopingInsights)
+                print("✅ Coping batch \(batchIndex/batchSize + 1) completed: \(batchCopingInsights.count) insights extracted")
+                
+                // Add a small delay between batches to avoid overwhelming the API
+                if endIndex < validSituations.count {
+                    try await Task.sleep(nanoseconds: 1_000_000_000) // 1 second delay
+                }
+                
+            } catch {
+                print("❌ Error processing regulation batch \(batchIndex/batchSize + 1): \(error)")
+                // Continue with next batch instead of failing completely
+                continue
+            }
+        }
+        
+        // 5. Save all extracted insights to the database
+        let allInsights = allRegulationInsights + allCopingInsights
+        if !allInsights.isEmpty {
+            print("💾 Saving \(allInsights.count) regulation insights to database...")
+            try await saveChildRegulationInsights(allInsights)
+            print("✅ Successfully saved all regulation insights to database")
+        } else {
+            print("⚠️ No regulation insights to save")
+        }
+        
+        // 6. Count insights by category
+        let emotionalCount = allRegulationInsights.filter { $0.category == .core }.count
+        let attentionCount = allRegulationInsights.filter { $0.category == .adhd }.count
+        let flexibilityCount = allRegulationInsights.filter { $0.category == .mildAutism }.count
+        let copingCount = allCopingInsights.count
+        
+        print("✅ Batched regulation regeneration completed: \(emotionalCount) emotional, \(attentionCount) attention, \(flexibilityCount) flexibility, \(copingCount) coping")
+        return (emotionalCount, attentionCount, flexibilityCount, copingCount)
+    }
+    
+    /// Regenerate all contextual insights from all user situations
+    func regenerateAllContextualInsights(familyId: String, apiKey: String) async throws -> [ContextCategory: Int] {
+        print("🔄 Starting batched regeneration of all contextual insights for family: \(familyId)")
+        
+        // 1. Fetch all situations for this family
+        let situations = try await ConversationService.shared.getAllSituations(familyId: familyId)
+        guard !situations.isEmpty else {
+            print("⚠️ No situations found for family: \(familyId)")
+            return [:]
+        }
+        
+        // 2. Filter out empty situations
+        let validSituations = situations.filter { 
+            !$0.description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty 
+        }
+        
+        guard !validSituations.isEmpty else {
+            print("⚠️ No valid situation content found for family: \(familyId)")
+            return [:]
+        }
+        
+        print("📝 Processing \(validSituations.count) valid situations")
+        
+        // 3. Clear existing contextual insights (not deleted ones)
+        try await clearActiveContextualInsights(familyId: familyId)
+        
+        // 4. Process situations in batches to avoid API limits
+        let batchSize = 10 // Process 10 situations at a time to stay within API limits
+        var allInsights: [ContextualInsight] = []
+        
+        for batchIndex in stride(from: 0, to: validSituations.count, by: batchSize) {
+            let endIndex = min(batchIndex + batchSize, validSituations.count)
+            let batch = Array(validSituations[batchIndex..<endIndex])
+            
+            print("🔄 Processing batch \(batchIndex/batchSize + 1) of \(Int(ceil(Double(validSituations.count)/Double(batchSize)))): \(batch.count) situations")
+            
+            // Combine situations in this batch
+            let batchText = batch
+                .map { $0.description }
+                .joined(separator: "\n\n---\n\n")
+            
+            print("📝 Batch text length: \(batchText.count) characters")
+            
+            // Process this batch
+            do {
+                let batchInsights = try await extractContextFromSituation(
+                    situationText: batchText,
+                    apiKey: apiKey,
+                    familyId: familyId,
+                    childId: nil,
+                    situationId: nil
+                )
+                
+                allInsights.append(contentsOf: batchInsights)
+                print("✅ Batch \(batchIndex/batchSize + 1) completed: \(batchInsights.count) insights extracted")
+                
+                // Add a small delay between batches to avoid overwhelming the API
+                if endIndex < validSituations.count {
+                    try await Task.sleep(nanoseconds: 1_000_000_000) // 1 second delay
+                }
+                
+            } catch {
+                print("❌ Error processing batch \(batchIndex/batchSize + 1): \(error)")
+                // Continue with next batch instead of failing completely
+                continue
+            }
+        }
+        
+        // 5. Save all extracted insights to the database
+        if !allInsights.isEmpty {
+            print("💾 Saving \(allInsights.count) contextual insights to database...")
+            try await saveContextInsights(allInsights)
+            print("✅ Successfully saved all contextual insights to database")
+        } else {
+            print("⚠️ No contextual insights to save")
+        }
+        
+        // 6. Count insights by category
+        var counts: [ContextCategory: Int] = [:]
+        for insight in allInsights {
+            counts[insight.category, default: 0] += 1
+        }
+        
+        print("✅ Batched regeneration completed: \(allInsights.count) contextual insights across \(counts.count) categories")
+        return counts
+    }
+    
+    /// Clear active regulation insights (not deleted ones)
+    private func clearActiveRegulationInsights(familyId: String) async throws {
+        print("🧹 Clearing active regulation insights for family: \(familyId)")
+        
+        // Clear all regulation insights from the insight_bullet_points table
+        // This includes all regulation categories: core, adhd, mildAutism, and copingStrategies
+        do {
+            try await SupabaseManager.shared.client
+                .from("insight_bullet_points")
+                .delete()
+                .eq("family_id", value: familyId)
+                .execute()
+            print("✅ Cleared all regulation insights from insight_bullet_points table")
+        } catch {
+            print("❌ Error clearing regulation insights: \(error)")
+            throw ContextualInsightError.databaseError(error)
+        }
+    }
+    
+    /// Clear active contextual insights (not deleted ones)
+    private func clearActiveContextualInsights(familyId: String) async throws {
+        print("🧹 Clearing active contextual insights for family: \(familyId)")
+        
+        do {
+            try await SupabaseManager.shared.client
+                .from("contextual_insights")
+                .delete()
+                .eq("family_id", value: familyId)
+                .execute()
+            print("✅ Cleared contextual insights")
+        } catch {
+            print("❌ Error clearing contextual insights: \(error)")
             throw ContextualInsightError.databaseError(error)
         }
     }

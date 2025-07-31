@@ -14,7 +14,7 @@ struct DeletedEmotionalRegulationInsight: Codable, Identifiable {
     let originalInsightId: UUID?
     let familyId: String
     let childId: String?
-    let situationId: String
+    let situationId: String?
     let content: String
     let deletedAt: Date
     let deletedReason: String?

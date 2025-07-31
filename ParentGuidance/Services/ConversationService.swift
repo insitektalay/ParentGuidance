@@ -14,7 +14,8 @@ class ConversationService: ObservableObject {
     static let shared = ConversationService()
     
     /// Feature flag to use Edge Function instead of direct OpenAI API
-    private let useEdgeFunction = UserDefaults.standard.bool(forKey: "conversation_use_edge_function")
+    /// Default to true to support multi-provider API keys
+    private let useEdgeFunction = UserDefaults.standard.object(forKey: "conversation_use_edge_function") as? Bool ?? true
     
     private init() {}
     

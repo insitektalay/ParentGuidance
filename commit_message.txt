@@ -1,1 +1,1 @@
-pre delete all insights and generate again feature impliment
+Regenerate insight Buttons Working!

@@ -13,7 +13,9 @@ struct ChildRegulationInsight: Codable, Identifiable {
     let id: UUID
     let familyId: String
     let childId: String?
-    let situationId: String
+    /// References the situation this insight was extracted from.
+    /// Can be nil for insights generated during bulk regeneration from multiple situations.
+    let situationId: String?
     let category: RegulationCategory
     let content: String
     let insightResponseId: String?
@@ -79,7 +81,7 @@ extension ChildRegulationInsight {
     init(
         familyId: String,
         childId: String?,
-        situationId: String,
+        situationId: String? = nil,
         category: RegulationCategory,
         content: String,
         insightResponseId: String? = nil
@@ -104,7 +106,7 @@ extension ChildRegulationInsightsResponse {
     func toBulletPoints(
         familyId: String,
         childId: String?,
-        situationId: String,
+        situationId: String? = nil,
         responseId: String? = nil
     ) -> [ChildRegulationInsight] {
         var insights: [ChildRegulationInsight] = []

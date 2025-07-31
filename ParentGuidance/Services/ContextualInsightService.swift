@@ -1464,6 +1464,102 @@ class ContextualInsightService {
         }
     }
     
+    /// Permanently delete all contextual insights from the deleted archive
+    func permanentlyDeleteAllDeletedContextualInsights(familyId: String, category: ContextCategory? = nil) async throws {
+        print("🗑️ Permanently deleting all contextual insights from archive for family: \(familyId), category: \(category?.rawValue ?? "all")")
+        
+        do {
+            var query = SupabaseManager.shared.client
+                .from("deleted_contextual_insights")
+                .delete()
+                .eq("family_id", value: familyId)
+            
+            if let category = category {
+                query = query.eq("category", value: category.rawValue)
+            }
+            
+            try await query.execute()
+            
+            let categoryFilter = category?.rawValue ?? "all categories"
+            print("✅ Successfully permanently deleted all contextual insights for \(categoryFilter)")
+        } catch {
+            print("❌ Error permanently deleting all contextual insights: \(error)")
+            throw ContextualInsightError.databaseError(error)
+        }
+    }
+    
+    /// Permanently delete all deleted coping strategies
+    func permanentlyDeleteAllDeletedCopingStrategies(familyId: String) async throws {
+        print("🗑️ Permanently deleting all coping strategies from archive for family: \(familyId)")
+        
+        do {
+            try await SupabaseManager.shared.client
+                .from("deleted_coping_strategies")
+                .delete()
+                .eq("family_id", value: familyId)
+                .execute()
+            
+            print("✅ Successfully permanently deleted all coping strategies")
+        } catch {
+            print("❌ Error permanently deleting all coping strategies: \(error)")
+            throw ContextualInsightError.databaseError(error)
+        }
+    }
+    
+    /// Permanently delete all deleted emotional regulation insights
+    func permanentlyDeleteAllDeletedEmotionalRegulationInsights(familyId: String) async throws {
+        print("🗑️ Permanently deleting all emotional regulation insights from archive for family: \(familyId)")
+        
+        do {
+            try await SupabaseManager.shared.client
+                .from("deleted_emotional_regulation_insights")
+                .delete()
+                .eq("family_id", value: familyId)
+                .execute()
+            
+            print("✅ Successfully permanently deleted all emotional regulation insights")
+        } catch {
+            print("❌ Error permanently deleting all emotional regulation insights: \(error)")
+            throw ContextualInsightError.databaseError(error)
+        }
+    }
+    
+    /// Permanently delete all deleted attention focus insights
+    func permanentlyDeleteAllDeletedAttentionFocusInsights(familyId: String) async throws {
+        print("🗑️ Permanently deleting all attention focus insights from archive for family: \(familyId)")
+        
+        do {
+            try await SupabaseManager.shared.client
+                .from("deleted_attention_focus_insights")
+                .delete()
+                .eq("family_id", value: familyId)
+                .execute()
+            
+            print("✅ Successfully permanently deleted all attention focus insights")
+        } catch {
+            print("❌ Error permanently deleting all attention focus insights: \(error)")
+            throw ContextualInsightError.databaseError(error)
+        }
+    }
+    
+    /// Permanently delete all deleted flexibility social insights
+    func permanentlyDeleteAllDeletedFlexibilitySocialInsights(familyId: String) async throws {
+        print("🗑️ Permanently deleting all flexibility social insights from archive for family: \(familyId)")
+        
+        do {
+            try await SupabaseManager.shared.client
+                .from("deleted_flexibility_social_insights")
+                .delete()
+                .eq("family_id", value: familyId)
+                .execute()
+            
+            print("✅ Successfully permanently deleted all flexibility social insights")
+        } catch {
+            print("❌ Error permanently deleting all flexibility social insights: \(error)")
+            throw ContextualInsightError.databaseError(error)
+        }
+    }
+    
     // MARK: - Utility Methods
     
     func getInsightCounts(familyId: String) async throws -> [ContextCategory: Int] {

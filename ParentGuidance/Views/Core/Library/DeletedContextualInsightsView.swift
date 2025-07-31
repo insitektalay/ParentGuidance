@@ -17,13 +17,14 @@ struct DeletedContextualInsightsView: View {
     @State private var hasError = false
     @State private var showingRestoreAlert = false
     @State private var showingPermanentDeleteAlert = false
+    @State private var showingDeleteAllAlert = false
     @State private var insightToRestore: DeletedContextualInsight?
     @State private var insightToPermanentlyDelete: DeletedContextualInsight?
     
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // Header
+                // Header - Navigation Bar
                 HStack(alignment: .center, spacing: 12) {
                     Button(action: {
                         dismiss()
@@ -35,28 +36,52 @@ struct DeletedContextualInsightsView: View {
                     
                     Spacer()
                     
-                    VStack(spacing: 2) {
-                        if let category = category {
-                            Text("Deleted \(category.displayName)")
-                                .font(.system(size: 20, weight: .semibold))
-                                .foregroundColor(ColorPalette.white.opacity(0.9))
-                        } else {
-                            Text(String(localized: "library.deleted.contextual.title"))
-                                .font(.system(size: 20, weight: .semibold))
-                                .foregroundColor(ColorPalette.white.opacity(0.9))
+                    // Delete All button - only show when there are items
+                    if !deletedInsights.isEmpty {
+                        Button(action: {
+                            showingDeleteAllAlert = true
+                        }) {
+                            Text(String(localized: "regulation.archive.button.deleteAll"))
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(ColorPalette.white)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(ColorPalette.terracotta)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                                .frame(minHeight: 44)
+                                .contentShape(Rectangle())
                         }
-                        
-                        if !deletedInsights.isEmpty {
-                            Text("\(deletedInsights.count) insight\(deletedInsights.count == 1 ? "" : "s")")
-                                .font(.system(size: 12))
-                                .foregroundColor(ColorPalette.white.opacity(0.6))
-                        }
+                        .accessibilityLabel(String(localized: "regulation.archive.button.deleteAll"))
+                        .accessibilityHint(String(localized: "regulation.archive.deleteAll.hint"))
                     }
-                    
-                    Spacer()
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 12)
+                .padding(.bottom, 8)
+                
+                // Title Section
+                VStack(spacing: 8) {
+                    if let category = category {
+                        Text("Deleted \(category.displayName)")
+                            .font(.system(size: 22, weight: .semibold))
+                            .foregroundColor(ColorPalette.white.opacity(0.9))
+                            .multilineTextAlignment(.center)
+                            .lineLimit(2)
+                    } else {
+                        Text(String(localized: "library.deleted.contextual.title"))
+                            .font(.system(size: 22, weight: .semibold))
+                            .foregroundColor(ColorPalette.white.opacity(0.9))
+                            .multilineTextAlignment(.center)
+                            .lineLimit(2)
+                    }
+                    
+                    if !deletedInsights.isEmpty {
+                        Text("\(deletedInsights.count) insight\(deletedInsights.count == 1 ? "" : "s")")
+                            .font(.system(size: 14))
+                            .foregroundColor(ColorPalette.white.opacity(0.7))
+                    }
+                }
+                .padding(.horizontal, 16)
                 .padding(.bottom, 16)
                 
                 // Content
@@ -102,6 +127,16 @@ struct DeletedContextualInsightsView: View {
             }
         } message: {
             Text("Are you sure you want to permanently delete this insight? This action cannot be undone.")
+        }
+        .alert(String(localized: "regulation.archive.deleteAll.title"), isPresented: $showingDeleteAllAlert) {
+            Button(String(localized: "common.cancel"), role: .cancel) { }
+            Button(String(localized: "regulation.archive.deleteAll.confirm"), role: .destructive) {
+                Task {
+                    await deleteAllInsights()
+                }
+            }
+        } message: {
+            Text(String(localized: "regulation.archive.deleteAll.message \(deletedInsights.count)"))
         }
     }
     
@@ -215,6 +250,17 @@ struct DeletedContextualInsightsView: View {
             print("✅ Permanently deleted insight: \(insight.id)")
         } catch {
             print("❌ Failed to permanently delete insight: \(error)")
+        }
+    }
+    
+    @MainActor
+    private func deleteAllInsights() async {
+        do {
+            try await ContextualInsightService.shared.permanentlyDeleteAllDeletedContextualInsights(familyId: familyId, category: category)
+            deletedInsights.removeAll()
+            print("✅ Successfully deleted all insights")
+        } catch {
+            print("❌ Failed to delete all insights: \(error)")
         }
     }
 }

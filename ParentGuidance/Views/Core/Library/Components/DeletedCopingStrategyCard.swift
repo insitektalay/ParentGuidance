@@ -16,45 +16,62 @@ struct DeletedCopingStrategyCard: View {
     @State private var showingPermanentDeleteConfirmation = false
     
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            VStack(alignment: .leading, spacing: 12) {
-                // Main content
-                Text(deletedStrategy.content)
-                    .font(.system(size: 16))
-                    .foregroundColor(ColorPalette.white.opacity(0.9))
-                    .lineLimit(nil)
-                    .multilineTextAlignment(.leading)
+        VStack(alignment: .leading, spacing: 12) {
+            // Main content
+            Text(deletedStrategy.content)
+                .font(.system(size: 16))
+                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .lineLimit(nil)
+                .multilineTextAlignment(.leading)
+            
+            // Date info
+            HStack {
+                Text("Deleted \(formatDate(deletedStrategy.deletedAt))")
+                    .font(.system(size: 12))
+                    .foregroundColor(ColorPalette.white.opacity(0.6))
                 
-                // Date info
-                HStack {
-                    Text("Deleted \(formatDate(deletedStrategy.deletedAt))")
-                        .font(.system(size: 12))
-                        .foregroundColor(ColorPalette.white.opacity(0.6))
-                    
-                    Spacer()
-                }
+                Spacer()
             }
             
             // Action buttons
-            VStack(spacing: 8) {
-                // Restore button
+            HStack(spacing: 12) {
                 Button(action: {
                     showingRestoreConfirmation = true
                 }) {
-                    Image(systemName: "arrow.counterclockwise")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(ColorPalette.brightBlue)
+                    HStack(spacing: 6) {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.system(size: 12, weight: .medium))
+                        
+                        Text(String(localized: "library.deleted.action.restore"))
+                            .font(.system(size: 12, weight: .medium))
+                    }
+                    .foregroundColor(ColorPalette.brightBlue)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(ColorPalette.brightBlue.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
                 
-                // Permanent delete button
                 Button(action: {
                     showingPermanentDeleteConfirmation = true
                 }) {
-                    Image(systemName: "trash")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(ColorPalette.white.opacity(0.6))
+                    HStack(spacing: 6) {
+                        Image(systemName: "trash")
+                            .font(.system(size: 12, weight: .medium))
+                        
+                        Text(String(localized: "library.deleted.action.permanentDelete"))
+                            .font(.system(size: 12, weight: .medium))
+                    }
+                    .foregroundColor(ColorPalette.terracotta.opacity(0.8))
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(ColorPalette.terracotta.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
+                
+                Spacer()
             }
+            .padding(.top, 8)
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)

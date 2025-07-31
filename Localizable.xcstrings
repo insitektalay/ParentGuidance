@@ -1448,12 +1448,6 @@
     "Deleted %@" : {
 
     },
-    "Deleted Coping Strategies" : {
-
-    },
-    "Deleted coping strategies will appear here so you can restore them if needed." : {
-
-    },
     "Describe what's happening with %@..." : {
 
     },
@@ -1582,9 +1576,6 @@
 
     },
     "Error" : {
-
-    },
-    "Error Loading Deleted Items" : {
 
     },
     "error.loading.insights" : {
@@ -2880,9 +2871,6 @@
         }
       }
     },
-    "Loading deleted strategies..." : {
-
-    },
     "Loading insights..." : {
 
     },
@@ -2890,9 +2878,6 @@
 
     },
     "More details mean better guidance." : {
-
-    },
-    "No Deleted Strategies" : {
 
     },
     "No insights collected yet" : {
@@ -3542,6 +3527,16 @@
     "Reason: %@" : {
 
     },
+    "regulation.archive.button.deleteAll" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete All"
+          }
+        }
+      }
+    },
     "regulation.archive.button.viewDeleted" : {
       "localizations" : {
         "en" : {
@@ -3551,6 +3546,18 @@
           }
         }
       }
+    },
+    "regulation.archive.deleteAll.confirm" : {
+
+    },
+    "regulation.archive.deleteAll.hint" : {
+
+    },
+    "regulation.archive.deleteAll.message %lld" : {
+
+    },
+    "regulation.archive.deleteAll.title" : {
+
     },
     "regulation.archive.deleted.date" : {
       "localizations" : {
@@ -3678,6 +3685,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Deleted Attention & Focus"
+          }
+        }
+      }
+    },
+    "regulation.deleted.coping.empty.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deleted coping strategies will appear here so you can restore them if needed."
+          }
+        }
+      }
+    },
+    "regulation.deleted.coping.empty.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Deleted Strategies"
+          }
+        }
+      }
+    },
+    "regulation.deleted.coping.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deleted Coping Strategies"
           }
         }
       }
@@ -3860,9 +3897,6 @@
 
     },
     "Restore Insight" : {
-
-    },
-    "Retry" : {
 
     },
     "Save" : {

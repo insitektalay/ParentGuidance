@@ -1,18 +1,1 @@
-Update UI consistency for Library tab sections
-  - Unified card styles between "Noticing What Matters" and "Your Child's World"
-  - Category listings now use consistent horizontal card layout with icon, title, and count badge
-  - Individual insight cards updated to spacious design with category badges and improved typography
-- Standardized deleted items access pattern
-  - Replaced ambiguous trash icons with clear "View Deleted Items" text + archivebox icon
-  - Positioned consistently as right-aligned links below headers
-  - Added proper accessibility labels and 44pt touch targets
-- Fixed localization issues
-  - Replaced hardcoded "Deleted Coping Strategies" with localized string
-  - All UI text now uses proper localization keys
-- Enhanced accessibility
-  - Added accessibility labels and hints to all interactive elements
-  - Increased touch targets to meet iOS HIG standards
-  - Improved VoiceOver support with descriptive hints
-
-These changes create a more intuitive and consistent experience when browsing insights and managing deleted items across
-both Library sections.
+pre delete all insights and generate again feature impliment

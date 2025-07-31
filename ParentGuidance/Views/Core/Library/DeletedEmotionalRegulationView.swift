@@ -15,11 +15,12 @@ struct DeletedEmotionalRegulationView: View {
     @State private var isLoading = true
     @State private var hasError = false
     @State private var errorMessage = ""
+    @State private var showingDeleteAllAlert = false
     
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // Header
+                // Header - Navigation Bar
                 HStack(alignment: .center, spacing: 12) {
                     Button(action: {
                         dismiss()
@@ -31,22 +32,44 @@ struct DeletedEmotionalRegulationView: View {
                     
                     Spacer()
                     
-                    VStack(spacing: 4) {
-                        Text(String(localized: "regulation.deleted.emotional.title"))
-                            .font(.system(size: 20, weight: .semibold))
-                            .foregroundColor(ColorPalette.white.opacity(0.9))
-                        
-                        if !deletedInsights.isEmpty {
-                            Text(String(localized: "regulation.deleted.emotional.count", defaultValue: "\(deletedInsights.count) item\(deletedInsights.count == 1 ? "" : "s")"))
-                                .font(.system(size: 14))
-                                .foregroundColor(ColorPalette.white.opacity(0.7))
+                    // Delete All button - only show when there are items
+                    if !deletedInsights.isEmpty {
+                        Button(action: {
+                            showingDeleteAllAlert = true
+                        }) {
+                            Text(String(localized: "regulation.archive.button.deleteAll"))
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(ColorPalette.white)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(ColorPalette.terracotta)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                                .frame(minHeight: 44)
+                                .contentShape(Rectangle())
                         }
+                        .accessibilityLabel(String(localized: "regulation.archive.button.deleteAll"))
+                        .accessibilityHint(String(localized: "regulation.archive.deleteAll.hint"))
                     }
-                    
-                    Spacer()
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 12)
+                .padding(.bottom, 8)
+                
+                // Title Section
+                VStack(spacing: 8) {
+                    Text(String(localized: "regulation.deleted.emotional.title"))
+                        .font(.system(size: 22, weight: .semibold))
+                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                    
+                    if !deletedInsights.isEmpty {
+                        Text(String(localized: "regulation.deleted.emotional.count", defaultValue: "\(deletedInsights.count) item\(deletedInsights.count == 1 ? "" : "s")"))
+                            .font(.system(size: 14))
+                            .foregroundColor(ColorPalette.white.opacity(0.7))
+                    }
+                }
+                .padding(.horizontal, 16)
                 .padding(.bottom, 16)
                 
                 // Content
@@ -68,6 +91,16 @@ struct DeletedEmotionalRegulationView: View {
             Task {
                 await loadDeletedInsights()
             }
+        }
+        .alert(String(localized: "regulation.archive.deleteAll.title"), isPresented: $showingDeleteAllAlert) {
+            Button(String(localized: "common.cancel"), role: .cancel) { }
+            Button(String(localized: "regulation.archive.deleteAll.confirm"), role: .destructive) {
+                Task {
+                    await deleteAllInsights()
+                }
+            }
+        } message: {
+            Text(String(localized: "regulation.archive.deleteAll.message \(deletedInsights.count)"))
         }
     }
     
@@ -193,6 +226,17 @@ struct DeletedEmotionalRegulationView: View {
         } catch {
             print("❌ Failed to permanently delete emotional regulation insight: \(error)")
             // Could show an error alert here if needed
+        }
+    }
+    
+    @MainActor
+    private func deleteAllInsights() async {
+        do {
+            try await ContextualInsightService.shared.permanentlyDeleteAllDeletedEmotionalRegulationInsights(familyId: familyId)
+            deletedInsights.removeAll()
+            print("✅ Successfully deleted all emotional regulation insights")
+        } catch {
+            print("❌ Failed to delete all emotional regulation insights: \(error)")
         }
     }
 }

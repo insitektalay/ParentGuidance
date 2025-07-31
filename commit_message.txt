@@ -1,13 +1,1 @@
-Add delete/restore functionality for contextual insights in "Your Child's World" section
-Implemented a unified archive system for all 11 contextual insight categories using a single database table approach.
-Users can now delete insights from any category (Family Context, Regulation Tools, Medical/Health, etc.) with the ability
-to restore or permanently remove them.
-Key changes:
-- Created deleted_contextual_insights table with RLS policies
-- Added DeletedContextualInsight model with conversion methods
-- Extended ContextualInsightService with archive/restore operations
-- Built DeletedContextualInsightsView and DeletedContextualInsightCard components
-- Added navigation links in category and knowledge base views
-- Included 8 new localization keys for the archive interface
-This follows the same pattern as the regulation insights archive but uses a consolidated table structure to avoid
-creating separate tables for each of the 11 categories.
+pre UI subagent work on your childs world and noticing what matters sections

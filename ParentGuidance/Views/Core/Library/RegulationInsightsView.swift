@@ -137,42 +137,43 @@ struct RegulationCategoryCardContent: View {
     let insightCount: Int
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            // Icon and count row
-            HStack(alignment: .top) {
-                Image(systemName: category.iconName)
-                    .font(.system(size: 28, weight: .medium))
-                    .foregroundColor(ColorPalette.brightBlue)
-                
-                Spacer()
+        HStack(alignment: .center, spacing: 16) {
+            // Icon
+            Image(systemName: category.iconName)
+                .font(.system(size: 28, weight: .medium))
+                .foregroundColor(ColorPalette.brightBlue)
+                .frame(width: 32, height: 32)
+            
+            // Content
+            VStack(alignment: .leading, spacing: 4) {
+                Text(category.parentFriendlyName)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(ColorPalette.white)
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(2)
                 
                 if insightCount > 0 {
-                    Text("\(insightCount)")
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundColor(ColorPalette.white)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background(ColorPalette.terracotta)
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                    Text(String(localized: "regulation.insights.count \(insightCount)"))
+                        .font(.system(size: 14))
+                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                } else {
+                    Text(String(localized: "regulation.insights.empty"))
+                        .font(.system(size: 14))
+                        .foregroundColor(ColorPalette.white.opacity(0.5))
                 }
             }
             
-            // Category name
-            Text(category.parentFriendlyName)
-                .font(.system(size: 20, weight: .semibold))
-                .foregroundColor(ColorPalette.white)
-                .multilineTextAlignment(.leading)
-                .lineLimit(2)
+            Spacer()
             
-            // Insight count description
+            // Count badge
             if insightCount > 0 {
-                Text(String(localized: "regulation.insights.count \(insightCount)"))
-                    .font(.system(size: 14))
-                    .foregroundColor(ColorPalette.white.opacity(0.7))
-            } else {
-                Text(String(localized: "regulation.insights.empty"))
-                    .font(.system(size: 14))
-                    .foregroundColor(ColorPalette.white.opacity(0.5))
+                Text("\(insightCount)")
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundColor(ColorPalette.white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(ColorPalette.terracotta)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
             }
         }
         .padding(20)

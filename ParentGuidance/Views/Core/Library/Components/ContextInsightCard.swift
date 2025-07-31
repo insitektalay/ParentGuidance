@@ -14,39 +14,51 @@ struct ContextInsightCard: View {
     @State private var showingDeleteAlert = false
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            // Subcategory (if available)
-            if let subcategory = insight.subcategory {
-                Text(subcategory.displayName)
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(ColorPalette.brightBlue)
-            }
-            
-            // Insight content
-            Text(insight.content)
-                .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
-                .lineLimit(nil)
-                .multilineTextAlignment(.leading)
-            
-            // Bottom row with date and delete button
-            HStack(alignment: .bottom) {
-                // Date
-                Text(formatDate(insight.createdAt))
-                    .font(.system(size: 11))
-                    .foregroundColor(ColorPalette.white.opacity(0.5))
+        HStack(alignment: .top, spacing: 12) {
+            VStack(alignment: .leading, spacing: 12) {
+                // Main content
+                Text(insight.content)
+                    .font(.system(size: 16))
+                    .foregroundColor(ColorPalette.white.opacity(0.9))
+                    .lineLimit(nil)
+                    .multilineTextAlignment(.leading)
                 
-                Spacer()
-                
-                // Delete button
-                Button(action: {
-                    showingDeleteAlert = true
-                }) {
-                    Image(systemName: "trash")
-                        .font(.system(size: 14, weight: .medium))
+                // Date and category info
+                HStack {
+                    // Category or subcategory badge
+                    if let subcategory = insight.subcategory {
+                        Text(subcategory.displayName)
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(ColorPalette.brightBlue)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(ColorPalette.brightBlue.opacity(0.2))
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                    } else {
+                        Text(insight.category.displayName)
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(ColorPalette.brightBlue)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(ColorPalette.brightBlue.opacity(0.2))
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
+                    
+                    Spacer()
+                    
+                    Text(formatDate(insight.createdAt))
+                        .font(.system(size: 12))
                         .foregroundColor(ColorPalette.white.opacity(0.6))
                 }
-                .buttonStyle(PlainButtonStyle())
+            }
+            
+            // Delete button in upper right corner
+            Button(action: {
+                showingDeleteAlert = true
+            }) {
+                Image(systemName: "trash")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(ColorPalette.white.opacity(0.6))
             }
         }
         .padding(16)

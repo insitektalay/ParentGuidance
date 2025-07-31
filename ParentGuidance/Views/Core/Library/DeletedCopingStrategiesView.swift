@@ -32,7 +32,7 @@ struct DeletedCopingStrategiesView: View {
                     Spacer()
                     
                     VStack(spacing: 4) {
-                        Text("Deleted Coping Strategies")
+                        Text(String(localized: "Deleted Coping Strategies"))
                             .font(.system(size: 20, weight: .semibold))
                             .foregroundColor(ColorPalette.white.opacity(0.9))
                         

@@ -65,7 +65,13 @@ struct RegulationCategoryView: View {
                                     .font(.system(size: 14, weight: .medium))
                             }
                             .foregroundColor(ColorPalette.brightBlue)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 6)
+                            .frame(minHeight: 44)
+                            .contentShape(Rectangle())
                         }
+                        .accessibilityLabel(String(localized: "regulation.archive.button.viewDeleted"))
+                        .accessibilityHint("Double tap to view deleted coping strategies")
                         
                     case .core:
                         NavigationLink(destination: DeletedEmotionalRegulationView(familyId: familyId)) {
@@ -76,7 +82,13 @@ struct RegulationCategoryView: View {
                                     .font(.system(size: 14, weight: .medium))
                             }
                             .foregroundColor(ColorPalette.brightBlue)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 6)
+                            .frame(minHeight: 44)
+                            .contentShape(Rectangle())
                         }
+                        .accessibilityLabel(String(localized: "regulation.archive.button.viewDeleted"))
+                        .accessibilityHint("Double tap to view deleted emotional regulation insights")
                         
                     case .adhd:
                         NavigationLink(destination: DeletedAttentionFocusView(familyId: familyId)) {
@@ -87,7 +99,13 @@ struct RegulationCategoryView: View {
                                     .font(.system(size: 14, weight: .medium))
                             }
                             .foregroundColor(ColorPalette.brightBlue)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 6)
+                            .frame(minHeight: 44)
+                            .contentShape(Rectangle())
                         }
+                        .accessibilityLabel(String(localized: "regulation.archive.button.viewDeleted"))
+                        .accessibilityHint("Double tap to view deleted attention and focus insights")
                         
                     case .mildAutism:
                         NavigationLink(destination: DeletedFlexibilitySocialView(familyId: familyId)) {
@@ -98,10 +116,14 @@ struct RegulationCategoryView: View {
                                     .font(.system(size: 14, weight: .medium))
                             }
                             .foregroundColor(ColorPalette.brightBlue)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 6)
+                            .frame(minHeight: 44)
+                            .contentShape(Rectangle())
                         }
+                        .accessibilityLabel(String(localized: "regulation.archive.button.viewDeleted"))
+                        .accessibilityHint("Double tap to view deleted flexibility and social insights")
                     }
-                    
-                    Spacer()
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 16)

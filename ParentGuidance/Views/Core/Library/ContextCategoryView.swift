@@ -47,19 +47,35 @@ struct ContextCategoryView: View {
                     }
                     
                     Spacer()
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
+                .padding(.bottom, 16)
+                
+                // Deleted items link
+                HStack {
+                    Spacer()
                     
-                    // Deleted insights link
                     NavigationLink(destination: DeletedContextualInsightsView(
                         familyId: familyId,
                         category: category
                     )) {
-                        Image(systemName: "trash")
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(ColorPalette.white.opacity(0.7))
+                        HStack(spacing: 6) {
+                            Image(systemName: "archivebox")
+                                .font(.system(size: 14, weight: .medium))
+                            Text(String(localized: "regulation.archive.button.viewDeleted"))
+                                .font(.system(size: 14, weight: .medium))
+                        }
+                        .foregroundColor(ColorPalette.brightBlue)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 6)
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
                     }
+                    .accessibilityLabel(String(localized: "regulation.archive.button.viewDeleted"))
+                    .accessibilityHint("Double tap to view deleted insights in \(category.displayName)")
+                    .padding(.trailing, 8)
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 12)
                 .padding(.bottom, 16)
                 
                 // Content

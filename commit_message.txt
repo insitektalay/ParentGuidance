@@ -1,15 +1,7 @@
-Add manual date editing for situations in Library view
+Insights Matter: Improve user engagement tracking
 
-Implemented the ability to manually change the creation date of situations to any past date, allowing users to 
-retroactively log situations with their correct timestamps.
+- Added scroll depth events
+- Fixed bounce rate calculation
+- Updated insight dashboard with new metrics
 
-Key changes:
-- Added updateSituationDate() method to ConversationService with future-date validation
-- Enhanced SituationDetailView with edit button and date picker modal
-- Integrated automatic Library refresh after date updates
-- Added comprehensive localization keys for date editing UI
-- Connected date update callbacks in both LibraryView and SearchSituationsView
-
-Users can now tap the pencil icon next to any situation's date to open a date picker restricted to past dates only. After 
-saving, the Library view automatically refreshes to reflect the new chronological ordering.
-
+OReilly data referenced in methods comments.

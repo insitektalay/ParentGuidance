@@ -504,7 +504,8 @@ Output:
       version: "1",
       variables: ["longtext"],
       systemPromptText: `
-  Extract a short, simple list of the child's main coping strategies from the following text. Do not include any explanations or examples:
+  Extract a short, simple list of the child's main coping strategies from the following text. Do not include behaviors that are primarily imposed by others (e.g., being given rewards or allowed screens), unless the child actively uses them for self-regulation.
+  Focus only on strategies the child initiates or clearly uses to regulate emotions or manage difficulty. Avoid describing passive activities or adult-managed interventions unless the child’s engagement and benefit are obvious. Do not include any explanations or examples:
 
   {{longtext}}
   `
@@ -560,7 +561,7 @@ Output:
          Identify sentences showing overstimulation or dysregulation from specific environments (e.g., crowds, noise) or tech use (e.g., screens, gaming).
       
       10. Parenting Approaches
-          Extract sentences that describe parenting strategies, tone, or decision-making patterns that affect the child’s behavior.
+          Extract only strategies or decisions that clearly shape the child’s experience or behavior. Avoid listing parent behaviors that are described without evaluation, purpose, or impact on the child.
       
       11. Sibling Dynamics
           Include sentences that highlight sibling relationships—positive, conflictual, or regulatory in nature.
@@ -574,6 +575,9 @@ Output:
       Ignore vague impressions, inferred emotions, or generic behaviors.
       Do not include quotes or dialogue unless describing observed context.
       If no clear idea fits the category, return: 'none found'.
+      Avoid listing caregiver choices or household practices that are not clearly described as effective or meaningful for the child. Do not include surface-level descriptions of parental behavior unless the child’s response is strongly evident and clearly positive or negative.
+      If a routine or strategy is mentioned without emotional tone or clear outcome, do not extract it as a success pattern or behavior.
+      Avoid extracting insights that may sound normative, promotional, or judgmental without explicit context about the child's experience.
       
       Output Format:
       
@@ -651,6 +655,8 @@ Output:
         Skip weak, vague, or general traits.
         No interpretation or emotional labels.
         If no clear traits for a section: return — No strong patterns found in this data.
+        Exclude isolated labels, color zones, frameworks, or terminology unless the child’s concrete behavior is described alongside them.
+        Do not extract behaviors framed as part of external programs or parenting strategies unless the child’s internal regulation response is clear.
 
       Output Format:
       Return JSON with keys "Core", "ADHD", and "Mild Autism" mapping to arrays of ultra-brief bullet point strings (e.g., "meltdowns after school"). No full sentences. No extras.
@@ -659,8 +665,35 @@ Output:
       {{long_prompt}}`
     },
     
-    
-    
+    which_insights_matter: {
+      id: "pmpt_which_matter",
+      version: "1",
+      variables: ["GuidanceText,InsightList"],
+      systemPromptText: `
+    You are a clinical analyst reviewing a piece of parenting guidance that was generated for a specific real-life situation. Your task is to evaluate which of the following existing child insights are highly relevant to this guidance.
+
+    By "highly relevant," we mean:
+    - The insight clearly connects to a key theme, concern, or behavioral pattern described in the guidance.
+    - The insight helps explain, support, or contextualize the guidance given.
+    - The insight reflects a pattern the guidance is implicitly or explicitly addressing.
+
+    DO NOT include insights that are only tangentially related, vaguely connected, or not clearly linked to the core issues discussed.
+
+    Your output should be a list of the most relevant insights, using only their original text. Keep the list focused — most situations will have only a few relevant insights.
+
+    Inputs:
+    1. GuidanceText — the parenting guidance given for this specific situation.
+    2. InsightList — a list of pre-extracted insight strings.
+
+    Output:
+    Return a list of insight strings from InsightList that are highly relevant to the content and focus of the GuidanceText.
+      
+          GuidanceText follows here:
+      {{GuidanceText}}
+      
+          InsightList  follows here:
+      {{InsightList}}`
+    },
     
     
   };

@@ -129,7 +129,63 @@ class LibraryViewController: ObservableObject {
     }
     
     func refreshSituations() {
-        loadSituations()
+        Task {
+            await refreshSituationsAsync()
+        }
+    }
+    
+    @MainActor
+    private func refreshSituationsAsync() async {
+        // Store the currently selected situation ID to refresh it after loading
+        let selectedSituationId = selectedSituation?.id
+        
+        // Reload all situations using the existing loadSituations logic
+        await loadSituationsAsync()
+        
+        // If there was a selected situation, update it with the refreshed data
+        if let situationId = selectedSituationId {
+            if let updatedSituation = situations.first(where: { $0.id == situationId }) {
+                selectedSituation = updatedSituation
+                print("✅ Updated selected situation with refreshed data")
+            }
+        }
+    }
+    
+    @MainActor
+    private func loadSituationsAsync() async {
+        viewState = .loading
+        
+        do {
+            guard let userId = currentUserId else {
+                print("❌ No current user ID available")
+                self.viewState = .empty
+                return
+            }
+            let userProfile = try await AuthService.shared.loadUserProfile(userId: userId)
+            
+            guard let familyId = userProfile.familyId else {
+                print("❌ No family_id found for user")
+                self.viewState = .empty
+                return
+            }
+            
+            // Set user context for selection manager
+            selectionManager.currentUserId = userId
+            selectionManager.currentFamilyId = familyId
+            
+            print("📚 Loading all situations for family: \(familyId)")
+            let allSituations = try await ConversationService.shared.getAllSituations(familyId: familyId)
+            
+            self.situations = allSituations
+            self.viewState = allSituations.isEmpty ? .empty : .content
+            // Apply current filters to newly loaded situations
+            self.filterSituations()
+            
+        } catch {
+            print("❌ Error loading situations: \(error)")
+            self.errorMessage = "Failed to load situations. Please try again."
+            self.viewState = .error
+        }
     }
     
     // MARK: - Search Debouncing

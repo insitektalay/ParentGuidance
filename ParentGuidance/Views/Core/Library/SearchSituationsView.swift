@@ -132,6 +132,13 @@ struct SearchSituationsView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(ColorPalette.navy)
         .navigationBarHidden(true)
+        .alert("Delete Failed", isPresented: $controller.showingDeleteError) {
+            Button("OK") {
+                controller.showingDeleteError = false
+            }
+        } message: {
+            Text(controller.deleteErrorMessage)
+        }
     }
     
     private var searchHeaderSection: some View {

@@ -9,6 +9,18 @@ import Foundation
 import SwiftUI
 import Supabase
 
+// MARK: - ConversationError
+enum ConversationError: LocalizedError {
+    case deletionFailed(String)
+    
+    var errorDescription: String? {
+        switch self {
+        case .deletionFailed(let message):
+            return message
+        }
+    }
+}
+
 // MARK: - ConversationService
 class ConversationService: ObservableObject {
     static let shared = ConversationService()
@@ -566,26 +578,83 @@ class ConversationService: ObservableObject {
     func deleteSituation(situationId: String) async throws {
         print("🗑️ Deleting situation: \(situationId)")
         
+        var insightBulletPointsDeleted = false
+        var contextualInsightsDeleted = false
+        var guidanceDeleted = false
+        var situationDeleted = false
+        
         do {
-            // First delete all related guidance
-            try await SupabaseManager.shared.client
-                .from("guidance")
-                .delete()
-                .eq("situation_id", value: situationId)
-                .execute()
+            // First delete all related insight_bullet_points
+            do {
+                try await SupabaseManager.shared.client
+                    .from("insight_bullet_points")
+                    .delete()
+                    .eq("situation_id", value: situationId)
+                    .execute()
+                
+                insightBulletPointsDeleted = true
+                print("✅ Deleted related insight bullet points for situation")
+            } catch {
+                print("❌ Error deleting insight bullet points: \(error)")
+                // Continue even if this fails
+            }
             
-            print("✅ Deleted related guidance for situation")
+            // Delete any contextual insights that reference this situation
+            do {
+                try await SupabaseManager.shared.client
+                    .from("contextual_insights")
+                    .delete()
+                    .eq("source_situation_id", value: situationId)
+                    .execute()
+                
+                contextualInsightsDeleted = true
+                print("✅ Deleted related contextual insights for situation")
+            } catch {
+                print("❌ Error deleting contextual insights: \(error)")
+                // Continue even if this fails
+            }
             
-            // Then delete the situation itself
-            try await SupabaseManager.shared.client
-                .from("situations")
-                .delete()
-                .eq("id", value: situationId)
-                .execute()
+            // Delete all related guidance
+            do {
+                try await SupabaseManager.shared.client
+                    .from("guidance")
+                    .delete()
+                    .eq("situation_id", value: situationId)
+                    .execute()
+                
+                guidanceDeleted = true
+                print("✅ Deleted related guidance for situation")
+            } catch {
+                print("❌ Error deleting guidance: \(error)")
+                // Continue to try deleting the situation even if guidance fails
+            }
             
-            print("✅ Situation deleted successfully")
+            // Finally delete the situation itself
+            do {
+                try await SupabaseManager.shared.client
+                    .from("situations")
+                    .delete()
+                    .eq("id", value: situationId)
+                    .execute()
+                
+                situationDeleted = true
+                print("✅ Situation deleted successfully")
+            } catch {
+                print("❌ Error deleting situation: \(error)")
+                
+                // Check if it's a foreign key constraint error
+                if let postgrestError = error as? PostgrestError,
+                   postgrestError.code == "23503" {
+                    print("❌ Foreign key constraint violation - there are still related records")
+                    throw ConversationError.deletionFailed("Cannot delete situation - there are still related records. Please contact support.")
+                } else {
+                    print("❌ Situation deletion failed - likely due to missing DELETE RLS policy")
+                    throw ConversationError.deletionFailed("Failed to delete situation. Please check database permissions.")
+                }
+            }
+            
         } catch {
-            print("❌ Error deleting situation: \(error)")
+            print("❌ Overall deletion error: \(error)")
             throw error
         }
     }

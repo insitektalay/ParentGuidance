@@ -36,6 +36,8 @@ class LibraryViewController: ObservableObject {
     // Delete confirmation state
     @Published var showingDeleteConfirmation: Bool = false
     @Published var situationToDelete: String?
+    @Published var showingDeleteError: Bool = false
+    @Published var deleteErrorMessage: String = ""
     
     // Search debouncing
     private var searchDebounceTimer: Timer?
@@ -342,6 +344,14 @@ class LibraryViewController: ObservableObject {
                 await MainActor.run {
                     // Reload situations to restore the failed delete
                     self.loadSituations()
+                    
+                    // Show error to user
+                    if let conversationError = error as? ConversationError {
+                        self.deleteErrorMessage = conversationError.localizedDescription
+                    } else {
+                        self.deleteErrorMessage = "Failed to delete the situation. Please try again or contact support if the problem persists."
+                    }
+                    self.showingDeleteError = true
                 }
             }
         }

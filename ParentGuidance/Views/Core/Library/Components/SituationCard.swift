@@ -134,15 +134,27 @@ struct SituationCard: View {
                 
                 Spacer()
                 
-                // Star favorite button
-                Button(action: onToggleFavorite) {
-                    Image(systemName: isFavorited ? "star.fill" : "star")
-                        .font(.system(size: 16))
-                        .foregroundColor(isFavorited ? ColorPalette.terracotta : ColorPalette.white.opacity(0.7))
-                        .animation(.easeInOut(duration: 0.2), value: isFavorited)
+                // Action buttons
+                HStack(spacing: 12) {
+                    // Trash delete button
+                    Button(action: onDelete) {
+                        Image(systemName: "trash")
+                            .font(.system(size: 16))
+                            .foregroundColor(ColorPalette.white.opacity(0.7))
+                    }
+                    .accessibilityLabel("Delete")
+                    .accessibilityHint("Double tap to delete this situation")
+                    
+                    // Star favorite button
+                    Button(action: onToggleFavorite) {
+                        Image(systemName: isFavorited ? "star.fill" : "star")
+                            .font(.system(size: 16))
+                            .foregroundColor(isFavorited ? ColorPalette.terracotta : ColorPalette.white.opacity(0.7))
+                            .animation(.easeInOut(duration: 0.2), value: isFavorited)
+                    }
+                    .accessibilityLabel(isFavorited ? String(localized: "action.removeFromFavorites") : String(localized: "action.addToFavorites"))
+                    .accessibilityHint(String(localized: "accessibility.favorite.toggle"))
                 }
-                .accessibilityLabel(isFavorited ? String(localized: "action.removeFromFavorites") : String(localized: "action.addToFavorites"))
-                .accessibilityHint(String(localized: "accessibility.favorite.toggle"))
             }
             .padding(12)
             .background(

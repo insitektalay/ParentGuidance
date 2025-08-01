@@ -9,7 +9,7 @@ const corsHeaders = {
 }
 
 interface RequestBody {
-  operation: 'guidance' | 'analyze' | 'framework' | 'context' | 'translate' | 'psychologists_note_context' | 'psychologists_note_traits' | 'transcribe' | 'validate_key' | 'coping_strategies' | 'extract_overall_recommendation'
+  operation: 'guidance' | 'analyze' | 'framework' | 'context' | 'translate' | 'psychologists_note_context' | 'psychologists_note_traits' | 'transcribe' | 'validate_key' | 'coping_strategies' | 'extract_overall_recommendation' | 'generate_embedding' | 'check_similarity'
   variables: Record<string, any>
   apiKey: string
   provider?: 'openai' | 'anthropic' | 'xai' | 'google' // Provider override
@@ -170,6 +170,12 @@ serve(async (req) => {
       
       case 'extract_overall_recommendation':
         return await handleExtractOverallRecommendationOperation(apiKey, variables, detectedProvider)
+      
+      case 'generate_embedding':
+        return await handleGenerateEmbeddingOperation(apiKey, variables, detectedProvider)
+      
+      case 'check_similarity':
+        return await handleCheckSimilarityOperation(apiKey, variables, detectedProvider)
       
       default:
         return new Response(
@@ -1199,4 +1205,361 @@ async function handleTranscribeOperation(
       }
     )
   }
+}
+
+// ================== EMBEDDING GENERATION HANDLER ==================
+
+// Handle embedding generation with multilingual support
+async function handleGenerateEmbeddingOperation(apiKey: string, variables: any, provider: string) {
+  const { text, source_language } = variables
+  console.log(`[DEBUG] Generate embedding operation - text length: ${text?.length || 0}, source language: ${source_language || 'auto-detect'}`)
+
+  try {
+    const startTime = Date.now()
+    
+    // Step 1: Detect language if not provided
+    let detectedLanguage = source_language || 'unknown'
+    let textToEmbed = text
+    let wasTranslated = false
+    
+    if (!source_language) {
+      // Simple language detection - check for non-ASCII characters and common words
+      detectedLanguage = detectLanguage(text)
+      console.log(`[DEBUG] Detected language: ${detectedLanguage}`)
+    }
+    
+    // Step 2: Translate to English if needed
+    if (detectedLanguage !== 'en' && detectedLanguage !== 'unknown') {
+      console.log(`[DEBUG] Translating from ${detectedLanguage} to English`)
+      
+      try {
+        // Use the existing translate prompt template
+        const translateVariables = {
+          input_text: text,
+          lang: 'English'
+        }
+        
+        const translatePrompt = interpolatePrompt(promptTemplates.translate.systemPromptText, translateVariables)
+        
+        // Use OpenAI for translation (most reliable for embeddings)
+        const translateResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'gpt-4-turbo-preview',
+            messages: [
+              { role: 'system', content: translatePrompt }
+            ],
+            temperature: 0.3,
+            max_tokens: 1000
+          })
+        })
+        
+        if (translateResponse.ok) {
+          const translateData = await translateResponse.json()
+          textToEmbed = translateData.choices?.[0]?.message?.content || text
+          wasTranslated = true
+          console.log(`[DEBUG] Translation successful: ${textToEmbed.substring(0, 100)}...`)
+        } else {
+          console.log(`[DEBUG] Translation failed, using original text`)
+          textToEmbed = text
+        }
+      } catch (translateError) {
+        console.log(`[DEBUG] Translation error, using original text: ${translateError}`)
+        textToEmbed = text
+      }
+    }
+    
+    // Step 3: Generate embedding using OpenAI (always use OpenAI for consistency)
+    console.log(`[DEBUG] Generating embedding for text: ${textToEmbed.substring(0, 100)}...`)
+    
+    const embeddingResponse = await fetch('https://api.openai.com/v1/embeddings', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'text-embedding-3-small',
+        input: textToEmbed,
+        encoding_format: 'float'
+      })
+    })
+    
+    if (!embeddingResponse.ok) {
+      const errorText = await embeddingResponse.text()
+      console.error(`[ERROR] Embedding API error: ${embeddingResponse.status} - ${errorText}`)
+      throw new Error(`Embedding API error: ${embeddingResponse.status}`)
+    }
+    
+    const embeddingData = await embeddingResponse.json()
+    const embedding = embeddingData.data?.[0]?.embedding
+    
+    if (!embedding) {
+      console.error(`[ERROR] No embedding data received`)
+      throw new Error('No embedding data received')
+    }
+    
+    const processingTime = Date.now() - startTime
+    console.log(`[DEBUG] Embedding generated successfully in ${processingTime}ms`)
+    
+    return new Response(
+      JSON.stringify({
+        success: true,
+        data: {
+          embedding: embedding,
+          detectedLanguage: detectedLanguage,
+          wasTranslated: wasTranslated,
+          originalText: text,
+          embeddedText: textToEmbed,
+          model: 'text-embedding-3-small',
+          dimension: embedding.length,
+          processingTimeMs: processingTime
+        }
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+    
+  } catch (error) {
+    console.error('[ERROR] Generate embedding operation failed:', error)
+    return new Response(
+      JSON.stringify({ error: 'Embedding generation failed', details: error.message }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  }
+}
+
+// Simple language detection function
+function detectLanguage(text: string): string {
+  if (!text || text.trim().length === 0) return 'unknown'
+  
+  // Simple heuristics for common languages
+  const englishWords = ['the', 'and', 'is', 'in', 'to', 'of', 'a', 'that', 'it', 'with', 'for', 'as', 'was', 'on', 'are', 'you']
+  const spanishWords = ['el', 'la', 'de', 'que', 'y', 'a', 'en', 'un', 'es', 'se', 'no', 'te', 'lo', 'le', 'da', 'su']
+  const frenchWords = ['le', 'de', 'et', 'à', 'un', 'il', 'être', 'et', 'en', 'avoir', 'que', 'pour', 'dans', 'ce', 'son']
+  
+  const lowerText = text.toLowerCase()
+  
+  // Count matches for each language
+  const englishMatches = englishWords.filter(word => lowerText.includes(` ${word} `) || lowerText.startsWith(`${word} `) || lowerText.endsWith(` ${word}`)).length
+  const spanishMatches = spanishWords.filter(word => lowerText.includes(` ${word} `) || lowerText.startsWith(`${word} `) || lowerText.endsWith(` ${word}`)).length
+  const frenchMatches = frenchWords.filter(word => lowerText.includes(` ${word} `) || lowerText.startsWith(`${word} `) || lowerText.endsWith(` ${word}`)).length
+  
+  // Check for non-ASCII characters (suggests non-English)
+  const hasNonAscii = /[^\x00-\x7F]/.test(text)
+  
+  if (englishMatches > spanishMatches && englishMatches > frenchMatches && !hasNonAscii) {
+    return 'en'
+  } else if (spanishMatches > englishMatches && spanishMatches > frenchMatches) {
+    return 'es'
+  } else if (frenchMatches > englishMatches && frenchMatches > spanishMatches) {
+    return 'fr'
+  } else if (hasNonAscii) {
+    return 'non-en' // Generic non-English
+  }
+  
+  return 'en' // Default to English
+}
+
+// ================== SIMILARITY CHECK HANDLER ==================
+
+// Handle similarity checking with deduplication policies
+async function handleCheckSimilarityOperation(apiKey: string, variables: any, provider: string) {
+  const { 
+    embedding, 
+    family_id, 
+    category, 
+    table_name, 
+    similarity_threshold,
+    subcategory,
+    max_results = 20
+  } = variables
+  
+  console.log(`[DEBUG] Check similarity operation - table: ${table_name}, category: ${category}, threshold: ${similarity_threshold}`)
+
+  try {
+    // Initialize Supabase client with service role for database operations
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+
+    const startTime = Date.now()
+    
+    // Validate inputs
+    if (!embedding || !Array.isArray(embedding)) {
+      throw new Error('Invalid embedding provided')
+    }
+    
+    if (!family_id || !category || !table_name) {
+      throw new Error('Missing required parameters: family_id, category, table_name')
+    }
+    
+    // Use default thresholds from settings if not provided
+    const threshold = similarity_threshold || (table_name === 'insight_bullet_points' ? 0.90 : 0.85)
+    
+    let similarInsights = []
+    
+    // Query for similar insights based on table
+    if (table_name === 'insight_bullet_points') {
+      console.log(`[DEBUG] Searching for similar bullet points in category: ${category}`)
+      
+      const { data, error } = await supabaseClient.rpc('find_similar_bullet_points', {
+        target_embedding: `[${embedding.join(',')}]`,
+        family_id_filter: family_id,
+        category_filter: category,
+        similarity_threshold: threshold,
+        max_results: max_results
+      })
+      
+      if (error) {
+        console.error(`[ERROR] Database error in similarity search: ${error.message}`)
+        throw new Error(`Database error: ${error.message}`)
+      }
+      
+      similarInsights = data || []
+      
+    } else if (table_name === 'contextual_insights') {
+      console.log(`[DEBUG] Searching for similar contextual insights in category: ${category}`)
+      
+      const { data, error } = await supabaseClient.rpc('find_similar_contextual_insights', {
+        target_embedding: `[${embedding.join(',')}]`,
+        family_id_filter: family_id,
+        category_filter: category,
+        similarity_threshold: threshold,
+        max_results: max_results
+      })
+      
+      if (error) {
+        console.error(`[ERROR] Database error in similarity search: ${error.message}`)
+        throw new Error(`Database error: ${error.message}`)
+      }
+      
+      similarInsights = data || []
+    } else {
+      throw new Error(`Unsupported table: ${table_name}`)
+    }
+    
+    // Apply category-specific deduplication policies
+    const deduplicationPolicy = getDeduplicationPolicy(table_name, category, subcategory)
+    
+    const searchTime = Date.now() - startTime
+    console.log(`[DEBUG] Found ${similarInsights.length} similar insights in ${searchTime}ms`)
+    
+    // Determine recommended action based on policy and similarity scores
+    let recommendedAction = 'insert'
+    let highestSimilarity = 0
+    
+    if (similarInsights.length > 0) {
+      highestSimilarity = Math.max(...similarInsights.map(insight => insight.similarity_score))
+      
+      switch (deduplicationPolicy) {
+        case 'DROP':
+          recommendedAction = 'drop'
+          break
+        case 'REWRITE':
+          recommendedAction = 'rewrite'
+          break
+        case 'FUSE':
+          recommendedAction = 'fuse'
+          break
+        default:
+          recommendedAction = 'insert'
+      }
+    }
+    
+    return new Response(
+      JSON.stringify({
+        success: true,
+        data: {
+          similarInsights: similarInsights,
+          recommendedAction: recommendedAction,
+          deduplicationPolicy: deduplicationPolicy,
+          highestSimilarity: highestSimilarity,
+          searchTimeMs: searchTime,
+          threshold: threshold,
+          totalFound: similarInsights.length
+        }
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+    
+  } catch (error) {
+    console.error('[ERROR] Check similarity operation failed:', error)
+    return new Response(
+      JSON.stringify({ error: 'Similarity check failed', details: error.message }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  }
+}
+
+// Get deduplication policy for a given category
+function getDeduplicationPolicy(tableName: string, category: string, subcategory?: string): string {
+  if (tableName === 'insight_bullet_points') {
+    // Regulation insights policies
+    switch (category.toLowerCase()) {
+      case 'core':
+      case 'emotional_regulation':
+        return 'DROP'
+      case 'adhd':
+      case 'attention_focus':
+        return 'DROP'
+      case 'mildautism':
+      case 'mild_autism':
+      case 'flexibility_social':
+        return 'DROP'
+      case 'copingstrategies':
+      case 'coping_strategies':
+        return 'REWRITE'
+      default:
+        return 'DROP'
+    }
+  } else if (tableName === 'contextual_insights') {
+    // Contextual insights policies
+    switch (category.toLowerCase()) {
+      case 'proven_regulation_tools':
+        return 'FUSE'
+      case 'behavioral_patterns':
+        return 'REWRITE'
+      case 'family_context':
+        return 'DROP'
+      case 'medical_health':
+      case 'medical':
+      case 'health':
+        return 'DROP'
+      case 'educational_academic':
+      case 'educational':
+      case 'academic':
+        return 'DROP'
+      case 'peer_social':
+      case 'peer':
+      case 'social':
+        return 'REWRITE'
+      case 'daily_life_practical':
+      case 'daily_life':
+      case 'practical':
+        return 'FUSE'
+      case 'temporal_timing':
+      case 'temporal':
+      case 'timing':
+        return 'FUSE'
+      case 'environmental_tech_triggers':
+      case 'environmental':
+      case 'tech_triggers':
+        return 'FUSE'
+      case 'parenting_approaches':
+      case 'parenting':
+        return 'DROP'
+      case 'sibling_dynamics':
+      case 'sibling':
+        return 'FUSE'
+      default:
+        return 'DROP'
+    }
+  }
+  
+  return 'DROP' // Default to dropping duplicates
 }

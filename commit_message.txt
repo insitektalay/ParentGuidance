@@ -1,10 +1,1 @@
-Add delete functionality to situation cards in library view
-Implemented a visible trash icon on each situation card that allows users to delete situations and their associated data.
-The delete operation properly handles cascade deletion of related records (guidance, insight_bullet_points, contextual_insights) while respecting foreign key constraints.
-Key changes:
-- Added trash icon button next to favorite star in SituationCard component
-- Updated ConversationService.deleteSituation() to delete related records in correct order
-- Added ConversationError enum for better error handling and user feedback
-- Enhanced LibraryViewController with delete error alerts
-- Provided SQL DELETE policies for situations, guidance, insight_bullet_points, and contextual_insights tables
-The implementation ensures data consistency by deleting child records before parent records and provides clear error messages to users when deletion fails.
+Implement vector embedding deduplication system with multilingual support    Added comprehensive insight deduplication using pgvector similarity matching to prevent duplicate insights across both   regulation (insight_bullet_points) and contextual (contextual_insights) tables. The system automatically detects   language, translates non-English content to English before embedding generation, and applies category-specific   deduplication policies.    Key features:   - Vector embeddings using OpenAI text-embedding-3-small model with translation support   - Category-specific policies: DROP (emotional/attention/flexibility), REWRITE (coping/behavioral), FUSE (regulation   tools/timing/environment)   - Race condition protection via database constraints and ON CONFLICT handling   - Comprehensive metrics tracking for deduplication effectiveness and language processing   - Settings table stores embedding dimensions to prevent future model swap issues    Database enhancements include pgvector extension, embedding columns with metadata tracking, unique indexes for literal   duplicate prevention, and helper functions for similarity search. Swift services updated with new response models and   EdgeFunction integration for embedding generation and similarity checking.

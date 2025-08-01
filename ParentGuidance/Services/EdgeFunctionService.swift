@@ -447,6 +447,158 @@ class EdgeFunctionService {
         print("✅ [EdgeFunction] Response received successfully")
         return jsonResponse
     }
+    
+    // MARK: - Embedding and Deduplication Methods
+    
+    /// Generate vector embedding with multilingual support
+    func generateEmbedding(
+        text: String,
+        apiKey: String,
+        sourceLanguage: String? = nil
+    ) async throws -> EmbeddingData {
+        print("🔄 [EdgeFunction] Generating embedding via Edge Function")
+        print("   → Text length: \(text.count) characters")
+        print("   → Source language: \(sourceLanguage ?? "auto-detect")")
+        
+        let variables: [String: Any] = [
+            "text": text,
+            "source_language": sourceLanguage as Any
+        ]
+        
+        let result = try await callEdgeFunction(
+            operation: "generate_embedding",
+            variables: variables,
+            apiKey: apiKey
+        )
+        
+        // Parse the response
+        guard let success = result["success"] as? Bool, success,
+              let data = result["data"] as? [String: Any] else {
+            let errorMessage = result["error"] as? String ?? "Unknown error"
+            print("❌ [EdgeFunction] Embedding generation failed: \(errorMessage)")
+            throw EdgeFunctionError.invalidResponse
+        }
+        
+        // Parse embedding data from response
+        guard let embedding = data["embedding"] as? [Float],
+              let detectedLanguage = data["detectedLanguage"] as? String,
+              let wasTranslated = data["wasTranslated"] as? Bool,
+              let originalText = data["originalText"] as? String,
+              let embeddedText = data["embeddedText"] as? String,
+              let model = data["model"] as? String,
+              let dimension = data["dimension"] as? Int,
+              let processingTimeMs = data["processingTimeMs"] as? Int else {
+            print("❌ [EdgeFunction] Invalid embedding data format")
+            throw EdgeFunctionError.invalidResponse
+        }
+        
+        let embeddingData = EmbeddingData(
+            embedding: embedding,
+            detectedLanguage: detectedLanguage,
+            wasTranslated: wasTranslated,
+            originalText: originalText,
+            embeddedText: embeddedText,
+            model: model,
+            dimension: dimension,
+            processingTimeMs: processingTimeMs
+        )
+        
+        print("✅ [EdgeFunction] Embedding generated successfully")
+        print("   → Language: \(detectedLanguage), Translated: \(wasTranslated)")
+        print("   → Dimension: \(dimension), Processing time: \(processingTimeMs)ms")
+        
+        return embeddingData
+    }
+    
+    /// Check similarity against existing insights  
+    func checkSimilarity(
+        embedding: [Float],
+        familyId: String,
+        category: String,
+        tableName: String,
+        subcategory: String? = nil,
+        similarityThreshold: Float? = nil,
+        apiKey: String
+    ) async throws -> SimilarityData {
+        print("🔄 [EdgeFunction] Checking similarity via Edge Function")
+        print("   → Table: \(tableName), Category: \(category)")
+        print("   → Threshold: \(similarityThreshold ?? 0.0)")
+        
+        let variables: [String: Any] = [
+            "embedding": embedding,
+            "family_id": familyId,
+            "category": category,
+            "table_name": tableName,
+            "subcategory": subcategory as Any,
+            "similarity_threshold": similarityThreshold as Any
+        ]
+        
+        let result = try await callEdgeFunction(
+            operation: "check_similarity",
+            variables: variables,
+            apiKey: apiKey
+        )
+        
+        // Parse the response
+        guard let success = result["success"] as? Bool, success,
+              let data = result["data"] as? [String: Any] else {
+            let errorMessage = result["error"] as? String ?? "Unknown error"
+            print("❌ [EdgeFunction] Similarity check failed: \(errorMessage)")
+            throw EdgeFunctionError.invalidResponse
+        }
+        
+        // Parse similarity data from response
+        guard let similarInsightsData = data["similarInsights"] as? [[String: Any]],
+              let recommendedAction = data["recommendedAction"] as? String,
+              let deduplicationPolicy = data["deduplicationPolicy"] as? String,
+              let highestSimilarity = data["highestSimilarity"] as? Float,
+              let searchTimeMs = data["searchTimeMs"] as? Int,
+              let threshold = data["threshold"] as? Float,
+              let totalFound = data["totalFound"] as? Int else {
+            print("❌ [EdgeFunction] Invalid similarity data format")
+            throw EdgeFunctionError.invalidResponse
+        }
+        
+        // Parse similar insights
+        var similarInsights: [SimilarInsight] = []
+        for insightData in similarInsightsData {
+            guard let id = insightData["id"] as? String,
+                  let content = insightData["content"] as? String,
+                  let category = insightData["category"] as? String,
+                  let similarityScore = insightData["similarity_score"] as? Float,
+                  let wasTranslated = insightData["was_translated"] as? Bool,
+                  let createdAt = insightData["created_at"] as? String else {
+                continue
+            }
+            
+            let similarInsight = SimilarInsight(
+                id: id,
+                content: content,
+                category: category,
+                subcategory: insightData["subcategory"] as? String,
+                similarityScore: similarityScore,
+                wasTranslated: wasTranslated,
+                createdAt: createdAt
+            )
+            similarInsights.append(similarInsight)
+        }
+        
+        let similarityData = SimilarityData(
+            similarInsights: similarInsights,
+            recommendedAction: recommendedAction,
+            deduplicationPolicy: deduplicationPolicy,
+            highestSimilarity: highestSimilarity,
+            searchTimeMs: searchTimeMs,
+            threshold: threshold,
+            totalFound: totalFound
+        )
+        
+        print("✅ [EdgeFunction] Similarity check completed")
+        print("   → Found: \(totalFound), Action: \(recommendedAction)")
+        print("   → Highest similarity: \(highestSimilarity)")
+        
+        return similarityData
+    }
 }
 
 // MARK: - Error Types

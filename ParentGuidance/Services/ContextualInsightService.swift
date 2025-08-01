@@ -8,6 +8,87 @@
 import Foundation
 import Supabase
 
+// MARK: - Deduplication Response Models
+
+struct InsightExtractionResponse {
+    let insights: [ExtractedInsight]
+    let deduplicationStats: DeduplicationStats
+    let languageStats: LanguageProcessingStats
+}
+
+struct DeduplicationStats {
+    let candidatesGenerated: Int
+    var duplicatesFound: Int
+    var insightsInserted: Int
+    var insightsFused: Int
+    var insightsRewritten: Int
+    var raceConditionDuplicates: Int
+}
+
+struct LanguageProcessingStats {
+    var detectedLanguages: [String: Int] // language code -> count
+    var translatedCount: Int
+}
+
+struct ExtractedInsight {
+    let content: String
+    let category: String
+    let subcategory: String?
+    let wasTranslated: Bool
+    let detectedLanguage: String
+    let similarityScore: Float?
+    let deduplicationAction: String // 'inserted', 'dropped', 'fused', 'rewritten'
+}
+
+// MARK: - Embedding Generation Models
+
+struct EmbeddingGenerationResponse: Codable {
+    let success: Bool
+    let data: EmbeddingData?
+    let error: String?
+    let details: String?
+}
+
+struct EmbeddingData: Codable {
+    let embedding: [Float]
+    let detectedLanguage: String
+    let wasTranslated: Bool
+    let originalText: String
+    let embeddedText: String
+    let model: String
+    let dimension: Int
+    let processingTimeMs: Int
+}
+
+// MARK: - Similarity Check Models  
+
+struct SimilarityCheckResponse: Codable {
+    let success: Bool
+    let data: SimilarityData?
+    let error: String?
+    let details: String?
+}
+
+struct SimilarityData: Codable {
+    let similarInsights: [SimilarInsight]
+    let recommendedAction: String
+    let deduplicationPolicy: String
+    let highestSimilarity: Float
+    let searchTimeMs: Int
+    let threshold: Float
+    let totalFound: Int
+}
+
+struct SimilarInsight: Codable {
+    let id: String
+    let content: String
+    let category: String
+    let subcategory: String?
+    let similarityScore: Float
+    let wasTranslated: Bool
+    let createdAt: String
+}
+
 class ContextualInsightService {
     static let shared = ContextualInsightService()
     
@@ -1835,6 +1916,262 @@ class ContextualInsightService {
             print("❌ Error clearing contextual insights: \(error)")
             throw ContextualInsightError.databaseError(error)
         }
+    }
+    
+    // MARK: - Embedding and Deduplication Methods
+    
+    /// Generate vector embedding for text with multilingual support
+    func generateEmbedding(
+        text: String,
+        apiKey: String,
+        sourceLanguage: String? = nil
+    ) async throws -> EmbeddingData {
+        print("🧠 Generating embedding for text: \(text.prefix(100))...")
+        
+        // Choose implementation based on feature flag
+        if useEdgeFunction {
+            print("🚀 [ContextualInsightService] Using EdgeFunction for embedding generation")
+            return try await generateEmbeddingViaEdgeFunction(
+                text: text,
+                apiKey: apiKey,
+                sourceLanguage: sourceLanguage
+            )
+        } else {
+            print("🔗 [ContextualInsightService] Direct embedding API not implemented - using EdgeFunction")
+            return try await generateEmbeddingViaEdgeFunction(
+                text: text,
+                apiKey: apiKey,
+                sourceLanguage: sourceLanguage
+            )
+        }
+    }
+    
+    /// Check similarity against existing insights
+    func checkSimilarity(
+        embedding: [Float],
+        familyId: String,
+        category: String,
+        tableName: String,
+        subcategory: String? = nil,
+        similarityThreshold: Float? = nil,
+        apiKey: String
+    ) async throws -> SimilarityData {
+        print("🔍 Checking similarity for category: \(category) in table: \(tableName)")
+        
+        // Use EdgeFunction for similarity checking
+        if useEdgeFunction {
+            print("🚀 [ContextualInsightService] Using EdgeFunction for similarity check")
+            return try await checkSimilarityViaEdgeFunction(
+                embedding: embedding,
+                familyId: familyId,
+                category: category,
+                tableName: tableName,
+                subcategory: subcategory,
+                similarityThreshold: similarityThreshold,
+                apiKey: apiKey
+            )
+        } else {
+            throw ContextualInsightError.apiError(501) // Not implemented for direct API
+        }
+    }
+    
+    /// Generate embedding via Edge Function
+    private func generateEmbeddingViaEdgeFunction(
+        text: String,
+        apiKey: String,
+        sourceLanguage: String? = nil
+    ) async throws -> EmbeddingData {
+        print("🔄 Using Edge Function for embedding generation")
+        
+        do {
+            let response = try await EdgeFunctionService.shared.generateEmbedding(
+                text: text,
+                apiKey: apiKey,
+                sourceLanguage: sourceLanguage
+            )
+            
+            print("✅ Embedding generated via Edge Function")
+            return response
+            
+        } catch {
+            print("❌ Edge Function embedding generation failed: \(error)")
+            throw ContextualInsightError.apiError(0)
+        }
+    }
+    
+    /// Check similarity via Edge Function
+    private func checkSimilarityViaEdgeFunction(
+        embedding: [Float],
+        familyId: String,
+        category: String,
+        tableName: String,
+        subcategory: String? = nil,
+        similarityThreshold: Float? = nil,
+        apiKey: String
+    ) async throws -> SimilarityData {
+        print("🔄 Using Edge Function for similarity check")
+        
+        do {
+            let response = try await EdgeFunctionService.shared.checkSimilarity(
+                embedding: embedding,
+                familyId: familyId,
+                category: category,
+                tableName: tableName,
+                subcategory: subcategory,
+                similarityThreshold: similarityThreshold,
+                apiKey: apiKey
+            )
+            
+            print("✅ Similarity check completed via Edge Function")
+            return response
+            
+        } catch {
+            print("❌ Edge Function similarity check failed: \(error)")
+            throw ContextualInsightError.apiError(0)
+        }
+    }
+    
+    /// Extract insights with deduplication (enhanced version)
+    func extractInsightsWithDeduplication(
+        situationText: String,
+        apiKey: String,
+        familyId: String,
+        childId: String? = nil,
+        situationId: String? = nil,
+        userLanguage: String? = nil,
+        extractionType: String = "general" // "general" or "regulation"
+    ) async throws -> InsightExtractionResponse {
+        print("🧠 Starting insight extraction with deduplication for situation: \(situationId ?? "regeneration")")
+        print("📝 Situation text: \(situationText.prefix(100))...")
+        print("🌐 User language: \(userLanguage ?? "auto-detect")")
+        
+        let startTime = Date()
+        
+        // Step 1: Extract candidate insights using existing logic
+        let candidateInsights: [Any]
+        let tableName: String
+        
+        if extractionType == "regulation" {
+            candidateInsights = try await extractChildRegulationInsights(
+                situationText: situationText,
+                apiKey: apiKey,
+                familyId: familyId,
+                childId: childId,
+                situationId: situationId
+            )
+            tableName = "insight_bullet_points"
+        } else {
+            candidateInsights = try await extractContextFromSituation(
+                situationText: situationText,
+                apiKey: apiKey,
+                familyId: familyId,
+                childId: childId,
+                situationId: situationId
+            )
+            tableName = "contextual_insights"
+        }
+        
+        print("📊 Generated \(candidateInsights.count) candidate insights")
+        
+        // Step 2: Process each candidate with deduplication
+        var processedInsights: [ExtractedInsight] = []
+        var deduplicationStats = DeduplicationStats(
+            candidatesGenerated: candidateInsights.count,
+            duplicatesFound: 0,
+            insightsInserted: 0,
+            insightsFused: 0,
+            insightsRewritten: 0,
+            raceConditionDuplicates: 0
+        )
+        var languageStats = LanguageProcessingStats(
+            detectedLanguages: [:],
+            translatedCount: 0
+        )
+        
+        for candidate in candidateInsights {
+            // Extract content and category from candidate
+            let content: String
+            let category: String
+            let subcategory: String?
+            
+            if let regulationInsight = candidate as? ChildRegulationInsight {
+                content = regulationInsight.content
+                category = regulationInsight.category.rawValue
+                subcategory = nil
+            } else if let contextualInsight = candidate as? ContextualInsight {
+                content = contextualInsight.content
+                category = contextualInsight.category.rawValue
+                subcategory = contextualInsight.subcategory?.rawValue
+            } else {
+                continue // Skip unknown types
+            }
+            
+            // Generate embedding for this candidate
+            let embeddingData = try await generateEmbedding(
+                text: content,
+                apiKey: apiKey,
+                sourceLanguage: userLanguage
+            )
+            
+            // Update language statistics
+            languageStats.detectedLanguages[embeddingData.detectedLanguage, default: 0] += 1
+            if embeddingData.wasTranslated {
+                languageStats.translatedCount += 1
+            }
+            
+            // Check for similar insights
+            let similarityData = try await checkSimilarity(
+                embedding: embeddingData.embedding,
+                familyId: familyId,
+                category: category,
+                tableName: tableName,
+                subcategory: subcategory,
+                apiKey: apiKey
+            )
+            
+            // Apply deduplication policy
+            let extractedInsight = ExtractedInsight(
+                content: content,
+                category: category,
+                subcategory: subcategory,
+                wasTranslated: embeddingData.wasTranslated,
+                detectedLanguage: embeddingData.detectedLanguage,
+                similarityScore: similarityData.highestSimilarity > 0 ? similarityData.highestSimilarity : nil,
+                deduplicationAction: similarityData.recommendedAction
+            )
+            
+            processedInsights.append(extractedInsight)
+            
+            // Update deduplication statistics
+            if similarityData.totalFound > 0 {
+                deduplicationStats.duplicatesFound += 1
+                
+                switch similarityData.recommendedAction {
+                case "insert":
+                    deduplicationStats.insightsInserted += 1
+                case "fuse":
+                    deduplicationStats.insightsFused += 1
+                case "rewrite":
+                    deduplicationStats.insightsRewritten += 1
+                case "drop":
+                    break // Don't count dropped insights as inserted
+                default:
+                    deduplicationStats.insightsInserted += 1
+                }
+            } else {
+                deduplicationStats.insightsInserted += 1
+            }
+        }
+        
+        let processingTime = Date().timeIntervalSince(startTime)
+        print("✅ Deduplication processing completed in \(Int(processingTime * 1000))ms")
+        print("📊 Stats: \(deduplicationStats.duplicatesFound) duplicates found, \(deduplicationStats.insightsInserted) insights will be inserted")
+        
+        return InsightExtractionResponse(
+            insights: processedInsights,
+            deduplicationStats: deduplicationStats,
+            languageStats: languageStats
+        )
     }
     
     // MARK: - Utility Methods

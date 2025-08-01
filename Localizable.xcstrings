@@ -5882,6 +5882,56 @@
         }
       }
     },
+    "situation.dateEdit.accessibilityHint" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double tap to change the date of this situation"
+          }
+        }
+      }
+    },
+    "situation.dateEdit.accessibilityLabel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit date"
+          }
+        }
+      }
+    },
+    "situation.dateEdit.dateLabel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date"
+          }
+        }
+      }
+    },
+    "situation.dateEdit.description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose when this situation actually happened. You can only select dates in the past."
+          }
+        }
+      }
+    },
+    "situation.dateEdit.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit Date"
+          }
+        }
+      }
+    },
     "Sort options: %@" : {
 
     },

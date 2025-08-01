@@ -713,6 +713,35 @@ class ConversationService: ObservableObject {
         }
     }
     
+    func updateSituationDate(situationId: String, newDate: Date) async throws {
+        print("📅 Updating situation date for: \(situationId)")
+        
+        // Validate that the new date is not in the future
+        let now = Date()
+        if newDate > now {
+            throw NSError(domain: "InvalidDate", code: 400, userInfo: [NSLocalizedDescriptionKey: "Cannot set a future date"])
+        }
+        
+        let isoFormatter = ISO8601DateFormatter()
+        let newDateString = isoFormatter.string(from: newDate)
+        
+        do {
+            try await SupabaseManager.shared.client
+                .from("situations")
+                .update([
+                    "created_at": newDateString,
+                    "updated_at": isoFormatter.string(from: now)
+                ])
+                .eq("id", value: situationId)
+                .execute()
+            
+            print("✅ Situation date updated to: \(newDateString)")
+        } catch {
+            print("❌ Error updating situation date: \(error)")
+            throw error
+        }
+    }
+    
     // MARK: - Situation Analysis
     
     func analyzeSituation(situationText: String, apiKey: String, activeFramework: FrameworkRecommendation? = nil) async throws -> (category: String?, isIncident: Bool) {

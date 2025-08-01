@@ -34,6 +34,9 @@ struct LibraryView: View {
                     guidanceError: controller.guidanceError,
                     onBack: {
                         controller.clearSelection()
+                    },
+                    onDateUpdated: {
+                        controller.refreshSituations()
                     }
                 )
             } else {

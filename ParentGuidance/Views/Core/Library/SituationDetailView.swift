@@ -13,9 +13,13 @@ struct SituationDetailView: View {
     let isLoadingGuidance: Bool
     let guidanceError: String?
     let onBack: () -> Void
+    let onDateUpdated: (() -> Void)?
     
     @State private var currentGuidancePage = 0
     @State private var showCopyConfirmation = false
+    @State private var showDatePicker = false
+    @State private var selectedDate = Date()
+    @State private var isUpdatingDate = false
     @ObservedObject private var guidanceStructureSettings = GuidanceStructureSettings.shared
     
     var body: some View {
@@ -67,9 +71,24 @@ struct SituationDetailView: View {
                                 .font(.system(size: 24, weight: .semibold))
                                 .foregroundColor(ColorPalette.white.opacity(0.9))
                             
-                            Text(SituationCard.formatDate(situation.createdAt))
-                                .font(.system(size: 14))
-                                .foregroundColor(ColorPalette.white.opacity(0.6))
+                            HStack(spacing: 8) {
+                                Text(SituationCard.formatDate(situation.createdAt))
+                                    .font(.system(size: 14))
+                                    .foregroundColor(ColorPalette.white.opacity(0.6))
+                                
+                                Button(action: {
+                                    // Initialize date picker with current situation date
+                                    let formatter = ISO8601DateFormatter()
+                                    selectedDate = formatter.date(from: situation.createdAt) ?? Date()
+                                    showDatePicker = true
+                                }) {
+                                    Image(systemName: "pencil.circle")
+                                        .font(.system(size: 14))
+                                        .foregroundColor(ColorPalette.terracotta.opacity(0.8))
+                                }
+                                .accessibilityLabel(String(localized: "situation.dateEdit.accessibilityLabel"))
+                                .accessibilityHint(String(localized: "situation.dateEdit.accessibilityHint"))
+                            }
                         }
                         
                         Spacer()
@@ -243,6 +262,9 @@ struct SituationDetailView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(ColorPalette.navy)
         .navigationBarHidden(true)
+        .sheet(isPresented: $showDatePicker) {
+            datePickerSheet
+        }
         .overlay(
             // Copy confirmation overlay
             VStack {
@@ -265,6 +287,93 @@ struct SituationDetailView: View {
             }
             .animation(.easeInOut(duration: 0.3), value: showCopyConfirmation)
         )
+    }
+    
+    // MARK: - Date Picker Sheet
+    
+    @ViewBuilder
+    private var datePickerSheet: some View {
+        NavigationView {
+            VStack(spacing: 20) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(String(localized: "situation.dateEdit.description"))
+                        .font(.system(size: 16))
+                        .foregroundColor(ColorPalette.white.opacity(0.8))
+                        .multilineTextAlignment(.leading)
+                }
+                .padding(.horizontal, 20)
+                
+                DatePicker(
+                    String(localized: "situation.dateEdit.dateLabel"),
+                    selection: $selectedDate,
+                    in: ...Date(),
+                    displayedComponents: [.date]
+                )
+                .datePickerStyle(.wheel)
+                .labelsHidden()
+                .padding(.horizontal, 20)
+                
+                Spacer()
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(ColorPalette.navy)
+            .navigationTitle(String(localized: "situation.dateEdit.title"))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(String(localized: "common.cancel")) {
+                        showDatePicker = false
+                    }
+                    .foregroundColor(ColorPalette.white.opacity(0.8))
+                }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        Task {
+                            await updateSituationDate()
+                        }
+                    }) {
+                        if isUpdatingDate {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                                .foregroundColor(ColorPalette.terracotta)
+                        } else {
+                            Text(String(localized: "common.save"))
+                                .foregroundColor(ColorPalette.terracotta)
+                        }
+                    }
+                    .disabled(isUpdatingDate)
+                }
+            }
+        }
+        .presentationDetents([.medium])
+    }
+    
+    // MARK: - Date Update Method
+    
+    private func updateSituationDate() async {
+        isUpdatingDate = true
+        
+        do {
+            try await ConversationService.shared.updateSituationDate(
+                situationId: situation.id,
+                newDate: selectedDate
+            )
+            
+            await MainActor.run {
+                showDatePicker = false
+                isUpdatingDate = false
+                // Notify parent view to refresh
+                onDateUpdated?()
+            }
+            
+        } catch {
+            await MainActor.run {
+                isUpdatingDate = false
+                // TODO: Show error alert to user
+                print("❌ Failed to update situation date: \(error.localizedDescription)")
+            }
+        }
     }
     
     // MARK: - Helper Methods
@@ -424,6 +533,7 @@ struct SituationDetailView: View {
         guidance: [],
         isLoadingGuidance: false,
         guidanceError: nil,
-        onBack: {}
+        onBack: {},
+        onDateUpdated: nil
     )
 }

@@ -599,6 +599,55 @@ class EdgeFunctionService {
         
         return similarityData
     }
+    
+    // MARK: - Which Insights Matter
+    
+    /// Select which existing insights are relevant to a guidance text
+    func selectWhichInsightsMatter(
+        guidanceText: String,
+        insightsList: String,
+        apiKey: String
+    ) async throws -> String {
+        print("🎯 [EdgeFunction] Selecting relevant insights")
+        print("   → Guidance text length: \(guidanceText.count)")
+        print("   → Insights list length: \(insightsList.count)")
+        
+        let requestBody: [String: Any] = [
+            "operation": "which_insights_matter",
+            "variables": [
+                "GuidanceText": guidanceText,
+                "InsightList": insightsList
+            ],
+            "apiKey": apiKey
+        ]
+        
+        let url = URL(string: baseURL)!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(try await SupabaseManager.shared.client.auth.session.accessToken)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw EdgeFunctionError.invalidResponse
+        }
+        
+        guard httpResponse.statusCode == 200 else {
+            let errorMessage = String(data: data, encoding: .utf8) ?? "Unknown error"
+            print("❌ [EdgeFunction] Which insights matter failed: \(httpResponse.statusCode) - \(errorMessage)")
+            throw EdgeFunctionError.httpError(statusCode: httpResponse.statusCode)
+        }
+        
+        guard let jsonResponse = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let content = jsonResponse["content"] as? String else {
+            throw EdgeFunctionError.invalidResponse
+        }
+        
+        print("✅ [EdgeFunction] Relevant insights selection completed")
+        return content
+    }
 }
 
 // MARK: - Error Types

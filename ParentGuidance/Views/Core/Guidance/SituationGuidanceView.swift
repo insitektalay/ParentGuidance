@@ -11,6 +11,8 @@ struct SituationGuidanceView: View {
     @State private var showingLanguagePicker = false
     @State private var canSwitchLanguage = false
     @State private var overallRecommendation: String? = nil
+    @State private var relevantInsights: [RelevantInsight] = []
+    @State private var isLoadingInsights = false
     let situation: Situation?
     
     init(situation: Situation? = nil) {
@@ -169,6 +171,17 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
                         .padding(.bottom, 20)
                 }
                 
+                // Relevant Insights Section
+                if isLoadingInsights {
+                    RelevantInsightsLoadingView()
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 20)
+                } else if !relevantInsights.isEmpty {
+                    RelevantInsightsSection(insights: relevantInsights)
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 20)
+                }
+                
                 // Page indicators - moved above guidance cards
                 HStack(spacing: 8) {
                     ForEach(0..<categories.count, id: \.self) { index in
@@ -303,6 +316,11 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
                             self.overallRecommendation = recommendation
                             self.canSwitchLanguage = displayResults.first?.canSwitchLanguage ?? false
                             self.isLoading = false
+                        }
+                        
+                        // Load relevant insights for the first guidance entry
+                        if let firstGuidance = guidanceEntries.first {
+                            await loadRelevantInsights(for: firstGuidance.id)
                         }
                     }
                 } else {
@@ -589,6 +607,32 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
                 self.categories = categories
                 self.overallRecommendation = recommendation
                 print("🌐 Switched guidance display to language: \(switchedResults.first?.selectedLanguage ?? "unknown")")
+            }
+        }
+    }
+    
+    // MARK: - Relevant Insights Loading
+    
+    private func loadRelevantInsights(for guidanceId: String) async {
+        await MainActor.run {
+            isLoadingInsights = true
+        }
+        
+        do {
+            print("📋 Loading relevant insights for guidance: \(guidanceId)")
+            let insights = try await RelevantInsightsService.shared.getRelevantInsights(guidanceId: guidanceId)
+            
+            await MainActor.run {
+                self.relevantInsights = insights
+                self.isLoadingInsights = false
+            }
+            
+            print("✅ Loaded \(insights.count) relevant insights")
+            
+        } catch {
+            print("❌ Failed to load relevant insights: \(error)")
+            await MainActor.run {
+                self.isLoadingInsights = false
             }
         }
     }

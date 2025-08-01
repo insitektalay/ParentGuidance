@@ -197,19 +197,40 @@ struct NewSituationView: View {
             )
             
             // Step 6: Save the guidance response linked to the situation using raw content
+            let guidanceId: String
             do {
-                let guidanceId = try await ConversationService.shared.saveGuidance(
+                guidanceId = try await ConversationService.shared.saveGuidance(
                     situationId: situationId,
                     content: rawContent, // Use raw bracket-delimited content
                     category: "parenting_guidance",
                     overallRecommendation: guidance.overallRecommendation
                 )
+                print("✅ Saved guidance with ID: \(guidanceId)")
             } catch {
                 print("❌ [CRITICAL] Failed to save guidance in handleChatMessage!")
                 print("❌ [CRITICAL] Error: \(error)")
                 print("❌ [CRITICAL] Error description: \(error.localizedDescription)")
                 // Re-throw to maintain error handling
                 throw error
+            }
+            
+            // Step 6.5: Select relevant insights for this guidance (background task)
+            Task {
+                do {
+                    print("🎯 Starting relevant insights selection for guidance: \(guidanceId)")
+                    let relevantInsights = try await RelevantInsightsService.shared.selectRelevantInsights(
+                        guidanceText: rawContent,
+                        situationId: situationId,
+                        guidanceId: guidanceId,
+                        familyId: familyId!,
+                        apiKey: apiKey
+                    )
+                    print("✅ Successfully selected \(relevantInsights.count) relevant insights")
+                    print("🔄 Relevant insights will be visible when you view this guidance again")
+                } catch {
+                    print("⚠️ Relevant insights selection failed (non-critical): \(error)")
+                    print("⚠️ This won't affect the main guidance flow")
+                }
             }
             
             // Step 7: Extract contextual insights (background task)
@@ -416,20 +437,40 @@ struct NewSituationView: View {
             )
             
             // Step 6: Save the guidance response linked to the situation using raw content
-            
+            let guidanceId: String
             do {
-                let guidanceId = try await ConversationService.shared.saveGuidance(
+                guidanceId = try await ConversationService.shared.saveGuidance(
                     situationId: situationId,
                     content: rawContent, // Use raw bracket-delimited content
                     category: "parenting_guidance",
                     overallRecommendation: guidance.overallRecommendation
                 )
+                print("✅ Saved guidance with ID: \(guidanceId)")
             } catch {
                 print("❌ [CRITICAL] Failed to save guidance in handleSendMessage!")
                 print("❌ [CRITICAL] Error: \(error)")
                 print("❌ [CRITICAL] Error description: \(error.localizedDescription)")
                 // Re-throw to maintain error handling
                 throw error
+            }
+            
+            // Step 6.5: Select relevant insights for this guidance (background task)
+            Task {
+                do {
+                    print("🎯 Starting relevant insights selection for guidance: \(guidanceId)")
+                    let relevantInsights = try await RelevantInsightsService.shared.selectRelevantInsights(
+                        guidanceText: rawContent,
+                        situationId: situationId,
+                        guidanceId: guidanceId,
+                        familyId: familyId!,
+                        apiKey: apiKey
+                    )
+                    print("✅ Successfully selected \(relevantInsights.count) relevant insights")
+                    print("🔄 Relevant insights will be visible when you view this guidance again")
+                } catch {
+                    print("⚠️ Relevant insights selection failed (non-critical): \(error)")
+                    print("⚠️ This won't affect the main guidance flow")
+                }
             }
             
             // Step 7: Extract contextual insights (background task)

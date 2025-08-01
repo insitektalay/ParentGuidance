@@ -151,6 +151,8 @@
 		94BC2DD92E3A196000B35676 /* DeletedContextualInsight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DD82E3A195F00B35676 /* DeletedContextualInsight.swift */; };
 		94BC2DDB2E3A196F00B35676 /* DeletedContextualInsightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DDA2E3A196D00B35676 /* DeletedContextualInsightsView.swift */; };
 		94BC2DDD2E3A197C00B35676 /* DeletedContextualInsightCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DDC2E3A197A00B35676 /* DeletedContextualInsightCard.swift */; };
+		94BC2DE02E3CB77000B35676 /* RelevantInsightsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DDF2E3CB76E00B35676 /* RelevantInsightsService.swift */; };
+		94BC2DE22E3CB78200B35676 /* RelevantInsightsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DE12E3CB78000B35676 /* RelevantInsightsSection.swift */; };
 		94CBD5152E20F80C0014C22A /* FakeFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94CBD5142E20F80C0014C22A /* FakeFile.swift */; };
 		94FA10C42E056247003EC1E9 /* ParentGuidanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA10C32E056247003EC1E9 /* ParentGuidanceApp.swift */; };
 		94FA10C62E056247003EC1E9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FA10C52E056247003EC1E9 /* ContentView.swift */; };
@@ -363,6 +365,8 @@
 		94BC2DDA2E3A196D00B35676 /* DeletedContextualInsightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedContextualInsightsView.swift; sourceTree = "<group>"; };
 		94BC2DDC2E3A197A00B35676 /* DeletedContextualInsightCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedContextualInsightCard.swift; sourceTree = "<group>"; };
 		94BC2DDE2E3A1A8B00B35676 /* Untitled.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Untitled.swift; sourceTree = "<group>"; };
+		94BC2DDF2E3CB76E00B35676 /* RelevantInsightsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelevantInsightsService.swift; sourceTree = "<group>"; };
+		94BC2DE12E3CB78000B35676 /* RelevantInsightsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelevantInsightsSection.swift; sourceTree = "<group>"; };
 		94CBD5142E20F80C0014C22A /* FakeFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FakeFile.swift; sourceTree = "<group>"; };
 		94FA10C02E056247003EC1E9 /* ParentGuidance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ParentGuidance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		94FA10C32E056247003EC1E9 /* ParentGuidanceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentGuidanceApp.swift; sourceTree = "<group>"; };
@@ -719,6 +723,7 @@
 		94FA10F02E05630A003EC1E9 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				94BC2DDF2E3CB76E00B35676 /* RelevantInsightsService.swift */,
 				943BC98D2E38A2110056EFF9 /* AIProcessingSettings.swift */,
 				943BC9792E35D7770056EFF9 /* MultiProviderApiKeyService.swift */,
 				943BC97A2E35D7770056EFF9 /* VoiceRecorderViewModel.swift */,
@@ -932,6 +937,7 @@
 		94FA11382E05CC70003EC1E9 /* Guidance */ = {
 			isa = PBXGroup;
 			children = (
+				94BC2DE12E3CB78000B35676 /* RelevantInsightsSection.swift */,
 				94FA11392E05CC71003EC1E9 /* Components */,
 				94FA11372E05CC61003EC1E9 /* SituationGuidanceView.swift */,
 			);
@@ -1165,6 +1171,7 @@
 				943BC97B2E35D7770056EFF9 /* VoiceRecorderViewModel.swift in Sources */,
 				943BC97C2E35D7770056EFF9 /* MultiProviderApiKeyService.swift in Sources */,
 				94BC2DD92E3A196000B35676 /* DeletedContextualInsight.swift in Sources */,
+				94BC2DE02E3CB77000B35676 /* RelevantInsightsService.swift in Sources */,
 				94BC2DC02E39F19800B35676 /* DeletedCopingStrategiesView.swift in Sources */,
 				94BC2DC92E3A11A100B35676 /* DeletedAttentionFocusInsight.swift in Sources */,
 				94BC2DC22E39F1AC00B35676 /* DeletedCopingStrategyCard.swift in Sources */,
@@ -1245,6 +1252,7 @@
 				94BC2DD32E3A11E200B35676 /* DeletedEmotionalRegulationCard.swift in Sources */,
 				9481566C2E2A11E200C28273 /* RegulationInsightsView.swift in Sources */,
 				944EA2092E2E0EDB00C110AF /* DeleteAccountConfirmationView.swift in Sources */,
+				94BC2DE22E3CB78200B35676 /* RelevantInsightsSection.swift in Sources */,
 				943792AB2E1C34520089F512 /* FrameworkGeneratingView.swift in Sources */,
 				944EA22B2E320C3000C110AF /* SituationTypeCard.swift in Sources */,
 				944EA1E22E2CD35400C110AF /* EdgeFunctionService.swift in Sources */,

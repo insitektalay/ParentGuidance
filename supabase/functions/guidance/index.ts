@@ -9,7 +9,7 @@ const corsHeaders = {
 }
 
 interface RequestBody {
-  operation: 'guidance' | 'analyze' | 'framework' | 'context' | 'translate' | 'psychologists_note_context' | 'psychologists_note_traits' | 'transcribe' | 'validate_key' | 'coping_strategies' | 'extract_overall_recommendation' | 'generate_embedding' | 'check_similarity'
+  operation: 'guidance' | 'analyze' | 'framework' | 'context' | 'translate' | 'psychologists_note_context' | 'psychologists_note_traits' | 'transcribe' | 'validate_key' | 'coping_strategies' | 'extract_overall_recommendation' | 'generate_embedding' | 'check_similarity' | 'which_insights_matter'
   variables: Record<string, any>
   apiKey: string
   provider?: 'openai' | 'anthropic' | 'xai' | 'google' // Provider override
@@ -176,6 +176,9 @@ serve(async (req) => {
       
       case 'check_similarity':
         return await handleCheckSimilarityOperation(apiKey, variables, detectedProvider)
+      
+      case 'which_insights_matter':
+        return await handleWhichInsightsMatterOperation(apiKey, variables, detectedProvider)
       
       default:
         return new Response(
@@ -1562,4 +1565,102 @@ function getDeduplicationPolicy(tableName: string, category: string, subcategory
   }
   
   return 'DROP' // Default to dropping duplicates
+}
+
+// Handle which insights matter operation
+async function handleWhichInsightsMatterOperation(apiKey: string, variables: any, provider: string) {
+  const { GuidanceText, InsightList } = variables
+  console.log(`[DEBUG] Which insights matter operation - guidance length: ${GuidanceText?.length || 0}, insights count: ${InsightList?.length || 0}`)
+
+  try {
+    // Prepare variables for interpolation
+    const promptVariables = {
+      GuidanceText: GuidanceText,
+      InsightList: InsightList
+    }
+
+    // Get the system prompt and interpolate variables
+    const systemPrompt = interpolatePrompt(promptTemplates.which_insights_matter.systemPromptText, promptVariables)
+
+    // Use direct API calls for multi-provider support
+    const config = getProviderConfig(provider)
+    
+    console.log(`[DEBUG] Which insights matter using ${provider} with model: ${config.model}`)
+    
+    // Prepare request body based on provider
+    let requestBody
+    if (provider === 'anthropic') {
+      requestBody = {
+        model: config.model,
+        max_tokens: 2000,
+        temperature: 0.3,
+        messages: [
+          { role: 'user', content: systemPrompt }
+        ]
+      }
+    } else if (provider === 'google') {
+      requestBody = {
+        contents: [{
+          parts: [{ text: systemPrompt }]
+        }],
+        generationConfig: {
+          maxOutputTokens: 2000,
+          temperature: 0.3
+        }
+      }
+    } else {
+      // OpenAI and xAI use the same format
+      requestBody = {
+        model: config.model,
+        messages: [
+          { role: 'system', content: systemPrompt }
+        ],
+        temperature: 0.3,
+        max_tokens: 2000
+      }
+    }
+
+    // Make API request
+    const url = config.keyParam ? `${config.endpoint}?${config.keyParam}=${apiKey}` : config.endpoint
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: config.headers(apiKey),
+      body: JSON.stringify(requestBody)
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error(`[ERROR] Which insights matter API call failed: ${response.status} - ${errorText}`)
+      throw new Error(`API call failed: ${response.status}`)
+    }
+
+    // Parse response based on provider
+    let content
+    if (provider === 'anthropic') {
+      const data = await response.json()
+      content = data.content[0].text
+    } else if (provider === 'google') {
+      const data = await response.json()
+      content = data.candidates[0].content.parts[0].text
+    } else {
+      // OpenAI and xAI format
+      const data = await response.json()
+      content = data.choices[0].message.content
+    }
+
+    console.log(`[DEBUG] Which insights matter response received, length: ${content.length}`)
+    
+    return new Response(
+      JSON.stringify({ success: true, content }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+
+  } catch (error) {
+    console.error(`[ERROR] Which insights matter operation failed:`, error)
+    
+    return new Response(
+      JSON.stringify({ error: 'Failed to select relevant insights', details: error.message }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  }
 }

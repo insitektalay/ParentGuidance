@@ -90,6 +90,63 @@ class GuidanceGenerationService {
         return (enhancedGuidance, rawContent)
     }
     
+    /// Generate guidance and select relevant insights
+    func generateGuidanceWithRelevantInsights(
+        situation: String,
+        situationId: String,
+        familyId: String,
+        childContext: String? = nil,
+        keyInsights: String? = nil,
+        copingStrategies: String? = nil,
+        apiKey: String,
+        activeFramework: FrameworkRecommendation? = nil,
+        situationType: SituationType = .imJustWondering,
+        useStreaming: Bool = false
+    ) async throws -> (GuidanceResponseProtocol, String, String?) {
+        
+        // Step 1: Generate guidance as usual
+        let (guidance, rawContent) = try await generateGuidance(
+            situation: situation,
+            childContext: childContext,
+            keyInsights: keyInsights,
+            copingStrategies: copingStrategies,
+            apiKey: apiKey,
+            activeFramework: activeFramework,
+            situationType: situationType,
+            useStreaming: useStreaming
+        )
+        
+        // Step 2: Select relevant insights (if guidance has ID)
+        var guidanceId: String? = nil
+        
+        // Extract guidance ID from the response if available
+        // This would typically come from saving the guidance to the database first
+        // For now, we'll generate a placeholder ID
+        let tempGuidanceId = UUID().uuidString
+        
+        // Step 3: Select relevant insights using the raw guidance content
+        do {
+            let relevantInsights = try await RelevantInsightsService.shared.selectRelevantInsights(
+                guidanceText: rawContent,
+                situationId: situationId,
+                guidanceId: tempGuidanceId,
+                familyId: familyId,
+                apiKey: apiKey
+            )
+            
+            if !relevantInsights.isEmpty {
+                guidanceId = tempGuidanceId
+                print("✅ Selected \(relevantInsights.count) relevant insights for guidance")
+            }
+            
+        } catch {
+            print("⚠️ Failed to select relevant insights: \(error)")
+            // Continue without relevant insights - non-blocking
+        }
+        
+        return (guidance, rawContent, guidanceId)
+    }
+    
     /// Generate guidance with streaming updates via callback
     func generateGuidanceWithStreaming(
         situation: String,

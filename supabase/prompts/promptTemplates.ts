@@ -26,70 +26,28 @@ Consider this framework as background context. It should influence the general t
 const GUIDANCE_GENERATION_PROMPT = `
 GUIDANCE GENERATION PROMPT:
 
-Generate a Title for the situation (maximum 24 characters including spaces) that clearly summarizes the challenge or theme in a concise and parent-friendly way. Then analyze and categorize the following text using these six functional categories in order:
+Generate a concise, parent-friendly title (maximum 24 characters) that summarizes the challenge or theme. Then provide practical parenting guidance organized into 3-8 sections as appropriate for the situation.
 
-- Situation - sections that clarify what's happening or why
-- Analysis - sections that assess or analyze current situations
-- Action Steps - sections that provide specific actionable responses (no dialogue scripts)
-- Phrases to Try - sections that provide sample parent-to-child dialogue scripts and demonstrations
-- Quick Comebacks - sections that provide pre-emptive parent responses to anticipated child objections or resistance
-- Support - sections that offer tips, encouragement, or supplementary guidance
+Recommended sections include:
+- Situation (clarify what's happening or why)
+- Analysis (assess or analyze current situations) 
+- Action Steps (concrete actionable responses, no dialogue scripts)
+- Phrases to Try (parent-to-child dialogue scripts and demonstrations)
+- Quick Comebacks (responses to anticipated child objections or resistance)
+- Support (tips, encouragement, or supplementary guidance)
 
- Content Distribution Guidelines:
+Content Guidelines:
+- Action Steps: Provide concrete actions with parental warmth. Frame as advice from a supportive friend rather than clinical instructions. No dialogue scripts here.
+- Phrases to Try: Reserve all parent-to-child dialogue scripts for this section only.
+- Quick Comebacks: Focus on supportive but firm responses that redirect objections.
 
-Action Steps: Provide concrete actions and steps to take with parental warmth and understanding. Frame steps as advice from a supportive friend rather than clinical instructions. Acknowledge the emotional context while providing actionable guidance. Do not include any dialogue scripts or conversational examples - these belong in other categories.
-
-Phrases to Try: Reserve all parent-to-child dialogue scripts exclusively for this category. Include conversation starters, ongoing dialogue, and demonstration scripts.
-
-Quick Comebacks: When Action Steps might lead to anticipated child resistance, move those response scripts to this category. Focus on supportive but firm responses that redirect objections back toward situation resolution (e.g., "When they say 'I don't want to,' you can say...").
-
- Formatting Requirements:
-
-Present the response using the following exact bracket-delimited format, with each section clearly labeled and separated:
-
-[TITLE]
-Title text here
-
-[SITUATION]
-Situation content here
-
-[ANALYSIS]
-Analysis content here
-
-[ACTION STEPS]
-Action Steps content here
-
-[PHRASES TO TRY]
-Phrases to Try content here
-
-[QUICK COMEBACKS]
-Quick Comebacks content here
-
-[SUPPORT]
-Support content here
-
-- Present each category's content in clear, supportive language that maintains warmth while being actionable
-- Use concise paragraphs with minimal repetition
-- Combine related points within categories
-- Use plain text with paragraphs and bullet points as appropriate
-- Remove any emoji or decorative symbols
-- Preserve all parent-to-child quotes exactly as written in the appropriate categories
-- Exclude any child-to-parent or third-party quotes
-- Always include Situation, Analysis, and Action Steps categories (even if brief)
-- Only include Phrases to Try, Quick Comebacks, and Support categories when relevant content exists
-
- Tone Requirements:
+Tone Requirements:
 - Maintain a warm, supportive tone that acknowledges the parent's care and effort
-- Begin responses with empathetic recognition of the situation
 - Frame suggestions as collaborative rather than prescriptive
-- Use inclusive language ("you might find," "this could help") rather than directive language
-- Acknowledge both the challenges and the positive aspects of including the child
-- Avoid restating the same concept multiple times across categories
+- Use inclusive language ("you might find," "this could help")
 - Focus on the most impactful advice in each section
 
- Output Format:
-
-Return the enhanced guidance maintaining the original 6-category structure (Situation, Analysis, Action Steps, Phrases to Try, Quick Comebacks, Support)
+The response will be automatically formatted using the function calling schema. Provide the title and sections with appropriate names and content.
 `;
 
 const Analysis_Requirements = `
@@ -99,18 +57,11 @@ Shape all advice with the goal of reducing or smoothing the home consequences of
 `;
 
 const DYNAMIC_GUIDANCE_GENERATION_PROMPT = `
-Write your response in a warm, conversational tone. Title the entire response and organize it into 5–8 clearly defined sections using bracketed headers, following this format exactly:
+Write your response in a warm, conversational tone. Provide a concise, parent-friendly title and organize your guidance into 5–8 clearly defined sections with descriptive names.
 
-[TITLE]  
-A concise, parent-friendly title here
+Use clean, standalone section titles (e.g., "Understanding the Moment", "Immediate Steps", "Building Connection"). Do not use numbers or prefixes.
 
-[Section Name]  
-Content here
-
-[Another Section]  
-More content here
-
-Do not prefix section titles with numbers (e.g., “1.”, “Card 1:”, or “2:”) — use clean, standalone titles only.
+The response will be automatically formatted using the function calling schema. Focus on providing practical, empathetic guidance.
 `;
 
 const DISCLAIMER= `

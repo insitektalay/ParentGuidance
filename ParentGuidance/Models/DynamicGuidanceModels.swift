@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - Dynamic Guidance Response
-struct DynamicGuidanceResponse {
+struct DynamicGuidanceResponse: Codable {
     let title: String
     let sections: [GuidanceSection]
     let totalSections: Int
@@ -20,10 +20,21 @@ struct DynamicGuidanceResponse {
         self.totalSections = sections.count
         self.overallRecommendation = overallRecommendation
     }
+    
+    // MARK: - Function Calling JSON Response Support
+    /// Initialize from function calling response format
+    init(from functionCallResponse: FunctionCallGuidanceResponse) {
+        self.title = functionCallResponse.title
+        self.sections = functionCallResponse.sections.enumerated().map { index, section in
+            GuidanceSection(title: section.name, content: section.content, order: index + 1)
+        }
+        self.totalSections = self.sections.count
+        self.overallRecommendation = nil
+    }
 }
 
 // MARK: - Guidance Section
-struct GuidanceSection {
+struct GuidanceSection: Codable {
     let id: String
     let title: String
     let content: String
@@ -63,4 +74,25 @@ extension GuidanceResponse: GuidanceResponseProtocol {
         ]
     }
     var sectionCount: Int { 6 }
+}
+
+// MARK: - Function Calling Response Models
+
+/// Response format from OpenAI function calling
+struct FunctionCallGuidanceResponse: Codable {
+    let title: String
+    let sections: [FunctionCallSection]
+}
+
+/// Section format from function calling
+struct FunctionCallSection: Codable {
+    let name: String
+    let content: String
+}
+
+/// Edge Function response wrapper for function calling
+struct EdgeFunctionGuidanceResponse: Codable {
+    let success: Bool
+    let data: FunctionCallGuidanceResponse
+    let format: String
 }

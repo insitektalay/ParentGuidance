@@ -14,6 +14,7 @@ interface RequestBody {
   apiKey: string
   provider?: 'openai' | 'anthropic' | 'xai' | 'google' // Provider override
   audioData?: string // Base64 encoded audio data for transcribe operation
+  useFunctionCalling?: boolean // Feature flag for function calling format
 }
 
 // Helper function to interpolate variables in prompt templates
@@ -122,7 +123,7 @@ serve(async (req) => {
 
     // Parse request body
     const body: RequestBody = await req.json()
-    const { operation, variables, apiKey, provider } = body
+    const { operation, variables, apiKey, provider, useFunctionCalling } = body
     
     // Determine the AI provider to use
     const detectedProvider = provider || detectProvider(apiKey)
@@ -139,7 +140,7 @@ serve(async (req) => {
     console.log(`[DEBUG] Routing to operation: "${operation}"`)
     switch (operation) {
       case 'guidance':
-        return await handleGuidanceOperation(apiKey, variables, detectedProvider)
+        return await handleGuidanceOperation(apiKey, variables, detectedProvider, useFunctionCalling || false)
       
       case 'analyze':
         return await handleAnalyzeOperation(apiKey, variables, detectedProvider)
@@ -362,8 +363,8 @@ async function handleCopingStrategiesOperation(apiKey: string, variables: any, p
   }
 }
 
-// Handle guidance generation (non-streaming for now)
-  async function handleGuidanceOperation(apiKey: string, variables: any, provider: string) {
+// Handle guidance generation (supports both bracketed format and function calling)
+  async function handleGuidanceOperation(apiKey: string, variables: any, provider: string, useFunctionCalling: boolean = false) {
     const { current_situation, child_context, key_insights, active_foundation_tools, structure_mode, guidance_style, situation_type } = variables
 
     // Determine which prompt template to use
@@ -444,9 +445,49 @@ async function handleCopingStrategiesOperation(apiKey: string, variables: any, p
       
       console.log(`[DEBUG] Using ${provider} with model: ${config.model}`)
       
-      // Prepare request body based on provider
+      // Define function calling schema for structured guidance output
+      const guidanceFunctionSchema = {
+        type: "function" as const,
+        function: {
+          name: "formatGuidance",
+          description: "Format parenting guidance response with structured sections",
+          parameters: {
+            type: "object",
+            properties: {
+              title: { 
+                type: "string", 
+                description: "Concise, parent-friendly title (max 24 characters)" 
+              },
+              sections: {
+                type: "array",
+                description: "3-8 guidance sections with names and content",
+                items: {
+                  type: "object",
+                  properties: {
+                    name: { 
+                      type: "string", 
+                      description: "Section name (e.g. 'Analysis', 'Action Steps', 'Phrases to Try')" 
+                    },
+                    content: { 
+                      type: "string", 
+                      description: "Section content with practical guidance" 
+                    }
+                  },
+                  required: ["name", "content"]
+                },
+                minItems: 3,
+                maxItems: 8
+              }
+            },
+            required: ["title", "sections"]
+          }
+        }
+      }
+
+      // Prepare request body based on provider and function calling preference
       let requestBody
       if (provider === 'anthropic') {
+        // Anthropic doesn't support function calling yet, use text format
         requestBody = {
           model: config.model,
           max_tokens: 2000,
@@ -456,6 +497,7 @@ async function handleCopingStrategiesOperation(apiKey: string, variables: any, p
           ]
         }
       } else if (provider === 'google') {
+        // Google doesn't support function calling yet, use text format
         requestBody = {
           contents: [{
             parts: [{ text: systemPrompt }]
@@ -466,14 +508,29 @@ async function handleCopingStrategiesOperation(apiKey: string, variables: any, p
           }
         }
       } else {
-        // OpenAI and xAI use the same format
-        requestBody = {
-          model: config.model,
-          messages: [
-            { role: 'system', content: systemPrompt }
-          ],
-          temperature: 0.7,
-          max_tokens: 2000
+        // OpenAI and xAI support function calling
+        if (useFunctionCalling && (provider === 'openai' || provider === 'xai')) {
+          console.log(`[DEBUG] Using function calling for ${provider}`)
+          requestBody = {
+            model: config.model,
+            messages: [
+              { role: 'system', content: systemPrompt }
+            ],
+            tools: [guidanceFunctionSchema],
+            tool_choice: { type: "function", function: { name: "formatGuidance" } },
+            temperature: 0.7,
+            max_tokens: 2000
+          }
+        } else {
+          console.log(`[DEBUG] Using text format for ${provider}`)
+          requestBody = {
+            model: config.model,
+            messages: [
+              { role: 'system', content: systemPrompt }
+            ],
+            temperature: 0.7,
+            max_tokens: 2000
+          }
         }
       }
       
@@ -493,60 +550,96 @@ async function handleCopingStrategiesOperation(apiKey: string, variables: any, p
 
       const data = await response.json()
       
-      // Extract content based on provider response format
+      // Extract content based on provider response format and function calling usage
       let content
-      if (provider === 'anthropic') {
-        content = data.content?.[0]?.text
-      } else if (provider === 'google') {
-        content = data.candidates?.[0]?.content?.parts?.[0]?.text
+      let structuredResponse = null
+      
+      if (useFunctionCalling && (provider === 'openai' || provider === 'xai')) {
+        // Handle function calling response
+        const toolCall = data.choices?.[0]?.message?.tool_calls?.[0]
+        if (toolCall && toolCall.function && toolCall.function.name === 'formatGuidance') {
+          try {
+            structuredResponse = JSON.parse(toolCall.function.arguments)
+            console.log(`[DEBUG] Function calling response parsed successfully`)
+            console.log(`[DEBUG] Title: ${structuredResponse.title}`)
+            console.log(`[DEBUG] Sections: ${structuredResponse.sections?.length || 0}`)
+          } catch (parseError) {
+            console.error(`[ERROR] Failed to parse function calling arguments: ${parseError}`)
+            // Fallback to text response if function calling fails
+            content = data.choices?.[0]?.message?.content
+          }
+        } else {
+          console.warn(`[WARN] Expected function call but got text response`)
+          content = data.choices?.[0]?.message?.content
+        }
       } else {
-        // OpenAI and xAI
-        content = data.choices?.[0]?.message?.content
+        // Handle regular text response
+        if (provider === 'anthropic') {
+          content = data.content?.[0]?.text
+        } else if (provider === 'google') {
+          content = data.candidates?.[0]?.content?.parts?.[0]?.text
+        } else {
+          // OpenAI and xAI
+          content = data.choices?.[0]?.message?.content
+        }
       }
 
-      if (!content) {
+      if (!structuredResponse && !content) {
         console.error(`[ERROR] No content received from ${provider}`)
         throw new Error(`No content received from ${provider}`)
       }
 
-      console.log(`[DEBUG] Guidance response received, length: ${content.length} characters`)
+      console.log(`[DEBUG] Guidance response received - structured: ${!!structuredResponse}, text length: ${content?.length || 0} characters`)
 
-      // Return the content as SSE stream for iOS client compatibility
-      const stream = new ReadableStream({
-        async start(controller) {
-          try {
-            // Stream the content word by word to simulate streaming
-            const words = content.split(' ')
-            
-            for (let i = 0; i < words.length; i++) {
-              const chunk = words[i] + (i < words.length - 1 ? ' ' : '')
-              const sseData = `data: ${JSON.stringify([{ type: 'text', value: chunk }])}\n\n`
-              controller.enqueue(new TextEncoder().encode(sseData))
+      // Return appropriate response format based on function calling usage
+      if (structuredResponse) {
+        // Return structured JSON response for function calling
+        return new Response(
+          JSON.stringify({ 
+            success: true, 
+            data: structuredResponse,
+            format: 'structured' 
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      } else {
+        // Return SSE stream for traditional text format (iOS client compatibility)
+        const stream = new ReadableStream({
+          async start(controller) {
+            try {
+              // Stream the content word by word to simulate streaming
+              const words = content.split(' ')
               
-              // Small delay to simulate streaming
-              if (i < words.length - 1) {
-                await new Promise(resolve => setTimeout(resolve, 5))
+              for (let i = 0; i < words.length; i++) {
+                const chunk = words[i] + (i < words.length - 1 ? ' ' : '')
+                const sseData = `data: ${JSON.stringify([{ type: 'text', value: chunk }])}\n\n`
+                controller.enqueue(new TextEncoder().encode(sseData))
+                
+                // Small delay to simulate streaming
+                if (i < words.length - 1) {
+                  await new Promise(resolve => setTimeout(resolve, 5))
+                }
               }
+              
+              // Send completion signal
+              controller.enqueue(new TextEncoder().encode('data: [DONE]\n\n'))
+              controller.close()
+            } catch (error) {
+              console.error('[ERROR] Streaming error:', error)
+              controller.error(error)
             }
-            
-            // Send completion signal
-            controller.enqueue(new TextEncoder().encode('data: [DONE]\n\n'))
-            controller.close()
-          } catch (error) {
-            console.error('[ERROR] Streaming error:', error)
-            controller.error(error)
           }
-        }
-      })
+        })
 
-      return new Response(stream, {
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'text/event-stream',
-          'Cache-Control': 'no-cache',
-          'Connection': 'keep-alive',
-        }
-      })
+        return new Response(stream, {
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive',
+          }
+        })
+      }
 
     } catch (error) {
       console.error('Guidance operation error:', error)

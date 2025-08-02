@@ -21,6 +21,94 @@ class EdgeFunctionService {
     
     // MARK: - Public Methods
     
+    /// Generate guidance using function calling (JSON response)
+    func generateGuidanceWithFunctionCalling(
+        situation: String,
+        childContext: String? = nil,
+        keyInsights: String? = nil,
+        copingStrategies: String? = nil,
+        activeFramework: FrameworkRecommendation? = nil,
+        structureMode: String = "fixed",
+        guidanceStyle: String = "Warm Practical",
+        situationType: SituationType = .imJustWondering,
+        apiKey: String
+    ) async throws -> EdgeFunctionGuidanceResponse {
+        print("🔄 [EdgeFunction] Generating guidance via Edge Function (function calling)")
+        print("   → Operation: guidance")
+        print("   → Has Framework: \(activeFramework != nil)")
+        print("   → Structure Mode: \(structureMode)")
+        print("   → Guidance Style: \(guidanceStyle)")
+        print("   → Situation Type: \(situationType.rawValue)")
+        print("   → Function Calling: true")
+        
+        var variables: [String: Any] = [
+            "current_situation": situation,
+            "structure_mode": structureMode,
+            "guidance_style": guidanceStyle,
+            "situation_type": situationType.rawValue
+        ]
+        
+        if let childContext = childContext, !childContext.isEmpty {
+            variables["child_context"] = childContext
+        }
+        
+        if let keyInsights = keyInsights, !keyInsights.isEmpty {
+            variables["key_insights"] = keyInsights
+        }
+        
+        if let copingStrategies = copingStrategies, !copingStrategies.isEmpty {
+            variables["coping_strategies_home_consequences"] = copingStrategies
+        }
+        
+        if let framework = activeFramework {
+            let formattedFramework = formatFrameworkForRequest(framework)
+            variables["active_foundation_tools"] = formattedFramework
+            print("🔍 FRAMEWORK FORMATTING CHECK:")
+            print("🔍   Original name: '\(framework.frameworkName)'")
+            print("🔍   Formatted value: '\(formattedFramework)'")
+            print("🔍   Contains notification text: \(formattedFramework.contains(framework.notificationText))")
+        }
+        
+        // Log all variables being sent to edge function
+        print("📤 ===== EDGE FUNCTION REQUEST VARIABLES =====")
+        print("📤 All variables being sent:")
+        for (key, value) in variables {
+            print("📤   \(key): \(value)")
+        }
+        print("📤 ===============================================")
+        
+        let result = try await callEdgeFunction(
+            operation: "guidance",
+            variables: variables,
+            apiKey: apiKey,
+            customBody: [
+                "operation": "guidance",
+                "variables": variables,
+                "apiKey": apiKey,
+                "useFunctionCalling": true
+            ]
+        )
+        
+        // Parse the response
+        guard let success = result["success"] as? Bool, success,
+              let format = result["format"] as? String, format == "structured",
+              let data = result["data"] as? [String: Any] else {
+            let errorMessage = result["error"] as? String ?? "Unknown error"
+            print("❌ [EdgeFunction] Function calling guidance generation failed: \(errorMessage)")
+            throw EdgeFunctionError.invalidResponse
+        }
+        
+        // Convert to our response format
+        let jsonData = try JSONSerialization.data(withJSONObject: result)
+        let response = try JSONDecoder().decode(EdgeFunctionGuidanceResponse.self, from: jsonData)
+        
+        print("✅ [EdgeFunction] Function calling guidance generation completed")
+        print("✅ Title: \(response.data.title)")
+        print("✅ Sections: \(response.data.sections.count)")
+        
+        return response
+    }
+
     /// Stream guidance generation with optional framework
     func streamGuidance(
         situation: String,

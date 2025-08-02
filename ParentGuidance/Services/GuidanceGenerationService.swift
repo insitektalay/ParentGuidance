@@ -14,6 +14,15 @@ class GuidanceGenerationService {
     /// Feature flag to use Edge Function instead of direct OpenAI API
     private let useEdgeFunction = UserDefaults.standard.bool(forKey: "guidance_use_edge_function")
     
+    /// Feature flag to use function calling for structured JSON responses
+    private var useFunctionCalling: Bool {
+        // If not explicitly set, default to true when Edge Function is enabled
+        if UserDefaults.standard.object(forKey: "guidance_use_function_calling") == nil {
+            return useEdgeFunction // Default to same as Edge Function setting
+        }
+        return UserDefaults.standard.bool(forKey: "guidance_use_function_calling")
+    }
+    
     private init() {}
     
     // MARK: - Configuration Methods
@@ -27,6 +36,17 @@ class GuidanceGenerationService {
     /// Check if Edge Function is currently enabled
     static func isUsingEdgeFunction() -> Bool {
         return UserDefaults.standard.bool(forKey: "guidance_use_edge_function")
+    }
+    
+    /// Enable or disable function calling for structured JSON responses
+    static func setUseFunctionCalling(_ enabled: Bool) {
+        UserDefaults.standard.set(enabled, forKey: "guidance_use_function_calling")
+        print("🔧 GuidanceGenerationService Function Calling usage set to: \(enabled)")
+    }
+    
+    /// Check if function calling is currently enabled
+    static func isUsingFunctionCalling() -> Bool {
+        return UserDefaults.standard.bool(forKey: "guidance_use_function_calling")
     }
     
     // MARK: - Main Guidance Generation
@@ -45,7 +65,25 @@ class GuidanceGenerationService {
         
         let (guidance, rawContent): (GuidanceResponseProtocol, String)
         
-        if useEdgeFunction && useStreaming {
+        // Debug logging for feature flags
+        print("🔍 [GuidanceGenerationService] Feature flags:")
+        print("   → useEdgeFunction: \(useEdgeFunction)")
+        print("   → useFunctionCalling: \(useFunctionCalling)")
+        print("   → useStreaming: \(useStreaming)")
+        print("   → Selected path: \(useEdgeFunction && useFunctionCalling ? "EdgeFunction + FunctionCalling" : useEdgeFunction && useStreaming ? "EdgeFunction + Streaming" : useEdgeFunction ? "EdgeFunction (non-streaming)" : "Direct API")")
+        
+        if useEdgeFunction && useFunctionCalling {
+            print("🚀 [GuidanceGenerationService] Using EdgeFunction with function calling")
+            (guidance, rawContent) = try await generateGuidanceViaEdgeFunctionCalling(
+                situation: situation,
+                childContext: childContext,
+                keyInsights: keyInsights,
+                copingStrategies: copingStrategies,
+                apiKey: apiKey,
+                activeFramework: activeFramework,
+                situationType: situationType
+            )
+        } else if useEdgeFunction && useStreaming {
             print("🚀 [GuidanceGenerationService] Using EdgeFunction with streaming")
             (guidance, rawContent) = try await generateGuidanceViaEdgeFunctionStreaming(
                 situation: situation,
@@ -79,6 +117,20 @@ class GuidanceGenerationService {
                 situationType: situationType
             )
         }
+        
+        // Debug logging for guidance response type
+        print("🔍 [GuidanceGenerationService] Generated guidance:")
+        print("   → Type: \(type(of: guidance))")
+        print("   → Title: \(guidance.title)")
+        if let dynamicGuidance = guidance as? DynamicGuidanceResponse {
+            print("   → Dynamic sections: \(dynamicGuidance.sections.count)")
+            for (index, section) in dynamicGuidance.sections.enumerated() {
+                print("     \(index + 1). \(section.title) (\(section.content.count) chars)")
+            }
+        } else if let fixedGuidance = guidance as? GuidanceResponse {
+            print("   → Fixed structure with 6 sections")
+        }
+        print("   → Raw content length: \(rawContent.count)")
         
         // Extract overall recommendation from the guidance content
         let enhancedGuidance = try await extractAndAddRecommendation(
@@ -327,6 +379,105 @@ class GuidanceGenerationService {
             activeFramework: activeFramework,
             situationType: situationType
         )
+    }
+    
+    /// Generate guidance using EdgeFunction with function calling (structured JSON response)
+    private func generateGuidanceViaEdgeFunctionCalling(
+        situation: String,
+        childContext: String?,
+        keyInsights: String?,
+        copingStrategies: String?,
+        apiKey: String,
+        activeFramework: FrameworkRecommendation?,
+        situationType: SituationType
+    ) async throws -> (GuidanceResponseProtocol, String) {
+        print("🔄 Using Edge Function for guidance generation with function calling")
+        
+        do {
+            let guidanceStructureSettings = GuidanceStructureSettings.shared
+            let structureMode = guidanceStructureSettings.currentMode == .fixed ? "fixed" : "dynamic"
+            let guidanceStyle = guidanceStructureSettings.currentStyle == .warmPractical ? "Warm Practical" : "Analytical Scientific"
+            
+            print("📊 [GuidanceGenerationService] Current settings:")
+            print("   → Structure Mode: \(structureMode)")
+            print("   → Guidance Style: \(guidanceStyle)")
+            print("   → Function Calling: true")
+            
+            let response = try await EdgeFunctionService.shared.generateGuidanceWithFunctionCalling(
+                situation: situation,
+                childContext: childContext,
+                keyInsights: keyInsights,
+                copingStrategies: copingStrategies,
+                activeFramework: activeFramework,
+                structureMode: structureMode,
+                guidanceStyle: guidanceStyle,
+                situationType: situationType,
+                apiKey: apiKey
+            )
+            
+            // Convert the structured response to our internal format
+            let guidance = DynamicGuidanceResponse(from: response.data)
+            
+            // Debug logging for function calling response
+            print("🔍 [GuidanceGenerationService] Function calling response details:")
+            print("   → EdgeFunction response title: '\(response.data.title)'")
+            print("   → EdgeFunction response sections: \(response.data.sections.count)")
+            for (index, section) in response.data.sections.enumerated() {
+                print("     \(index + 1). '\(section.name)': \(section.content.count) chars")
+                if section.content.isEmpty {
+                    print("       ⚠️ WARNING: Section content is EMPTY!")
+                }
+            }
+            print("   → Converted DynamicGuidanceResponse title: '\(guidance.title)'")
+            print("   → Converted DynamicGuidanceResponse sections: \(guidance.sections.count)")
+            for (index, section) in guidance.sections.enumerated() {
+                print("     \(index + 1). '\(section.title)': \(section.content.count) chars")
+                if section.content.isEmpty {
+                    print("       ⚠️ WARNING: Converted section content is EMPTY!")
+                }
+            }
+            
+            // Create a text representation for compatibility
+            let rawContent = convertStructuredResponseToText(response.data)
+            
+            print("✅ Edge Function function calling guidance generation completed")
+            print("✅ Converted to DynamicGuidanceResponse with \(guidance.sections.count) sections")
+            
+            return (guidance, rawContent)
+            
+        } catch {
+            print("❌ Edge Function function calling guidance generation failed: \(error)")
+            print("🔄 [GuidanceGenerationService] Falling back to streaming EdgeFunction...")
+            
+            // Fall back to streaming EdgeFunction if function calling fails
+            do {
+                let fallbackResult = try await generateGuidanceViaEdgeFunctionStreaming(
+                    situation: situation,
+                    childContext: childContext,
+                    keyInsights: keyInsights,
+                    copingStrategies: copingStrategies,
+                    apiKey: apiKey,
+                    activeFramework: activeFramework,
+                    situationType: situationType
+                )
+                print("✅ Fallback to streaming EdgeFunction succeeded")
+                return fallbackResult
+            } catch {
+                print("❌ Fallback to streaming EdgeFunction also failed: \(error)")
+                throw GuidanceGenerationError.apiError("Both function calling and streaming EdgeFunction failed: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    /// Convert structured function calling response to text format for compatibility
+    private func convertStructuredResponseToText(_ response: FunctionCallGuidanceResponse) -> String {
+        var text = "[TITLE]\n\(response.title)\n\n"
+        
+        for section in response.sections {
+            text += "[\(section.name.uppercased())]\n\(section.content)\n\n"
+        }
+        
+        return text.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
     // MARK: - Direct API Implementation (Legacy)

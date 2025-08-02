@@ -219,12 +219,26 @@ struct NoticingWhatMattersCard: View {
                 case .parsingError(let parseError):
                     regenerateErrorMessage = "Failed to process insights: \(parseError.localizedDescription)"
                 case .databaseError(let dbError):
-                    regenerateErrorMessage = "Database error: \(dbError.localizedDescription)"
+                    // Check if this is a duplicate key constraint violation
+                    let errorString = String(describing: dbError)
+                    if errorString.contains("duplicate key value violates unique constraint") || 
+                       errorString.contains("idx_bullet_points_unique_content") {
+                        regenerateErrorMessage = "Some insights were already present and have been automatically resolved. The regeneration was mostly successful."
+                    } else {
+                        regenerateErrorMessage = "Database error: \(dbError.localizedDescription)"
+                    }
                 case .apiError(let statusCode):
                     regenerateErrorMessage = "API error (code: \(statusCode)). Please check your API key and try again."
                 }
             } else {
-                regenerateErrorMessage = "An unexpected error occurred: \(error.localizedDescription)"
+                // Check for duplicate key errors in generic errors too
+                let errorString = String(describing: error)
+                if errorString.contains("duplicate key value violates unique constraint") || 
+                   errorString.contains("idx_bullet_points_unique_content") {
+                    regenerateErrorMessage = "Some insights were already present and have been automatically resolved. The regeneration was mostly successful."
+                } else {
+                    regenerateErrorMessage = "An unexpected error occurred: \(error.localizedDescription)"
+                }
             }
             
             showingRegenerateError = true

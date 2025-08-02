@@ -887,6 +887,41 @@ class ContextualInsightService {
             print("✅ Successfully saved \(insights.count) child regulation insights")
         } catch {
             print("❌ Error saving child regulation insights: \(error)")
+            
+            // Check if this is a duplicate key constraint violation
+            let errorString = String(describing: error)
+            if errorString.contains("duplicate key value violates unique constraint") || 
+               errorString.contains("idx_bullet_points_unique_content") {
+                
+                print("⚠️ Duplicate content detected during batch save. Attempting individual inserts with deduplication...")
+                
+                // Try to save insights individually, skipping duplicates
+                var successCount = 0
+                var duplicateCount = 0
+                
+                for insight in insights {
+                    do {
+                        try await SupabaseManager.shared.client
+                            .from("insight_bullet_points")
+                            .insert([insight])
+                            .execute()
+                        successCount += 1
+                    } catch {
+                        let individualErrorString = String(describing: error)
+                        if individualErrorString.contains("duplicate key value violates unique constraint") {
+                            print("🔄 Skipping duplicate insight: \(insight.content.prefix(50))...")
+                            duplicateCount += 1
+                        } else {
+                            print("❌ Unexpected error saving individual insight: \(error)")
+                            throw ContextualInsightError.databaseError(error)
+                        }
+                    }
+                }
+                
+                print("✅ Completed individual saves: \(successCount) saved, \(duplicateCount) duplicates skipped")
+                return
+            }
+            
             throw ContextualInsightError.databaseError(error)
         }
     }
@@ -1757,21 +1792,46 @@ class ContextualInsightService {
             }
         }
         
-        // 5. Save all extracted insights to the database
+        // 5. Deduplicate and save all extracted insights to the database
         let allInsights = allRegulationInsights + allCopingInsights
+        var deduplicatedInsights: [ChildRegulationInsight] = []
+        
         if !allInsights.isEmpty {
-            print("💾 Saving \(allInsights.count) regulation insights to database...")
-            try await saveChildRegulationInsights(allInsights)
-            print("✅ Successfully saved all regulation insights to database")
+            print("💾 Deduplicating and saving \(allInsights.count) regulation insights to database...")
+            
+            // Simple content-based deduplication before saving
+            var seenContent: Set<String> = []
+            deduplicatedInsights = allInsights.filter { insight in
+                let contentKey = "\(insight.familyId)_\(insight.category.rawValue)_\(insight.content.lowercased().trimmingCharacters(in: .whitespacesAndNewlines))"
+                if seenContent.contains(contentKey) {
+                    print("🔄 Skipping duplicate content: \(insight.content.prefix(50))...")
+                    return false
+                } else {
+                    seenContent.insert(contentKey)
+                    return true
+                }
+            }
+            
+            print("📊 Deduplication summary: \(allInsights.count) original -> \(deduplicatedInsights.count) deduplicated (\(allInsights.count - deduplicatedInsights.count) duplicates removed)")
+            
+            if !deduplicatedInsights.isEmpty {
+                try await saveChildRegulationInsights(deduplicatedInsights)
+                print("✅ Successfully saved \(deduplicatedInsights.count) deduplicated regulation insights to database")
+            } else {
+                print("⚠️ No insights to save after deduplication")
+            }
         } else {
             print("⚠️ No regulation insights to save")
         }
         
-        // 6. Count insights by category
-        let emotionalCount = allRegulationInsights.filter { $0.category == .core }.count
-        let attentionCount = allRegulationInsights.filter { $0.category == .adhd }.count
-        let flexibilityCount = allRegulationInsights.filter { $0.category == .mildAutism }.count
-        let copingCount = allCopingInsights.count
+        // 6. Count insights by category from deduplicated set
+        let deduplicatedRegulationInsights = deduplicatedInsights.filter { $0.category != .copingStrategies }
+        let deduplicatedCopingInsights = deduplicatedInsights.filter { $0.category == .copingStrategies }
+        
+        let emotionalCount = deduplicatedRegulationInsights.filter { $0.category == .core }.count
+        let attentionCount = deduplicatedRegulationInsights.filter { $0.category == .adhd }.count
+        let flexibilityCount = deduplicatedRegulationInsights.filter { $0.category == .mildAutism }.count
+        let copingCount = deduplicatedCopingInsights.count
         
         print("✅ Batched regulation regeneration completed: \(emotionalCount) emotional, \(attentionCount) attention, \(flexibilityCount) flexibility, \(copingCount) coping")
         return (emotionalCount, attentionCount, flexibilityCount, copingCount)

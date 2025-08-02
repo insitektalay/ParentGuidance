@@ -134,6 +134,7 @@
 		948605D52E133250008D92DE /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948605D62E133251008D92DE /* AuthService.swift */; };
 		949600D42E20F2B1008EC0C0 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949600D22E20F2B1008EC0C0 /* LoadingView.swift */; };
 		949600D52E20F2B1008EC0C0 /* AppCoordinatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949600D32E20F2B1008EC0C0 /* AppCoordinatorView.swift */; };
+		94A6CE4D2E3DFDFE0062DEDD /* VerticalGuidanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A6CE4C2E3DFDFC0062DEDD /* VerticalGuidanceView.swift */; };
 		94B3D79C2E16C45B000F1D65 /* TodayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B3D79B2E16C45B000F1D65 /* TodayViewController.swift */; };
 		94BC2DBE2E39EF6000B35676 /* DeletedCopingStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DBD2E39EF5D00B35676 /* DeletedCopingStrategy.swift */; };
 		94BC2DC02E39F19800B35676 /* DeletedCopingStrategiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DBF2E39F19700B35676 /* DeletedCopingStrategiesView.swift */; };
@@ -346,6 +347,7 @@
 		948605D62E133251008D92DE /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		949600D22E20F2B1008EC0C0 /* LoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		949600D32E20F2B1008EC0C0 /* AppCoordinatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppCoordinatorView.swift; sourceTree = "<group>"; };
+		94A6CE4C2E3DFDFC0062DEDD /* VerticalGuidanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalGuidanceView.swift; sourceTree = "<group>"; };
 		94B3D79B2E16C45B000F1D65 /* TodayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayViewController.swift; sourceTree = "<group>"; };
 		94BC2DBD2E39EF5D00B35676 /* DeletedCopingStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedCopingStrategy.swift; sourceTree = "<group>"; };
 		94BC2DBF2E39F19700B35676 /* DeletedCopingStrategiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedCopingStrategiesView.swift; sourceTree = "<group>"; };
@@ -947,6 +949,7 @@
 		94FA11392E05CC71003EC1E9 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				94A6CE4C2E3DFDFC0062DEDD /* VerticalGuidanceView.swift */,
 				94FA11352E05CC51003EC1E9 /* GuidanceCard.swift */,
 			);
 			path = Components;
@@ -1164,6 +1167,7 @@
 				94BC2DD52E3A11EC00B35676 /* DeletedAttentionFocusCard.swift in Sources */,
 				943DFD972E1A85B9004F8043 /* AppCoordinator.swift in Sources */,
 				94FA112E2E05CC15003EC1E9 /* SendButton.swift in Sources */,
+				94A6CE4D2E3DFDFE0062DEDD /* VerticalGuidanceView.swift in Sources */,
 				944EA1FD2E2DFEDB00C110AF /* GuidanceModeCard.swift in Sources */,
 				943DFD982E1A85B9004F8043 /* OpenAIService.swift in Sources */,
 				943DFD8E2E1A856E004F8043 /* UserProfile.swift in Sources */,

@@ -59,7 +59,10 @@ struct NewSituationView: View {
                     if isLoading {
                         SituationOrganizingView()
                     } else if let guidance = guidanceResponse {
-                        SituationGuidanceViewWithData(guidance: guidance)
+                        VerticalGuidanceView(
+                            guidance: guidance,
+                            overallRecommendation: guidance.overallRecommendation
+                        )
                     } else {
                         SituationInputIdleView(
                             voiceRecorderViewModel: voiceRecorderViewModel,
@@ -890,123 +893,5 @@ struct NewSituationView: View {
     */
 }
 
-struct SituationGuidanceViewWithData: View {
-    let guidance: GuidanceResponseProtocol
-    @Environment(\.dismiss) private var dismiss
-    @State private var currentPage = 0
-    
-    private var categories: [GuidanceCategory] {
-        guidance.displaySections.map { section in
-            GuidanceCategory(title: section.title, content: section.content)
-        }
-    }
-    
-    var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                // Header with back button
-                HStack(alignment: .center, spacing: 12) {
-                    Button(action: {
-                        dismiss()
-                    }) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 18, weight: .medium))
-                            .foregroundColor(SemanticColors.primaryText)
-                    }
-                    
-                    Spacer()
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 12)
-                .padding(.bottom, 12)
-                
-                // Title
-                HStack {
-                    Text(guidance.title)
-                        .font(.system(size: 24, weight: .semibold))
-                        .foregroundColor(SemanticColors.primaryText)
-                        .padding(.horizontal, 16)
-                    
-                    Spacer()
-                }
-                .padding(.bottom, 16)
-                
-                // Overall Recommendation Section
-                if let recommendation = guidance.overallRecommendation {
-                    overallRecommendationView(recommendation: recommendation)
-                        .padding(.horizontal, 16)
-                        .padding(.bottom, 20)
-                }
-                
-                // Guidance cards - maintain natural height
-                TabView(selection: $currentPage) {
-                    ForEach(0..<categories.count, id: \.self) { index in
-                        GuidanceCard(
-                            title: categories[index].title,
-                            content: categories[index].content,
-                            isActive: index == currentPage
-                        )
-                        .tag(index)
-                    }
-                }
-                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                .frame(height: 400) // Set explicit height for cards to prevent compression
-                .padding(.horizontal, 16)
-                
-                // Page indicators
-                HStack(spacing: 8) {
-                    ForEach(0..<categories.count, id: \.self) { index in
-                        Circle()
-                            .fill(index == currentPage ? SemanticColors.accent : SemanticColors.tertiaryText)
-                            .frame(width: 8, height: 8)
-                            .animation(.easeInOut(duration: 0.2), value: currentPage)
-                    }
-                }
-                .padding(.top, 16)
-                .padding(.bottom, 100)
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(SemanticColors.primaryBackground)
-        .navigationBarHidden(true)
-    }
-    
-    // MARK: - Overall Recommendation View
-    
-    @ViewBuilder
-    private func overallRecommendationView(recommendation: String) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // Header with icon
-            HStack(spacing: 8) {
-                Image(systemName: "lightbulb.fill")
-                    .font(.system(size: 18, weight: .medium))
-                    .foregroundColor(SemanticColors.accent)
-                
-                Text("Overall Recommendation")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(SemanticColors.primaryText)
-                
-                Spacer()
-            }
-            
-            // Recommendation content
-            Text(recommendation)
-                .font(.system(size: 16))
-                .foregroundColor(SemanticColors.secondaryText)
-                .lineSpacing(4)
-                .fixedSize(horizontal: false, vertical: true)
-                .multilineTextAlignment(.leading)
-        }
-        .padding(20)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(SemanticColors.accent.opacity(0.15))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(SemanticColors.accent.opacity(0.3), lineWidth: 1)
-                )
-        )
-    }
-}
 
 

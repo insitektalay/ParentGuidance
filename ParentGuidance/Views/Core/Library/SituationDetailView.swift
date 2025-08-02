@@ -16,7 +16,6 @@ struct SituationDetailView: View {
     let onDateUpdated: (() -> Void)?
     
     @Environment(\.colorScheme) private var colorScheme
-    @State private var currentGuidancePage = 0
     @State private var showCopyConfirmation = false
     @State private var showDatePicker = false
     @State private var selectedDate = Date()
@@ -163,40 +162,15 @@ struct SituationDetailView: View {
                                                 .padding(.bottom, 20)
                                         }
                                         
-                                        // Page indicators - moved above guidance cards
-                                        HStack(spacing: 8) {
+                                        // Vertical stack of guidance cards
+                                        LazyVStack(spacing: 16) {
                                             ForEach(0..<categories.count, id: \.self) { index in
-                                                Circle()
-                                                    .fill(index == currentGuidancePage ? SemanticColors.accent : SemanticColors.tertiaryText)
-                                                    .frame(width: 8, height: 8)
-                                                    .animation(.easeInOut(duration: 0.2), value: currentGuidancePage)
+                                                GuidanceCard(
+                                                    title: categories[index].title,
+                                                    content: categories[index].content,
+                                                    isActive: true // All cards are active in vertical layout
+                                                )
                                             }
-                                        }
-                                        
-                                        // Guidance cards - dynamic height without scrolling
-                                        if currentGuidancePage < categories.count {
-                                            GuidanceCard(
-                                                title: categories[currentGuidancePage].title,
-                                                content: categories[currentGuidancePage].content,
-                                                isActive: true
-                                            )
-                                            .gesture(
-                                                DragGesture()
-                                                    .onEnded { value in
-                                                        // Swipe left to go to next
-                                                        if value.translation.width < -50 && currentGuidancePage < categories.count - 1 {
-                                                            withAnimation {
-                                                                currentGuidancePage += 1
-                                                            }
-                                                        }
-                                                        // Swipe right to go to previous
-                                                        else if value.translation.width > 50 && currentGuidancePage > 0 {
-                                                            withAnimation {
-                                                                currentGuidancePage -= 1
-                                                            }
-                                                        }
-                                                    }
-                                            )
                                         }
                                     }
                                     .padding(.horizontal, 16)

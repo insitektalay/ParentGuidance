@@ -24,12 +24,12 @@ struct ApiKeyProviderCard: View {
             actionButtonsSection
         }
         .padding(16)
-        .background(ColorPalette.white.opacity(0.05))
+        .background(SemanticColors.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .overlay(
             RoundedRectangle(cornerRadius: 12)
                 .stroke(
-                    isActive ? provider.brandColor.opacity(0.5) : ColorPalette.white.opacity(0.1),
+                    isActive ? provider.brandColor.opacity(0.5) : SemanticColors.tertiaryText.opacity(0.3),
                     lineWidth: isActive ? 2 : 1
                 )
         )
@@ -59,11 +59,11 @@ struct ApiKeyProviderCard: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(provider.displayName)
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(ColorPalette.white)
+                    .foregroundColor(SemanticColors.primaryText)
                 
                 Text(provider.description)
                     .font(.system(size: 12))
-                    .foregroundColor(ColorPalette.white.opacity(0.7))
+                    .foregroundColor(SemanticColors.secondaryText)
                     .lineLimit(2)
             }
         }
@@ -78,7 +78,7 @@ struct ApiKeyProviderCard: View {
             } label: {
                 Image(systemName: showingKeyDetails ? "chevron.up" : "chevron.down")
                     .font(.system(size: 12))
-                    .foregroundColor(ColorPalette.white.opacity(0.6))
+                    .foregroundColor(SemanticColors.tertiaryText)
             }
         }
     }
@@ -96,10 +96,10 @@ struct ApiKeyProviderCard: View {
             } else {
                 Text("Configured")
                     .font(.system(size: 11, weight: .medium))
-                    .foregroundColor(ColorPalette.white.opacity(0.7))
+                    .foregroundColor(SemanticColors.secondaryText)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
-                    .background(ColorPalette.white.opacity(0.1))
+                    .background(SemanticColors.tertiaryText.opacity(0.3))
                     .clipShape(RoundedRectangle(cornerRadius: 4))
             }
         }
@@ -110,30 +110,30 @@ struct ApiKeyProviderCard: View {
         if let apiKey = userApiKey, showingKeyDetails {
             VStack(spacing: 8) {
                 Divider()
-                    .background(ColorPalette.white.opacity(0.2))
+                    .background(SemanticColors.tertiaryText.opacity(0.5))
                 
                 HStack {
                     Text("API Key:")
                         .font(.system(size: 12))
-                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                        .foregroundColor(SemanticColors.secondaryText)
                     
                     Spacer()
                     
                     Text(apiKey.maskedApiKey)
                         .font(.system(size: 12, design: .monospaced))
-                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                        .foregroundColor(SemanticColors.primaryText)
                 }
                 
                 HStack {
                     Text("Added:")
                         .font(.system(size: 12))
-                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                        .foregroundColor(SemanticColors.secondaryText)
                     
                     Spacer()
                     
                     Text(formatDate(apiKey.createdAt))
                         .font(.system(size: 12))
-                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                        .foregroundColor(SemanticColors.primaryText)
                 }
             }
         }
@@ -156,7 +156,7 @@ struct ApiKeyProviderCard: View {
                     onSetActive()
                 }
                 .font(.system(size: 14, weight: .medium))
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
                 .background(provider.brandColor)
@@ -176,7 +176,7 @@ struct ApiKeyProviderCard: View {
                 }
             }
             .font(.system(size: 12))
-            .foregroundColor(ColorPalette.white.opacity(0.7))
+            .foregroundColor(SemanticColors.secondaryText)
             
             Button("Delete") {
                 onDeleteKey(apiKey)
@@ -196,7 +196,7 @@ struct ApiKeyProviderCard: View {
                 onAddKey()
             }
             .font(.system(size: 14, weight: .medium))
-            .foregroundColor(ColorPalette.white)
+            .foregroundColor(SemanticColors.primaryText)
             .padding(.horizontal, 16)
             .padding(.vertical, 8)
             .background(provider.brandColor)
@@ -215,7 +215,7 @@ struct ApiKeyProviderCard: View {
                 }
             }
             .font(.system(size: 12))
-            .foregroundColor(ColorPalette.white.opacity(0.7))
+            .foregroundColor(SemanticColors.secondaryText)
         }
     }
     
@@ -280,5 +280,5 @@ struct ApiKeyProviderCard: View {
         )
     }
     .padding()
-    .background(ColorPalette.navy)
+    .background(SemanticColors.primaryBackground)
 }

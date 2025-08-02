@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ApiKeyManagementView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
     @StateObject private var apiKeyService = MultiProviderApiKeyService.shared
     @State private var showingAddKeySheet = false
     @State private var selectedProvider: ApiKeyProvider?
@@ -27,12 +28,12 @@ struct ApiKeyManagementView: View {
                         Text("API Key Management")
                             .font(.title2)
                             .fontWeight(.bold)
-                            .foregroundColor(ColorPalette.white)
+                            .foregroundColor(SemanticColors.primaryText)
                             .multilineTextAlignment(.center)
                         
                         Text("Manage your AI provider API keys and switch between different services")
                             .font(.body)
-                            .foregroundColor(ColorPalette.white.opacity(0.8))
+                            .foregroundColor(SemanticColors.secondaryText)
                             .multilineTextAlignment(.center)
                     }
                     .padding(.top, 40)
@@ -43,14 +44,14 @@ struct ApiKeyManagementView: View {
                         HStack {
                             Text("Available Providers")
                                 .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(ColorPalette.white)
+                                .foregroundColor(SemanticColors.primaryText)
                             
                             Spacer()
                             
                             if apiKeyService.isLoading {
                                 ProgressView()
                                     .scaleEffect(0.8)
-                                    .tint(ColorPalette.white)
+                                    .tint(SemanticColors.primaryText)
                             }
                         }
                         
@@ -83,7 +84,7 @@ struct ApiKeyManagementView: View {
                             HStack {
                                 Text("Active Provider")
                                     .font(.system(size: 16, weight: .semibold))
-                                    .foregroundColor(ColorPalette.white)
+                                    .foregroundColor(SemanticColors.primaryText)
                                 
                                 Spacer()
                             }
@@ -95,11 +96,11 @@ struct ApiKeyManagementView: View {
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(activeKey.provider.displayName)
                                         .font(.system(size: 14, weight: .medium))
-                                        .foregroundColor(ColorPalette.white)
+                                        .foregroundColor(SemanticColors.primaryText)
                                     
                                     Text("All AI operations will use this provider")
                                         .font(.system(size: 12))
-                                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                                        .foregroundColor(SemanticColors.secondaryText)
                                 }
                                 
                                 Spacer()
@@ -114,8 +115,11 @@ struct ApiKeyManagementView: View {
                             }
                         }
                         .padding(16)
-                        .background(ColorPalette.white.opacity(0.05))
+                        .background(SemanticColors.cardBackground)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .if(colorScheme == .light) { view in
+                            view.cardShadow()
+                        }
                         .padding(.horizontal, 24)
                     }
                     
@@ -123,7 +127,7 @@ struct ApiKeyManagementView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(ColorPalette.navy)
+            .background(SemanticColors.primaryBackground)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
             .toolbar {
@@ -131,7 +135,7 @@ struct ApiKeyManagementView: View {
                     Button("Cancel") {
                         dismiss()
                     }
-                    .foregroundColor(ColorPalette.white.opacity(0.8))
+                    .foregroundColor(SemanticColors.secondaryText)
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -139,7 +143,7 @@ struct ApiKeyManagementView: View {
                         onApiKeySaved?()
                         dismiss()
                     }
-                    .foregroundColor(ColorPalette.terracotta)
+                    .foregroundColor(SemanticColors.accent)
                 }
             }
         }

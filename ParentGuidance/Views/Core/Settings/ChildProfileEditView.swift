@@ -8,18 +8,18 @@ struct SettingsDatePicker: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(label)
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
             
             DatePicker("", selection: $date, displayedComponents: .date)
                 .datePickerStyle(.wheel)
                 .labelsHidden()
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
-                .background(ColorPalette.white)
+                .background(SemanticColors.primaryText)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
-                        .stroke(ColorPalette.terracotta.opacity(0.3), lineWidth: 1)
+                        .stroke(SemanticColors.accent.opacity(0.3), lineWidth: 1)
                 )
         }
     }
@@ -34,18 +34,18 @@ struct SettingsTextField: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(label)
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
             
             TextField(placeholder, text: $text)
                 .font(.system(size: 16))
-                .foregroundColor(ColorPalette.navy)
+                .foregroundColor(SemanticColors.primaryBackground)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
-                .background(ColorPalette.white)
+                .background(SemanticColors.primaryText)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
-                        .stroke(ColorPalette.terracotta.opacity(0.3), lineWidth: 1)
+                        .stroke(SemanticColors.accent.opacity(0.3), lineWidth: 1)
                 )
         }
     }
@@ -71,12 +71,12 @@ struct ChildProfileEditView: View {
                         Text(String(localized: "childProfileEdit.title"))
                             .font(.title2)
                             .fontWeight(.bold)
-                            .foregroundColor(ColorPalette.white)
+                            .foregroundColor(SemanticColors.primaryText)
                             .multilineTextAlignment(.center)
                         
                         Text(String(localized: "childProfileEdit.subtitle"))
                             .font(.body)
-                            .foregroundColor(ColorPalette.white.opacity(0.8))
+                            .foregroundColor(SemanticColors.secondaryText)
                             .multilineTextAlignment(.center)
                     }
                     .padding(.top, 40)
@@ -101,7 +101,7 @@ struct ChildProfileEditView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(ColorPalette.navy)
+            .background(SemanticColors.primaryBackground)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
             .toolbar {
@@ -109,7 +109,7 @@ struct ChildProfileEditView: View {
                     Button(String(localized: "common.cancel")) {
                         dismiss()
                     }
-                    .foregroundColor(ColorPalette.white.opacity(0.8))
+                    .foregroundColor(SemanticColors.secondaryText)
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -118,7 +118,7 @@ struct ChildProfileEditView: View {
                             await handleSave()
                         }
                     }
-                    .foregroundColor(isValidForm ? ColorPalette.terracotta : ColorPalette.white.opacity(0.5))
+                    .foregroundColor(isValidForm ? SemanticColors.accent : SemanticColors.tertiaryText)
                     .disabled(!isValidForm || isSaving)
                 }
             }

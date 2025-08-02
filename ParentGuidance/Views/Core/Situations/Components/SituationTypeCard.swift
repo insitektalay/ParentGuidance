@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct SituationTypeCard: View {
+    @Environment(\.colorScheme) private var colorScheme
     let situationType: SituationType
     let isSelected: Bool
     let action: () -> Void
@@ -21,13 +22,13 @@ struct SituationTypeCard: View {
                 VStack(alignment: .leading, spacing: 6) {
                     Text(LocalizedStringKey(situationType.titleKey))
                         .font(.system(size: 17, weight: .semibold))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
                     
                     Text(LocalizedStringKey(situationType.subtitleKey))
                         .font(.system(size: 15))
-                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                        .foregroundColor(SemanticColors.secondaryText)
                         .multilineTextAlignment(.leading)
                         .lineLimit(3)
                         .fixedSize(horizontal: false, vertical: true)
@@ -39,14 +40,17 @@ struct SituationTypeCard: View {
             .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(ColorPalette.white.opacity(0.08))
+                    .fill(SemanticColors.cardBackground)
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(
-                                isSelected ? ColorPalette.terracotta : Color.clear,
+                                isSelected ? SemanticColors.accent : Color.clear,
                                 lineWidth: 2
                             )
                     )
+                    .if(colorScheme == .light) { view in
+                        view.cardShadow()
+                    }
             )
         }
         .buttonStyle(PlainButtonStyle())

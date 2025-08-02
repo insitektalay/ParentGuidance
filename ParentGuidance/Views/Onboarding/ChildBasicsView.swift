@@ -5,23 +5,26 @@ struct CustomTextField: View {
     let placeholder: String
     @Binding var text: String
     
+    @Environment(\.colorScheme) private var colorScheme
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(label)
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.secondaryText)
             
             TextField(placeholder, text: $text)
                 .font(.system(size: 16))
-                .foregroundColor(ColorPalette.navy)
+                .foregroundColor(SemanticColors.primaryBackground)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
-                .background(ColorPalette.white)
+                .background(SemanticColors.cardBackground)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
-                        .stroke(ColorPalette.terracotta.opacity(0.3), lineWidth: 1)
+                        .stroke(SemanticColors.accent.opacity(0.3), lineWidth: 1)
                 )
+                .if(colorScheme == .light) { view in view.cardShadow() }
         }
     }
 }
@@ -30,23 +33,26 @@ struct CustomDatePicker: View {
     let label: String
     @Binding var date: Date
     
+    @Environment(\.colorScheme) private var colorScheme
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(label)
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.secondaryText)
             
             DatePicker("", selection: $date, displayedComponents: .date)
                 .datePickerStyle(.wheel)
                 .labelsHidden()
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
-                .background(ColorPalette.white)
+                .background(SemanticColors.cardBackground)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
-                        .stroke(ColorPalette.terracotta.opacity(0.3), lineWidth: 1)
+                        .stroke(SemanticColors.accent.opacity(0.3), lineWidth: 1)
                 )
+                .if(colorScheme == .light) { view in view.cardShadow() }
         }
     }
 }
@@ -58,6 +64,8 @@ struct ChildBasicsView: View {
     let onAddAnotherChild: (String, Date) -> Void
     let onContinue: (String, Date) -> Void
     
+    @Environment(\.colorScheme) private var colorScheme
+    
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
@@ -66,12 +74,12 @@ struct ChildBasicsView: View {
                         Text(String(localized: "childBasics.title"))
                             .font(.title2)
                             .fontWeight(.bold)
-                            .foregroundColor(ColorPalette.white)
+                            .foregroundColor(SemanticColors.primaryText)
                             .multilineTextAlignment(.center)
                         
                         Text(String(localized: "childBasics.subtitle"))
                             .font(.body)
-                            .foregroundColor(ColorPalette.white.opacity(0.8))
+                            .foregroundColor(SemanticColors.secondaryText)
                             .multilineTextAlignment(.center)
                     }
                     .padding(.top, 80)
@@ -92,7 +100,7 @@ struct ChildBasicsView: View {
                         Button(action: { onAddAnotherChild(childName, birthDate) }) {
                             Text(String(localized: "childBasics.addAnother"))
                                 .font(.system(size: 16))
-                                .foregroundColor(ColorPalette.terracotta)
+                                .foregroundColor(SemanticColors.accent)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 8)
                         }
@@ -107,24 +115,25 @@ struct ChildBasicsView: View {
             VStack(spacing: 16) {
                 Text(String(localized: "childBasics.moreDetailsHint"))
                     .font(.system(size: 14))
-                    .foregroundColor(ColorPalette.white.opacity(0.6))
+                    .foregroundColor(SemanticColors.tertiaryText)
                     .multilineTextAlignment(.center)
                 
                 Button(action: { onContinue(childName, birthDate) }) {
                     Text(String(localized: "childBasics.continue"))
                         .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
-                        .background(ColorPalette.terracotta)
+                        .background(SemanticColors.accent)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .if(colorScheme == .light) { view in view.cardShadow() }
                 }
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 32)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(ColorPalette.navy)
+        .background(SemanticColors.primaryBackground)
         .ignoresSafeArea()
     }
 }

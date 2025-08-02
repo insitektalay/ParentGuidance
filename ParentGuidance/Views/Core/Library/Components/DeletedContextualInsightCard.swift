@@ -18,18 +18,18 @@ struct DeletedContextualInsightCard: View {
             HStack(alignment: .top, spacing: 8) {
                 Image(systemName: insight.category.iconName)
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(ColorPalette.brightBlue)
+                    .foregroundColor(SemanticColors.accentBlue)
                     .frame(width: 20, height: 20)
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(insight.category.displayName)
                         .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                        .foregroundColor(SemanticColors.primaryText)
                     
                     if let subcategory = insight.subcategory {
                         Text(subcategory.displayName)
                             .font(.system(size: 12))
-                            .foregroundColor(ColorPalette.white.opacity(0.7))
+                            .foregroundColor(SemanticColors.primaryText.opacity(0.7))
                     }
                 }
                 
@@ -38,18 +38,18 @@ struct DeletedContextualInsightCard: View {
                 VStack(alignment: .trailing, spacing: 2) {
                     Text("Deleted")
                         .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(ColorPalette.terracotta)
+                        .foregroundColor(SemanticColors.accent)
                     
                     Text(DateFormatter.shortDate.string(from: insight.deletedAt))
                         .font(.system(size: 10))
-                        .foregroundColor(ColorPalette.white.opacity(0.5))
+                        .foregroundColor(SemanticColors.primaryText.opacity(0.5))
                 }
             }
             
             // Content
             Text(insight.content)
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.8))
+                .foregroundColor(SemanticColors.primaryText.opacity(0.8))
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
             
@@ -58,11 +58,11 @@ struct DeletedContextualInsightCard: View {
                 HStack(spacing: 6) {
                     Image(systemName: "info.circle")
                         .font(.system(size: 12))
-                        .foregroundColor(ColorPalette.white.opacity(0.6))
+                        .foregroundColor(SemanticColors.tertiaryText)
                     
                     Text("Reason: \(reason)")
                         .font(.system(size: 12))
-                        .foregroundColor(ColorPalette.white.opacity(0.6))
+                        .foregroundColor(SemanticColors.tertiaryText)
                         .italic()
                 }
                 .padding(.top, 4)
@@ -78,10 +78,10 @@ struct DeletedContextualInsightCard: View {
                         Text(String(localized: "library.deleted.action.restore"))
                             .font(.system(size: 12, weight: .medium))
                     }
-                    .foregroundColor(ColorPalette.brightBlue)
+                    .foregroundColor(SemanticColors.accentBlue)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
-                    .background(ColorPalette.brightBlue.opacity(0.1))
+                    .background(SemanticColors.accentBlue.opacity(0.1))
                     .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
                 
@@ -93,10 +93,10 @@ struct DeletedContextualInsightCard: View {
                         Text(String(localized: "library.deleted.action.permanentDelete"))
                             .font(.system(size: 12, weight: .medium))
                     }
-                    .foregroundColor(ColorPalette.terracotta.opacity(0.8))
+                    .foregroundColor(SemanticColors.accent.opacity(0.8))
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
-                    .background(ColorPalette.terracotta.opacity(0.1))
+                    .background(SemanticColors.accent.opacity(0.1))
                     .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
                 
@@ -105,10 +105,10 @@ struct DeletedContextualInsightCard: View {
             .padding(.top, 8)
         }
         .padding(16)
-        .background(Color(red: 0.21, green: 0.22, blue: 0.33))
+        .background(SemanticColors.cardBackground)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(ColorPalette.white.opacity(0.1), lineWidth: 1)
+                .stroke(SemanticColors.primaryText.opacity(0.1), lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
@@ -145,6 +145,6 @@ extension DateFormatter {
         onPermanentDelete: { print("Permanent delete tapped") }
     )
     .padding()
-    .background(ColorPalette.navy)
+    .background(SemanticColors.primaryBackground)
 }
 

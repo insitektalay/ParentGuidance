@@ -22,8 +22,8 @@ struct FrameworkGeneratingView: View {
                     .stroke(
                         LinearGradient(
                             gradient: Gradient(colors: [
-                                ColorPalette.terracotta.opacity(0.8),
-                                ColorPalette.terracotta.opacity(0.3),
+                                SemanticColors.accent.opacity(0.8),
+                                SemanticColors.accent.opacity(0.3),
                                 Color.clear
                             ]),
                             startPoint: .topLeading,
@@ -41,7 +41,7 @@ struct FrameworkGeneratingView: View {
                 
                 // Inner pulsing circle
                 Circle()
-                    .fill(ColorPalette.terracotta.opacity(0.6))
+                    .fill(SemanticColors.accent.opacity(0.6))
                     .frame(width: 20, height: 20)
                     .scaleEffect(pulseScale)
                     .animation(
@@ -55,7 +55,7 @@ struct FrameworkGeneratingView: View {
             // Main text
             Text(String(localized: "alerts.generating.title"))
                 .font(.system(size: 24, weight: .medium))
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
                 .padding(.bottom, 16)
@@ -63,14 +63,14 @@ struct FrameworkGeneratingView: View {
             // Subtitle
             Text(String(localized: "alerts.generating.subtitle"))
                 .font(.system(size: 16))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.primaryText.opacity(0.7))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
             
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(ColorPalette.navy)
+        .background(SemanticColors.primaryBackground)
         .onAppear {
             rotationAngle = 360
             pulseScale = 1.3

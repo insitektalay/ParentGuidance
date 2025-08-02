@@ -18,6 +18,7 @@ extension Publishers {
 }
 
 struct ChatConversationView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @Binding var messages: [ChatMessage]
     @Binding var isLoading: Bool
     @State private var inputText: String = ""
@@ -46,10 +47,10 @@ struct ChatConversationView: View {
                         if isLoading {
                             HStack {
                                 ProgressView()
-                                    .tint(ColorPalette.terracotta)
+                                    .tint(SemanticColors.accent)
                                 Text(String(localized: "chat.message.loading"))
                                     .font(.system(size: 14))
-                                    .foregroundColor(ColorPalette.white.opacity(0.6))
+                                    .foregroundColor(SemanticColors.secondaryText)
                                 Spacer()
                             }
                             .padding(.horizontal, 16)
@@ -95,7 +96,7 @@ struct ChatConversationView: View {
 
             VStack(spacing: 0) {
                 LinearGradient(
-                    colors: [ColorPalette.navy.opacity(0.0), ColorPalette.navy.opacity(1.0)],
+                    colors: [SemanticColors.primaryBackground.opacity(0.0), SemanticColors.primaryBackground.opacity(1.0)],
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -109,11 +110,11 @@ struct ChatConversationView: View {
                     isTranscribing: voiceRecorderViewModel.isTranscribing,
                     isSending: isLoading
                 )
-                .background(ColorPalette.navy)
+                .background(SemanticColors.primaryBackground)
                 .padding(.bottom, 8)
             }
         }
-        .background(ColorPalette.navy)
+        .background(SemanticColors.primaryBackground)
         .ignoresSafeArea(.keyboard, edges: .bottom)
         .safeAreaInset(edge: .bottom) {
             Color.clear.frame(height: 0)

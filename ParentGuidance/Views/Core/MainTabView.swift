@@ -39,19 +39,19 @@ struct TabButton: View {
                 ZStack {
                     if isActive {
                         Circle()
-                            .fill(ColorPalette.terracotta)
+                            .fill(SemanticColors.accent)
                             .frame(width: 40, height: 40)
                     }
                     
                     Image(systemName: tab.icon)
                         .font(.system(size: 20))
-                        .foregroundColor(isActive ? ColorPalette.white : ColorPalette.white.opacity(0.5))
+                        .foregroundColor(isActive ? SemanticColors.primaryText : SemanticColors.primaryText)
                 }
                 .frame(width: 40, height: 40)
                 
                 Text(tab.title)
                     .font(.system(size: 12))
-                    .foregroundColor(isActive ? ColorPalette.terracotta : ColorPalette.white.opacity(0.5))
+                    .foregroundColor(isActive ? SemanticColors.accent : SemanticColors.primaryText)
             }
         }
     }
@@ -60,10 +60,10 @@ struct TabButton: View {
 struct TodayScreen: View {
     var body: some View {
         ZStack {
-            ColorPalette.navy.ignoresSafeArea()
+            SemanticColors.primaryBackground.ignoresSafeArea()
             Text(String(localized: "screen.today.title"))
                 .font(.title)
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
         }
     }
 }
@@ -71,10 +71,10 @@ struct TodayScreen: View {
 struct NewScreen: View {
     var body: some View {
         ZStack {
-            ColorPalette.navy.ignoresSafeArea()
+            SemanticColors.primaryBackground.ignoresSafeArea()
             Text(String(localized: "screen.new.title"))
                 .font(.title)
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
         }
     }
 }
@@ -82,10 +82,10 @@ struct NewScreen: View {
 struct LibraryScreen: View {
     var body: some View {
         ZStack {
-            ColorPalette.navy.ignoresSafeArea()
+            SemanticColors.primaryBackground.ignoresSafeArea()
             Text(String(localized: "screen.library.title"))
                 .font(.title)
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
         }
     }
 }
@@ -93,10 +93,10 @@ struct LibraryScreen: View {
 struct AlertsScreen: View {
     var body: some View {
         ZStack {
-            ColorPalette.navy.ignoresSafeArea()
+            SemanticColors.primaryBackground.ignoresSafeArea()
             Text(String(localized: "screen.alerts.title"))
                 .font(.title)
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
         }
     }
 }
@@ -112,7 +112,7 @@ struct MainTabView: View {
             VStack(spacing: 0) {
                 // Fixed child header - always stays at top
                 ChildHeader(childName: appCoordinator.children.first?.name ?? "Child")
-                    .background(ColorPalette.navy)
+                    .background(SemanticColors.primaryBackground)
                     .zIndex(1000)
                 
                 // Scrollable content area
@@ -139,7 +139,7 @@ struct MainTabView: View {
                         .frame(minHeight: geometry.size.height - 140) // Account for header and tab bar
                     }
                 }
-                .background(ColorPalette.navy)
+                .background(SemanticColors.primaryBackground)
                 
                 // Fixed tab bar - always stays at bottom
                 HStack {
@@ -160,7 +160,7 @@ struct MainTabView: View {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
                 .padding(.bottom, 20)
-                .background(Color(hex: "1F2133"))
+                .background(SemanticColors.secondaryBackground)
                 .zIndex(1000)
             }
         }

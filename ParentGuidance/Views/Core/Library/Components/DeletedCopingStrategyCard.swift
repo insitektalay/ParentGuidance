@@ -20,7 +20,7 @@ struct DeletedCopingStrategyCard: View {
             // Main content
             Text(deletedStrategy.content)
                 .font(.system(size: 16))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
                 .lineLimit(nil)
                 .multilineTextAlignment(.leading)
             
@@ -28,7 +28,7 @@ struct DeletedCopingStrategyCard: View {
             HStack {
                 Text("Deleted \(formatDate(deletedStrategy.deletedAt))")
                     .font(.system(size: 12))
-                    .foregroundColor(ColorPalette.white.opacity(0.6))
+                    .foregroundColor(SemanticColors.tertiaryText)
                 
                 Spacer()
             }
@@ -45,10 +45,10 @@ struct DeletedCopingStrategyCard: View {
                         Text(String(localized: "library.deleted.action.restore"))
                             .font(.system(size: 12, weight: .medium))
                     }
-                    .foregroundColor(ColorPalette.brightBlue)
+                    .foregroundColor(SemanticColors.accentBlue)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
-                    .background(ColorPalette.brightBlue.opacity(0.1))
+                    .background(SemanticColors.accentBlue.opacity(0.1))
                     .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
                 
@@ -62,10 +62,10 @@ struct DeletedCopingStrategyCard: View {
                         Text(String(localized: "library.deleted.action.permanentDelete"))
                             .font(.system(size: 12, weight: .medium))
                     }
-                    .foregroundColor(ColorPalette.terracotta.opacity(0.8))
+                    .foregroundColor(SemanticColors.accent.opacity(0.8))
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
-                    .background(ColorPalette.terracotta.opacity(0.1))
+                    .background(SemanticColors.accent.opacity(0.1))
                     .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
                 
@@ -75,10 +75,10 @@ struct DeletedCopingStrategyCard: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(red: 0.15, green: 0.16, blue: 0.25)) // Slightly darker than regular cards
+        .background(SemanticColors.cardBackground) // Slightly darker than regular cards
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(ColorPalette.white.opacity(0.1), lineWidth: 1)
+                .stroke(SemanticColors.border, lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .confirmationDialog("Restore Coping Strategy", isPresented: $showingRestoreConfirmation) {
@@ -124,5 +124,5 @@ struct DeletedCopingStrategyCard: View {
         onPermanentDelete: { print("Permanent delete tapped") }
     )
     .padding()
-    .background(ColorPalette.navy)
+    .background(SemanticColors.primaryBackground)
 }

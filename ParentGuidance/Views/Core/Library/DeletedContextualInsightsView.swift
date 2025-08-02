@@ -31,7 +31,7 @@ struct DeletedContextualInsightsView: View {
                     }) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 18, weight: .medium))
-                            .foregroundColor(ColorPalette.white.opacity(0.9))
+                            .foregroundColor(SemanticColors.primaryText)
                     }
                     
                     Spacer()
@@ -43,10 +43,10 @@ struct DeletedContextualInsightsView: View {
                         }) {
                             Text(String(localized: "regulation.archive.button.deleteAll"))
                                 .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(ColorPalette.white)
+                                .foregroundColor(SemanticColors.primaryText)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 6)
-                                .background(ColorPalette.terracotta)
+                                .background(SemanticColors.accent)
                                 .clipShape(RoundedRectangle(cornerRadius: 8))
                                 .frame(minHeight: 44)
                                 .contentShape(Rectangle())
@@ -64,13 +64,13 @@ struct DeletedContextualInsightsView: View {
                     if let category = category {
                         Text("Deleted \(category.displayName)")
                             .font(.system(size: 22, weight: .semibold))
-                            .foregroundColor(ColorPalette.white.opacity(0.9))
+                            .foregroundColor(SemanticColors.primaryText)
                             .multilineTextAlignment(.center)
                             .lineLimit(2)
                     } else {
                         Text(String(localized: "library.deleted.contextual.title"))
                             .font(.system(size: 22, weight: .semibold))
-                            .foregroundColor(ColorPalette.white.opacity(0.9))
+                            .foregroundColor(SemanticColors.primaryText)
                             .multilineTextAlignment(.center)
                             .lineLimit(2)
                     }
@@ -78,7 +78,7 @@ struct DeletedContextualInsightsView: View {
                     if !deletedInsights.isEmpty {
                         Text("\(deletedInsights.count) insight\(deletedInsights.count == 1 ? "" : "s")")
                             .font(.system(size: 14))
-                            .foregroundColor(ColorPalette.white.opacity(0.7))
+                            .foregroundColor(SemanticColors.secondaryText)
                     }
                 }
                 .padding(.horizontal, 16)
@@ -96,7 +96,7 @@ struct DeletedContextualInsightsView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(ColorPalette.navy)
+            .background(SemanticColors.primaryBackground)
             .navigationBarHidden(true)
         }
         .onAppear {
@@ -144,11 +144,11 @@ struct DeletedContextualInsightsView: View {
         VStack(spacing: 16) {
             ProgressView()
                 .scaleEffect(1.5)
-                .foregroundColor(ColorPalette.white.opacity(0.8))
+                .foregroundColor(SemanticColors.secondaryText)
             
             Text(String(localized: "library.deleted.loading"))
                 .font(.system(size: 16))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
         }
     }
     
@@ -156,18 +156,18 @@ struct DeletedContextualInsightsView: View {
         VStack(spacing: 16) {
             Text(String(localized: "library.deleted.error.title"))
                 .font(.system(size: 18, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
             
             Text(String(localized: "library.deleted.error.subtitle"))
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
             
             Button(String(localized: "common.button.retry")) {
                 Task {
                     await loadDeletedInsights()
                 }
             }
-            .foregroundColor(ColorPalette.terracotta)
+            .foregroundColor(SemanticColors.accent)
             .font(.system(size: 16, weight: .medium))
         }
     }
@@ -176,15 +176,15 @@ struct DeletedContextualInsightsView: View {
         VStack(spacing: 16) {
             Image(systemName: category?.iconName ?? "trash")
                 .font(.system(size: 48, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.3))
+                .foregroundColor(SemanticColors.primaryText.opacity(0.3))
             
             Text(String(localized: "library.deleted.empty.title"))
                 .font(.system(size: 18, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
             
             Text(String(localized: "library.deleted.empty.description"))
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
         }

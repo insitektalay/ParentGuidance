@@ -10,6 +10,7 @@ import SwiftUI
 struct AlertView: View {
     @State private var selectedCategory: AlertCategory = .recent
     @EnvironmentObject var appCoordinator: AppCoordinator
+    @Environment(\.colorScheme) private var colorScheme
     
     enum AlertCategory: String, CaseIterable {
         case recent = "Recent Alerts"
@@ -35,16 +36,16 @@ struct AlertView: View {
                     }) {
                         Text(category.localizedName)
                             .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(selectedCategory == category ? ColorPalette.terracotta : ColorPalette.white.opacity(0.6))
+                            .foregroundColor(selectedCategory == category ? SemanticColors.accent : SemanticColors.tertiaryText)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
                             .background(
                                 Rectangle()
-                                    .fill(selectedCategory == category ? ColorPalette.white.opacity(0.1) : Color.clear)
+                                    .fill(selectedCategory == category ? SemanticColors.secondaryText.opacity(0.1) : Color.clear)
                             )
                             .overlay(
                                 Rectangle()
-                                    .fill(selectedCategory == category ? ColorPalette.terracotta : Color.clear)
+                                    .fill(selectedCategory == category ? SemanticColors.accent : Color.clear)
                                     .frame(height: 2)
                                     .offset(y: 16),
                                 alignment: .bottom
@@ -71,7 +72,7 @@ struct AlertView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(ColorPalette.navy)
+        .background(SemanticColors.primaryBackground)
     }
     
     private var recentAlertsContent: some View {

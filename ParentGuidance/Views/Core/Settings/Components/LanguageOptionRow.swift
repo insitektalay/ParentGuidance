@@ -23,11 +23,11 @@ struct LanguageOptionRow: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(languageName)
                         .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                     
                     Text(languageCode.uppercased())
                         .font(.system(size: 12, design: .monospaced))
-                        .foregroundColor(ColorPalette.white.opacity(0.6))
+                        .foregroundColor(SemanticColors.tertiaryText)
                 }
                 
                 Spacer()
@@ -35,22 +35,22 @@ struct LanguageOptionRow: View {
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 20))
-                        .foregroundColor(ColorPalette.brightBlue)
+                        .foregroundColor(SemanticColors.accentBlue)
                 } else {
                     Image(systemName: "circle")
                         .font(.system(size: 20))
-                        .foregroundColor(ColorPalette.white.opacity(0.3))
+                        .foregroundColor(SemanticColors.tertiaryText)
                 }
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(isSelected ? ColorPalette.brightBlue.opacity(0.1) : ColorPalette.white.opacity(0.05))
+                    .fill(isSelected ? SemanticColors.accentBlue.opacity(0.1) : SemanticColors.cardBackground)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(isSelected ? ColorPalette.brightBlue.opacity(0.3) : ColorPalette.white.opacity(0.1), lineWidth: 1)
+                    .stroke(isSelected ? SemanticColors.accentBlue.opacity(0.3) : SemanticColors.tertiaryText.opacity(0.3), lineWidth: 1)
             )
         }
         .buttonStyle(PlainButtonStyle())

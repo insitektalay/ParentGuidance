@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct RoutineCard: View {
+    @Environment(\.colorScheme) private var colorScheme
     let time: String
     let activity: String
     let icon: String?
@@ -27,7 +28,7 @@ struct RoutineCard: View {
             // Time label
             Text(time)
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.6))
+                .foregroundColor(SemanticColors.tertiaryText)
             
             // Activity card with navigation
             NavigationLink(destination: SituationGuidanceView(situation: situation)) {
@@ -36,23 +37,25 @@ struct RoutineCard: View {
                     if let iconName = icon {
                         Image(systemName: iconName)
                             .font(.system(size: 20))
-                            .foregroundColor(ColorPalette.white.opacity(0.7))
+                            .foregroundColor(SemanticColors.secondaryText)
                             .frame(width: 20, height: 20)
                     }
                     
                     // Activity text
                     Text(activity)
                         .font(.system(size: 18))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                     
                     Spacer()
                 }
                 .padding(16)
-                .background(Color.clear)
+                .background(SemanticColors.cardBackground)
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
-                        .stroke(ColorPalette.terracotta.opacity(0.3), lineWidth: 1)
+                        .stroke(SemanticColors.accent.opacity(0.3), lineWidth: 1)
                 )
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .modifier(ConditionalCardShadow(colorScheme: colorScheme))
             }
             .buttonStyle(PlainButtonStyle())
         }
@@ -67,5 +70,18 @@ struct RoutineCard: View {
         RoutineCard(time: "6:00 PM", activity: "Dinner Time", icon: "fork.knife")
     }
     .padding()
-    .background(ColorPalette.navy)
+    .background(SemanticColors.primaryBackground)
+}
+
+// MARK: - Conditional Shadow Modifier for Cards
+struct ConditionalCardShadow: ViewModifier {
+    let colorScheme: ColorScheme
+    
+    func body(content: Content) -> some View {
+        if colorScheme == .light {
+            content.cardShadow()
+        } else {
+            content
+        }
+    }
 }

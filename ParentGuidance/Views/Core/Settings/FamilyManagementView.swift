@@ -9,6 +9,7 @@ import SwiftUI
 
 struct FamilyManagementView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
     @State private var familyMembers: [FamilyMember] = []
     @State private var pendingInvitations: [FamilyInvitation] = []
     @State private var familySettings: FamilySettings?
@@ -55,7 +56,7 @@ struct FamilyManagementView: View {
                 .padding(.bottom, 50)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(ColorPalette.navy)
+            .background(SemanticColors.primaryBackground)
             .navigationTitle(String(localized: "settings.familyManagement.title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -63,14 +64,14 @@ struct FamilyManagementView: View {
                     Button(String(localized: "common.back")) {
                         dismiss()
                     }
-                    .foregroundColor(ColorPalette.white)
+                    .foregroundColor(SemanticColors.primaryText)
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(String(localized: "settings.familyManagement.inviteFamily")) {
                         showingInviteFlow = true
                     }
-                    .foregroundColor(ColorPalette.brightBlue)
+                    .foregroundColor(SemanticColors.accentBlue)
                 }
             }
         }
@@ -114,10 +115,10 @@ struct FamilyManagementView: View {
     private var loadingView: some View {
         VStack {
             ProgressView()
-                .tint(ColorPalette.terracotta)
+                .tint(SemanticColors.accent)
             Text(String(localized: "settings.familyManagement.loading"))
                 .font(.system(size: 16))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
                 .padding(.top, 8)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -131,19 +132,19 @@ struct FamilyManagementView: View {
             
             Text(String(localized: "settings.familyManagement.error.title"))
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
                 .padding(.top, 8)
             
             Text(message)
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
                 .multilineTextAlignment(.center)
                 .padding(.top, 4)
             
             Button(String(localized: "common.tryAgain")) {
                 Task { await loadFamilyData() }
             }
-            .foregroundColor(ColorPalette.brightBlue)
+            .foregroundColor(SemanticColors.accentBlue)
             .padding(.top, 16)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -154,11 +155,11 @@ struct FamilyManagementView: View {
             HStack {
                 Image(systemName: "house.fill")
                     .font(.system(size: 18))
-                    .foregroundColor(ColorPalette.terracotta)
+                    .foregroundColor(SemanticColors.accent)
                 
                 Text(String(localized: "settings.familyManagement.overview.title"))
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(ColorPalette.white)
+                    .foregroundColor(SemanticColors.primaryText)
                 
                 Spacer()
             }
@@ -167,38 +168,38 @@ struct FamilyManagementView: View {
                 HStack {
                     Text(String(localized: "settings.familyManagement.overview.members"))
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.white.opacity(0.8))
+                        .foregroundColor(SemanticColors.secondaryText)
                     
                     Spacer()
                     
                     Text("\(familyMembers.count)")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                 }
                 
                 HStack {
                     Text(String(localized: "settings.familyManagement.overview.languages"))
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.white.opacity(0.8))
+                        .foregroundColor(SemanticColors.secondaryText)
                     
                     Spacer()
                     
                     Text(getActiveLanguagesText())
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                 }
                 
                 if let settings = familySettings {
                     HStack {
                         Text(String(localized: "settings.familyManagement.overview.strategy"))
                             .font(.system(size: 14))
-                            .foregroundColor(ColorPalette.white.opacity(0.8))
+                            .foregroundColor(SemanticColors.secondaryText)
                         
                         Spacer()
                         
                         Text(settings.translationStrategy.description)
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(ColorPalette.brightBlue)
+                            .foregroundColor(SemanticColors.accentBlue)
                     }
                 }
                 
@@ -206,7 +207,7 @@ struct FamilyManagementView: View {
                     HStack {
                         Text(String(localized: "settings.familyManagement.overview.pendingInvites"))
                             .font(.system(size: 14))
-                            .foregroundColor(ColorPalette.white.opacity(0.8))
+                            .foregroundColor(SemanticColors.secondaryText)
                         
                         Spacer()
                         
@@ -218,8 +219,9 @@ struct FamilyManagementView: View {
             }
         }
         .padding(16)
-        .background(Color(red: 0.21, green: 0.22, blue: 0.33))
+        .background(SemanticColors.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 10))
+        .shadow(color: colorScheme == .light ? Color.black.opacity(0.1) : Color.clear, radius: 2, x: 0, y: 1)
     }
     
     private var familyMembersSection: some View {
@@ -227,7 +229,7 @@ struct FamilyManagementView: View {
             HStack {
                 Text(String(localized: "settings.familyManagement.members.title"))
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(ColorPalette.white)
+                    .foregroundColor(SemanticColors.primaryText)
                 
                 Spacer()
                 
@@ -235,7 +237,7 @@ struct FamilyManagementView: View {
                     showingInviteFlow = true
                 }
                 .font(.system(size: 14, weight: .medium))
-                .foregroundColor(ColorPalette.brightBlue)
+                .foregroundColor(SemanticColors.accentBlue)
             }
             
             VStack(spacing: 12) {
@@ -258,7 +260,7 @@ struct FamilyManagementView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text(String(localized: "settings.familyManagement.invitations.title"))
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
             
             VStack(spacing: 12) {
                 ForEach(pendingInvitations) { invitation in
@@ -280,7 +282,7 @@ struct FamilyManagementView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text(String(localized: "settings.familyManagement.settings.title"))
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
             
             VStack(spacing: 12) {
                 // Translation Strategy Setting
@@ -291,12 +293,12 @@ struct FamilyManagementView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(String(localized: "settings.familyManagement.settings.translationStrategy"))
                                 .font(.system(size: 16, weight: .medium))
-                                .foregroundColor(ColorPalette.white)
+                                .foregroundColor(SemanticColors.primaryText)
                             
                             if let settings = familySettings {
                                 Text(settings.translationStrategy.description)
                                     .font(.system(size: 14))
-                                    .foregroundColor(ColorPalette.white.opacity(0.7))
+                                    .foregroundColor(SemanticColors.secondaryText)
                             }
                         }
                         
@@ -304,10 +306,10 @@ struct FamilyManagementView: View {
                         
                         Image(systemName: "chevron.right")
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(ColorPalette.white.opacity(0.6))
+                            .foregroundColor(SemanticColors.tertiaryText)
                     }
                     .padding(16)
-                    .background(Color(red: 0.21, green: 0.22, blue: 0.33))
+                    .background(SemanticColors.cardBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
                 
@@ -324,20 +326,20 @@ struct FamilyManagementView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text(String(localized: "settings.familyManagement.settings.languageCoordination"))
                 .font(.system(size: 16, weight: .medium))
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
             
             VStack(alignment: .leading, spacing: 8) {
                 ForEach(getLanguageBreakdown(), id: \.language) { item in
                     HStack {
                         Text(item.language)
                             .font(.system(size: 14))
-                            .foregroundColor(ColorPalette.white.opacity(0.8))
+                            .foregroundColor(SemanticColors.secondaryText)
                         
                         Spacer()
                         
                         Text(String(localized: "settings.familyManagement.settings.membersCount", defaultValue: "\(item.memberCount) members"))
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(ColorPalette.white)
+                            .foregroundColor(SemanticColors.primaryText)
                         
                         if item.isConflict {
                             Image(systemName: "exclamationmark.triangle.fill")
@@ -356,15 +358,16 @@ struct FamilyManagementView: View {
             }
         }
         .padding(16)
-        .background(Color(red: 0.21, green: 0.22, blue: 0.33))
+        .background(SemanticColors.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 10))
+        .shadow(color: colorScheme == .light ? Color.black.opacity(0.1) : Color.clear, radius: 2, x: 0, y: 1)
     }
     
     private var familyUsageAnalyticsCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(String(localized: "settings.familyManagement.settings.usageAnalytics"))
                 .font(.system(size: 16, weight: .medium))
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
             
             let metrics = TranslationQueueManager.shared.getFamilyUsageMetrics(familyId: familyId)
             
@@ -372,50 +375,51 @@ struct FamilyManagementView: View {
                 HStack {
                     Text(String(localized: "settings.familyManagement.analytics.totalContent"))
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.white.opacity(0.8))
+                        .foregroundColor(SemanticColors.secondaryText)
                     
                     Spacer()
                     
                     Text("\(metrics.uniqueContentAccessed)")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                 }
                 
                 HStack {
                     Text(String(localized: "settings.familyManagement.analytics.avgAccess"))
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.white.opacity(0.8))
+                        .foregroundColor(SemanticColors.secondaryText)
                     
                     Spacer()
                     
                     Text(String(format: "%.1f", metrics.averageAccessesPerContent))
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                 }
                 
                 HStack {
                     Text(String(localized: "settings.familyManagement.analytics.familyType"))
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.white.opacity(0.8))
+                        .foregroundColor(SemanticColors.secondaryText)
                     
                     Spacer()
                     
                     Text(metrics.isHighUsageFamily ? String(localized: "family.usage.high") : String(localized: "family.usage.low"))
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(metrics.isHighUsageFamily ? .green : ColorPalette.white)
+                        .foregroundColor(metrics.isHighUsageFamily ? .green : SemanticColors.primaryText)
                 }
             }
         }
         .padding(16)
-        .background(Color(red: 0.21, green: 0.22, blue: 0.33))
+        .background(SemanticColors.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 10))
+        .shadow(color: colorScheme == .light ? Color.black.opacity(0.1) : Color.clear, radius: 2, x: 0, y: 1)
     }
     
     private var familyActionsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text(String(localized: "settings.familyManagement.actions.title"))
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
             
             VStack(spacing: 12) {
                 // Export Family Data
@@ -425,16 +429,16 @@ struct FamilyManagementView: View {
                     HStack {
                         Image(systemName: "square.and.arrow.up")
                             .font(.system(size: 16))
-                            .foregroundColor(ColorPalette.brightBlue)
+                            .foregroundColor(SemanticColors.accentBlue)
                         
                         Text(String(localized: "settings.familyManagement.actions.exportData"))
                             .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(ColorPalette.white)
+                            .foregroundColor(SemanticColors.primaryText)
                         
                         Spacer()
                     }
                     .padding(16)
-                    .background(Color(red: 0.21, green: 0.22, blue: 0.33))
+                    .background(SemanticColors.cardBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
                 
@@ -455,7 +459,7 @@ struct FamilyManagementView: View {
                             Spacer()
                         }
                         .padding(16)
-                        .background(Color(red: 0.21, green: 0.22, blue: 0.33))
+                        .background(SemanticColors.cardBackground)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                 }
@@ -659,6 +663,7 @@ struct LanguageBreakdownItem {
 // MARK: - Supporting View Components
 
 struct FamilyMemberCard: View {
+    @Environment(\.colorScheme) private var colorScheme
     let member: FamilyMember
     let onEdit: () -> Void
     let onRemove: () -> Void
@@ -670,20 +675,20 @@ struct FamilyMemberCard: View {
                     HStack(spacing: 8) {
                         Text(member.name)
                             .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(ColorPalette.white)
+                            .foregroundColor(SemanticColors.primaryText)
                         
                         Text(member.role.displayName)
                             .font(.system(size: 11, weight: .semibold))
-                            .foregroundColor(ColorPalette.white)
+                            .foregroundColor(SemanticColors.primaryText)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
-                            .background(member.role == .admin ? ColorPalette.terracotta : ColorPalette.brightBlue)
+                            .background(member.role == .admin ? SemanticColors.accent : SemanticColors.accentBlue)
                             .cornerRadius(4)
                     }
                     
                     Text(member.email)
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                        .foregroundColor(SemanticColors.secondaryText)
                 }
                 
                 Spacer()
@@ -692,10 +697,10 @@ struct FamilyMemberCard: View {
                     if let language = member.preferredLanguage {
                         Text(FamilyLanguageService.shared.getLanguageName(for: language))
                             .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(ColorPalette.white)
+                            .foregroundColor(SemanticColors.primaryText)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
-                            .background(ColorPalette.brightBlue.opacity(0.6))
+                            .background(SemanticColors.accentBlue.opacity(0.6))
                             .cornerRadius(4)
                     }
                     
@@ -704,7 +709,7 @@ struct FamilyMemberCard: View {
                             onEdit()
                         }
                         .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(ColorPalette.brightBlue)
+                        .foregroundColor(SemanticColors.accentBlue)
                         
                         if member.role != .admin {
                             Button(String(localized: "common.remove")) {
@@ -718,12 +723,14 @@ struct FamilyMemberCard: View {
             }
         }
         .padding(16)
-        .background(Color(red: 0.21, green: 0.22, blue: 0.33))
+        .background(SemanticColors.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 10))
+        .shadow(color: colorScheme == .light ? Color.black.opacity(0.1) : Color.clear, radius: 2, x: 0, y: 1)
     }
 }
 
 struct PendingInvitationCard: View {
+    @Environment(\.colorScheme) private var colorScheme
     let invitation: FamilyInvitation
     let onResend: () -> Void
     let onCancel: () -> Void
@@ -734,11 +741,11 @@ struct PendingInvitationCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(invitation.email)
                         .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                     
                     Text("Sent \(invitation.sentAt, format: .relative(presentation: .named))")
                         .font(.system(size: 12))
-                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                        .foregroundColor(SemanticColors.secondaryText)
                 }
                 
                 Spacer()
@@ -748,7 +755,7 @@ struct PendingInvitationCard: View {
                         onResend()
                     }
                     .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(ColorPalette.brightBlue)
+                    .foregroundColor(SemanticColors.accentBlue)
                     
                     Button(String(localized: "common.cancel")) {
                         onCancel()
@@ -759,12 +766,13 @@ struct PendingInvitationCard: View {
             }
         }
         .padding(16)
-        .background(Color(red: 0.21, green: 0.22, blue: 0.33).opacity(0.6))
+        .background(SemanticColors.cardBackground.opacity(0.6))
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .overlay(
             RoundedRectangle(cornerRadius: 10)
                 .stroke(.orange.opacity(0.3), lineWidth: 1)
         )
+        .shadow(color: colorScheme == .light ? Color.black.opacity(0.1) : Color.clear, radius: 2, x: 0, y: 1)
     }
 }
 
@@ -776,9 +784,9 @@ struct FamilyInviteView: View {
     
     var body: some View {
         Text(String(localized: "familyManagement.inviteView.placeholder"))
-            .foregroundColor(ColorPalette.white)
+            .foregroundColor(SemanticColors.primaryText)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(ColorPalette.navy)
+            .background(SemanticColors.primaryBackground)
     }
 }
 
@@ -789,9 +797,9 @@ struct FamilyMemberEditView: View {
     
     var body: some View {
         Text(String(localized: "familyManagement.editView.placeholder"))
-            .foregroundColor(ColorPalette.white)
+            .foregroundColor(SemanticColors.primaryText)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(ColorPalette.navy)
+            .background(SemanticColors.primaryBackground)
     }
 }
 

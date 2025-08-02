@@ -8,19 +8,20 @@
 import SwiftUI
 
 struct DeveloperSection: View {
+    @Environment(\.colorScheme) private var colorScheme
     @ObservedObject var viewState: SettingsViewState
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(String(localized: "developer.settings.title"))
                 .font(.system(size: 20, weight: .semibold))
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
                 .padding(.horizontal, 16)
             
             VStack(alignment: .leading, spacing: 16) {
                 Text(String(localized: "developer.settings.edgeFunctionTesting"))
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(ColorPalette.white)
+                    .foregroundColor(SemanticColors.primaryText)
                 
                 // Feature flag toggles
                 featureFlagToggles
@@ -29,8 +30,9 @@ struct DeveloperSection: View {
                 featureFlagStatus
             }
             .padding(16)
-            .background(ColorPalette.white.opacity(0.05))
+            .background(SemanticColors.cardBackground)
             .clipShape(RoundedRectangle(cornerRadius: 12))
+            .shadow(color: colorScheme == .light ? Color.black.opacity(0.1) : Color.clear, radius: 2, x: 0, y: 1)
             .padding(.horizontal, 16)
         }
     }
@@ -70,7 +72,7 @@ struct DeveloperSection: View {
         HStack {
             Text(name)
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
             
             Spacer()
             
@@ -88,11 +90,11 @@ struct DeveloperSection: View {
                         .frame(width: 10, height: 10)
                     Text(isEnabled ? String(localized: "developer.settings.edgeFunction") : String(localized: "developer.settings.directApi"))
                         .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                        .foregroundColor(SemanticColors.primaryText)
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
-                .background(ColorPalette.white.opacity(isEnabled ? 0.15 : 0.1))
+                .background(SemanticColors.cardBackground.opacity(isEnabled ? 1.0 : 0.6))
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
@@ -107,11 +109,11 @@ struct DeveloperSection: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(String(localized: "common.label.status"))
                 .font(.system(size: 14, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
             
             Text(String(localized: "developer.testing.instructions"))
                 .font(.system(size: 12))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
                 .lineLimit(nil)
         }
     }

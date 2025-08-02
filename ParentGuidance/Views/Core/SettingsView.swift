@@ -13,12 +13,47 @@ struct SettingsView: View {
     @StateObject private var frameworkState = SettingsFrameworkState()
     @StateObject private var viewState = SettingsViewState()
     @ObservedObject private var guidanceStructureSettings = GuidanceStructureSettings.shared
+    @State private var showingThemeSelection = false
+    @AppStorage("preferredColorScheme") private var preferredColorScheme: String = "system"
     
     // Services
     private let dataService = SettingsDataService.shared
     private let accountService = SettingsAccountService.shared
     private let formatterService: SettingsFormatterService = SettingsFormatterService.shared
     private let utilityService = SettingsUtilityService.shared
+    
+    // MARK: - Theme Helpers
+    
+    private var themeDisplayName: String {
+        switch preferredColorScheme {
+        case "light": return "Light"
+        case "dark": return "Dark"
+        default: return "System"
+        }
+    }
+    
+    private var themeIcon: String {
+        switch preferredColorScheme {
+        case "light": return "sun.max.fill"
+        case "dark": return "moon.fill"
+        default: return "gear"
+        }
+    }
+    
+    private func applyColorScheme() {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
+        
+        windowScene.windows.forEach { window in
+            switch preferredColorScheme {
+            case "light":
+                window.overrideUserInterfaceStyle = .light
+            case "dark":
+                window.overrideUserInterfaceStyle = .dark
+            default:
+                window.overrideUserInterfaceStyle = .unspecified
+            }
+        }
+    }
     
     // MARK: - Formatting Helpers (delegated to service)
     
@@ -122,38 +157,38 @@ struct SettingsView: View {
             HStack {
                 Text(String(localized: "settings.device.iosVersion"))
                     .font(.system(size: 12))
-                    .foregroundColor(ColorPalette.white.opacity(0.6))
+                    .foregroundColor(SemanticColors.secondaryText)
                 
                 Spacer()
                 
                 Text(UIDevice.current.systemVersion)
                     .font(.system(size: 12))
-                    .foregroundColor(ColorPalette.white.opacity(0.5))
+                    .foregroundColor(SemanticColors.tertiaryText)
             }
             
             HStack {
                 Text(String(localized: "settings.device.device"))
                     .font(.system(size: 12))
-                    .foregroundColor(ColorPalette.white.opacity(0.6))
+                    .foregroundColor(SemanticColors.secondaryText)
                 
                 Spacer()
                 
                 Text(UIDevice.current.model)
                     .font(.system(size: 12))
-                    .foregroundColor(ColorPalette.white.opacity(0.5))
+                    .foregroundColor(SemanticColors.tertiaryText)
             }
             
             if let userId = appCoordinator.currentUserId {
                 HStack {
                     Text(String(localized: "settings.device.userId"))
                         .font(.system(size: 12))
-                        .foregroundColor(ColorPalette.white.opacity(0.6))
+                        .foregroundColor(SemanticColors.secondaryText)
                     
                     Spacer()
                     
                     Text(String(userId.prefix(8)) + "...")
                         .font(.system(size: 10, design: .monospaced))
-                        .foregroundColor(ColorPalette.white.opacity(0.5))
+                        .foregroundColor(SemanticColors.tertiaryText)
                 }
             }
         }
@@ -192,7 +227,7 @@ struct SettingsView: View {
                 // Settings title
                 Text(String(localized: "settings.title"))
                     .font(.system(size: 28, weight: .bold))
-                    .foregroundColor(ColorPalette.white)
+                    .foregroundColor(SemanticColors.primaryText)
                     .padding(.horizontal, 16)
                 
                 // Foundation Tools Section
@@ -209,6 +244,59 @@ struct SettingsView: View {
                     guidanceStructureSettings: guidanceStructureSettings,
                     viewState: viewState
                 )
+                
+                // Appearance Section
+                VStack(alignment: .leading, spacing: 0) {
+                    Text("Appearance")
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(SemanticColors.tertiaryText)
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 8)
+                    
+                    VStack(spacing: 0) {
+                        // Light/Dark theme toggle
+                        Button(action: { 
+                            // Cycle through themes: system -> light -> dark -> system
+                            switch preferredColorScheme {
+                            case "system":
+                                preferredColorScheme = "light"
+                            case "light":
+                                preferredColorScheme = "dark"
+                            default:
+                                preferredColorScheme = "system"
+                            }
+                            applyColorScheme()
+                        }) {
+                            HStack {
+                                Image(systemName: themeIcon)
+                                    .font(.system(size: 20))
+                                    .foregroundColor(SemanticColors.secondaryText)
+                                    .frame(width: 24)
+                                
+                                Text("Theme")
+                                    .font(.system(size: 16))
+                                    .foregroundColor(SemanticColors.primaryText)
+                                
+                                Spacer()
+                                
+                                Text(themeDisplayName)
+                                    .font(.system(size: 14))
+                                    .foregroundColor(SemanticColors.tertiaryText)
+                                
+                                Image(systemName: "arrow.clockwise")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(SemanticColors.tertiaryText)
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                    .background(SemanticColors.secondaryBackground)
+                    .cornerRadius(12)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 24)
+                }
                 
                 // Child Profile Section
                 ChildProfileSection(
@@ -254,7 +342,7 @@ struct SettingsView: View {
             .padding(.bottom, 100) // Space for tab bar
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(ColorPalette.navy)
+        .background(SemanticColors.primaryBackground)
         .overlay(frameworkRemovalConfirmationOverlay)
         .overlay(
             SignOutConfirmationView(
@@ -433,7 +521,7 @@ struct DocumentationView: View {
                     Text(String(localized: "settings.helpSupport.documentation"))
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                         .padding(.top)
                     
                     faqSection(
@@ -476,14 +564,14 @@ struct DocumentationView: View {
                 .padding(.bottom, 50)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(ColorPalette.navy)
+            .background(SemanticColors.primaryBackground)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(String(localized: "common.button.done")) {
                         dismiss()
                     }
-                    .foregroundColor(ColorPalette.white)
+                    .foregroundColor(SemanticColors.primaryText)
                 }
             }
         }
@@ -494,7 +582,7 @@ struct DocumentationView: View {
             Text(title)
                 .font(.title2)
                 .fontWeight(.semibold)
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
             
             VStack(alignment: .leading, spacing: 12) {
                 ForEach(Array(items.enumerated()), id: \.offset) { index, item in
@@ -508,15 +596,15 @@ struct DocumentationView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(question)
                 .font(.system(size: 16, weight: .medium))
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
             
             Text(answer)
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.8))
+                .foregroundColor(SemanticColors.secondaryText)
                 .lineSpacing(2)
         }
         .padding(16)
-        .background(ColorPalette.white.opacity(0.05))
+        .background(SemanticColors.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }

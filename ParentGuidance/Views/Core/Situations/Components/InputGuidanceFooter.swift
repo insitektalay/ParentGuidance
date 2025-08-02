@@ -6,7 +6,7 @@ struct InputGuidanceFooter: View {
             Text("More details mean better guidance.")
                 .font(.system(size: 12))
                 .italic()
-                .foregroundColor(ColorPalette.white.opacity(0.6))
+                .foregroundColor(SemanticColors.tertiaryText)
             Spacer()
         }
         .padding(.horizontal, 16)

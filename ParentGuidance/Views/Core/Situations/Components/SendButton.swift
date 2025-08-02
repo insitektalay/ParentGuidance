@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct SendButton: View {
+    @Environment(\.colorScheme) private var colorScheme
     let isEnabled: Bool
     let action: () -> Void
     
@@ -8,10 +9,13 @@ struct SendButton: View {
         Button(action: action) {
             Image(systemName: "paperplane.fill")
                 .font(.system(size: 24, weight: .medium))
-                .foregroundColor(isEnabled ? ColorPalette.white : ColorPalette.white.opacity(0.3))
+                .foregroundColor(isEnabled ? SemanticColors.primaryText : SemanticColors.tertiaryText)
                 .frame(width: 56, height: 56)
-                .background(isEnabled ? ColorPalette.terracotta : ColorPalette.white.opacity(0.1))
+                .background(isEnabled ? SemanticColors.accent : SemanticColors.tertiaryText.opacity(0.3))
                 .clipShape(Circle())
+                .if(colorScheme == .light && isEnabled) { view in
+                    view.cardShadow()
+                }
         }
         .disabled(!isEnabled)
         .accessibilityLabel(String(localized: "situation.input.send"))

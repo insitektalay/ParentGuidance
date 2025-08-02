@@ -64,6 +64,7 @@ struct FoundationToolCard: View {
     let onSetupFramework: () -> Void
     let familyId: String?
     
+    @Environment(\.colorScheme) private var colorScheme
     @StateObject private var frameworkState: FoundationFrameworkState
     
     init(
@@ -88,11 +89,14 @@ struct FoundationToolCard: View {
             }
         }
         .padding(16)
-        .background(Color(red: 0.21, green: 0.22, blue: 0.33)) // #363853 equivalent
+        .background(SemanticColors.cardBackground)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(ColorPalette.white.opacity(0.1), lineWidth: 1)
+                .stroke(SemanticColors.border, lineWidth: 1)
         )
+        .if(colorScheme == .light) { view in
+            view.cardShadow()
+        }
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .onAppear {
             Task {
@@ -122,11 +126,11 @@ struct FoundationToolCard: View {
         HStack(alignment: .center, spacing: 12) {
             ProgressView()
                 .scaleEffect(0.8)
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
             
             Text(String(localized: "foundation.loading"))
                 .font(.system(size: 16, weight: .medium))
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
             
             Spacer()
         }
@@ -138,16 +142,16 @@ struct FoundationToolCard: View {
             HStack(alignment: .center, spacing: 8) {
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 20))
-                    .foregroundColor(ColorPalette.brightBlue)
+                    .foregroundColor(SemanticColors.accentBlue)
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(String(localized: "foundation.active.title"))
                         .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(ColorPalette.brightBlue)
+                        .foregroundColor(SemanticColors.accentBlue)
                     
                     Text(framework.frameworkName)
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                 }
                 
                 Spacer()
@@ -157,12 +161,12 @@ struct FoundationToolCard: View {
             if let frameworkType = framework.frameworkType {
                 Text(frameworkType.description)
                     .font(.system(size: 14))
-                    .foregroundColor(ColorPalette.white.opacity(0.8))
+                    .foregroundColor(SemanticColors.secondaryText)
                     .lineLimit(2)
             } else {
                 Text(String(localized: "foundation.active.description"))
                     .font(.system(size: 14))
-                    .foregroundColor(ColorPalette.white.opacity(0.8))
+                    .foregroundColor(SemanticColors.secondaryText)
                     .lineLimit(2)
             }
             
@@ -171,10 +175,10 @@ struct FoundationToolCard: View {
                 Button(action: onViewTools) {
                     Text(String(localized: "foundation.active.guide"))
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 6)
-                        .background(ColorPalette.brightBlue)
+                        .background(SemanticColors.accentBlue)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
                 
@@ -183,12 +187,12 @@ struct FoundationToolCard: View {
                 }) {
                     Text(String(localized: "foundation.active.deactivate"))
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(ColorPalette.terracotta)
+                        .foregroundColor(SemanticColors.accent)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 6)
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
-                                .stroke(ColorPalette.terracotta, lineWidth: 1)
+                                .stroke(SemanticColors.accent, lineWidth: 1)
                         )
                 }
                 
@@ -203,11 +207,11 @@ struct FoundationToolCard: View {
             HStack(alignment: .center, spacing: 8) {
                 Image(systemName: "target")
                     .font(.system(size: 20))
-                    .foregroundColor(ColorPalette.white)
+                    .foregroundColor(SemanticColors.primaryText)
                 
                 Text(String(localized: "foundation.inactive.title"))
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(ColorPalette.white)
+                    .foregroundColor(SemanticColors.primaryText)
                 
                 Spacer()
             }
@@ -215,7 +219,7 @@ struct FoundationToolCard: View {
             // Description
             Text(String(localized: "foundation.inactive.description"))
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.8))
+                .foregroundColor(SemanticColors.secondaryText)
                 .lineLimit(nil)
             
             // Action buttons
@@ -223,22 +227,22 @@ struct FoundationToolCard: View {
                 Button(action: onViewTools) {
                     Text(String(localized: "foundation.inactive.viewTools"))
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 6)
-                        .background(ColorPalette.terracotta)
+                        .background(SemanticColors.accent)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
                 
                 Button(action: onSetupFramework) {
                     Text(String(localized: "foundation.inactive.setup"))
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(ColorPalette.terracotta)
+                        .foregroundColor(SemanticColors.accent)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 6)
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
-                                .stroke(ColorPalette.terracotta, lineWidth: 1)
+                                .stroke(SemanticColors.accent, lineWidth: 1)
                         )
                 }
                 
@@ -251,5 +255,5 @@ struct FoundationToolCard: View {
 #Preview {
     FoundationToolCard()
         .padding()
-        .background(ColorPalette.navy)
+        .background(SemanticColors.primaryBackground)
 }

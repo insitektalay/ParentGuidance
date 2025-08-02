@@ -11,6 +11,7 @@ struct SearchSituationsCard: View {
     let familyId: String?
     let onSearchSituations: () -> Void
     
+    @Environment(\.colorScheme) private var colorScheme
     @State private var situationCount: Int = 0
     @State private var isLoading: Bool = false
     @State private var hasError: Bool = false
@@ -21,11 +22,11 @@ struct SearchSituationsCard: View {
             HStack(alignment: .center, spacing: 8) {
                 Image(systemName: "magnifyingglass.circle.fill")
                     .font(.system(size: 20))
-                    .foregroundColor(ColorPalette.brightBlue)
+                    .foregroundColor(SemanticColors.accentBlue)
                 
                 Text(String(localized: "library.searchCard.title"))
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(ColorPalette.white)
+                    .foregroundColor(SemanticColors.primaryText)
                 
                 Spacer()
             }
@@ -34,31 +35,31 @@ struct SearchSituationsCard: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text(String(localized: "library.searchCard.subtitle"))
                     .font(.system(size: 14))
-                    .foregroundColor(ColorPalette.white.opacity(0.8))
+                    .foregroundColor(SemanticColors.secondaryText)
                 
                 if isLoading {
                     HStack(spacing: 8) {
                         ProgressView()
                             .scaleEffect(0.6)
-                            .foregroundColor(ColorPalette.white.opacity(0.6))
+                            .foregroundColor(SemanticColors.tertiaryText)
                         
                         Text(String(localized: "library.searchCard.loading"))
                             .font(.system(size: 12))
-                            .foregroundColor(ColorPalette.white.opacity(0.6))
+                            .foregroundColor(SemanticColors.tertiaryText)
                     }
                 } else if hasError {
                     Text(String(localized: "library.searchCard.error"))
                         .font(.system(size: 12))
-                        .foregroundColor(ColorPalette.white.opacity(0.6))
+                        .foregroundColor(SemanticColors.tertiaryText)
                 } else {
                     if situationCount > 0 {
                         Text(String(localized: "library.searchCard.count \(situationCount)"))
                             .font(.system(size: 12))
-                            .foregroundColor(ColorPalette.white.opacity(0.6))
+                            .foregroundColor(SemanticColors.tertiaryText)
                     } else {
                         Text(String(localized: "library.searchCard.empty"))
                             .font(.system(size: 12))
-                            .foregroundColor(ColorPalette.white.opacity(0.6))
+                            .foregroundColor(SemanticColors.tertiaryText)
                     }
                 }
             }
@@ -68,10 +69,10 @@ struct SearchSituationsCard: View {
                 Button(action: onSearchSituations) {
                     Text(String(localized: "library.searchCard.button"))
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 6)
-                        .background(ColorPalette.terracotta)
+                        .background(SemanticColors.accent)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
                 .disabled(isLoading)
@@ -80,11 +81,14 @@ struct SearchSituationsCard: View {
             }
         }
         .padding(16)
-        .background(Color(red: 0.21, green: 0.22, blue: 0.33)) // #363853 equivalent
+        .background(SemanticColors.cardBackground)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(ColorPalette.white.opacity(0.1), lineWidth: 1)
+                .stroke(SemanticColors.border, lineWidth: 1)
         )
+        .if(colorScheme == .light) { view in
+            view.cardShadow()
+        }
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .onAppear {
             loadSituationCount()
@@ -125,5 +129,5 @@ struct SearchSituationsCard: View {
         print("Search situations tapped")
     }
     .padding()
-    .background(ColorPalette.navy)
+    .background(SemanticColors.primaryBackground)
 }

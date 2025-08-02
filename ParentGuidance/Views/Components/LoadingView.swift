@@ -8,27 +8,28 @@
 import SwiftUI
 
 struct LoadingView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @State private var isAnimating = false
     
     var body: some View {
         VStack(spacing: 20) {
             Circle()
-                .stroke(ColorPalette.terracotta.opacity(0.3), lineWidth: 4)
+                .stroke(SemanticColors.accent.opacity(0.3), lineWidth: 4)
                 .frame(width: 60, height: 60)
                 .overlay(
                     Circle()
                         .trim(from: 0, to: 0.3)
-                        .stroke(ColorPalette.terracotta, lineWidth: 4)
+                        .stroke(SemanticColors.accent, lineWidth: 4)
                         .rotationEffect(.degrees(isAnimating ? 360 : 0))
                         .animation(.linear(duration: 1).repeatForever(autoreverses: false), value: isAnimating)
                 )
             
             Text(String(localized: "common.loading"))
                 .font(.headline)
-                .foregroundColor(ColorPalette.navy)
+                .foregroundColor(SemanticColors.primaryText)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(ColorPalette.cream)
+        .background(SemanticColors.primaryBackground)
         .onAppear {
             isAnimating = true
         }

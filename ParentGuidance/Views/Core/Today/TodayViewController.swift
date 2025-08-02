@@ -10,6 +10,7 @@ import Foundation
 import Supabase
 
 struct TodayViewController: View {
+    @Environment(\.colorScheme) private var colorScheme
     @State private var isLoading = true
     @State private var situations: [Situation] = []
     @State private var errorMessage: String?
@@ -22,30 +23,30 @@ struct TodayViewController: View {
                 // Show loading state
                 VStack {
                     ProgressView()
-                        .tint(ColorPalette.terracotta)
+                        .tint(SemanticColors.accent)
                     Text(String(localized: "today.loading"))
                         .font(.system(size: 16))
-                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                        .foregroundColor(SemanticColors.secondaryText)
                         .padding(.top, 8)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(ColorPalette.navy)
+                .background(SemanticColors.primaryBackground)
             } else if let error = errorMessage {
                 // Show error state (fallback to timeline)
                 VStack {
                     Text(String(localized: "today.error.title"))
                         .font(.system(size: 18))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                     Text(error)
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.white.opacity(0.6))
+                        .foregroundColor(SemanticColors.tertiaryText)
                         .padding(.top, 4)
                     
                     // Still show timeline as fallback
                     TodayTimelineView(situations: situations)
                         .padding(.top, 16)
                 }
-                .background(ColorPalette.navy)
+                .background(SemanticColors.primaryBackground)
             } else if !situations.isEmpty {
                 // Show timeline with data
                 TodayTimelineView(situations: situations)

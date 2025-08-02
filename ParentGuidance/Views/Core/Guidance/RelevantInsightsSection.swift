@@ -18,11 +18,11 @@ struct RelevantInsightsSection: View {
                 HStack(spacing: 8) {
                     Image(systemName: "lightbulb.2.fill")
                         .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(ColorPalette.terracotta)
+                        .foregroundColor(SemanticColors.accent)
                     
                     Text(String(localized: "insights.relevant.title"))
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                        .foregroundColor(SemanticColors.primaryText)
                     
                     Spacer()
                     
@@ -33,7 +33,7 @@ struct RelevantInsightsSection: View {
                     }) {
                         Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(ColorPalette.white.opacity(0.6))
+                            .foregroundColor(SemanticColors.secondaryText)
                     }
                 }
                 
@@ -64,7 +64,7 @@ struct RelevantInsightsSection: View {
                         if contextualInsights.isEmpty && regulationInsights.isEmpty {
                             Text(String(localized: "insights.relevant.empty"))
                                 .font(.system(size: 14))
-                                .foregroundColor(ColorPalette.white.opacity(0.6))
+                                .foregroundColor(SemanticColors.secondaryText)
                                 .italic()
                         }
                     }
@@ -73,10 +73,10 @@ struct RelevantInsightsSection: View {
             .padding(20)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(ColorPalette.navy.opacity(0.8))
+                    .fill(SemanticColors.cardBackground)
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(ColorPalette.terracotta.opacity(0.3), lineWidth: 1)
+                            .stroke(SemanticColors.accent.opacity(0.3), lineWidth: 1)
                     )
             )
         }
@@ -93,11 +93,11 @@ struct RelevantInsightsSection: View {
             HStack(spacing: 6) {
                 Image(systemName: icon)
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(ColorPalette.terracotta.opacity(0.8))
+                    .foregroundColor(SemanticColors.accent.opacity(0.8))
                 
                 Text(title)
                     .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(ColorPalette.white.opacity(0.8))
+                    .foregroundColor(SemanticColors.secondaryText)
             }
             
             // Insights list
@@ -106,12 +106,12 @@ struct RelevantInsightsSection: View {
                     HStack(alignment: .top, spacing: 8) {
                         Text("•")
                             .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(ColorPalette.terracotta.opacity(0.7))
+                            .foregroundColor(SemanticColors.accent.opacity(0.7))
                             .padding(.top, 2)
                         
                         Text(insight.insightContent)
                             .font(.system(size: 14))
-                            .foregroundColor(ColorPalette.white.opacity(0.8))
+                            .foregroundColor(SemanticColors.secondaryText)
                             .lineSpacing(2)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -131,11 +131,11 @@ struct RelevantInsightsLoadingView: View {
             HStack(spacing: 8) {
                 Image(systemName: "lightbulb.2.fill")
                     .font(.system(size: 18, weight: .medium))
-                    .foregroundColor(ColorPalette.terracotta)
+                    .foregroundColor(SemanticColors.accent)
                 
                 Text(String(localized: "insights.relevant.title"))
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(ColorPalette.white.opacity(0.9))
+                    .foregroundColor(SemanticColors.primaryText)
                 
                 Spacer()
             }
@@ -143,21 +143,21 @@ struct RelevantInsightsLoadingView: View {
             // Loading content
             HStack(spacing: 8) {
                 ProgressView()
-                    .tint(ColorPalette.terracotta.opacity(0.7))
+                    .tint(SemanticColors.accent.opacity(0.7))
                     .scaleEffect(0.8)
                 
                 Text(String(localized: "insights.relevant.loading"))
                     .font(.system(size: 14))
-                    .foregroundColor(ColorPalette.white.opacity(0.6))
+                    .foregroundColor(SemanticColors.secondaryText)
             }
         }
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(ColorPalette.navy.opacity(0.8))
+                .fill(SemanticColors.cardBackground)
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
-                        .stroke(ColorPalette.terracotta.opacity(0.3), lineWidth: 1)
+                        .stroke(SemanticColors.accent.opacity(0.3), lineWidth: 1)
                 )
         )
     }
@@ -213,11 +213,11 @@ struct RelevantInsightsEmptyView: View {
             HStack(spacing: 8) {
                 Image(systemName: "lightbulb.2.fill")
                     .font(.system(size: 18, weight: .medium))
-                    .foregroundColor(ColorPalette.terracotta)
+                    .foregroundColor(SemanticColors.accent)
                 
                 Text(String(localized: "insights.relevant.title"))
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(ColorPalette.white.opacity(0.9))
+                    .foregroundColor(SemanticColors.primaryText)
                 
                 Spacer()
             }
@@ -226,16 +226,16 @@ struct RelevantInsightsEmptyView: View {
             HStack(spacing: 12) {
                 Image(systemName: reason.icon)
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(ColorPalette.white.opacity(0.5))
+                    .foregroundColor(SemanticColors.tertiaryText)
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(reason.title)
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(ColorPalette.white.opacity(0.8))
+                        .foregroundColor(SemanticColors.secondaryText)
                     
                     Text(reason.message)
                         .font(.system(size: 12))
-                        .foregroundColor(ColorPalette.white.opacity(0.6))
+                        .foregroundColor(SemanticColors.secondaryText)
                         .lineLimit(2)
                 }
                 
@@ -245,10 +245,10 @@ struct RelevantInsightsEmptyView: View {
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(ColorPalette.navy.opacity(0.6))
+                .fill(SemanticColors.cardBackground.opacity(0.6))
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
-                        .stroke(ColorPalette.terracotta.opacity(0.2), lineWidth: 1)
+                        .stroke(SemanticColors.accent.opacity(0.2), lineWidth: 1)
                 )
         )
     }
@@ -273,17 +273,17 @@ struct RelevantInsightsDebugView: View {
             HStack(spacing: 8) {
                 Image(systemName: "lightbulb.2.fill")
                     .font(.system(size: 18, weight: .medium))
-                    .foregroundColor(ColorPalette.terracotta)
+                    .foregroundColor(SemanticColors.accent)
                 
                 Text("Relevant Insights (Debug)")
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(ColorPalette.white.opacity(0.9))
+                    .foregroundColor(SemanticColors.primaryText)
                 
                 Spacer()
                 
                 Image(systemName: "ladybug")
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(ColorPalette.brightBlue)
+                    .foregroundColor(SemanticColors.accentBlue)
             }
             
             // Debug content
@@ -301,10 +301,10 @@ struct RelevantInsightsDebugView: View {
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(ColorPalette.brightBlue.opacity(0.1))
+                .fill(SemanticColors.accentBlue.opacity(0.1))
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
-                        .stroke(ColorPalette.brightBlue.opacity(0.3), lineWidth: 1)
+                        .stroke(SemanticColors.accentBlue.opacity(0.3), lineWidth: 1)
                 )
         )
     }
@@ -313,13 +313,13 @@ struct RelevantInsightsDebugView: View {
         HStack {
             Text(title + ":")
                 .font(.system(size: 12, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
             
             Spacer()
             
             Text(value)
                 .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(ColorPalette.brightBlue)
+                .foregroundColor(SemanticColors.accentBlue)
         }
     }
 }
@@ -364,5 +364,5 @@ struct RelevantInsightsDebugView: View {
         ))
     }
     .padding()
-    .background(ColorPalette.navy)
+    .background(SemanticColors.primaryBackground)
 }

@@ -9,6 +9,7 @@ struct TextViewHeightKey: PreferenceKey {
 }
 
 struct ChatInputBar: View {
+    @Environment(\.colorScheme) private var colorScheme
     @Binding var text: String
     var onSend: () -> Void
     var onMic: () -> Void
@@ -29,11 +30,11 @@ struct ChatInputBar: View {
             }) {
                 Image(systemName: isRecording ? "mic.fill" : "mic")
                     .font(.system(size: 22))
-                    .foregroundColor(isRecording ? ColorPalette.terracotta : ColorPalette.white.opacity(0.8))
+                    .foregroundColor(isRecording ? SemanticColors.accent : SemanticColors.secondaryText)
                     .frame(width: 44, height: 44)
                     .background(
                         Circle()
-                            .fill(ColorPalette.white.opacity(0.1))
+                            .fill(SemanticColors.tertiaryText.opacity(0.3))
                     )
             }
             .disabled(isTranscribing || isSending)
@@ -42,14 +43,14 @@ struct ChatInputBar: View {
             ZStack(alignment: .topLeading) {
                 if text.isEmpty {
                     Text(String(localized: "chat.input.placeholder"))
-                        .foregroundColor(ColorPalette.white.opacity(0.5))
+                        .foregroundColor(SemanticColors.tertiaryText)
                         .padding(.vertical, 12)
                         .padding(.horizontal, 8)
                 }
 
                 TextEditor(text: $text)
                     .font(.system(size: 16))
-                    .foregroundColor(ColorPalette.white)
+                    .foregroundColor(SemanticColors.primaryText)
                     .scrollContentBackground(.hidden)
                     .background(Color.clear)
                     .frame(height: measuredHeight)
@@ -79,12 +80,12 @@ struct ChatInputBar: View {
             }
             .background(
                 RoundedRectangle(cornerRadius: 22)
-                    .fill(ColorPalette.white.opacity(0.1))
+                    .fill(SemanticColors.tertiaryText.opacity(0.3))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 22)
                     .stroke(
-                        isTextEditorFocused ? ColorPalette.terracotta.opacity(0.5) : Color.clear,
+                        isTextEditorFocused ? SemanticColors.accent.opacity(0.5) : Color.clear,
                         lineWidth: 1.5
                     )
             )
@@ -99,14 +100,17 @@ struct ChatInputBar: View {
                     .font(.system(size: 32))
                     .foregroundColor(
                         text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isSending
-                            ? ColorPalette.white.opacity(0.3)
-                            : ColorPalette.terracotta
+                            ? SemanticColors.tertiaryText
+                            : SemanticColors.accent
                     )
             }
             .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isSending)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 20)
-        .background(ColorPalette.navy)
+        .background(SemanticColors.primaryBackground)
+        .if(colorScheme == .light) { view in
+            view.cardShadow()
+        }
     }
 }

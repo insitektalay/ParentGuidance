@@ -14,9 +14,29 @@ import SwiftUI
 
 @main
 struct ParentGuidanceApp: App {
+    @AppStorage("preferredColorScheme") private var preferredColorScheme: String = "system"
+    
     var body: some Scene {
         WindowGroup {
             AppCoordinatorView()
+                .onAppear {
+                    applyColorScheme()
+                }
+        }
+    }
+    
+    private func applyColorScheme() {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
+        
+        windowScene.windows.forEach { window in
+            switch preferredColorScheme {
+            case "light":
+                window.overrideUserInterfaceStyle = .light
+            case "dark":
+                window.overrideUserInterfaceStyle = .dark
+            default:
+                window.overrideUserInterfaceStyle = .unspecified
+            }
         }
     }
 }

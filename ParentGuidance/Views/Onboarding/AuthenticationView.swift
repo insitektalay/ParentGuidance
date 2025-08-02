@@ -13,6 +13,8 @@ struct SocialButton: View {
     let variant: SocialButtonVariant
     let action: () -> Void
     
+    @Environment(\.colorScheme) private var colorScheme
+    
     var body: some View {
         Button(action: action) {
             HStack {
@@ -32,6 +34,7 @@ struct SocialButton: View {
             .padding(.vertical, 12)
             .background(backgroundColor)
             .clipShape(RoundedRectangle(cornerRadius: 12))
+            .if(colorScheme == .light) { view in view.cardShadow() }
         }
     }
     
@@ -40,18 +43,18 @@ struct SocialButton: View {
         case .apple:
             return Color.black
         case .google:
-            return ColorPalette.white
+            return SemanticColors.cardBackground
         case .facebook:
             return Color(hex: "1877F2")
         case .email:
-            return ColorPalette.terracotta
+            return SemanticColors.accent
         }
     }
     
     private var textColor: Color {
         switch variant {
         case .apple, .facebook, .email:
-            return ColorPalette.white
+            return SemanticColors.primaryText
         case .google:
             return Color.black
         }
@@ -60,7 +63,7 @@ struct SocialButton: View {
     private var iconColor: Color {
         switch variant {
         case .apple, .facebook, .email:
-            return ColorPalette.white
+            return SemanticColors.primaryText
         case .google:
             return Color.black
         }
@@ -72,6 +75,8 @@ struct CustomSocialButton: View {
     let label: String
     let variant: SocialButtonVariant
     let action: () -> Void
+    
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         Button(action: action) {
@@ -91,6 +96,7 @@ struct CustomSocialButton: View {
             .padding(.vertical, 12)
             .background(backgroundColor)
             .clipShape(RoundedRectangle(cornerRadius: 12))
+            .if(colorScheme == .light) { view in view.cardShadow() }
         }
     }
     
@@ -99,18 +105,18 @@ struct CustomSocialButton: View {
         case .apple:
             return Color.black
         case .google:
-            return ColorPalette.white
+            return SemanticColors.cardBackground
         case .facebook:
             return Color(hex: "1877F2")
         case .email:
-            return ColorPalette.terracotta
+            return SemanticColors.accent
         }
     }
     
     private var textColor: Color {
         switch variant {
         case .apple, .facebook, .email:
-            return ColorPalette.white
+            return SemanticColors.primaryText
         case .google:
             return Color.black
         }
@@ -153,6 +159,8 @@ struct AuthenticationView: View {
     let onEmailSignIn: (String, String?) -> Void
     let onBackTapped: () -> Void
     
+    @Environment(\.colorScheme) private var colorScheme
+    
     // Test credentials
     private let testEmail = "test@example.com"
     private let testPassword = "password123"
@@ -164,7 +172,7 @@ struct AuthenticationView: View {
                     Button(action: onBackTapped) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 18, weight: .medium))
-                            .foregroundColor(ColorPalette.white.opacity(0.8))
+                            .foregroundColor(SemanticColors.secondaryText)
                     }
                     
                     Spacer()
@@ -179,11 +187,11 @@ struct AuthenticationView: View {
                         Text(String(localized: "auth.signInTitle"))
                             .font(.title2)
                             .fontWeight(.semibold)
-                            .foregroundColor(ColorPalette.white)
+                            .foregroundColor(SemanticColors.primaryText)
                         
                         Text(String(localized: "auth.signInSubtitle"))
                             .font(.body)
-                            .foregroundColor(ColorPalette.white.opacity(0.6))
+                            .foregroundColor(SemanticColors.tertiaryText)
                             .multilineTextAlignment(.center)
                     }
                     
@@ -274,13 +282,13 @@ struct AuthenticationView: View {
             
             Text(String(localized: "auth.privacyNote"))
                 .font(.body)
-                .foregroundColor(ColorPalette.white.opacity(0.6))
+                .foregroundColor(SemanticColors.tertiaryText)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
                 .padding(.bottom, 32)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(ColorPalette.navy)
+        .background(SemanticColors.primaryBackground)
         .ignoresSafeArea()
     }
 }

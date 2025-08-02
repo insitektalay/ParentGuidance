@@ -8,37 +8,39 @@ struct PlanCard: View {
     let buttonText: String
     let action: () -> Void
     
+    @Environment(\.colorScheme) private var colorScheme
+    
     var body: some View {
         VStack(spacing: 0) {
             HStack(alignment: .top, spacing: 12) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(ColorPalette.terracotta.opacity(0.1))
+                        .fill(SemanticColors.accent.opacity(0.1))
                         .frame(width: 36, height: 36)
                     
                     Image(systemName: icon)
                         .font(.system(size: 20))
-                        .foregroundColor(ColorPalette.terracotta)
+                        .foregroundColor(SemanticColors.accent)
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
                         Text(title)
                             .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(ColorPalette.white)
+                            .foregroundColor(SemanticColors.primaryText)
                         
                         Spacer()
                         
                         if let price = price {
                             Text(price)
                                 .font(.system(size: 14))
-                                .foregroundColor(ColorPalette.white.opacity(0.6))
+                                .foregroundColor(SemanticColors.tertiaryText)
                         }
                     }
                     
                     Text(description)
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.white.opacity(0.6))
+                        .foregroundColor(SemanticColors.tertiaryText)
                 }
             }
             .padding(.bottom, 12)
@@ -46,20 +48,21 @@ struct PlanCard: View {
             Button(action: action) {
                 Text(buttonText)
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(ColorPalette.white)
+                    .foregroundColor(SemanticColors.primaryText)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 10)
-                    .background(ColorPalette.terracotta)
+                    .background(SemanticColors.accent)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
             }
         }
         .padding(16)
-        .background(Color(hex: "363853"))
+        .background(SemanticColors.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(ColorPalette.terracotta.opacity(0.2), lineWidth: 1)
+                .stroke(SemanticColors.accent.opacity(0.2), lineWidth: 1)
         )
+        .if(colorScheme == .light) { view in view.cardShadow() }
     }
 }
 
@@ -69,18 +72,20 @@ struct PlanSelectionView: View {
     let onFamilyPlan: () -> Void
     let onPremiumPlan: () -> Void
     
+    @Environment(\.colorScheme) private var colorScheme
+    
     var body: some View {
         VStack(spacing: 0) {
             VStack(spacing: 4) {
                 Text(String(localized: "planSelection.title"))
                     .font(.title2)
                     .fontWeight(.bold)
-                    .foregroundColor(ColorPalette.white)
+                    .foregroundColor(SemanticColors.primaryText)
                     .multilineTextAlignment(.center)
                 
                 Text(String(localized: "planSelection.subtitle"))
                     .font(.body)
-                    .foregroundColor(ColorPalette.white.opacity(0.6))
+                    .foregroundColor(SemanticColors.tertiaryText)
                     .multilineTextAlignment(.center)
             }
             .padding(.top, 80)
@@ -132,7 +137,7 @@ struct PlanSelectionView: View {
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(ColorPalette.navy)
+        .background(SemanticColors.primaryBackground)
         .ignoresSafeArea()
     }
 }

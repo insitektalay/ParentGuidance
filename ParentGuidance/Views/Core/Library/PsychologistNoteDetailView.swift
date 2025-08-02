@@ -26,14 +26,14 @@ struct PsychologistNoteDetailView: View {
                     }) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 18, weight: .medium))
-                            .foregroundColor(ColorPalette.white.opacity(0.9))
+                            .foregroundColor(SemanticColors.primaryText)
                     }
                     
                     Spacer()
                     
                     Text(note.displayTitle)
                         .font(.system(size: 24, weight: .semibold))
-                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                        .foregroundColor(SemanticColors.primaryText)
                     
                     Spacer()
                     
@@ -44,7 +44,7 @@ struct PsychologistNoteDetailView: View {
                         }) {
                             Image(systemName: "square.and.arrow.up")
                                 .font(.system(size: 16))
-                                .foregroundColor(ColorPalette.white.opacity(0.8))
+                                .foregroundColor(SemanticColors.secondaryText)
                         }
                         
                         Button(action: {
@@ -80,7 +80,7 @@ struct PsychologistNoteDetailView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(ColorPalette.navy)
+            .background(SemanticColors.primaryBackground)
             .navigationBarHidden(true)
         }
         .sheet(isPresented: $showingShareSheet) {
@@ -107,64 +107,64 @@ struct PsychologistNoteDetailView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text(String(localized: "psychologistNote.detail.metadata"))
                 .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
             
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 8) {
                     Image(systemName: note.noteType.iconName)
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.brightBlue)
+                        .foregroundColor(SemanticColors.accentBlue)
                     
                     Text(String(localized: "psychologistNote.detail.type"))
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(ColorPalette.white.opacity(0.8))
+                        .foregroundColor(SemanticColors.secondaryText)
                     
                     Spacer()
                     
                     Text(note.displayTitle)
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                        .foregroundColor(SemanticColors.secondaryText)
                 }
                 
                 HStack(spacing: 8) {
                     Image(systemName: "calendar")
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.brightBlue)
+                        .foregroundColor(SemanticColors.accentBlue)
                     
                     Text(String(localized: "psychologistNote.detail.created"))
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(ColorPalette.white.opacity(0.8))
+                        .foregroundColor(SemanticColors.secondaryText)
                     
                     Spacer()
                     
                     Text(note.formattedCreatedDate)
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                        .foregroundColor(SemanticColors.secondaryText)
                 }
                 
                 HStack(alignment: .top, spacing: 8) {
                     Image(systemName: "info.circle")
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.brightBlue)
+                        .foregroundColor(SemanticColors.accentBlue)
                     
                     Text(String(localized: "psychologistNote.detail.sources"))
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(ColorPalette.white.opacity(0.8))
+                        .foregroundColor(SemanticColors.secondaryText)
                     
                     Spacer()
                     
                     Text(note.sourceDataSummary)
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                        .foregroundColor(SemanticColors.secondaryText)
                         .multilineTextAlignment(.trailing)
                 }
             }
         }
         .padding(16)
-        .background(Color(red: 0.21, green: 0.22, blue: 0.33))
+        .background(SemanticColors.cardBackground)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(ColorPalette.white.opacity(0.1), lineWidth: 1)
+                .stroke(SemanticColors.border, lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
@@ -173,19 +173,19 @@ struct PsychologistNoteDetailView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text(String(localized: "psychologistNote.detail.content"))
                 .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
             
             Text(note.content)
                 .font(.system(size: 15, weight: .regular))
                 .lineSpacing(4)
-                .foregroundColor(ColorPalette.white.opacity(0.8))
+                .foregroundColor(SemanticColors.secondaryText)
                 .textSelection(.enabled)
         }
         .padding(16)
-        .background(Color(red: 0.21, green: 0.22, blue: 0.33))
+        .background(SemanticColors.cardBackground)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(ColorPalette.white.opacity(0.1), lineWidth: 1)
+                .stroke(SemanticColors.border, lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
@@ -197,7 +197,7 @@ struct PsychologistNoteDetailView: View {
             
             Text(error)
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.8))
+                .foregroundColor(SemanticColors.secondaryText)
         }
         .padding(12)
         .background(Color.red.opacity(0.1))

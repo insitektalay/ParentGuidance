@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct TranscribingOverlay: View {
+    @Environment(\.colorScheme) private var colorScheme
     @State private var animationPhase: Int = 0
     
     var body: some View {
@@ -9,7 +10,7 @@ struct TranscribingOverlay: View {
             HStack(spacing: 4) {
                 ForEach(0..<3, id: \.self) { index in
                     Circle()
-                        .fill(ColorPalette.terracotta)
+                        .fill(SemanticColors.accent)
                         .frame(width: 8, height: 8)
                         .scaleEffect(animationPhase == index ? 1.2 : 0.8)
                         .opacity(animationPhase == index ? 1.0 : 0.6)
@@ -24,15 +25,15 @@ struct TranscribingOverlay: View {
             // Transcribing text
             Text("Transcribing...")
                 .font(.system(size: 14, weight: .medium))
-                .foregroundColor(ColorPalette.terracotta)
+                .foregroundColor(SemanticColors.accent)
                 .opacity(0.9)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(ColorPalette.white.opacity(0.95))
-                .shadow(color: ColorPalette.navy.opacity(0.1), radius: 8, x: 0, y: 2)
+                .fill(SemanticColors.cardBackground)
+                .if(colorScheme == .light) { view in view.cardShadow() }
         )
         .scaleEffect(1.0)
         .opacity(1.0)
@@ -54,7 +55,7 @@ struct TranscribingOverlay: View {
 
 #Preview {
     ZStack {
-        ColorPalette.navy
+        SemanticColors.primaryBackground
             .ignoresSafeArea()
         
         TranscribingOverlay()

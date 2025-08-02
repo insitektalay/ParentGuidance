@@ -24,14 +24,14 @@ struct RegulationInsightsView: View {
                     }) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 18, weight: .medium))
-                            .foregroundColor(ColorPalette.white.opacity(0.9))
+                            .foregroundColor(SemanticColors.primaryText)
                     }
                     
                     Spacer()
                     
                     Text(String(localized: "regulation.insights.title"))
                         .font(.system(size: 24, weight: .semibold))
-                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                        .foregroundColor(SemanticColors.primaryText)
                     
                     Spacer()
                 }
@@ -49,7 +49,7 @@ struct RegulationInsightsView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(ColorPalette.navy)
+            .background(SemanticColors.primaryBackground)
             .navigationBarHidden(true)
         }
         .onAppear {
@@ -63,11 +63,11 @@ struct RegulationInsightsView: View {
         VStack(spacing: 16) {
             ProgressView()
                 .scaleEffect(1.5)
-                .foregroundColor(ColorPalette.white.opacity(0.8))
+                .foregroundColor(SemanticColors.secondaryText)
             
             Text(String(localized: "regulation.insights.loading"))
                 .font(.system(size: 16))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -76,18 +76,18 @@ struct RegulationInsightsView: View {
         VStack(spacing: 16) {
             Text(String(localized: "regulation.insights.error.title"))
                 .font(.system(size: 18, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
             
             Text(String(localized: "regulation.insights.error.subtitle"))
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
             
             Button(String(localized: "common.retry")) {
                 Task {
                     await loadInsightCounts()
                 }
             }
-            .foregroundColor(ColorPalette.terracotta)
+            .foregroundColor(SemanticColors.accent)
             .font(.system(size: 16, weight: .medium))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -141,25 +141,25 @@ struct RegulationCategoryCardContent: View {
             // Icon
             Image(systemName: category.iconName)
                 .font(.system(size: 28, weight: .medium))
-                .foregroundColor(ColorPalette.brightBlue)
+                .foregroundColor(SemanticColors.accentBlue)
                 .frame(width: 32, height: 32)
             
             // Content
             VStack(alignment: .leading, spacing: 4) {
                 Text(category.parentFriendlyName)
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(ColorPalette.white)
+                    .foregroundColor(SemanticColors.primaryText)
                     .multilineTextAlignment(.leading)
                     .lineLimit(2)
                 
                 if insightCount > 0 {
                     Text(String(localized: "regulation.insights.count \(insightCount)"))
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                        .foregroundColor(SemanticColors.secondaryText)
                 } else {
                     Text(String(localized: "regulation.insights.empty"))
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.white.opacity(0.5))
+                        .foregroundColor(SemanticColors.tertiaryText)
                 }
             }
             
@@ -169,19 +169,19 @@ struct RegulationCategoryCardContent: View {
             if insightCount > 0 {
                 Text("\(insightCount)")
                     .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(ColorPalette.white)
+                    .foregroundColor(SemanticColors.primaryText)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
-                    .background(ColorPalette.terracotta)
+                    .background(SemanticColors.accent)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
             }
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(red: 0.21, green: 0.22, blue: 0.33))
+        .background(SemanticColors.cardBackground)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(ColorPalette.white.opacity(0.1), lineWidth: 1)
+                .stroke(SemanticColors.border, lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }

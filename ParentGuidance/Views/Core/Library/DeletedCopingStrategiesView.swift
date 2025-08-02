@@ -27,7 +27,7 @@ struct DeletedCopingStrategiesView: View {
                     }) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 18, weight: .medium))
-                            .foregroundColor(ColorPalette.white.opacity(0.9))
+                            .foregroundColor(SemanticColors.primaryText)
                     }
                     
                     Spacer()
@@ -39,10 +39,10 @@ struct DeletedCopingStrategiesView: View {
                         }) {
                             Text(String(localized: "regulation.archive.button.deleteAll"))
                                 .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(ColorPalette.white)
+                                .foregroundColor(SemanticColors.primaryText)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 6)
-                                .background(ColorPalette.terracotta)
+                                .background(SemanticColors.accent)
                                 .clipShape(RoundedRectangle(cornerRadius: 8))
                                 .frame(minHeight: 44)
                                 .contentShape(Rectangle())
@@ -59,14 +59,14 @@ struct DeletedCopingStrategiesView: View {
                 VStack(spacing: 8) {
                     Text(String(localized: "regulation.deleted.coping.title"))
                         .font(.system(size: 22, weight: .semibold))
-                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                        .foregroundColor(SemanticColors.primaryText)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
                     
                     if !deletedStrategies.isEmpty {
                         Text("\(deletedStrategies.count) item\(deletedStrategies.count == 1 ? "" : "s")")
                             .font(.system(size: 14))
-                            .foregroundColor(ColorPalette.white.opacity(0.7))
+                            .foregroundColor(SemanticColors.secondaryText)
                     }
                 }
                 .padding(.horizontal, 16)
@@ -84,7 +84,7 @@ struct DeletedCopingStrategiesView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(ColorPalette.navy)
+            .background(SemanticColors.primaryBackground)
             .navigationBarHidden(true)
         }
         .onAppear {
@@ -108,11 +108,11 @@ struct DeletedCopingStrategiesView: View {
         VStack(spacing: 16) {
             ProgressView()
                 .scaleEffect(1.5)
-                .foregroundColor(ColorPalette.white.opacity(0.8))
+                .foregroundColor(SemanticColors.secondaryText)
             
             Text(String(localized: "regulation.archive.loading"))
                 .font(.system(size: 16))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -121,15 +121,15 @@ struct DeletedCopingStrategiesView: View {
         VStack(spacing: 16) {
             Image(systemName: "exclamationmark.triangle")
                 .font(.system(size: 48, weight: .light))
-                .foregroundColor(ColorPalette.white.opacity(0.4))
+                .foregroundColor(SemanticColors.primaryText.opacity(0.4))
             
             Text(String(localized: "regulation.archive.error.title"))
                 .font(.system(size: 18, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
             
             Text(errorMessage.isEmpty ? String(localized: "error.tryAgainLater") : errorMessage)
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
                 .multilineTextAlignment(.center)
             
             Button(String(localized: "common.button.retry")) {
@@ -137,7 +137,7 @@ struct DeletedCopingStrategiesView: View {
                     await loadDeletedStrategies()
                 }
             }
-            .foregroundColor(ColorPalette.terracotta)
+            .foregroundColor(SemanticColors.accent)
             .font(.system(size: 16, weight: .medium))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -148,15 +148,15 @@ struct DeletedCopingStrategiesView: View {
         VStack(spacing: 16) {
             Image(systemName: "archivebox")
                 .font(.system(size: 48, weight: .light))
-                .foregroundColor(ColorPalette.white.opacity(0.4))
+                .foregroundColor(SemanticColors.primaryText.opacity(0.4))
             
             Text(String(localized: "regulation.deleted.coping.empty.title"))
                 .font(.system(size: 18, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
             
             Text(String(localized: "regulation.deleted.coping.empty.description"))
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

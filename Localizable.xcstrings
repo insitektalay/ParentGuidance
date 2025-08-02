@@ -680,6 +680,9 @@
         }
       }
     },
+    "Appearance" : {
+
+    },
     "Are you sure you want to delete this insight? This action cannot be undone." : {
 
     },
@@ -6086,6 +6089,9 @@
       }
     },
     "Test API Key" : {
+
+    },
+    "Theme" : {
 
     },
     "This will permanently delete this coping strategy. This action cannot be undone." : {

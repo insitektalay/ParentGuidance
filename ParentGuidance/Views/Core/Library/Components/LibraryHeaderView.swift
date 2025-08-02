@@ -10,6 +10,7 @@ import SwiftUI
 
 struct LibraryHeaderView: View {
     @ObservedObject var controller: LibraryViewController
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         VStack(spacing: 12) {
@@ -28,12 +29,12 @@ struct LibraryHeaderView: View {
                 }) {
                     Image(systemName: controller.isShowingSortDropdown ? "chevron.up" : "chevron.down")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(ColorPalette.white.opacity(0.8))
+                        .foregroundColor(SemanticColors.secondaryText)
                         .padding(8)
                         .background(Color.clear)
                         .overlay(
                             RoundedRectangle(cornerRadius: 6)
-                                .stroke(ColorPalette.white.opacity(0.2), lineWidth: 1)
+                                .stroke(SemanticColors.border, lineWidth: 1)
                         )
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
@@ -61,6 +62,6 @@ struct LibraryHeaderView_Previews: PreviewProvider {
             }())
         }
         .padding()
-        .background(ColorPalette.navy)
+        .background(SemanticColors.primaryBackground)
     }
 }

@@ -72,23 +72,23 @@ struct FilterButton: View {
     
     // MARK: - Computed Properties
     private var foregroundColor: Color {
-        isActive ? ColorPalette.white : ColorPalette.white.opacity(0.7)
+        isActive ? SemanticColors.primaryText : SemanticColors.secondaryText
     }
     
     private var backgroundColor: Color {
-        isActive ? ColorPalette.terracotta : Color.clear
+        isActive ? SemanticColors.accent : Color.clear
     }
     
     private var borderColor: Color {
-        isActive ? ColorPalette.terracotta : ColorPalette.white.opacity(0.2)
+        isActive ? SemanticColors.accent : SemanticColors.border
     }
     
     private var badgeTextColor: Color {
-        isActive ? ColorPalette.terracotta : ColorPalette.white
+        isActive ? SemanticColors.accent : SemanticColors.primaryText
     }
     
     private var badgeBackgroundColor: Color {
-        isActive ? ColorPalette.white : ColorPalette.white.opacity(0.2)
+        isActive ? SemanticColors.primaryBackground : SemanticColors.tertiaryBackground
     }
     
     private var accessibilityLabel: String {
@@ -157,5 +157,5 @@ struct FilterButton: View {
         }
     }
     .padding()
-    .background(ColorPalette.navy)
+    .background(SemanticColors.primaryBackground)
 }

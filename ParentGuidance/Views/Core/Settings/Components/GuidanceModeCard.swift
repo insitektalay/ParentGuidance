@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct GuidanceModeCard: View {
+    @Environment(\.colorScheme) private var colorScheme
     let mode: GuidanceStructureMode
     let isSelected: Bool
     let onSelect: () -> Void
@@ -18,7 +19,7 @@ struct GuidanceModeCard: View {
                 // Mode icon
                 Image(systemName: mode.iconName)
                     .font(.system(size: 20))
-                    .foregroundColor(isSelected ? ColorPalette.brightBlue : ColorPalette.white.opacity(0.6))
+                    .foregroundColor(isSelected ? SemanticColors.accentBlue : SemanticColors.tertiaryText)
                     .frame(width: 24, height: 24)
                 
                 // Mode info
@@ -26,20 +27,20 @@ struct GuidanceModeCard: View {
                     HStack(spacing: 8) {
                         Text(mode.displayName)
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(ColorPalette.white)
+                            .foregroundColor(SemanticColors.primaryText)
                         
                         Text(mode.sectionCount)
                             .font(.system(size: 11, weight: .medium))
-                            .foregroundColor(ColorPalette.white.opacity(0.6))
+                            .foregroundColor(SemanticColors.tertiaryText)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
-                            .background(ColorPalette.white.opacity(0.1))
+                            .background(SemanticColors.tertiaryText)
                             .clipShape(RoundedRectangle(cornerRadius: 4))
                     }
                     
                     Text(mode.description)
                         .font(.system(size: 13))
-                        .foregroundColor(ColorPalette.white.opacity(0.8))
+                        .foregroundColor(SemanticColors.secondaryText)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
                 }
@@ -49,20 +50,20 @@ struct GuidanceModeCard: View {
                 // Selection indicator
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                     .font(.system(size: 20))
-                    .foregroundColor(isSelected ? ColorPalette.brightBlue : ColorPalette.white.opacity(0.4))
+                    .foregroundColor(isSelected ? SemanticColors.accentBlue : SemanticColors.tertiaryText)
                     .animation(.easeInOut(duration: 0.2), value: isSelected)
             }
             .padding(16)
-            .background(
-                Color(red: 0.21, green: 0.22, blue: 0.33)
-                    .opacity(isSelected ? 1.0 : 0.6)
-            )
+            .background(SemanticColors.cardBackground.opacity(isSelected ? 1.0 : 0.6))
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
-                    .stroke(isSelected ? ColorPalette.brightBlue.opacity(0.4) : ColorPalette.white.opacity(0.1), lineWidth: 1.5)
+                    .stroke(isSelected ? SemanticColors.accentBlue.opacity(0.4) : SemanticColors.tertiaryText.opacity(0.1), lineWidth: 1.5)
             )
         }
         .buttonStyle(PlainButtonStyle())
+        .if(colorScheme == .light) { view in
+            view.cardShadow()
+        }
     }
 }

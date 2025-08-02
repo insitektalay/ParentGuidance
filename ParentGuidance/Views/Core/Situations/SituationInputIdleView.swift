@@ -2,6 +2,7 @@ import SwiftUI
 import Combine
 
 struct SituationInputIdleView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @State private var inputText: String = ""
     @FocusState private var isTextEditorFocused: Bool
     @ObservedObject var voiceRecorderViewModel: VoiceRecorderViewModel
@@ -41,14 +42,17 @@ struct SituationInputIdleView: View {
                 ZStack {
                     TextEditor(text: $inputText)
                         .font(.system(size: isKeyboardVisible ? 16 : 18))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                         .scrollContentBackground(.hidden)
-                        .background(ColorPalette.white.opacity(isKeyboardVisible ? 0.05 : 0.08))
+                        .background(SemanticColors.cardBackground)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .if(colorScheme == .light) { view in
+                            view.cardShadow()
+                        }
                         .overlay(
                             RoundedRectangle(cornerRadius: 12)
                                 .stroke(
-                                    isTextEditorFocused ? ColorPalette.terracotta : Color.clear,
+                                    isTextEditorFocused ? SemanticColors.accent : Color.clear,
                                     lineWidth: 2
                                 )
                         )
@@ -60,7 +64,7 @@ struct SituationInputIdleView: View {
                                         HStack {
                                             Text(String(localized: "situation.input.placeholder \(childName)"))
                                                 .font(.system(size: isKeyboardVisible ? 16 : 18))
-                                                .foregroundColor(ColorPalette.white.opacity(isKeyboardVisible ? 0.5 : 0.6))
+                                                .foregroundColor(SemanticColors.tertiaryText)
                                                 .padding(.top, 8)
                                                 .padding(.leading, 5)
                                             Spacer()
@@ -110,7 +114,7 @@ struct SituationInputIdleView: View {
             .padding(.bottom, isKeyboardVisible ? 60 : 50)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(ColorPalette.navy)
+            .background(SemanticColors.primaryBackground)
         }
         .onAppear {
             setupKeyboardObservers()

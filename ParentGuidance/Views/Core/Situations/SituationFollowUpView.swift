@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct SituationFollowUpView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @State private var inputText: String = ""
     @State private var isRecording: Bool = false
     @FocusState private var isTextEditorFocused: Bool
@@ -18,27 +19,30 @@ struct SituationFollowUpView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text(String(localized: "situation.followup.label"))
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                        .foregroundColor(SemanticColors.primaryText)
                     
                     Text(String(localized: "situation.example.text"))
                         .font(.system(size: 16))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(12)
-                .background(ColorPalette.white.opacity(0.05))
+                .background(SemanticColors.cardBackground)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
+                .if(colorScheme == .light) { view in
+                    view.cardShadow()
+                }
                 .padding(.horizontal, 16)
                 
                 // Title and subtitle
                 VStack(alignment: .leading, spacing: 8) {
                     Text(String(localized: "situation.followup.button"))
                         .font(.system(size: 20, weight: .semibold))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                     
                     Text(String(localized: "situation.followup.context"))
                         .font(.system(size: 16))
-                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                        .foregroundColor(SemanticColors.primaryText)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 16)
@@ -47,14 +51,14 @@ struct SituationFollowUpView: View {
                 ZStack(alignment: .bottomTrailing) {
                     TextEditor(text: $inputText)
                         .font(.system(size: 16))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                         .scrollContentBackground(.hidden)
-                        .background(ColorPalette.white.opacity(0.05))
+                        .background(SemanticColors.cardBackground)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                         .overlay(
                             RoundedRectangle(cornerRadius: 12)
                                 .stroke(
-                                    isTextEditorFocused ? ColorPalette.terracotta : Color.clear,
+                                    isTextEditorFocused ? SemanticColors.accent : Color.clear,
                                     lineWidth: 2
                                 )
                         )
@@ -66,7 +70,7 @@ struct SituationFollowUpView: View {
                                         HStack {
                                             Text("Describe what's happening with \(childName)...")
                                                 .font(.system(size: 16))
-                                                .foregroundColor(ColorPalette.white.opacity(0.5))
+                                                .foregroundColor(SemanticColors.tertiaryText)
                                                 .padding(.top, 8)
                                                 .padding(.leading, 5)
                                             Spacer()
@@ -96,20 +100,20 @@ struct SituationFollowUpView: View {
                     Button(action: onAddDetails) {
                         Text(String(localized: "button.addDetails"))
                             .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(ColorPalette.white)
+                            .foregroundColor(SemanticColors.primaryText)
                             .frame(maxWidth: .infinity)
                             .frame(height: 48)
-                            .background(ColorPalette.terracotta)
+                            .background(SemanticColors.accent)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
                     
                     Button(action: onContinueAnyway) {
                         Text(String(localized: "button.continueAnyway"))
                             .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(ColorPalette.white)
+                            .foregroundColor(SemanticColors.primaryText)
                             .frame(maxWidth: .infinity)
                             .frame(height: 48)
-                            .background(ColorPalette.white.opacity(0.05))
+                            .background(SemanticColors.cardBackground)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
                 }
@@ -122,7 +126,7 @@ struct SituationFollowUpView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(ColorPalette.navy)
+        .background(SemanticColors.primaryBackground)
         .ignoresSafeArea()
     }
 }

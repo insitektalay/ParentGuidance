@@ -1,12 +1,15 @@
 import SwiftUI
 
 struct PhoneIllustration: View {
+    @Environment(\.colorScheme) private var colorScheme
+    
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 12)
-                .fill(ColorPalette.white)
+                .fill(SemanticColors.cardBackground)
                 .frame(width: 128, height: 192)
                 .shadow(radius: 8)
+                .if(colorScheme == .light) { view in view.cardShadow() }
             
             Circle()
                 .fill(Color(hex: "FF8A65"))
@@ -15,16 +18,16 @@ struct PhoneIllustration: View {
                     ZStack {
                         HStack(spacing: 18) {
                             Circle()
-                                .fill(ColorPalette.navy)
+                                .fill(SemanticColors.primaryBackground)
                                 .frame(width: 12, height: 12)
                             Circle()
-                                .fill(ColorPalette.navy)
+                                .fill(SemanticColors.primaryBackground)
                                 .frame(width: 12, height: 12)
                         }
                         .offset(y: -12)
                         
                         Capsule()
-                            .stroke(ColorPalette.navy, lineWidth: 2)
+                            .stroke(SemanticColors.primaryBackground, lineWidth: 2)
                             .frame(width: 48, height: 24)
                             .offset(y: 12)
                             .clipShape(
@@ -50,7 +53,7 @@ struct FloatingElement: View {
     var body: some View {
         Image(systemName: systemName)
             .font(.system(size: size))
-            .foregroundColor(ColorPalette.cream)
+            .foregroundColor(SemanticColors.cardBackground)
             .position(position)
     }
 }
@@ -67,12 +70,13 @@ struct FloatingShape: View {
 
 struct WelcomeView: View {
     let onGetStarted: () -> Void
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         VStack(spacing: 0) {
             ZStack {
                 LinearGradient(
-                    colors: [ColorPalette.terracotta, Color(hex: "D9A292")],
+                    colors: [SemanticColors.accent, Color(hex: "D9A292")],
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -115,7 +119,7 @@ struct WelcomeView: View {
                         FloatingShape(
                             shape: AnyView(
                                 Circle()
-                                    .fill(ColorPalette.cream.opacity(0.7))
+                                    .fill(SemanticColors.cardBackground.opacity(0.7))
                                     .frame(width: 20, height: 20)
                             ),
                             position: CGPoint(x: 48, y: upperHeight - 128)
@@ -124,7 +128,7 @@ struct WelcomeView: View {
                         FloatingShape(
                             shape: AnyView(
                                 Capsule()
-                                    .fill(ColorPalette.cream.opacity(0.7))
+                                    .fill(SemanticColors.cardBackground.opacity(0.7))
                                     .frame(width: 64, height: 8)
                                     .rotationEffect(.degrees(12))
                             ),
@@ -134,7 +138,7 @@ struct WelcomeView: View {
                         FloatingShape(
                             shape: AnyView(
                                 Circle()
-                                    .stroke(ColorPalette.cream.opacity(0.7), lineWidth: 2)
+                                    .stroke(SemanticColors.cardBackground.opacity(0.7), lineWidth: 2)
                                     .frame(width: 48, height: 48)
                             ),
                             position: CGPoint(x: screenWidth - 24, y: upperHeight - 64)
@@ -153,7 +157,7 @@ struct WelcomeView: View {
                                         clockwise: false
                                     )
                                 }
-                                .stroke(ColorPalette.cream.opacity(0.7), lineWidth: 4)
+                                .stroke(SemanticColors.cardBackground.opacity(0.7), lineWidth: 4)
                                 .frame(width: 64, height: 32)
                             ),
                             position: CGPoint(x: 32, y: upperHeight - 80)
@@ -172,12 +176,12 @@ struct WelcomeView: View {
                     Text(String(localized: "welcome.title"))
                         .font(.title)
                         .fontWeight(.bold)
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                     
                     Text(String(localized: "welcome.subtitle"))
                         .font(.body)
                         .italic()
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                         .multilineTextAlignment(.leading)
                 }
                 .padding(.top, 32)
@@ -188,17 +192,17 @@ struct WelcomeView: View {
                 Button(action: onGetStarted) {
                     Text(String(localized: "welcome.getStarted"))
                         .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
-                        .background(ColorPalette.brightBlue)
+                        .background(SemanticColors.accentBlue)
                         .clipShape(Capsule())
                 }
                 .padding(.horizontal, 32)
                 .padding(.bottom, 24)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(ColorPalette.navy)
+            .background(SemanticColors.primaryBackground)
         }
         .ignoresSafeArea()
     }

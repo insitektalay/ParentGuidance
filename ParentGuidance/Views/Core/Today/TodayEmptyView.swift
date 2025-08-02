@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct TodayEmptyView: View {
+    @Environment(\.colorScheme) private var colorScheme
     let onCreateFirstSituation: () -> Void
     
     var body: some View {
@@ -17,7 +18,7 @@ struct TodayEmptyView: View {
                 // Main headline
                 Text(String(localized: "today.empty.title"))
                     .font(.system(size: 28, weight: .medium))
-                    .foregroundColor(ColorPalette.white)
+                    .foregroundColor(SemanticColors.primaryText)
                     .multilineTextAlignment(.center)
                     .lineLimit(nil)
                     .padding(.horizontal, 32)
@@ -25,7 +26,7 @@ struct TodayEmptyView: View {
                 // Subtitle
                 Text(String(localized: "today.empty.subtitle"))
                     .font(.system(size: 18))
-                    .foregroundColor(ColorPalette.white.opacity(0.8))
+                    .foregroundColor(SemanticColors.secondaryText)
                     .multilineTextAlignment(.center)
                     .lineLimit(nil)
                     .padding(.horizontal, 32)
@@ -33,7 +34,7 @@ struct TodayEmptyView: View {
                 // Description text
                 Text(String(localized: "today.empty.description"))
                     .font(.system(size: 16))
-                    .foregroundColor(ColorPalette.white.opacity(0.7))
+                    .foregroundColor(SemanticColors.secondaryText)
                     .multilineTextAlignment(.center)
                     .lineLimit(nil)
                     .padding(.horizontal, 32)
@@ -43,11 +44,12 @@ struct TodayEmptyView: View {
                 Button(action: onCreateFirstSituation) {
                     Text(String(localized: "today.empty.createButton"))
                         .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                         .frame(maxWidth: .infinity)
                         .frame(height: 56)
-                        .background(ColorPalette.terracotta)
+                        .background(SemanticColors.accent)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .modifier(ConditionalShadow(colorScheme: colorScheme))
                 }
                 .padding(.horizontal, 32)
                 .padding(.bottom, 32)
@@ -55,14 +57,14 @@ struct TodayEmptyView: View {
                 // Footer instruction
                 Text(String(localized: "today.empty.instruction"))
                     .font(.system(size: 16))
-                    .foregroundColor(ColorPalette.white.opacity(0.6))
+                    .foregroundColor(SemanticColors.tertiaryText)
                     .multilineTextAlignment(.center)
             }
             
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(ColorPalette.navy)
+        .background(SemanticColors.primaryBackground)
     }
 }
 
@@ -70,4 +72,17 @@ struct TodayEmptyView: View {
     TodayEmptyView(
         onCreateFirstSituation: {}
     )
+}
+
+// MARK: - Conditional Shadow Modifier
+struct ConditionalShadow: ViewModifier {
+    let colorScheme: ColorScheme
+    
+    func body(content: Content) -> some View {
+        if colorScheme == .light {
+            content.cardShadow()
+        } else {
+            content
+        }
+    }
 }

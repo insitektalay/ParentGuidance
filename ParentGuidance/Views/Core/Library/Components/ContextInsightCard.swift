@@ -19,7 +19,7 @@ struct ContextInsightCard: View {
                 // Main content
                 Text(insight.content)
                     .font(.system(size: 16))
-                    .foregroundColor(ColorPalette.white.opacity(0.9))
+                    .foregroundColor(SemanticColors.primaryText)
                     .lineLimit(nil)
                     .multilineTextAlignment(.leading)
                 
@@ -29,18 +29,18 @@ struct ContextInsightCard: View {
                     if let subcategory = insight.subcategory {
                         Text(subcategory.displayName)
                             .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(ColorPalette.brightBlue)
+                            .foregroundColor(SemanticColors.accentBlue)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
-                            .background(ColorPalette.brightBlue.opacity(0.2))
+                            .background(SemanticColors.accentBlue.opacity(0.2))
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                     } else {
                         Text(insight.category.displayName)
                             .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(ColorPalette.brightBlue)
+                            .foregroundColor(SemanticColors.accentBlue)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
-                            .background(ColorPalette.brightBlue.opacity(0.2))
+                            .background(SemanticColors.accentBlue.opacity(0.2))
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                     }
                     
@@ -48,7 +48,7 @@ struct ContextInsightCard: View {
                     
                     Text(formatDate(insight.createdAt))
                         .font(.system(size: 12))
-                        .foregroundColor(ColorPalette.white.opacity(0.6))
+                        .foregroundColor(SemanticColors.tertiaryText)
                 }
             }
             
@@ -58,17 +58,18 @@ struct ContextInsightCard: View {
             }) {
                 Image(systemName: "trash")
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(ColorPalette.white.opacity(0.6))
+                    .foregroundColor(SemanticColors.tertiaryText)
             }
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(red: 0.21, green: 0.22, blue: 0.33))
+        .background(SemanticColors.cardBackground)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(ColorPalette.white.opacity(0.1), lineWidth: 1)
+                .stroke(SemanticColors.border, lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: 12))
+        .cardShadow()
         .alert("Delete Insight", isPresented: $showingDeleteAlert) {
             Button("Cancel", role: .cancel) { }
             Button("Delete", role: .destructive) {
@@ -122,5 +123,5 @@ struct ContextInsightCard: View {
         )
     }
     .padding()
-    .background(ColorPalette.navy)
+    .background(SemanticColors.primaryBackground)
 }

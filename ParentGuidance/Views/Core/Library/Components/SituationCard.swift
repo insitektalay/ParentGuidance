@@ -13,6 +13,7 @@ struct SituationCard: View {
     
     @State private var dragOffset: CGFloat = 0
     @State private var showingDeleteButton: Bool = false
+    @Environment(\.colorScheme) private var colorScheme
     
     private var isSelected: Bool {
         guard let situationId = situationId,
@@ -108,7 +109,7 @@ struct SituationCard: View {
                     }) {
                         Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                             .font(.system(size: 20))
-                            .foregroundColor(isSelected ? ColorPalette.terracotta : ColorPalette.white.opacity(0.6))
+                            .foregroundColor(isSelected ? SemanticColors.accent : SemanticColors.secondaryText)
                     }
                     .buttonStyle(PlainButtonStyle())
                 }
@@ -116,19 +117,19 @@ struct SituationCard: View {
                 // Icon
                 Image(systemName: iconForEmoji)
                     .font(.system(size: 20))
-                    .foregroundColor(ColorPalette.white)
+                    .foregroundColor(SemanticColors.primaryText)
                     .frame(width: 20, height: 20)
                 
                 // Content
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
                         .font(.system(size: 16))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
                     Text(date)
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.white.opacity(0.5))
+                        .foregroundColor(SemanticColors.tertiaryText)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 
@@ -140,7 +141,7 @@ struct SituationCard: View {
                     Button(action: onDelete) {
                         Image(systemName: "trash")
                             .font(.system(size: 16))
-                            .foregroundColor(ColorPalette.white.opacity(0.7))
+                            .foregroundColor(SemanticColors.secondaryText)
                     }
                     .accessibilityLabel("Delete")
                     .accessibilityHint("Double tap to delete this situation")
@@ -149,7 +150,7 @@ struct SituationCard: View {
                     Button(action: onToggleFavorite) {
                         Image(systemName: isFavorited ? "star.fill" : "star")
                             .font(.system(size: 16))
-                            .foregroundColor(isFavorited ? ColorPalette.terracotta : ColorPalette.white.opacity(0.7))
+                            .foregroundColor(isFavorited ? SemanticColors.accent : SemanticColors.secondaryText)
                             .animation(.easeInOut(duration: 0.2), value: isFavorited)
                     }
                     .accessibilityLabel(isFavorited ? String(localized: "action.removeFromFavorites") : String(localized: "action.addToFavorites"))
@@ -159,17 +160,20 @@ struct SituationCard: View {
             .padding(12)
             .background(
                 isSelected ? 
-                    ColorPalette.terracotta.opacity(0.2) : 
-                    Color(red: 0.21, green: 0.22, blue: 0.33) // #363853 equivalent
+                    SemanticColors.accent.opacity(0.2) : 
+                    SemanticColors.cardBackground
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
                     .stroke(
-                        isSelected ? ColorPalette.terracotta.opacity(0.6) : ColorPalette.white.opacity(0.1), 
+                        isSelected ? SemanticColors.accent.opacity(0.6) : SemanticColors.border, 
                         lineWidth: isSelected ? 2 : 1
                     )
             )
             .clipShape(RoundedRectangle(cornerRadius: 12))
+            .if(colorScheme == .light) { view in
+                view.cardShadow()
+            }
             .offset(x: dragOffset)
             .onTapGesture {
                 if showingDeleteButton {
@@ -375,6 +379,8 @@ struct SituationCard: View {
     }
 }
 
+// MARK: - View Extension for conditional modifiers (now in ColorPalette.swift)
+
 #Preview {
     VStack(spacing: 12) {
         SituationCard(
@@ -411,5 +417,5 @@ struct SituationCard: View {
         )
     }
     .padding()
-    .background(ColorPalette.navy)
+    .background(SemanticColors.primaryBackground)
 }

@@ -8,6 +8,8 @@ struct APIKeyView: View {
     let onGetAPIKey: () -> Void
     let onWhatsThis: () -> Void
     
+    @Environment(\.colorScheme) private var colorScheme
+    
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
@@ -16,12 +18,12 @@ struct APIKeyView: View {
                         Text(String(localized: "apiKey.title"))
                             .font(.title2)
                             .fontWeight(.bold)
-                            .foregroundColor(ColorPalette.white)
+                            .foregroundColor(SemanticColors.primaryText)
                             .multilineTextAlignment(.center)
                         
                         Text(String(localized: "apiKey.subtitle"))
                             .font(.body)
-                            .foregroundColor(ColorPalette.white.opacity(0.7))
+                            .foregroundColor(SemanticColors.secondaryText)
                             .multilineTextAlignment(.center)
                     }
                     .padding(.top, 80)
@@ -30,30 +32,33 @@ struct APIKeyView: View {
                     VStack(spacing: 16) {
                         TextField(String(localized: "apiKey.placeholder"), text: $apiKey)
                             .font(.system(size: 16))
-                            .foregroundColor(ColorPalette.navy)
+                            .foregroundColor(SemanticColors.primaryBackground)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 12)
-                            .background(ColorPalette.white)
+                            .background(SemanticColors.cardBackground)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .if(colorScheme == .light) { view in view.cardShadow() }
                         
                         Button(action: { onTestConnection(apiKey) }) {
                             Text(String(localized: "apiKey.testConnection"))
                                 .font(.system(size: 16, weight: .medium))
-                                .foregroundColor(ColorPalette.white)
+                                .foregroundColor(SemanticColors.primaryText)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 12)
-                                .background(ColorPalette.terracotta)
+                                .background(SemanticColors.accent)
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
+                                .if(colorScheme == .light) { view in view.cardShadow() }
                         }
                         
                         Button(action: { onSaveAndContinue(apiKey) }) {
                             Text(String(localized: "apiKey.saveAndContinue"))
                                 .font(.system(size: 16, weight: .medium))
-                                .foregroundColor(ColorPalette.white)
+                                .foregroundColor(SemanticColors.primaryText)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 12)
-                                .background(ColorPalette.terracotta)
+                                .background(SemanticColors.accent)
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
+                                .if(colorScheme == .light) { view in view.cardShadow() }
                         }
                     }
                     .padding(.top, 32)
@@ -66,19 +71,19 @@ struct APIKeyView: View {
             VStack(spacing: 8) {
                 Text(String(localized: "apiKey.needKey"))
                     .font(.system(size: 14))
-                    .foregroundColor(ColorPalette.white.opacity(0.9))
+                    .foregroundColor(SemanticColors.secondaryText)
                 
                 HStack(spacing: 16) {
                     Button(action: onGetAPIKey) {
                         Text(String(localized: "apiKey.getKey"))
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(ColorPalette.terracotta)
+                            .foregroundColor(SemanticColors.accent)
                     }
                     
                     Button(action: onWhatsThis) {
                         Text(String(localized: "apiKey.whatsThis"))
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(ColorPalette.terracotta)
+                            .foregroundColor(SemanticColors.accent)
                     }
                 }
             }
@@ -86,7 +91,7 @@ struct APIKeyView: View {
             .padding(.bottom, 32)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(ColorPalette.navy)
+        .background(SemanticColors.primaryBackground)
         .ignoresSafeArea()
     }
 }

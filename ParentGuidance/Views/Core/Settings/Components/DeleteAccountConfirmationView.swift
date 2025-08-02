@@ -34,7 +34,7 @@ struct DeleteAccountConfirmationView: View {
             }
         }
         .padding(32)
-        .background(ColorPalette.white)
+        .background(SemanticColors.primaryText)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .padding(.horizontal, 24)
     }
@@ -44,11 +44,11 @@ struct DeleteAccountConfirmationView: View {
             Text(String(localized: "settings.account.delete.title"))
                 .font(.title2)
                 .fontWeight(.bold)
-                .foregroundColor(ColorPalette.navy)
+                .foregroundColor(SemanticColors.primaryBackground)
             
             Text(String(localized: "settings.account.delete.warning"))
                 .font(.body)
-                .foregroundColor(ColorPalette.navy.opacity(0.8))
+                .foregroundColor(SemanticColors.primaryBackground.opacity(0.8))
                 .multilineTextAlignment(.center)
             
             VStack(alignment: .leading, spacing: 8) {
@@ -70,19 +70,19 @@ struct DeleteAccountConfirmationView: View {
                 }
             }
             .font(.system(size: 14))
-            .foregroundColor(ColorPalette.navy.opacity(0.7))
+            .foregroundColor(SemanticColors.primaryBackground.opacity(0.7))
             
             HStack(spacing: 16) {
                 Button(String(localized: "common.button.cancel")) {
                     onCancel()
                 }
                 .font(.system(size: 16, weight: .medium))
-                .foregroundColor(ColorPalette.navy)
+                .foregroundColor(SemanticColors.primaryBackground)
                 .padding(.horizontal, 24)
                 .padding(.vertical, 12)
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
-                        .stroke(ColorPalette.navy, lineWidth: 1)
+                        .stroke(SemanticColors.primaryBackground, lineWidth: 1)
                 )
                 
                 Button(String(localized: "common.button.continue")) {
@@ -103,11 +103,11 @@ struct DeleteAccountConfirmationView: View {
             Text(String(localized: "settings.account.delete.confirm.title"))
                 .font(.title2)
                 .fontWeight(.bold)
-                .foregroundColor(ColorPalette.navy)
+                .foregroundColor(SemanticColors.primaryBackground)
             
             Text(String(localized: "settings.account.delete.confirm.warning"))
                 .font(.body)
-                .foregroundColor(ColorPalette.navy.opacity(0.8))
+                .foregroundColor(SemanticColors.primaryBackground.opacity(0.8))
                 .multilineTextAlignment(.center)
             
             Text(String(localized: "settings.account.delete.confirm.permanent"))
@@ -120,12 +120,12 @@ struct DeleteAccountConfirmationView: View {
                     onCancel()
                 }
                 .font(.system(size: 16, weight: .medium))
-                .foregroundColor(ColorPalette.navy)
+                .foregroundColor(SemanticColors.primaryBackground)
                 .padding(.horizontal, 24)
                 .padding(.vertical, 12)
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
-                        .stroke(ColorPalette.navy, lineWidth: 1)
+                        .stroke(SemanticColors.primaryBackground, lineWidth: 1)
                 )
                 
                 Button(String(localized: "common.button.understand")) {
@@ -150,7 +150,7 @@ struct DeleteAccountConfirmationView: View {
             
             Text(String(localized: "settings.account.delete.final.instruction"))
                 .font(.body)
-                .foregroundColor(ColorPalette.navy.opacity(0.8))
+                .foregroundColor(SemanticColors.primaryBackground.opacity(0.8))
                 .multilineTextAlignment(.center)
             
             if isDeleting {
@@ -159,7 +159,7 @@ struct DeleteAccountConfirmationView: View {
                         .scaleEffect(1.2)
                     Text(String(localized: "settings.account.delete.deleting"))
                         .font(.system(size: 16))
-                        .foregroundColor(ColorPalette.navy.opacity(0.7))
+                        .foregroundColor(SemanticColors.primaryBackground.opacity(0.7))
                 }
                 .padding(.vertical)
             } else {
@@ -170,12 +170,12 @@ struct DeleteAccountConfirmationView: View {
                         onCancel()
                     }
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(ColorPalette.navy)
+                    .foregroundColor(SemanticColors.primaryBackground)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 12)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .stroke(ColorPalette.navy, lineWidth: 1)
+                            .stroke(SemanticColors.primaryBackground, lineWidth: 1)
                     )
                 }
             }

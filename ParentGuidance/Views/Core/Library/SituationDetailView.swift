@@ -15,6 +15,7 @@ struct SituationDetailView: View {
     let onBack: () -> Void
     let onDateUpdated: (() -> Void)?
     
+    @Environment(\.colorScheme) private var colorScheme
     @State private var currentGuidancePage = 0
     @State private var showCopyConfirmation = false
     @State private var showDatePicker = false
@@ -30,7 +31,7 @@ struct SituationDetailView: View {
                     Button(action: onBack) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 18, weight: .medium))
-                            .foregroundColor(ColorPalette.white.opacity(0.9))
+                            .foregroundColor(SemanticColors.primaryText)
                     }
                     
                     Spacer()
@@ -42,15 +43,15 @@ struct SituationDetailView: View {
                 HStack {
                     Text(String(localized: "tab.library"))
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.white.opacity(0.5))
+                        .foregroundColor(SemanticColors.tertiaryText)
                     
                     Image(systemName: "chevron.right")
                         .font(.system(size: 12))
-                        .foregroundColor(ColorPalette.white.opacity(0.3))
+                        .foregroundColor(SemanticColors.tertiaryText)
                     
                     Text(String(localized: "library.situationDetail.title"))
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                        .foregroundColor(SemanticColors.primaryText)
                     
                     Spacer()
                 }
@@ -64,17 +65,17 @@ struct SituationDetailView: View {
                     HStack(alignment: .top, spacing: 12) {
                         Image(systemName: SituationCard.getIconForEmoji(SituationCard.getEmojiForSituation(situation)))
                             .font(.system(size: 24))
-                            .foregroundColor(ColorPalette.terracotta)
+                            .foregroundColor(SemanticColors.accent)
                         
                         VStack(alignment: .leading, spacing: 4) {
                             Text(situation.title)
                                 .font(.system(size: 24, weight: .semibold))
-                                .foregroundColor(ColorPalette.white.opacity(0.9))
+                                .foregroundColor(SemanticColors.primaryText)
                             
                             HStack(spacing: 8) {
                                 Text(SituationCard.formatDate(situation.createdAt))
                                     .font(.system(size: 14))
-                                    .foregroundColor(ColorPalette.white.opacity(0.6))
+                                    .foregroundColor(SemanticColors.tertiaryText)
                                 
                                 Button(action: {
                                     // Initialize date picker with current situation date
@@ -84,7 +85,7 @@ struct SituationDetailView: View {
                                 }) {
                                     Image(systemName: "pencil.circle")
                                         .font(.system(size: 14))
-                                        .foregroundColor(ColorPalette.terracotta.opacity(0.8))
+                                        .foregroundColor(SemanticColors.accent)
                                 }
                                 .accessibilityLabel(String(localized: "situation.dateEdit.accessibilityLabel"))
                                 .accessibilityHint(String(localized: "situation.dateEdit.accessibilityHint"))
@@ -100,7 +101,7 @@ struct SituationDetailView: View {
                         HStack {
                             Text(String(localized: "library.situationDetail.aiGuidance"))
                                 .font(.system(size: 18, weight: .medium))
-                                .foregroundColor(ColorPalette.white.opacity(0.9))
+                                .foregroundColor(SemanticColors.primaryText)
                             
                             Spacer()
                         }
@@ -110,11 +111,11 @@ struct SituationDetailView: View {
                             VStack(spacing: 16) {
                                 ProgressView()
                                     .scaleEffect(1.5)
-                                    .foregroundColor(ColorPalette.white.opacity(0.8))
+                                    .foregroundColor(SemanticColors.secondaryText)
                                 
                                 Text(String(localized: "library.situationDetail.loadingGuidance"))
                                     .font(.system(size: 16))
-                                    .foregroundColor(ColorPalette.white.opacity(0.7))
+                                    .foregroundColor(SemanticColors.tertiaryText)
                             }
                             .padding(40)
                             .frame(maxWidth: .infinity)
@@ -123,11 +124,11 @@ struct SituationDetailView: View {
                             VStack(spacing: 16) {
                                 Text(String(localized: "library.situationDetail.noGuidance"))
                                     .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(ColorPalette.white.opacity(0.9))
+                                    .foregroundColor(SemanticColors.primaryText)
                                 
                                 Text(error)
                                     .font(.system(size: 14))
-                                    .foregroundColor(ColorPalette.white.opacity(0.7))
+                                    .foregroundColor(SemanticColors.tertiaryText)
                                     .multilineTextAlignment(.center)
                             }
                             .padding(40)
@@ -137,11 +138,11 @@ struct SituationDetailView: View {
                             VStack(spacing: 16) {
                                 Text(String(localized: "library.situationDetail.noGuidanceYet"))
                                     .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(ColorPalette.white.opacity(0.9))
+                                    .foregroundColor(SemanticColors.primaryText)
                                 
                                 Text(String(localized: "library.situationDetail.notProcessed"))
                                     .font(.system(size: 14))
-                                    .foregroundColor(ColorPalette.white.opacity(0.7))
+                                    .foregroundColor(SemanticColors.tertiaryText)
                                     .multilineTextAlignment(.center)
                             }
                             .padding(40)
@@ -166,7 +167,7 @@ struct SituationDetailView: View {
                                         HStack(spacing: 8) {
                                             ForEach(0..<categories.count, id: \.self) { index in
                                                 Circle()
-                                                    .fill(index == currentGuidancePage ? ColorPalette.terracotta : ColorPalette.white.opacity(0.3))
+                                                    .fill(index == currentGuidancePage ? SemanticColors.accent : SemanticColors.tertiaryText)
                                                     .frame(width: 8, height: 8)
                                                     .animation(.easeInOut(duration: 0.2), value: currentGuidancePage)
                                             }
@@ -219,7 +220,7 @@ struct SituationDetailView: View {
                         HStack {
                             Text(String(localized: "library.situationDetail.originalSituation"))
                                 .font(.system(size: 16, weight: .medium))
-                                .foregroundColor(ColorPalette.white.opacity(0.8))
+                                .foregroundColor(SemanticColors.secondaryText)
                             
                             Spacer()
                             
@@ -232,26 +233,29 @@ struct SituationDetailView: View {
                                     Text(String(localized: "common.button.copy"))
                                         .font(.system(size: 12))
                                 }
-                                .foregroundColor(ColorPalette.terracotta)
+                                .foregroundColor(SemanticColors.accent)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
-                                .background(ColorPalette.terracotta.opacity(0.1))
+                                .background(SemanticColors.accent.opacity(0.1))
                                 .cornerRadius(6)
                             }
                         }
                         
                         Text(situation.description)
                             .font(.system(size: 15))
-                            .foregroundColor(ColorPalette.white.opacity(0.9))
+                            .foregroundColor(SemanticColors.primaryText)
                             .lineSpacing(4)
                             .textSelection(.enabled)
                     }
                     .padding(16)
-                    .background(Color(red: 0.21, green: 0.22, blue: 0.33))
+                    .background(SemanticColors.cardBackground)
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(ColorPalette.white.opacity(0.1), lineWidth: 1)
+                            .stroke(SemanticColors.border, lineWidth: 1)
                     )
+                    .if(colorScheme == .light) { view in
+                        view.cardShadow()
+                    }
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .padding(.horizontal, 16)
                 }
@@ -260,7 +264,7 @@ struct SituationDetailView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(ColorPalette.navy)
+        .background(SemanticColors.primaryBackground)
         .navigationBarHidden(true)
         .sheet(isPresented: $showDatePicker) {
             datePickerSheet
@@ -276,10 +280,10 @@ struct SituationDetailView: View {
                         
                         Text(String(localized: "common.copiedToClipboard"))
                             .font(.system(size: 14))
-                            .foregroundColor(ColorPalette.white)
+                            .foregroundColor(SemanticColors.primaryText)
                     }
                     .padding(16)
-                    .background(ColorPalette.navy.opacity(0.9))
+                    .background(SemanticColors.primaryBackground.opacity(0.9))
                     .cornerRadius(12)
                     .shadow(radius: 8)
                     .transition(.opacity)
@@ -298,7 +302,7 @@ struct SituationDetailView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text(String(localized: "situation.dateEdit.description"))
                         .font(.system(size: 16))
-                        .foregroundColor(ColorPalette.white.opacity(0.8))
+                        .foregroundColor(SemanticColors.secondaryText)
                         .multilineTextAlignment(.leading)
                 }
                 .padding(.horizontal, 20)
@@ -316,7 +320,7 @@ struct SituationDetailView: View {
                 Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(ColorPalette.navy)
+            .background(SemanticColors.primaryBackground)
             .navigationTitle(String(localized: "situation.dateEdit.title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -324,7 +328,7 @@ struct SituationDetailView: View {
                     Button(String(localized: "common.cancel")) {
                         showDatePicker = false
                     }
-                    .foregroundColor(ColorPalette.white.opacity(0.8))
+                    .foregroundColor(SemanticColors.secondaryText)
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -336,10 +340,10 @@ struct SituationDetailView: View {
                         if isUpdatingDate {
                             ProgressView()
                                 .scaleEffect(0.8)
-                                .foregroundColor(ColorPalette.terracotta)
+                                .foregroundColor(SemanticColors.accent)
                         } else {
                             Text(String(localized: "common.save"))
-                                .foregroundColor(ColorPalette.terracotta)
+                                .foregroundColor(SemanticColors.accent)
                         }
                     }
                     .disabled(isUpdatingDate)
@@ -490,11 +494,11 @@ struct SituationDetailView: View {
             HStack(spacing: 8) {
                 Image(systemName: "lightbulb.fill")
                     .font(.system(size: 18, weight: .medium))
-                    .foregroundColor(ColorPalette.terracotta)
+                    .foregroundColor(SemanticColors.accent)
                 
                 Text(String(localized: "guidance.overallRecommendation.title"))
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(ColorPalette.white.opacity(0.9))
+                    .foregroundColor(SemanticColors.primaryText)
                 
                 Spacer()
             }
@@ -502,7 +506,7 @@ struct SituationDetailView: View {
             // Recommendation content
             Text(recommendation)
                 .font(.system(size: 16))
-                .foregroundColor(ColorPalette.white.opacity(0.8))
+                .foregroundColor(SemanticColors.secondaryText)
                 .lineSpacing(4)
                 .fixedSize(horizontal: false, vertical: true)
                 .multilineTextAlignment(.leading)
@@ -510,10 +514,10 @@ struct SituationDetailView: View {
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(ColorPalette.terracotta.opacity(0.15))
+                .fill(SemanticColors.accent.opacity(0.15))
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
-                        .stroke(ColorPalette.terracotta.opacity(0.3), lineWidth: 1)
+                        .stroke(SemanticColors.accent.opacity(0.3), lineWidth: 1)
                 )
         )
     }

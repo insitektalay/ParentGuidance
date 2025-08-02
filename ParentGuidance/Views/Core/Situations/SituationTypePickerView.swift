@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct SituationTypePickerView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @State private var selectedType: SituationType?
     let onTypeSelected: (SituationType) -> Void
     
@@ -16,7 +17,7 @@ struct SituationTypePickerView: View {
             // Header
             Text(LocalizedStringKey("situation.picker.title"))
                 .font(.system(size: 28, weight: .bold))
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 20)
                 .padding(.top, 20)
@@ -43,6 +44,6 @@ struct SituationTypePickerView: View {
                 .padding(.bottom, 120) // Extra space for tab bar and safe area
             }
         }
-        .background(ColorPalette.navy)
+        .background(SemanticColors.primaryBackground)
     }
 }

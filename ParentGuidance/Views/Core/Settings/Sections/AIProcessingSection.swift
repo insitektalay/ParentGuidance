@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct AIProcessingSection: View {
+    @Environment(\.colorScheme) private var colorScheme
     @ObservedObject var viewState: SettingsViewState
     
     var body: some View {
@@ -15,13 +16,13 @@ struct AIProcessingSection: View {
             // Section title
             Text(String(localized: "settings.aiprocessing.title"))
                 .font(.system(size: 20, weight: .semibold))
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
                 .padding(.horizontal, 16)
             
             // Section description
             Text(String(localized: "settings.aiprocessing.description"))
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
                 .padding(.horizontal, 16)
                 .padding(.bottom, 8)
             
@@ -39,7 +40,7 @@ struct AIProcessingSection: View {
                 )
                 
                 Divider()
-                    .background(ColorPalette.white.opacity(0.1))
+                    .background(SemanticColors.tertiaryText)
                     .padding(.horizontal, 16)
                 
                 // Context Extraction toggle
@@ -55,7 +56,7 @@ struct AIProcessingSection: View {
                 )
                 
                 Divider()
-                    .background(ColorPalette.white.opacity(0.1))
+                    .background(SemanticColors.tertiaryText)
                     .padding(.horizontal, 16)
                 
                 // Regulation Insights toggle
@@ -71,7 +72,7 @@ struct AIProcessingSection: View {
                 )
                 
                 Divider()
-                    .background(ColorPalette.white.opacity(0.1))
+                    .background(SemanticColors.tertiaryText)
                     .padding(.horizontal, 16)
                 
                 // Coping Strategies toggle
@@ -86,8 +87,11 @@ struct AIProcessingSection: View {
                     }
                 )
             }
-            .background(ColorPalette.white.opacity(0.05))
+            .background(SemanticColors.cardBackground)
             .clipShape(RoundedRectangle(cornerRadius: 12))
+            .if(colorScheme == .light) { view in
+                view.cardShadow()
+            }
             .padding(.horizontal, 16)
         }
     }
@@ -106,11 +110,11 @@ struct AIProcessingSection: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
                         .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                     
                     Text(description)
                         .font(.system(size: 13))
-                        .foregroundColor(ColorPalette.white.opacity(0.8))
+                        .foregroundColor(SemanticColors.secondaryText)
                 }
                 
                 Spacer()
@@ -120,18 +124,18 @@ struct AIProcessingSection: View {
                     set: { _ in onToggle() }
                 ))
                 .labelsHidden()
-                .tint(ColorPalette.brightBlue)
+                .tint(SemanticColors.accentBlue)
             }
             
             if !isEnabled {
                 HStack(alignment: .top, spacing: 8) {
                     Image(systemName: "info.circle.fill")
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.terracotta)
+                        .foregroundColor(SemanticColors.accent)
                     
                     Text(implications)
                         .font(.system(size: 12))
-                        .foregroundColor(ColorPalette.terracotta.opacity(0.9))
+                        .foregroundColor(SemanticColors.accent.opacity(0.9))
                         .lineLimit(nil)
                         .multilineTextAlignment(.leading)
                 }

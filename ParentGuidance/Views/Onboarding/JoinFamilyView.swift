@@ -18,6 +18,7 @@ struct JoinFamilyView: View {
     @State private var isValidating: Bool = false
     
     @FocusState private var isCodeFieldFocused: Bool
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         VStack(spacing: 0) {
@@ -26,12 +27,12 @@ struct JoinFamilyView: View {
                 Text(String(localized: "onboarding.joinFamily.title"))
                     .font(.largeTitle)
                     .fontWeight(.bold)
-                    .foregroundColor(ColorPalette.navy)
+                    .foregroundColor(SemanticColors.primaryText)
                     .multilineTextAlignment(.center)
                 
                 Text(String(localized: "onboarding.joinFamily.subtitle"))
                     .font(.body)
-                    .foregroundColor(ColorPalette.navy)
+                    .foregroundColor(SemanticColors.primaryText)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)
             }
@@ -47,7 +48,7 @@ struct JoinFamilyView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text(String(localized: "onboarding.joinFamily.codeLabel"))
                             .font(.headline)
-                            .foregroundColor(ColorPalette.navy)
+                            .foregroundColor(SemanticColors.primaryText)
                         
                         TextField(String(localized: "onboarding.joinFamily.codePlaceholder"), text: $invitationCode)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -91,7 +92,7 @@ struct JoinFamilyView: View {
                     // Helper Text
                     Text(String(localized: "onboarding.joinFamily.codeHelper"))
                         .font(.caption)
-                        .foregroundColor(ColorPalette.navy)
+                        .foregroundColor(SemanticColors.primaryText)
                         .multilineTextAlignment(.center)
                 }
                 
@@ -103,7 +104,7 @@ struct JoinFamilyView: View {
                                 .scaleEffect(0.8)
                             Text(String(localized: "onboarding.joinFamily.validating"))
                                 .font(.body)
-                                .foregroundColor(ColorPalette.navy)
+                                .foregroundColor(SemanticColors.primaryText)
                         }
                         .padding()
                     } else if let error = errorMessage {
@@ -131,10 +132,10 @@ struct JoinFamilyView: View {
                             VStack(spacing: 8) {
                                 Text(String(localized: "onboarding.joinFamily.invitedBy"))
                                     .font(.caption)
-                                    .foregroundColor(ColorPalette.navy)
+                                    .foregroundColor(SemanticColors.primaryText)
                                 Text(info.inviterName)
                                     .font(.headline)
-                                    .foregroundColor(ColorPalette.navy)
+                                    .foregroundColor(SemanticColors.primaryText)
                             }
                         }
                         .padding()
@@ -167,10 +168,11 @@ struct JoinFamilyView: View {
                     .frame(height: 50)
                     .background(
                         invitationInfo != nil && !isLoading ?
-                        ColorPalette.terracotta :
-                        ColorPalette.terracotta.opacity(0.5)
+                        SemanticColors.accent :
+                        SemanticColors.accent.opacity(0.5)
                     )
                     .cornerRadius(12)
+                    .if(colorScheme == .light) { view in view.cardShadow() }
                 }
                 .disabled(invitationInfo == nil || isLoading)
             }
@@ -187,7 +189,7 @@ struct JoinFamilyView: View {
                         Text(String(localized: "onboarding.button.back"))
                             .font(.system(size: 17, weight: .medium))
                     }
-                    .foregroundColor(ColorPalette.navy)
+                    .foregroundColor(SemanticColors.primaryText)
                 }
                 
                 Spacer()
@@ -195,7 +197,7 @@ struct JoinFamilyView: View {
             .padding(.horizontal, 24)
             .padding(.bottom, 40)
         }
-        .background(ColorPalette.cream)
+        .background(SemanticColors.cardBackground)
         .ignoresSafeArea()
         .onAppear {
             isCodeFieldFocused = true

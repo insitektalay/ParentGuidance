@@ -23,11 +23,11 @@ struct LanguageSelectionView: View {
                         Text(String(localized: "settings.language.title"))
                             .font(.title2)
                             .fontWeight(.bold)
-                            .foregroundColor(ColorPalette.white)
+                            .foregroundColor(SemanticColors.primaryText)
                         
                         Text(String(localized: "settings.language.description"))
                             .font(.body)
-                            .foregroundColor(ColorPalette.white.opacity(0.8))
+                            .foregroundColor(SemanticColors.secondaryText)
                     }
                     .padding(.horizontal, 24)
                     .padding(.top, 16)
@@ -51,15 +51,15 @@ struct LanguageSelectionView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text(String(localized: "settings.language.familyNote.title"))
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(ColorPalette.white)
+                            .foregroundColor(SemanticColors.primaryText)
                         
                         Text(String(localized: "settings.language.familyNote.description"))
                             .font(.system(size: 14))
-                            .foregroundColor(ColorPalette.white.opacity(0.8))
+                            .foregroundColor(SemanticColors.secondaryText)
                             .lineSpacing(2)
                     }
                     .padding(16)
-                    .background(ColorPalette.brightBlue.opacity(0.1))
+                    .background(SemanticColors.accentBlue.opacity(0.1))
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .padding(.horizontal, 16)
                     .padding(.top, 24)
@@ -67,14 +67,14 @@ struct LanguageSelectionView: View {
                 .padding(.bottom, 50)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(ColorPalette.navy)
+            .background(SemanticColors.primaryBackground)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(String(localized: "common.cancel")) {
                         dismiss()
                     }
-                    .foregroundColor(ColorPalette.white)
+                    .foregroundColor(SemanticColors.primaryText)
                 }
             }
         }

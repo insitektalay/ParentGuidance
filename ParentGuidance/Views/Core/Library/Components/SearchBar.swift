@@ -13,32 +13,33 @@ struct SearchBar: View {
             // Search icon
             Image(systemName: "magnifyingglass")
                 .font(.system(size: 16))
-                .foregroundColor(ColorPalette.white.opacity(0.5))
+                .foregroundColor(SemanticColors.tertiaryText)
                 .padding(.leading, 16)
             
             // Search text field
             TextField("Search situations...", text: $searchText)
                 .font(.system(size: 16))
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
                 .focused($isSearchFocused)
                 .textFieldStyle(PlainTextFieldStyle())
                 .padding(.vertical, 10)
                 .padding(.trailing, 16)
         }
-        .background(Color(red: 0.21, green: 0.22, blue: 0.33)) // #363853 equivalent
+        .background(SemanticColors.cardBackground)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
                 .stroke(
-                    isSearchFocused ? ColorPalette.terracotta.opacity(0.5) : ColorPalette.white.opacity(0.1),
+                    isSearchFocused ? SemanticColors.accent.opacity(0.5) : SemanticColors.border,
                     lineWidth: 1
                 )
         )
         .clipShape(RoundedRectangle(cornerRadius: 12))
+        .cardShadow()
     }
 }
 
 #Preview {
     SearchBar()
         .padding()
-        .background(ColorPalette.navy)
+        .background(SemanticColors.primaryBackground)
 }

@@ -12,6 +12,8 @@ struct FamilyChoiceView: View {
     let onJoinFamily: () -> Void
     let onBackTapped: () -> Void
     
+    @Environment(\.colorScheme) private var colorScheme
+    
     var body: some View {
         VStack(spacing: 0) {
             // Header
@@ -19,12 +21,12 @@ struct FamilyChoiceView: View {
                 Text(String(localized: "onboarding.familyChoice.title"))
                     .font(.largeTitle)
                     .fontWeight(.bold)
-                    .foregroundColor(ColorPalette.navy)
+                    .foregroundColor(SemanticColors.primaryText)
                     .multilineTextAlignment(.center)
                 
                 Text(String(localized: "onboarding.familyChoice.subtitle"))
                     .font(.body)
-                    .foregroundColor(ColorPalette.navy)
+                    .foregroundColor(SemanticColors.primaryText)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)
             }
@@ -41,7 +43,7 @@ struct FamilyChoiceView: View {
                     title: String(localized: "onboarding.familyChoice.createFamily.title"),
                     description: String(localized: "onboarding.familyChoice.createFamily.description"),
                     buttonText: String(localized: "onboarding.familyChoice.createFamily.button"),
-                    buttonColor: ColorPalette.brightBlue,
+                    buttonColor: SemanticColors.accentBlue,
                     action: onCreateFamily
                 )
                 
@@ -51,7 +53,7 @@ struct FamilyChoiceView: View {
                     title: String(localized: "onboarding.familyChoice.joinFamily.title"),
                     description: String(localized: "onboarding.familyChoice.joinFamily.description"),
                     buttonText: String(localized: "onboarding.familyChoice.joinFamily.button"),
-                    buttonColor: ColorPalette.terracotta,
+                    buttonColor: SemanticColors.accent,
                     action: onJoinFamily
                 )
             }
@@ -68,7 +70,7 @@ struct FamilyChoiceView: View {
                         Text(String(localized: "onboarding.button.back"))
                             .font(.system(size: 17, weight: .medium))
                     }
-                    .foregroundColor(ColorPalette.navy)
+                    .foregroundColor(SemanticColors.primaryText)
                 }
                 
                 Spacer()
@@ -76,7 +78,7 @@ struct FamilyChoiceView: View {
             .padding(.horizontal, 24)
             .padding(.bottom, 40)
         }
-        .background(ColorPalette.cream)
+        .background(SemanticColors.cardBackground)
         .ignoresSafeArea()
     }
 }
@@ -88,6 +90,8 @@ struct FamilyChoiceCard: View {
     let buttonText: String
     let buttonColor: Color
     let action: () -> Void
+    
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         VStack(spacing: 20) {
@@ -101,12 +105,12 @@ struct FamilyChoiceCard: View {
                 Text(title)
                     .font(.title2)
                     .fontWeight(.bold)
-                    .foregroundColor(ColorPalette.navy)
+                    .foregroundColor(SemanticColors.primaryText)
                     .multilineTextAlignment(.center)
                 
                 Text(description)
                     .font(.body)
-                    .foregroundColor(ColorPalette.navy)
+                    .foregroundColor(SemanticColors.primaryText)
                     .multilineTextAlignment(.center)
                     .lineLimit(nil)
             }
@@ -126,6 +130,7 @@ struct FamilyChoiceCard: View {
         .background(Color.white)
         .cornerRadius(16)
         .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
+        .if(colorScheme == .light) { view in view.cardShadow() }
     }
 }
 

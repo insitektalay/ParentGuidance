@@ -40,14 +40,14 @@ struct AddApiKeySheet: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(ColorPalette.navy)
+            .background(SemanticColors.primaryBackground)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") {
                         dismiss()
                     }
-                    .foregroundColor(ColorPalette.white.opacity(0.8))
+                    .foregroundColor(SemanticColors.secondaryText)
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -56,7 +56,7 @@ struct AddApiKeySheet: View {
                             await saveApiKey()
                         }
                     }
-                    .foregroundColor(canSave ? provider.brandColor : ColorPalette.white.opacity(0.5))
+                    .foregroundColor(canSave ? provider.brandColor : SemanticColors.tertiaryText)
                     .disabled(!canSave || isSaving)
                 }
             }
@@ -86,11 +86,11 @@ struct AddApiKeySheet: View {
                     Text("Add \(provider.displayName) API Key")
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                     
                     Text(provider.description)
                         .font(.body)
-                        .foregroundColor(ColorPalette.white.opacity(0.8))
+                        .foregroundColor(SemanticColors.secondaryText)
                 }
                 
                 Spacer()
@@ -105,7 +105,7 @@ struct AddApiKeySheet: View {
             HStack {
                 Text("Instructions")
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(ColorPalette.white)
+                    .foregroundColor(SemanticColors.primaryText)
                 
                 Spacer()
             }
@@ -117,7 +117,7 @@ struct AddApiKeySheet: View {
             }
         }
         .padding(16)
-        .background(ColorPalette.white.opacity(0.05))
+        .background(SemanticColors.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .padding(.horizontal, 24)
     }
@@ -126,11 +126,11 @@ struct AddApiKeySheet: View {
         HStack(alignment: .top, spacing: 8) {
             Text("1.")
                 .font(.system(size: 14, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
             
             Text("Visit \(provider.displayName)'s API key page")
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
             
             Spacer()
             
@@ -152,11 +152,11 @@ struct AddApiKeySheet: View {
         HStack(alignment: .top, spacing: 8) {
             Text("2.")
                 .font(.system(size: 14, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
             
             Text("Create a new API key")
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
         }
     }
     
@@ -164,11 +164,11 @@ struct AddApiKeySheet: View {
         HStack(alignment: .top, spacing: 8) {
             Text("3.")
                 .font(.system(size: 14, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
             
             Text("Copy and paste it below")
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
         }
     }
     
@@ -180,7 +180,7 @@ struct AddApiKeySheet: View {
             makeActiveToggleView
         }
         .padding(16)
-        .background(ColorPalette.white.opacity(0.05))
+        .background(SemanticColors.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .padding(.horizontal, 24)
     }
@@ -190,7 +190,7 @@ struct AddApiKeySheet: View {
             HStack {
                 Text("\(provider.displayName) API Key")
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(ColorPalette.white)
+                    .foregroundColor(SemanticColors.primaryText)
                 
                 Spacer()
                 
@@ -203,20 +203,20 @@ struct AddApiKeySheet: View {
             
             Text(provider.apiKeyFormatDescription)
                 .font(.system(size: 12))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
             
             SecureField("Paste your API key here", text: $apiKey)
                 .font(.system(size: 14, design: .monospaced))
-                .foregroundColor(ColorPalette.navy)
+                .foregroundColor(SemanticColors.primaryBackground)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
-                .background(ColorPalette.white)
+                .background(SemanticColors.primaryText)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(
                             isValidFormatting ? .green : 
-                            apiKey.isEmpty ? ColorPalette.terracotta.opacity(0.3) : 
+                            apiKey.isEmpty ? SemanticColors.accent.opacity(0.3) : 
                             .red,
                             lineWidth: 1
                         )
@@ -224,7 +224,7 @@ struct AddApiKeySheet: View {
             
             Text("Example: \(provider.exampleMaskedKey)")
                 .font(.system(size: 11, design: .monospaced))
-                .foregroundColor(ColorPalette.white.opacity(0.5))
+                .foregroundColor(SemanticColors.tertiaryText)
         }
     }
     
@@ -270,10 +270,10 @@ struct AddApiKeySheet: View {
                 }
             }
             .font(.system(size: 14, weight: .medium))
-            .foregroundColor(ColorPalette.white)
+            .foregroundColor(SemanticColors.primaryText)
             .padding(.horizontal, 16)
             .padding(.vertical, 8)
-            .background(isValidFormatting && !isValidating ? ColorPalette.brightBlue : ColorPalette.white.opacity(0.3))
+            .background(isValidFormatting && !isValidating ? SemanticColors.accentBlue : SemanticColors.tertiaryText.opacity(0.5))
             .clipShape(RoundedRectangle(cornerRadius: 8))
             .disabled(!isValidFormatting || isValidating)
             
@@ -288,11 +288,11 @@ struct AddApiKeySheet: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Set as active provider")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                     
                     Text("This will replace your current active provider")
                         .font(.system(size: 12))
-                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                        .foregroundColor(SemanticColors.secondaryText)
                 }
                 
                 Spacer()

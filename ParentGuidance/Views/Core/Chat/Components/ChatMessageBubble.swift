@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ChatMessageBubble: View {
+    @Environment(\.colorScheme) private var colorScheme
     let message: ChatMessage
     let isStreaming: Bool
     
@@ -37,10 +38,10 @@ struct ChatMessageBubble: View {
             
             Text(message.text)
                 .font(.system(size: 16))
-                .foregroundColor(.white)
+                .foregroundColor(SemanticColors.primaryText)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 10)
-                .background(ColorPalette.terracotta)
+                .background(SemanticColors.accent)
                 .cornerRadius(18)
                 .frame(maxWidth: UIScreen.main.bounds.width * 0.75, alignment: .trailing)
         }
@@ -54,7 +55,7 @@ struct ChatMessageBubble: View {
             HStack {
                 Text(message.text)
                     .font(.system(size: 16))
-                    .foregroundColor(ColorPalette.white.opacity(0.9))
+                    .foregroundColor(SemanticColors.primaryText)
                     .lineSpacing(4)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
@@ -66,7 +67,7 @@ struct ChatMessageBubble: View {
                 HStack(spacing: 4) {
                     ForEach(0..<3) { index in
                         Circle()
-                            .fill(ColorPalette.terracotta.opacity(0.6))
+                            .fill(SemanticColors.accent.opacity(0.6))
                             .frame(width: 6, height: 6)
                             .scaleEffect(isStreaming ? 1.0 : 0.6)
                             .animation(

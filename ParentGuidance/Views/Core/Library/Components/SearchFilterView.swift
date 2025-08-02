@@ -40,6 +40,6 @@ struct SearchFilterView_Previews: PreviewProvider {
         
         SearchFilterView(controller: mockController)
             .padding()
-            .background(ColorPalette.navy)
+            .background(SemanticColors.primaryBackground)
     }
 }

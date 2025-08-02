@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct HelpSupportSection: View {
+    @Environment(\.colorScheme) private var colorScheme
     @ObservedObject var viewState: SettingsViewState
     
     let openSupportEmail: () -> Void
@@ -19,7 +20,7 @@ struct HelpSupportSection: View {
         VStack(alignment: .leading, spacing: 12) {
             Text(String(localized: "settings.helpSupport.title"))
                 .font(.system(size: 20, weight: .semibold))
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
                 .padding(.horizontal, 16)
             
             VStack(alignment: .leading, spacing: 16) {
@@ -27,27 +28,27 @@ struct HelpSupportSection: View {
                     viewState.showingDocumentation = true
                 }
                 .font(.system(size: 16, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
                 Button(String(localized: "settings.helpSupport.contactSupport")) {
                     openSupportEmail()
                 }
                 .font(.system(size: 16, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
                 VStack(spacing: 8) {
                     HStack {
                         Text(String(localized: "settings.helpSupport.appVersion"))
                             .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(ColorPalette.white.opacity(0.9))
+                            .foregroundColor(SemanticColors.primaryText)
                         
                         Spacer()
                         
                         Text(getAppVersion())
                             .font(.system(size: 14))
-                            .foregroundColor(ColorPalette.white.opacity(0.7))
+                            .foregroundColor(SemanticColors.secondaryText)
                     }
                     .onTapGesture {
                         viewState.showDebugInfo.toggle()
@@ -56,13 +57,13 @@ struct HelpSupportSection: View {
                     HStack {
                         Text(String(localized: "settings.helpSupport.build"))
                             .font(.system(size: 14))
-                            .foregroundColor(ColorPalette.white.opacity(0.7))
+                            .foregroundColor(SemanticColors.secondaryText)
                         
                         Spacer()
                         
                         Text(getBuildNumber())
                             .font(.system(size: 12))
-                            .foregroundColor(ColorPalette.white.opacity(0.6))
+                            .foregroundColor(SemanticColors.tertiaryText)
                     }
                     
                     if viewState.showDebugInfo {
@@ -72,8 +73,9 @@ struct HelpSupportSection: View {
                 }
             }
             .padding(16)
-            .background(ColorPalette.white.opacity(0.05))
+            .background(SemanticColors.cardBackground)
             .clipShape(RoundedRectangle(cornerRadius: 12))
+            .shadow(color: colorScheme == .light ? Color.black.opacity(0.1) : Color.clear, radius: 2, x: 0, y: 1)
             .padding(.horizontal, 16)
         }
     }

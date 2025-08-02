@@ -9,6 +9,7 @@ import SwiftUI
 
 struct TranslationStrategySelectionView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
     
     let currentStrategy: TranslationGenerationStrategy
     let familyUsageMetrics: TranslationQueueManager.FamilyUsageMetrics?
@@ -41,11 +42,11 @@ struct TranslationStrategySelectionView: View {
                     VStack(alignment: .leading, spacing: 16) {
                         Text(String(localized: "settings.familyLanguage.strategy.selection.title"))
                             .font(.system(size: 18, weight: .semibold))
-                            .foregroundColor(ColorPalette.white)
+                            .foregroundColor(SemanticColors.primaryText)
                         
                         Text(String(localized: "settings.familyLanguage.strategy.selection.description"))
                             .font(.system(size: 14))
-                            .foregroundColor(ColorPalette.white.opacity(0.8))
+                            .foregroundColor(SemanticColors.secondaryText)
                         
                         VStack(spacing: 12) {
                             ForEach(TranslationGenerationStrategy.allCases, id: \.self) { strategy in
@@ -68,7 +69,7 @@ struct TranslationStrategySelectionView: View {
                 .padding(.bottom, 50)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(ColorPalette.navy)
+            .background(SemanticColors.primaryBackground)
             .navigationTitle(String(localized: "settings.familyLanguage.strategy.title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -76,7 +77,7 @@ struct TranslationStrategySelectionView: View {
                     Button(String(localized: "common.cancel")) {
                         dismiss()
                     }
-                    .foregroundColor(ColorPalette.white)
+                    .foregroundColor(SemanticColors.primaryText)
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -87,7 +88,7 @@ struct TranslationStrategySelectionView: View {
                             dismiss()
                         }
                     }
-                    .foregroundColor(selectedStrategy != currentStrategy ? ColorPalette.brightBlue : ColorPalette.white.opacity(0.5))
+                    .foregroundColor(selectedStrategy != currentStrategy ? SemanticColors.accentBlue : SemanticColors.tertiaryText)
                     .disabled(selectedStrategy == currentStrategy)
                 }
             }
@@ -110,11 +111,11 @@ struct TranslationStrategySelectionView: View {
             HStack {
                 Image(systemName: "chart.line.uptrend.xyaxis")
                     .font(.system(size: 18))
-                    .foregroundColor(ColorPalette.brightBlue)
+                    .foregroundColor(SemanticColors.accentBlue)
                 
                 Text(String(localized: "settings.familyLanguage.strategy.currentUsage.title"))
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(ColorPalette.white)
+                    .foregroundColor(SemanticColors.primaryText)
                 
                 Spacer()
             }
@@ -123,25 +124,25 @@ struct TranslationStrategySelectionView: View {
                 HStack {
                     Text(String(localized: "settings.familyLanguage.strategy.currentUsage.familyType"))
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.white.opacity(0.8))
+                        .foregroundColor(SemanticColors.secondaryText)
                     
                     Spacer()
                     
                     Text(metrics.isHighUsageFamily ? String(localized: "family.usage.high") : String(localized: "family.usage.low"))
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(metrics.isHighUsageFamily ? .green : ColorPalette.white.opacity(0.8))
+                        .foregroundColor(metrics.isHighUsageFamily ? .green : SemanticColors.secondaryText)
                 }
                 
                 HStack {
                     Text(String(localized: "settings.familyLanguage.strategy.currentUsage.avgAccess"))
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.white.opacity(0.8))
+                        .foregroundColor(SemanticColors.secondaryText)
                     
                     Spacer()
                     
                     Text(String(format: "%.1f per item", metrics.averageAccessesPerContent))
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                 }
                 
                 if metrics.isDualLanguageActive {
@@ -152,7 +153,7 @@ struct TranslationStrategySelectionView: View {
                         
                         Text(String(localized: "settings.familyLanguage.strategy.currentUsage.dualLanguageActive"))
                             .font(.system(size: 14))
-                            .foregroundColor(ColorPalette.white.opacity(0.8))
+                            .foregroundColor(SemanticColors.secondaryText)
                         
                         Spacer()
                     }
@@ -160,8 +161,9 @@ struct TranslationStrategySelectionView: View {
             }
         }
         .padding(16)
-        .background(Color(red: 0.21, green: 0.22, blue: 0.33))
+        .background(SemanticColors.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 10))
+        .shadow(color: colorScheme == .light ? Color.black.opacity(0.1) : Color.clear, radius: 2, x: 0, y: 1)
     }
     
     private var costImplicationsCard: some View {
@@ -169,11 +171,11 @@ struct TranslationStrategySelectionView: View {
             HStack {
                 Image(systemName: "dollarsign.circle")
                     .font(.system(size: 18))
-                    .foregroundColor(ColorPalette.terracotta)
+                    .foregroundColor(SemanticColors.accent)
                 
                 Text(String(localized: "settings.familyLanguage.strategy.costImplications.title"))
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(ColorPalette.white)
+                    .foregroundColor(SemanticColors.primaryText)
                 
                 Spacer()
             }
@@ -190,7 +192,7 @@ struct TranslationStrategySelectionView: View {
                     strategy: .hybrid,
                     cost: "Balanced",
                     benefit: "Smart optimization",
-                    color: ColorPalette.brightBlue
+                    color: SemanticColors.accentBlue
                 )
                 
                 costImplicationRow(
@@ -202,15 +204,16 @@ struct TranslationStrategySelectionView: View {
             }
         }
         .padding(16)
-        .background(Color(red: 0.21, green: 0.22, blue: 0.33))
+        .background(SemanticColors.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 10))
+        .shadow(color: colorScheme == .light ? Color.black.opacity(0.1) : Color.clear, radius: 2, x: 0, y: 1)
     }
     
     private func costImplicationRow(strategy: TranslationGenerationStrategy, cost: String, benefit: String, color: Color) -> some View {
         HStack {
             Text(strategy.description.components(separatedBy: " (").first ?? strategy.description)
                 .font(.system(size: 14, weight: .medium))
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
             
             Spacer()
             
@@ -221,7 +224,7 @@ struct TranslationStrategySelectionView: View {
                 
                 Text(benefit)
                     .font(.system(size: 11))
-                    .foregroundColor(ColorPalette.white.opacity(0.7))
+                    .foregroundColor(SemanticColors.secondaryText)
             }
         }
     }
@@ -240,6 +243,7 @@ struct TranslationStrategySelectionView: View {
 }
 
 struct StrategyOptionCard: View {
+    @Environment(\.colorScheme) private var colorScheme
     let strategy: TranslationGenerationStrategy
     let isSelected: Bool
     let isRecommended: Bool
@@ -253,22 +257,22 @@ struct StrategyOptionCard: View {
                         HStack(spacing: 8) {
                             Text(strategy.description.components(separatedBy: " (").first ?? strategy.description)
                                 .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(ColorPalette.white)
+                                .foregroundColor(SemanticColors.primaryText)
                             
                             if isRecommended {
                                 Text(String(localized: "settings.familyLanguage.strategy.recommended"))
                                     .font(.system(size: 11, weight: .semibold))
-                                    .foregroundColor(ColorPalette.white)
+                                    .foregroundColor(SemanticColors.primaryText)
                                     .padding(.horizontal, 6)
                                     .padding(.vertical, 2)
-                                    .background(ColorPalette.brightBlue)
+                                    .background(SemanticColors.accentBlue)
                                     .cornerRadius(4)
                             }
                         }
                         
                         Text(getStrategyDetail(strategy))
                             .font(.system(size: 14))
-                            .foregroundColor(ColorPalette.white.opacity(0.8))
+                            .foregroundColor(SemanticColors.secondaryText)
                             .multilineTextAlignment(.leading)
                     }
                     
@@ -276,25 +280,26 @@ struct StrategyOptionCard: View {
                     
                     Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                         .font(.system(size: 20))
-                        .foregroundColor(isSelected ? ColorPalette.brightBlue : ColorPalette.white.opacity(0.4))
+                        .foregroundColor(isSelected ? SemanticColors.accentBlue : SemanticColors.tertiaryText)
                         .animation(.easeInOut(duration: 0.2), value: isSelected)
                 }
             }
             .padding(16)
             .background(
-                Color(red: 0.21, green: 0.22, blue: 0.33)
+                SemanticColors.cardBackground
                     .opacity(isSelected ? 1.0 : 0.6)
             )
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(
-                        isSelected ? ColorPalette.brightBlue.opacity(0.4) : 
-                        isRecommended ? ColorPalette.brightBlue.opacity(0.2) :
-                        ColorPalette.white.opacity(0.1),
+                        isSelected ? SemanticColors.accentBlue.opacity(0.4) : 
+                        isRecommended ? SemanticColors.accentBlue.opacity(0.2) :
+                        SemanticColors.border,
                         lineWidth: isSelected ? 2 : 1
                     )
             )
+            .shadow(color: colorScheme == .light ? Color.black.opacity(0.1) : Color.clear, radius: 2, x: 0, y: 1)
         }
     }
     

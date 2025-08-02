@@ -37,12 +37,12 @@ struct ConfirmationDialog: View {
                 Text(title)
                     .font(.headline)
                     .fontWeight(.semibold)
-                    .foregroundColor(ColorPalette.navy)
+                    .foregroundColor(SemanticColors.primaryText)
                     .multilineTextAlignment(.center)
                 
                 Text(message)
                     .font(.subheadline)
-                    .foregroundColor(ColorPalette.navy.opacity(0.8))
+                    .foregroundColor(SemanticColors.primaryText.opacity(0.8))
                     .multilineTextAlignment(.center)
             }
             
@@ -63,13 +63,13 @@ struct ConfirmationDialog: View {
                 Button(action: onCancel) {
                     Text(cancelButtonTitle)
                         .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(ColorPalette.navy)
+                        .foregroundColor(SemanticColors.primaryText)
                         .frame(maxWidth: .infinity, minHeight: 44)
-                        .background(ColorPalette.cream)
+                        .background(SemanticColors.cardBackground)
                         .cornerRadius(8)
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
-                                .stroke(ColorPalette.navy.opacity(0.2), lineWidth: 1)
+                                .stroke(SemanticColors.primaryText.opacity(0.2), lineWidth: 1)
                         )
                 }
                 .accessibilityLabel(cancelButtonTitle)
@@ -77,16 +77,16 @@ struct ConfirmationDialog: View {
             }
         }
         .padding(24)
-        .background(ColorPalette.cream)
+        .background(SemanticColors.cardBackground)
         .cornerRadius(16)
-        .shadow(color: ColorPalette.navy.opacity(0.1), radius: 10, x: 0, y: 4)
+        .shadow(color: SemanticColors.primaryText.opacity(0.1), radius: 10, x: 0, y: 4)
         .padding(.horizontal, 40)
     }
 }
 
 #Preview {
     ZStack {
-        ColorPalette.navy.ignoresSafeArea()
+        SemanticColors.primaryText.ignoresSafeArea()
         
         ConfirmationDialog(
             title: "Delete Situation",

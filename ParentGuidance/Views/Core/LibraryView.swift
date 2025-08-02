@@ -11,6 +11,7 @@ struct LibraryView: View {
     @StateObject private var controller = LibraryViewController()
     @ObservedObject private var selectionManager: LibrarySelectionManager
     @EnvironmentObject var appCoordinator: AppCoordinator
+    @Environment(\.colorScheme) private var colorScheme
     @State private var showingContextualKnowledgeBase = false
     @State private var showingRegulationInsights = false
     @State private var showingSearchSituations = false
@@ -110,7 +111,7 @@ struct LibraryView: View {
             .padding(.bottom, 100) // Space for tab bar
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(ColorPalette.navy)
+        .background(SemanticColors.primaryBackground)
         .refreshable {
             controller.refreshSituations()
         }
@@ -179,7 +180,7 @@ struct LibraryView: View {
         HStack(spacing: 12) {
             Text(selectionManager.selectionCountText)
                 .font(.system(size: 14, weight: .medium))
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
             
             Spacer()
             
@@ -187,23 +188,23 @@ struct LibraryView: View {
                 selectionManager.exitSelectionMode()
             }
             .font(.system(size: 14, weight: .medium))
-            .foregroundColor(ColorPalette.white.opacity(0.8))
+            .foregroundColor(SemanticColors.secondaryText)
             
             Button(String(localized: "library.selection.generateFramework")) {
                 print("Generate Framework tapped - placeholder for Step 5")
                 selectionManager.handleGenerateFrameworkTap()
             }
             .font(.system(size: 14, weight: .medium))
-            .foregroundColor(ColorPalette.terracotta)
+            .foregroundColor(SemanticColors.accent)
             .disabled(!selectionManager.canGenerateFramework)
             .opacity(selectionManager.canGenerateFramework ? 1.0 : 0.5)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
-        .background(ColorPalette.navy.opacity(0.3))
+        .background(SemanticColors.secondaryBackground)
         .overlay(
             Rectangle()
-                .fill(ColorPalette.white.opacity(0.1))
+                .fill(SemanticColors.separator)
                 .frame(height: 1),
             alignment: .bottom
         )

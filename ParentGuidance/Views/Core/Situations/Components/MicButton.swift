@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct MicButton: View {
+    @Environment(\.colorScheme) private var colorScheme
     let isRecording: Bool
     let isTranscribing: Bool
     let action: () -> Void
@@ -43,19 +44,19 @@ struct MicButton: View {
     
     private var buttonBackgroundColor: Color {
         if isTranscribing {
-            return ColorPalette.white
+            return SemanticColors.cardBackground
         } else if isRecording {
             return Color.red
         } else {
-            return ColorPalette.terracotta
+            return SemanticColors.accent
         }
     }
     
     private var iconColor: Color {
         if isTranscribing {
-            return ColorPalette.terracotta
+            return SemanticColors.accent
         } else {
-            return ColorPalette.white
+            return SemanticColors.primaryText
         }
     }
     

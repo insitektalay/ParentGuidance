@@ -89,14 +89,14 @@ struct SearchSituationsView: View {
                     }) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 18, weight: .medium))
-                            .foregroundColor(ColorPalette.white.opacity(0.9))
+                            .foregroundColor(SemanticColors.primaryText)
                     }
                     
                     Spacer()
                     
                     Text(isSelectionMode ? String(localized: "library.search.selectTitle") : String(localized: "library.search.title"))
                         .font(.system(size: 24, weight: .semibold))
-                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                        .foregroundColor(SemanticColors.primaryText)
                     
                     Spacer()
                 }
@@ -107,7 +107,7 @@ struct SearchSituationsView: View {
                 // Search Header with Filters
                 searchHeaderSection
             }
-            .background(ColorPalette.navy)
+            .background(SemanticColors.primaryBackground)
             
             // Scrollable Content
             ScrollView {
@@ -124,7 +124,7 @@ struct SearchSituationsView: View {
                 .padding(.bottom, 100) // Space for tab bar
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(ColorPalette.navy)
+            .background(SemanticColors.primaryBackground)
             .refreshable {
                 controller.refreshSituations()
             }
@@ -133,7 +133,7 @@ struct SearchSituationsView: View {
             .overlay(frameworkGenerationOverlay)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(ColorPalette.navy)
+        .background(SemanticColors.primaryBackground)
         .navigationBarHidden(true)
         .alert("Delete Failed", isPresented: $controller.showingDeleteError) {
             Button("OK") {
@@ -161,12 +161,12 @@ struct SearchSituationsView: View {
                 }) {
                     Image(systemName: controller.isShowingSortDropdown ? "chevron.up" : "chevron.down")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(ColorPalette.white.opacity(0.8))
+                        .foregroundColor(SemanticColors.secondaryText)
                         .padding(8)
                         .background(Color.clear)
                         .overlay(
                             RoundedRectangle(cornerRadius: 6)
-                                .stroke(ColorPalette.white.opacity(0.2), lineWidth: 1)
+                                .stroke(SemanticColors.border, lineWidth: 1)
                         )
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
@@ -180,7 +180,7 @@ struct SearchSituationsView: View {
         HStack(spacing: 12) {
             Text(selectionManager.selectionCountText)
                 .font(.system(size: 14, weight: .medium))
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
             
             Spacer()
             
@@ -189,7 +189,7 @@ struct SearchSituationsView: View {
                 dismiss()
             }
             .font(.system(size: 14, weight: .medium))
-            .foregroundColor(ColorPalette.white.opacity(0.8))
+            .foregroundColor(SemanticColors.secondaryText)
             
             Button(String(localized: "library.selection.generateFramework")) {
                 print("Generate Framework tapped - starting generation")
@@ -197,16 +197,16 @@ struct SearchSituationsView: View {
                 selectionManager.handleGenerateFrameworkTap()
             }
             .font(.system(size: 14, weight: .medium))
-            .foregroundColor(ColorPalette.terracotta)
+            .foregroundColor(SemanticColors.accent)
             .disabled(!selectionManager.canGenerateFramework)
             .opacity(selectionManager.canGenerateFramework ? 1.0 : 0.5)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
-        .background(ColorPalette.navy.opacity(0.3))
+        .background(SemanticColors.tertiaryBackground)
         .overlay(
             Rectangle()
-                .fill(ColorPalette.white.opacity(0.1))
+                .fill(SemanticColors.border)
                 .frame(height: 1),
             alignment: .bottom
         )
@@ -234,11 +234,11 @@ struct SearchSituationsView: View {
         VStack(spacing: 16) {
             ProgressView()
                 .scaleEffect(1.5)
-                .foregroundColor(ColorPalette.white.opacity(0.8))
+                .foregroundColor(SemanticColors.secondaryText)
             
             Text(String(localized: "library.search.loading"))
                 .font(.system(size: 16))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
         }
         .padding(40)
         .frame(maxWidth: .infinity)
@@ -248,17 +248,17 @@ struct SearchSituationsView: View {
         VStack(spacing: 16) {
             Text(String(localized: "library.search.error.title"))
                 .font(.system(size: 18, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
             
             Text(controller.errorMessage)
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
                 .multilineTextAlignment(.center)
             
             Button(String(localized: "common.tryAgain")) {
                 controller.retry()
             }
-            .foregroundColor(ColorPalette.terracotta)
+            .foregroundColor(SemanticColors.accent)
             .font(.system(size: 16, weight: .medium))
         }
         .padding(40)
@@ -269,11 +269,11 @@ struct SearchSituationsView: View {
         VStack(spacing: 16) {
             Text(String(localized: "library.search.empty.title"))
                 .font(.system(size: 18, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
             
             Text(String(localized: "library.search.empty.subtitle"))
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
                 .multilineTextAlignment(.center)
         }
         .padding(40)
@@ -295,7 +295,7 @@ struct SearchSituationsView: View {
             VStack(alignment: .leading, spacing: 12) {
                 Text(group.title)
                     .font(.system(size: 18, weight: .medium))
-                    .foregroundColor(ColorPalette.white.opacity(0.9))
+                    .foregroundColor(SemanticColors.primaryText)
                     .padding(.horizontal, 16)
                 
                 VStack(spacing: 12) {
@@ -324,18 +324,18 @@ struct SearchSituationsView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text(String(localized: "library.search.results \(controller.filteredSituations.count)"))
                 .font(.system(size: 18, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
                 .padding(.horizontal, 16)
             
             if controller.filteredSituations.isEmpty {
                 VStack(spacing: 16) {
                     Text(String(localized: "library.search.noResults.title"))
                         .font(.system(size: 16))
-                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                        .foregroundColor(SemanticColors.secondaryText)
                     
                     Text(String(localized: "library.search.noResults.subtitle"))
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.white.opacity(0.5))
+                        .foregroundColor(SemanticColors.tertiaryText)
                 }
                 .padding(40)
                 .frame(maxWidth: .infinity)
@@ -375,26 +375,26 @@ struct SearchSituationsView: View {
                                 HStack(spacing: 12) {
                                     Image(systemName: option.sfSymbol)
                                         .font(.system(size: 14, weight: .medium))
-                                        .foregroundColor(ColorPalette.white)
+                                        .foregroundColor(SemanticColors.primaryText)
                                         .frame(width: 16)
                                     
                                     Text(option.displayName)
                                         .font(.system(size: 14, weight: .medium))
-                                        .foregroundColor(ColorPalette.white)
+                                        .foregroundColor(SemanticColors.primaryText)
                                     
                                     Spacer()
                                     
                                     if controller.selectedSort == option {
                                         Image(systemName: "checkmark")
                                             .font(.system(size: 12, weight: .bold))
-                                            .foregroundColor(ColorPalette.terracotta)
+                                            .foregroundColor(SemanticColors.accent)
                                     }
                                 }
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 12)
                                 .background(
                                     controller.selectedSort == option 
-                                        ? ColorPalette.terracotta.opacity(0.1)
+                                        ? SemanticColors.accent.opacity(0.1)
                                         : Color.clear
                                 )
                             }
@@ -402,14 +402,14 @@ struct SearchSituationsView: View {
                             
                             if option != SortOption.allCases.last {
                                 Divider()
-                                    .background(ColorPalette.white.opacity(0.1))
+                                    .background(SemanticColors.border)
                             }
                         }
                     }
-                    .background(ColorPalette.navy)
+                    .background(SemanticColors.primaryBackground)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .stroke(ColorPalette.white.opacity(0.2), lineWidth: 1)
+                            .stroke(SemanticColors.border, lineWidth: 1)
                     )
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                     .shadow(color: .black.opacity(0.3), radius: 8, x: 0, y: 4)
@@ -470,35 +470,35 @@ struct SearchSituationsView: View {
                         // Progress indicator
                         ProgressView()
                             .scaleEffect(1.5)
-                            .foregroundColor(ColorPalette.terracotta)
+                            .foregroundColor(SemanticColors.accent)
                         
                         // Status text
                         VStack(spacing: 8) {
                             Text(String(localized: "library.framework.generating.title"))
                                 .font(.system(size: 18, weight: .semibold))
-                                .foregroundColor(ColorPalette.white)
+                                .foregroundColor(SemanticColors.primaryText)
                                 .multilineTextAlignment(.center)
                             
                             Text(String(localized: "library.framework.generating.subtitle"))
                                 .font(.system(size: 14))
-                                .foregroundColor(ColorPalette.white.opacity(0.8))
+                                .foregroundColor(SemanticColors.secondaryText)
                                 .multilineTextAlignment(.center)
                         }
                         
                         // Selection count reminder
                         Text(selectionManager.selectionCountText)
                             .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(ColorPalette.terracotta.opacity(0.8))
+                            .foregroundColor(SemanticColors.accent.opacity(0.8))
                             .padding(.horizontal, 16)
                             .padding(.vertical, 4)
-                            .background(ColorPalette.terracotta.opacity(0.1))
+                            .background(SemanticColors.accent.opacity(0.1))
                             .clipShape(RoundedRectangle(cornerRadius: 6))
                     }
                     .padding(24)
-                    .background(ColorPalette.navy)
+                    .background(SemanticColors.primaryBackground)
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
-                            .stroke(ColorPalette.white.opacity(0.2), lineWidth: 1)
+                            .stroke(SemanticColors.border, lineWidth: 1)
                     )
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                     .shadow(color: .black.opacity(0.3), radius: 20, x: 0, y: 10)

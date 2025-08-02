@@ -20,7 +20,7 @@ struct FoundationToolsSection: View {
         VStack(alignment: .leading, spacing: 12) {
             Text(String(localized: "settings.foundationTools.title"))
                 .font(.system(size: 20, weight: .semibold))
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
                 .padding(.horizontal, 16)
             
             VStack(alignment: .leading, spacing: 16) {
@@ -35,7 +35,7 @@ struct FoundationToolsSection: View {
                 }
             }
             .padding(16)
-            .background(ColorPalette.white.opacity(0.05))
+            .background(SemanticColors.cardBackground)
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .padding(.horizontal, 16)
         }
@@ -55,11 +55,11 @@ struct FoundationToolsSection: View {
         HStack(spacing: 12) {
             ProgressView()
                 .scaleEffect(0.8)
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
             
             Text(String(localized: "settings.foundationTools.loading"))
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
         }
     }
     
@@ -67,11 +67,11 @@ struct FoundationToolsSection: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(String(localized: "settings.foundationTools.error"))
                 .font(.system(size: 16, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
             
             Text(errorMessage)
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
             
             Button(String(localized: "common.tryAgain")) {
                 Task {
@@ -79,7 +79,7 @@ struct FoundationToolsSection: View {
                 }
             }
             .font(.system(size: 14, weight: .medium))
-            .foregroundColor(ColorPalette.terracotta)
+            .foregroundColor(SemanticColors.accent)
         }
     }
     
@@ -88,7 +88,7 @@ struct FoundationToolsSection: View {
             // Section header with count
             Text(String(localized: "settings.foundationTools.frameworks \(frameworkState.frameworks.count)"))
                 .font(.system(size: 16, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
             
             // Framework cards
             ForEach(frameworkState.frameworks, id: \.id) { framework in
@@ -112,22 +112,22 @@ struct FoundationToolsSection: View {
         VStack(alignment: .leading, spacing: 16) {
             Text(String(localized: "settings.foundationTools.status"))
                 .font(.system(size: 16, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
             
             Text(String(localized: "settings.foundationTools.noFrameworks"))
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
             
             Text(String(localized: "settings.foundationTools.generateHint"))
                 .font(.system(size: 12))
-                .foregroundColor(ColorPalette.white.opacity(0.6))
+                .foregroundColor(SemanticColors.tertiaryText)
                 .lineLimit(nil)
             
             Button(String(localized: "settings.foundationTools.goToLibrary")) {
                 // TODO: Navigate to Library tab
             }
             .font(.system(size: 14, weight: .medium))
-            .foregroundColor(ColorPalette.terracotta)
+            .foregroundColor(SemanticColors.accent)
         }
     }
 }

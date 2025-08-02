@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct FrameworkCard: View {
+    @Environment(\.colorScheme) private var colorScheme
     let framework: FrameworkRecommendation
     let isActive: Bool
     let onToggle: () -> Void
@@ -19,16 +20,16 @@ struct FrameworkCard: View {
             HStack(spacing: 8) {
                 Image(systemName: isActive ? "checkmark.circle.fill" : "circle")
                     .font(.system(size: 16))
-                    .foregroundColor(isActive ? ColorPalette.brightBlue : ColorPalette.white.opacity(0.6))
+                    .foregroundColor(isActive ? SemanticColors.accentBlue : SemanticColors.tertiaryText)
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(framework.frameworkName)
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                     
                     Text(isActive ? String(localized: "framework.status.active") : String(localized: "framework.status.inactive"))
                         .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(isActive ? ColorPalette.brightBlue : ColorPalette.white.opacity(0.6))
+                        .foregroundColor(isActive ? SemanticColors.accentBlue : SemanticColors.tertiaryText)
                 }
                 
                 Spacer()
@@ -36,11 +37,11 @@ struct FrameworkCard: View {
                 // Toggle switch
                 Button(action: onToggle) {
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(isActive ? ColorPalette.brightBlue : ColorPalette.white.opacity(0.3))
+                        .fill(isActive ? SemanticColors.accentBlue : SemanticColors.tertiaryText)
                         .frame(width: 44, height: 24)
                         .overlay(
                             Circle()
-                                .fill(ColorPalette.white)
+                                .fill(SemanticColors.primaryText)
                                 .frame(width: 20, height: 20)
                                 .offset(x: isActive ? 10 : -10)
                         )
@@ -51,7 +52,7 @@ struct FrameworkCard: View {
             // Framework description
             Text(framework.notificationText)
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.8))
+                .foregroundColor(SemanticColors.secondaryText)
                 .lineLimit(2)
             
             // Framework actions
@@ -60,36 +61,36 @@ struct FrameworkCard: View {
                     // TODO: Navigate to framework guide
                 }
                 .font(.system(size: 14, weight: .medium))
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 6)
-                .background(ColorPalette.brightBlue)
+                .background(SemanticColors.accentBlue)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
                 
                 Button(String(localized: "framework.action.remove")) {
                     onRemove()
                 }
                 .font(.system(size: 14, weight: .medium))
-                .foregroundColor(ColorPalette.terracotta)
+                .foregroundColor(SemanticColors.accent)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 6)
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
-                        .stroke(ColorPalette.terracotta, lineWidth: 1)
+                        .stroke(SemanticColors.accent, lineWidth: 1)
                 )
                 
                 Spacer()
             }
         }
         .padding(16)
-        .background(
-            Color(red: 0.21, green: 0.22, blue: 0.33)
-                .opacity(isActive ? 1.0 : 0.8)
-        )
+        .background(SemanticColors.cardBackground.opacity(isActive ? 1.0 : 0.8))
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(isActive ? ColorPalette.brightBlue.opacity(0.3) : ColorPalette.white.opacity(0.1), lineWidth: 1)
+                .stroke(isActive ? SemanticColors.accentBlue.opacity(0.3) : SemanticColors.tertiaryText.opacity(0.1), lineWidth: 1)
         )
+        .if(colorScheme == .light) { view in
+            view.cardShadow()
+        }
     }
 }

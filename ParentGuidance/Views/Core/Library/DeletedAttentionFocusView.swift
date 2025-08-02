@@ -26,7 +26,7 @@ struct DeletedAttentionFocusView: View {
                     }) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 18, weight: .medium))
-                            .foregroundColor(ColorPalette.white.opacity(0.9))
+                            .foregroundColor(SemanticColors.primaryText)
                     }
                     
                     Spacer()
@@ -34,12 +34,12 @@ struct DeletedAttentionFocusView: View {
                     VStack(spacing: 4) {
                         Text(String(localized: "regulation.deleted.attention.title"))
                             .font(.system(size: 20, weight: .semibold))
-                            .foregroundColor(ColorPalette.white.opacity(0.9))
+                            .foregroundColor(SemanticColors.primaryText)
                         
                         if !deletedInsights.isEmpty {
                             Text(String(localized: "regulation.deleted.attention.count", defaultValue: "\(deletedInsights.count) item\(deletedInsights.count == 1 ? "" : "s")"))
                                 .font(.system(size: 14))
-                                .foregroundColor(ColorPalette.white.opacity(0.7))
+                                .foregroundColor(SemanticColors.secondaryText)
                         }
                     }
                     
@@ -61,7 +61,7 @@ struct DeletedAttentionFocusView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(ColorPalette.navy)
+            .background(SemanticColors.primaryBackground)
             .navigationBarHidden(true)
         }
         .onAppear {
@@ -75,11 +75,11 @@ struct DeletedAttentionFocusView: View {
         VStack(spacing: 16) {
             ProgressView()
                 .scaleEffect(1.5)
-                .foregroundColor(ColorPalette.white.opacity(0.8))
+                .foregroundColor(SemanticColors.secondaryText)
             
             Text(String(localized: "regulation.archive.loading"))
                 .font(.system(size: 16))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -88,15 +88,15 @@ struct DeletedAttentionFocusView: View {
         VStack(spacing: 16) {
             Image(systemName: "exclamationmark.triangle")
                 .font(.system(size: 48, weight: .light))
-                .foregroundColor(ColorPalette.white.opacity(0.4))
+                .foregroundColor(SemanticColors.primaryText.opacity(0.4))
             
             Text(String(localized: "regulation.archive.error.title"))
                 .font(.system(size: 18, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
             
             Text(errorMessage.isEmpty ? String(localized: "error.tryAgainLater") : errorMessage)
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
                 .multilineTextAlignment(.center)
             
             Button(String(localized: "common.button.retry")) {
@@ -104,7 +104,7 @@ struct DeletedAttentionFocusView: View {
                     await loadDeletedInsights()
                 }
             }
-            .foregroundColor(ColorPalette.terracotta)
+            .foregroundColor(SemanticColors.accent)
             .font(.system(size: 16, weight: .medium))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -115,15 +115,15 @@ struct DeletedAttentionFocusView: View {
         VStack(spacing: 16) {
             Image(systemName: "archivebox")
                 .font(.system(size: 48, weight: .light))
-                .foregroundColor(ColorPalette.white.opacity(0.4))
+                .foregroundColor(SemanticColors.primaryText.opacity(0.4))
             
             Text(String(localized: "regulation.deleted.attention.empty.title"))
                 .font(.system(size: 18, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
             
             Text(String(localized: "regulation.deleted.attention.empty.description"))
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

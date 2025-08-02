@@ -13,6 +13,7 @@ struct FrameworkRecommendationView: View {
     let onActivate: () -> Void
     let onLearnMore: () -> Void
     let onDismiss: () -> Void
+    @Environment(\.colorScheme) private var colorScheme
     
     init(
         framework: FrameworkRecommendation,
@@ -33,7 +34,7 @@ struct FrameworkRecommendationView: View {
             HStack(spacing: 0) {
                 // Left border - different color based on state
                 Rectangle()
-                    .fill(isActive ? ColorPalette.brightBlue : ColorPalette.terracotta)
+                    .fill(isActive ? SemanticColors.accentBlue : SemanticColors.accent)
                     .frame(width: 4)
                 
                 // Card content
@@ -43,10 +44,10 @@ struct FrameworkRecommendationView: View {
                         HStack {
                             Text(isActive ? String(localized: "alerts.framework.active") : String(localized: "alerts.framework.recommendation"))
                                 .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(isActive ? ColorPalette.brightBlue : ColorPalette.terracotta)
+                                .foregroundColor(isActive ? SemanticColors.accentBlue : SemanticColors.accent)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
-                                .background((isActive ? ColorPalette.brightBlue : ColorPalette.terracotta).opacity(0.1))
+                                .background((isActive ? SemanticColors.accentBlue : SemanticColors.accent).opacity(0.1))
                                 .clipShape(Capsule())
                             
                             Spacer()
@@ -55,34 +56,34 @@ struct FrameworkRecommendationView: View {
                                 Button(action: onDismiss) {
                                     Image(systemName: "xmark")
                                         .font(.system(size: 12, weight: .medium))
-                                        .foregroundColor(ColorPalette.navy.opacity(0.6))
+                                        .foregroundColor(SemanticColors.tertiaryText)
                                 }
                             }
                         }
                         
                         Text(framework.frameworkName)
                             .font(.system(size: 20, weight: .semibold))
-                            .foregroundColor(ColorPalette.navy)
+                            .foregroundColor(SemanticColors.primaryText)
                     }
                     
                     // Framework description
                     Text(framework.notificationText)
                         .font(.system(size: 16))
-                        .foregroundColor(ColorPalette.navy.opacity(0.8))
+                        .foregroundColor(SemanticColors.secondaryText)
                         .lineSpacing(2)
                     
                     // Framework type description if available
                     if let frameworkType = framework.frameworkType {
                         Text(frameworkType.description)
                             .font(.system(size: 14))
-                            .foregroundColor(ColorPalette.navy.opacity(0.6))
+                            .foregroundColor(SemanticColors.tertiaryText)
                             .lineSpacing(2)
                     }
                     
                     // Disclaimer
                     Text(String(localized: "alerts.framework.disclaimer"))
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.navy.opacity(0.6))
+                        .foregroundColor(SemanticColors.tertiaryText)
                         .lineSpacing(2)
                     
                     // Action buttons
@@ -93,20 +94,20 @@ struct FrameworkRecommendationView: View {
                                 Button(action: onLearnMore) {
                                     Text(String(localized: "alerts.framework.guide"))
                                         .font(.system(size: 14, weight: .medium))
-                                        .foregroundColor(ColorPalette.white)
+                                        .foregroundColor(SemanticColors.primaryText)
                                         .padding(.horizontal, 16)
                                         .padding(.vertical, 8)
-                                        .background(ColorPalette.brightBlue)
+                                        .background(SemanticColors.accentBlue)
                                         .clipShape(Capsule())
                                 }
                                 
                                 Button(action: {}) {
                                     Text(String(localized: "alerts.framework.progress"))
                                         .font(.system(size: 14, weight: .medium))
-                                        .foregroundColor(ColorPalette.brightBlue)
+                                        .foregroundColor(SemanticColors.accentBlue)
                                         .padding(.horizontal, 16)
                                         .padding(.vertical, 8)
-                                        .background(ColorPalette.brightBlue.opacity(0.1))
+                                        .background(SemanticColors.accentBlue.opacity(0.1))
                                         .clipShape(Capsule())
                                 }
                             }
@@ -116,20 +117,20 @@ struct FrameworkRecommendationView: View {
                                 Button(action: onActivate) {
                                     Text(String(localized: "alerts.framework.activate"))
                                         .font(.system(size: 14, weight: .medium))
-                                        .foregroundColor(ColorPalette.white)
+                                        .foregroundColor(SemanticColors.primaryText)
                                         .padding(.horizontal, 16)
                                         .padding(.vertical, 8)
-                                        .background(ColorPalette.terracotta)
+                                        .background(SemanticColors.accent)
                                         .clipShape(Capsule())
                                 }
                                 
                                 Button(action: onLearnMore) {
                                     Text(String(localized: "alerts.framework.learnMore"))
                                         .font(.system(size: 14, weight: .medium))
-                                        .foregroundColor(ColorPalette.terracotta)
+                                        .foregroundColor(SemanticColors.accent)
                                         .padding(.horizontal, 16)
                                         .padding(.vertical, 8)
-                                        .background(ColorPalette.terracotta.opacity(0.1))
+                                        .background(SemanticColors.accent.opacity(0.1))
                                         .clipShape(Capsule())
                                 }
                             }
@@ -140,9 +141,11 @@ struct FrameworkRecommendationView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
-        .background(ColorPalette.cream)
+        .background(SemanticColors.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 12))
-        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+        .if(colorScheme == .light) { view in
+            view.cardShadow()
+        }
         .padding(.horizontal, 16)
         .padding(.bottom, 24)
     }
@@ -253,10 +256,10 @@ struct FrameworkAlertContainer: View {
                         .scaleEffect(0.8)
                     Text(String(localized: "alerts.framework.loading"))
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.navy.opacity(0.6))
+                        .foregroundColor(SemanticColors.tertiaryText)
                 }
                 .padding()
-                .background(ColorPalette.cream)
+                .background(SemanticColors.cardBackground)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .padding(.horizontal, 16)
                 .padding(.bottom, 24)
@@ -266,11 +269,11 @@ struct FrameworkAlertContainer: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text(String(localized: "alerts.framework.error.title"))
                         .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(ColorPalette.navy)
+                        .foregroundColor(SemanticColors.primaryText)
                     
                     Text(errorMessage)
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.navy.opacity(0.6))
+                        .foregroundColor(SemanticColors.tertiaryText)
                     
                     Button(String(localized: "common.tryAgain")) {
                         Task {
@@ -278,11 +281,11 @@ struct FrameworkAlertContainer: View {
                         }
                     }
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(ColorPalette.terracotta)
+                    .foregroundColor(SemanticColors.accent)
                     .padding(.top, 4)
                 }
                 .padding(16)
-                .background(ColorPalette.cream)
+                .background(SemanticColors.cardBackground)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .padding(.horizontal, 16)
                 .padding(.bottom, 24)
@@ -313,11 +316,11 @@ struct FrameworkAlertContainer: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(String(localized: "alerts.framework.empty.title"))
                         .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(ColorPalette.navy)
+                        .foregroundColor(SemanticColors.primaryText)
                     
                     Text(String(localized: "alerts.framework.empty.subtitle"))
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.navy.opacity(0.6))
+                        .foregroundColor(SemanticColors.tertiaryText)
                         .lineSpacing(2)
                     
                     Button(String(localized: "alerts.framework.goToLibrary")) {
@@ -325,11 +328,11 @@ struct FrameworkAlertContainer: View {
                         // TODO: Navigate to Library tab
                     }
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(ColorPalette.terracotta)
+                    .foregroundColor(SemanticColors.accent)
                     .padding(.top, 4)
                 }
                 .padding(16)
-                .background(ColorPalette.cream)
+                .background(SemanticColors.cardBackground)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .padding(.horizontal, 16)
                 .padding(.bottom, 24)
@@ -364,5 +367,5 @@ struct FrameworkAlertContainer: View {
         )
     }
     .padding()
-    .background(ColorPalette.navy)
+    .background(SemanticColors.primaryBackground)
 }

@@ -1,10 +1,1 @@
-Implement relevant insights selection feature for guidance generation
-Added comprehensive system to automatically select and display existing insights that are relevant to newly generated   guidance. When guidance is created, the system analyzes all previous family insights (contextual and regulation) and uses    LLM to identify which ones are most applicable to the current situation.
-Key components implemented:
-- RelevantInsightsService with comprehensive debug logging and fuzzy matching
-- Integration into guidance generation flow in NewSituationView
-- Enhanced UI components (RelevantInsightsSection, empty states, debug views)
-- Robust LLM response parsing with multiple fallback strategies
-- Database schema for storing relevant_insights relationships
-- EdgeFunction integration with multi-provider LLM support
-The feature helps parents by surfacing relevant historical insights from their child's knowledge base, making past   learnings more actionable for current situations. Insights are formatted with category prefixes, matched using   Levenshtein similarity, and displayed in an organized expandable interface.
+impliment light and dark mode

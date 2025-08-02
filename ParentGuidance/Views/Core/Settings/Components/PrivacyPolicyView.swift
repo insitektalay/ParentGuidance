@@ -17,7 +17,7 @@ struct PrivacyPolicyView: View {
                     Text(String(localized: "settings.privacyData.privacyPolicy"))
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                         .padding(.top)
                     
                     privacySection(
@@ -52,21 +52,21 @@ struct PrivacyPolicyView: View {
                     
                     Text(String(localized: "settings.privacyData.lastUpdated"))
                         .font(.caption)
-                        .foregroundColor(ColorPalette.white.opacity(0.6))
+                        .foregroundColor(SemanticColors.tertiaryText)
                         .padding(.top, 24)
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 50)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(ColorPalette.navy)
+            .background(SemanticColors.primaryBackground)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(String(localized: "common.button.done")) {
                         dismiss()
                     }
-                    .foregroundColor(ColorPalette.white)
+                    .foregroundColor(SemanticColors.primaryText)
                 }
             }
         }
@@ -77,11 +77,11 @@ struct PrivacyPolicyView: View {
             Text(title)
                 .font(.headline)
                 .fontWeight(.semibold)
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
             
             Text(content)
                 .font(.body)
-                .foregroundColor(ColorPalette.white.opacity(0.8))
+                .foregroundColor(SemanticColors.secondaryText)
                 .lineSpacing(4)
         }
     }

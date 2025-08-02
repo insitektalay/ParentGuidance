@@ -9,6 +9,7 @@ import SwiftUI
 import Foundation
 
 struct TodayTimelineView: View {
+    @Environment(\.colorScheme) private var colorScheme
     let situations: [Situation]
     
     var body: some View {
@@ -18,7 +19,7 @@ struct TodayTimelineView: View {
                     // Empty state message
                     Text(String(localized: "today.timeline.empty"))
                         .font(.system(size: 16))
-                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                        .foregroundColor(SemanticColors.secondaryText)
                         .padding(.top, 32)
                         .frame(maxWidth: .infinity, alignment: .center)
                 } else {
@@ -39,7 +40,7 @@ struct TodayTimelineView: View {
             .padding(.bottom, 100) // Extra padding for tab bar
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(ColorPalette.navy)
+        .background(SemanticColors.primaryBackground)
     }
     
     private func getTimePeriod(from isoString: String) -> String {

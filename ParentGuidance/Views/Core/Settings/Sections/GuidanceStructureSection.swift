@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct GuidanceStructureSection: View {
+    @Environment(\.colorScheme) private var colorScheme
     @ObservedObject var guidanceStructureSettings: GuidanceStructureSettings
     @ObservedObject var viewState: SettingsViewState
     
@@ -15,7 +16,7 @@ struct GuidanceStructureSection: View {
         VStack(alignment: .leading, spacing: 12) {
             Text(String(localized: "settings.guidanceStructure.title"))
                 .font(.system(size: 20, weight: .semibold))
-                .foregroundColor(ColorPalette.white)
+                .foregroundColor(SemanticColors.primaryText)
                 .padding(.horizontal, 16)
             
             VStack(alignment: .leading, spacing: 16) {
@@ -23,16 +24,16 @@ struct GuidanceStructureSection: View {
                 HStack(spacing: 8) {
                     Image(systemName: guidanceStructureSettings.currentMode.iconName)
                         .font(.system(size: 16))
-                        .foregroundColor(ColorPalette.brightBlue)
+                        .foregroundColor(SemanticColors.accentBlue)
                     
                     VStack(alignment: .leading, spacing: 2) {
                         Text(String(localized: "settings.guidanceStructure.activeMode"))
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(ColorPalette.white)
+                            .foregroundColor(SemanticColors.primaryText)
                         
                         Text(guidanceStructureSettings.currentMode.displayName)
                             .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(ColorPalette.brightBlue)
+                            .foregroundColor(SemanticColors.accentBlue)
                     }
                     
                     Spacer()
@@ -40,17 +41,17 @@ struct GuidanceStructureSection: View {
                     // Mode indicator badge
                     Text(guidanceStructureSettings.currentMode.sectionCount)
                         .font(.system(size: 11, weight: .medium))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(ColorPalette.brightBlue.opacity(0.2))
+                        .background(SemanticColors.accentBlue.opacity(0.2))
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
                 
                 // Mode description
                 Text(guidanceStructureSettings.currentMode.description)
                     .font(.system(size: 14))
-                    .foregroundColor(ColorPalette.white.opacity(0.8))
+                    .foregroundColor(SemanticColors.secondaryText)
                     .lineLimit(nil)
                 
                 // Mode selection cards
@@ -70,7 +71,7 @@ struct GuidanceStructureSection: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(String(localized: "settings.guidanceStructure.style"))
                         .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                        .foregroundColor(SemanticColors.primaryText)
                         .padding(.top, 8)
                     
                     VStack(spacing: 8) {
@@ -78,7 +79,7 @@ struct GuidanceStructureSection: View {
                         HStack {
                             Text(String(localized: "settings.guidanceStructure.style.warmPractical"))
                                 .font(.system(size: 14))
-                                .foregroundColor(ColorPalette.white)
+                                .foregroundColor(SemanticColors.primaryText)
                             
                             Spacer()
                             
@@ -88,11 +89,11 @@ struct GuidanceStructureSection: View {
                                 }
                             }) {
                                 RoundedRectangle(cornerRadius: 10)
-                                    .fill(guidanceStructureSettings.currentStyle == .warmPractical ? ColorPalette.brightBlue : ColorPalette.white.opacity(0.3))
+                                    .fill(guidanceStructureSettings.currentStyle == .warmPractical ? SemanticColors.accentBlue : SemanticColors.tertiaryText)
                                     .frame(width: 44, height: 24)
                                     .overlay(
                                         Circle()
-                                            .fill(ColorPalette.white)
+                                            .fill(SemanticColors.primaryText)
                                             .frame(width: 20, height: 20)
                                             .offset(x: guidanceStructureSettings.currentStyle == .warmPractical ? 10 : -10)
                                     )
@@ -104,7 +105,7 @@ struct GuidanceStructureSection: View {
                         HStack {
                             Text(String(localized: "settings.guidanceStructure.style.analyticalScientific"))
                                 .font(.system(size: 14))
-                                .foregroundColor(ColorPalette.white)
+                                .foregroundColor(SemanticColors.primaryText)
                             
                             Spacer()
                             
@@ -114,11 +115,11 @@ struct GuidanceStructureSection: View {
                                 }
                             }) {
                                 RoundedRectangle(cornerRadius: 10)
-                                    .fill(guidanceStructureSettings.currentStyle == .analyticalScientific ? ColorPalette.brightBlue : ColorPalette.white.opacity(0.3))
+                                    .fill(guidanceStructureSettings.currentStyle == .analyticalScientific ? SemanticColors.accentBlue : SemanticColors.tertiaryText)
                                     .frame(width: 44, height: 24)
                                     .overlay(
                                         Circle()
-                                            .fill(ColorPalette.white)
+                                            .fill(SemanticColors.primaryText)
                                             .frame(width: 20, height: 20)
                                             .offset(x: guidanceStructureSettings.currentStyle == .analyticalScientific ? 10 : -10)
                                     )
@@ -133,18 +134,18 @@ struct GuidanceStructureSection: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(String(localized: "settings.guidanceStructure.chatStyle.section"))
                         .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                        .foregroundColor(SemanticColors.primaryText)
                         .padding(.top, 8)
                     
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(String(localized: "settings.guidanceStructure.chatStyle.title"))
                                 .font(.system(size: 14))
-                                .foregroundColor(ColorPalette.white)
+                                .foregroundColor(SemanticColors.primaryText)
                             
                             Text(String(localized: "settings.guidanceStructure.chatStyle.description"))
                                 .font(.system(size: 11))
-                                .foregroundColor(ColorPalette.white.opacity(0.7))
+                                .foregroundColor(SemanticColors.secondaryText)
                                 .lineLimit(2)
                         }
                         
@@ -154,11 +155,11 @@ struct GuidanceStructureSection: View {
                             guidanceStructureSettings.toggleChatStyle()
                         }) {
                             RoundedRectangle(cornerRadius: 10)
-                                .fill(guidanceStructureSettings.useChatStyleInterface ? ColorPalette.brightBlue : ColorPalette.white.opacity(0.3))
+                                .fill(guidanceStructureSettings.useChatStyleInterface ? SemanticColors.accentBlue : SemanticColors.tertiaryText)
                                 .frame(width: 44, height: 24)
                                 .overlay(
                                     Circle()
-                                        .fill(ColorPalette.white)
+                                        .fill(SemanticColors.primaryText)
                                         .frame(width: 20, height: 20)
                                         .offset(x: guidanceStructureSettings.useChatStyleInterface ? 10 : -10)
                                 )
@@ -172,7 +173,7 @@ struct GuidanceStructureSection: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(String(localized: "settings.guidanceStructure.psychologistNotes"))
                         .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                        .foregroundColor(SemanticColors.primaryText)
                         .padding(.top, 8)
                     
                     VStack(spacing: 8) {
@@ -181,11 +182,11 @@ struct GuidanceStructureSection: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(String(localized: "settings.guidanceStructure.childContext.title"))
                                     .font(.system(size: 14))
-                                    .foregroundColor(ColorPalette.white)
+                                    .foregroundColor(SemanticColors.primaryText)
                                 
                                 Text(String(localized: "settings.guidanceStructure.childContext.description"))
                                     .font(.system(size: 11))
-                                    .foregroundColor(ColorPalette.white.opacity(0.7))
+                                    .foregroundColor(SemanticColors.secondaryText)
                                     .lineLimit(2)
                             }
                             
@@ -195,11 +196,11 @@ struct GuidanceStructureSection: View {
                                 guidanceStructureSettings.toggleChildContext()
                             }) {
                                 RoundedRectangle(cornerRadius: 10)
-                                    .fill(guidanceStructureSettings.enableChildContext ? ColorPalette.brightBlue : ColorPalette.white.opacity(0.3))
+                                    .fill(guidanceStructureSettings.enableChildContext ? SemanticColors.accentBlue : SemanticColors.tertiaryText)
                                     .frame(width: 44, height: 24)
                                     .overlay(
                                         Circle()
-                                            .fill(ColorPalette.white)
+                                            .fill(SemanticColors.primaryText)
                                             .frame(width: 20, height: 20)
                                             .offset(x: guidanceStructureSettings.enableChildContext ? 10 : -10)
                                     )
@@ -212,11 +213,11 @@ struct GuidanceStructureSection: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(String(localized: "settings.guidanceStructure.keyInsights.title"))
                                     .font(.system(size: 14))
-                                    .foregroundColor(ColorPalette.white)
+                                    .foregroundColor(SemanticColors.primaryText)
                                 
                                 Text(String(localized: "settings.guidanceStructure.keyInsights.description"))
                                     .font(.system(size: 11))
-                                    .foregroundColor(ColorPalette.white.opacity(0.7))
+                                    .foregroundColor(SemanticColors.secondaryText)
                                     .lineLimit(2)
                             }
                             
@@ -226,11 +227,11 @@ struct GuidanceStructureSection: View {
                                 guidanceStructureSettings.toggleKeyInsights()
                             }) {
                                 RoundedRectangle(cornerRadius: 10)
-                                    .fill(guidanceStructureSettings.enableKeyInsights ? ColorPalette.brightBlue : ColorPalette.white.opacity(0.3))
+                                    .fill(guidanceStructureSettings.enableKeyInsights ? SemanticColors.accentBlue : SemanticColors.tertiaryText)
                                     .frame(width: 44, height: 24)
                                     .overlay(
                                         Circle()
-                                            .fill(ColorPalette.white)
+                                            .fill(SemanticColors.primaryText)
                                             .frame(width: 20, height: 20)
                                             .offset(x: guidanceStructureSettings.enableKeyInsights ? 10 : -10)
                                     )
@@ -243,11 +244,11 @@ struct GuidanceStructureSection: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(String(localized: "settings.guidanceStructure.copingStrategies.title"))
                                     .font(.system(size: 14))
-                                    .foregroundColor(ColorPalette.white)
+                                    .foregroundColor(SemanticColors.primaryText)
                                 
                                 Text(String(localized: "settings.guidanceStructure.copingStrategies.description"))
                                     .font(.system(size: 11))
-                                    .foregroundColor(ColorPalette.white.opacity(0.7))
+                                    .foregroundColor(SemanticColors.secondaryText)
                                     .lineLimit(2)
                             }
                             
@@ -257,11 +258,11 @@ struct GuidanceStructureSection: View {
                                 guidanceStructureSettings.toggleCopingStrategies()
                             }) {
                                 RoundedRectangle(cornerRadius: 10)
-                                    .fill(guidanceStructureSettings.enableCopingStrategies ? ColorPalette.brightBlue : ColorPalette.white.opacity(0.3))
+                                    .fill(guidanceStructureSettings.enableCopingStrategies ? SemanticColors.accentBlue : SemanticColors.tertiaryText)
                                     .frame(width: 44, height: 24)
                                     .overlay(
                                         Circle()
-                                            .fill(ColorPalette.white)
+                                            .fill(SemanticColors.primaryText)
                                             .frame(width: 20, height: 20)
                                             .offset(x: guidanceStructureSettings.enableCopingStrategies ? 10 : -10)
                                     )
@@ -276,11 +277,11 @@ struct GuidanceStructureSection: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text(String(localized: "settings.guidanceStructure.benefits \(guidanceStructureSettings.currentMode.displayName)"))
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                        .foregroundColor(SemanticColors.primaryText)
                     
                     Text(guidanceStructureSettings.currentMode.benefits)
                         .font(.system(size: 12))
-                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                        .foregroundColor(SemanticColors.secondaryText)
                         .lineLimit(nil)
                 }
                 .padding(.top, 8)
@@ -291,22 +292,22 @@ struct GuidanceStructureSection: View {
                         viewState.showingDocumentation = true
                     }
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(ColorPalette.white)
+                    .foregroundColor(SemanticColors.primaryText)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 6)
-                    .background(ColorPalette.brightBlue)
+                    .background(SemanticColors.accentBlue)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                     
                     Button(String(localized: "settings.guidanceStructure.previewMode")) {
                         // TODO: Add preview functionality
                     }
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(ColorPalette.terracotta)
+                    .foregroundColor(SemanticColors.accent)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 6)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .stroke(ColorPalette.terracotta, lineWidth: 1)
+                            .stroke(SemanticColors.accent, lineWidth: 1)
                     )
                     
                     Spacer()
@@ -314,8 +315,11 @@ struct GuidanceStructureSection: View {
                 .padding(.top, 12)
             }
             .padding(16)
-            .background(ColorPalette.white.opacity(0.05))
+            .background(SemanticColors.cardBackground)
             .clipShape(RoundedRectangle(cornerRadius: 12))
+            .if(colorScheme == .light) { view in
+                view.cardShadow()
+            }
             .padding(.horizontal, 16)
         }
     }

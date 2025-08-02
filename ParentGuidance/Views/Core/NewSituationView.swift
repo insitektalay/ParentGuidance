@@ -75,7 +75,7 @@ struct NewSituationView: View {
                 }
             }
         }
-        .background(ColorPalette.navy)
+        .background(SemanticColors.primaryBackground)
         .onAppear {
             Task {
                 await loadUserApiKey()
@@ -911,7 +911,7 @@ struct SituationGuidanceViewWithData: View {
                     }) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 18, weight: .medium))
-                            .foregroundColor(ColorPalette.white.opacity(0.9))
+                            .foregroundColor(SemanticColors.primaryText)
                     }
                     
                     Spacer()
@@ -924,7 +924,7 @@ struct SituationGuidanceViewWithData: View {
                 HStack {
                     Text(guidance.title)
                         .font(.system(size: 24, weight: .semibold))
-                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                        .foregroundColor(SemanticColors.primaryText)
                         .padding(.horizontal, 16)
                     
                     Spacer()
@@ -957,7 +957,7 @@ struct SituationGuidanceViewWithData: View {
                 HStack(spacing: 8) {
                     ForEach(0..<categories.count, id: \.self) { index in
                         Circle()
-                            .fill(index == currentPage ? ColorPalette.terracotta : ColorPalette.white.opacity(0.3))
+                            .fill(index == currentPage ? SemanticColors.accent : SemanticColors.tertiaryText)
                             .frame(width: 8, height: 8)
                             .animation(.easeInOut(duration: 0.2), value: currentPage)
                     }
@@ -967,7 +967,7 @@ struct SituationGuidanceViewWithData: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(ColorPalette.navy)
+        .background(SemanticColors.primaryBackground)
         .navigationBarHidden(true)
     }
     
@@ -980,11 +980,11 @@ struct SituationGuidanceViewWithData: View {
             HStack(spacing: 8) {
                 Image(systemName: "lightbulb.fill")
                     .font(.system(size: 18, weight: .medium))
-                    .foregroundColor(ColorPalette.terracotta)
+                    .foregroundColor(SemanticColors.accent)
                 
                 Text("Overall Recommendation")
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(ColorPalette.white.opacity(0.9))
+                    .foregroundColor(SemanticColors.primaryText)
                 
                 Spacer()
             }
@@ -992,7 +992,7 @@ struct SituationGuidanceViewWithData: View {
             // Recommendation content
             Text(recommendation)
                 .font(.system(size: 16))
-                .foregroundColor(ColorPalette.white.opacity(0.8))
+                .foregroundColor(SemanticColors.secondaryText)
                 .lineSpacing(4)
                 .fixedSize(horizontal: false, vertical: true)
                 .multilineTextAlignment(.leading)
@@ -1000,10 +1000,10 @@ struct SituationGuidanceViewWithData: View {
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(ColorPalette.terracotta.opacity(0.15))
+                .fill(SemanticColors.accent.opacity(0.15))
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
-                        .stroke(ColorPalette.terracotta.opacity(0.3), lineWidth: 1)
+                        .stroke(SemanticColors.accent.opacity(0.3), lineWidth: 1)
                 )
         )
     }

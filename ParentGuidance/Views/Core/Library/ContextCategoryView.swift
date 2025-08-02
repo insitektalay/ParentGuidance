@@ -29,7 +29,7 @@ struct ContextCategoryView: View {
                     }) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 18, weight: .medium))
-                            .foregroundColor(ColorPalette.white.opacity(0.9))
+                            .foregroundColor(SemanticColors.primaryText)
                     }
                     
                     Spacer()
@@ -37,12 +37,12 @@ struct ContextCategoryView: View {
                     VStack(spacing: 2) {
                         Text(category.displayName)
                             .font(.system(size: 20, weight: .semibold))
-                            .foregroundColor(ColorPalette.white.opacity(0.9))
+                            .foregroundColor(SemanticColors.primaryText)
                         
                         if !insights.isEmpty {
                             Text("\(insights.count) insight\(insights.count == 1 ? "" : "s")")
                                 .font(.system(size: 12))
-                                .foregroundColor(ColorPalette.white.opacity(0.6))
+                                .foregroundColor(SemanticColors.primaryText.opacity(0.6))
                         }
                     }
                     
@@ -66,7 +66,7 @@ struct ContextCategoryView: View {
                             Text(String(localized: "regulation.archive.button.viewDeleted"))
                                 .font(.system(size: 14, weight: .medium))
                         }
-                        .foregroundColor(ColorPalette.brightBlue)
+                        .foregroundColor(SemanticColors.accentBlue)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 6)
                         .frame(minHeight: 44)
@@ -90,7 +90,7 @@ struct ContextCategoryView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(ColorPalette.navy)
+            .background(SemanticColors.primaryBackground)
             .navigationBarHidden(true)
         }
         .onAppear {
@@ -116,11 +116,11 @@ struct ContextCategoryView: View {
         VStack(spacing: 16) {
             ProgressView()
                 .scaleEffect(1.5)
-                .foregroundColor(ColorPalette.white.opacity(0.8))
+                .foregroundColor(SemanticColors.secondaryText)
             
             Text("Loading insights...")
                 .font(.system(size: 16))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
         }
     }
     
@@ -128,18 +128,18 @@ struct ContextCategoryView: View {
         VStack(spacing: 16) {
             Text(String(localized: "error.loading.insights"))
                 .font(.system(size: 18, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
             
             Text(String(localized: "error.tryAgainLater"))
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
             
             Button(String(localized: "common.button.retry")) {
                 Task {
                     await loadInsights()
                 }
             }
-            .foregroundColor(ColorPalette.terracotta)
+            .foregroundColor(SemanticColors.accent)
             .font(.system(size: 16, weight: .medium))
         }
     }
@@ -148,15 +148,15 @@ struct ContextCategoryView: View {
         VStack(spacing: 16) {
             Image(systemName: category.iconName)
                 .font(.system(size: 48, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.3))
+                .foregroundColor(SemanticColors.primaryText.opacity(0.3))
             
             Text(String(localized: "context.empty.title"))
                 .font(.system(size: 18, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
             
             Text(String(localized: "context.empty.description", defaultValue: "Insights will appear here as you add situations that relate to \(category.displayName.lowercased())"))
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
         }

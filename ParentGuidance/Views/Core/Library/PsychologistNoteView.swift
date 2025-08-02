@@ -36,14 +36,14 @@ struct PsychologistNoteView: View {
                     }) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 18, weight: .medium))
-                            .foregroundColor(ColorPalette.white.opacity(0.9))
+                            .foregroundColor(SemanticColors.primaryText)
                     }
                     
                     Spacer()
                     
                     Text(String(localized: "psychologistNote.view.title"))
                         .font(.system(size: 24, weight: .semibold))
-                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                        .foregroundColor(SemanticColors.primaryText)
                     
                     Spacer()
                 }
@@ -61,7 +61,7 @@ struct PsychologistNoteView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(ColorPalette.navy)
+            .background(SemanticColors.primaryBackground)
             .navigationBarHidden(true)
         }
         .sheet(isPresented: $showingNoteDetail) {
@@ -83,11 +83,11 @@ struct PsychologistNoteView: View {
         VStack(spacing: 16) {
             ProgressView()
                 .scaleEffect(1.5)
-                .foregroundColor(ColorPalette.white.opacity(0.8))
+                .foregroundColor(SemanticColors.secondaryText)
             
             Text(String(localized: "psychologistNote.loading"))
                 .font(.system(size: 16))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -96,11 +96,11 @@ struct PsychologistNoteView: View {
         VStack(spacing: 16) {
             Text(String(localized: "psychologistNote.error.title"))
                 .font(.system(size: 18, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
             
             Text(errorMessage)
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
                 .multilineTextAlignment(.center)
             
             Button(String(localized: "common.retry")) {
@@ -109,10 +109,10 @@ struct PsychologistNoteView: View {
                 }
             }
             .font(.system(size: 16, weight: .medium))
-            .foregroundColor(ColorPalette.white)
+            .foregroundColor(SemanticColors.primaryText)
             .padding(.horizontal, 20)
             .padding(.vertical, 10)
-            .background(ColorPalette.terracotta)
+            .background(SemanticColors.accent)
             .clipShape(RoundedRectangle(cornerRadius: 8))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -141,11 +141,11 @@ struct PsychologistNoteView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text(String(localized: "psychologistNote.generate.title"))
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
             
             Text(String(localized: "psychologistNote.generate.subtitle"))
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
             
             // Generation Error Alert
             if let generationError = generationError {
@@ -155,7 +155,7 @@ struct PsychologistNoteView: View {
                     
                     Text(generationError)
                         .font(.system(size: 12))
-                        .foregroundColor(ColorPalette.white.opacity(0.8))
+                        .foregroundColor(SemanticColors.secondaryText)
                 }
                 .padding(12)
                 .background(Color.orange.opacity(0.1))
@@ -184,10 +184,10 @@ struct PsychologistNoteView: View {
             }
         }
         .padding(16)
-        .background(Color(red: 0.21, green: 0.22, blue: 0.33))
+        .background(SemanticColors.cardBackground)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(ColorPalette.white.opacity(0.1), lineWidth: 1)
+                .stroke(SemanticColors.border, lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
@@ -206,16 +206,16 @@ struct PsychologistNoteView: View {
             HStack(spacing: 12) {
                 Image(systemName: noteType.iconName)
                     .font(.system(size: 16))
-                    .foregroundColor(ColorPalette.brightBlue)
+                    .foregroundColor(SemanticColors.accentBlue)
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                     
                     Text(subtitle)
                         .font(.system(size: 12))
-                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                        .foregroundColor(SemanticColors.secondaryText)
                 }
                 
                 Spacer()
@@ -223,18 +223,18 @@ struct PsychologistNoteView: View {
                 if isGenerating {
                     ProgressView()
                         .scaleEffect(0.8)
-                        .foregroundColor(ColorPalette.white.opacity(0.6))
+                        .foregroundColor(SemanticColors.tertiaryText)
                 } else {
                     Image(systemName: "arrow.right.circle.fill")
                         .font(.system(size: 16))
-                        .foregroundColor(ColorPalette.terracotta)
+                        .foregroundColor(SemanticColors.accent)
                 }
             }
             .padding(12)
-            .background(ColorPalette.navy.opacity(0.3))
+            .background(SemanticColors.tertiaryBackground)
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(ColorPalette.white.opacity(0.1), lineWidth: 1)
+                    .stroke(SemanticColors.border, lineWidth: 1)
             )
             .clipShape(RoundedRectangle(cornerRadius: 8))
         }
@@ -245,7 +245,7 @@ struct PsychologistNoteView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text(String(localized: "psychologistNote.existing.title"))
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(ColorPalette.white.opacity(0.9))
+                .foregroundColor(SemanticColors.primaryText)
             
             LazyVStack(spacing: 12) {
                 ForEach(notes) { note in
@@ -263,20 +263,20 @@ struct PsychologistNoteView: View {
             HStack(spacing: 12) {
                 Image(systemName: note.noteType.iconName)
                     .font(.system(size: 16))
-                    .foregroundColor(ColorPalette.brightBlue)
+                    .foregroundColor(SemanticColors.accentBlue)
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(note.displayTitle)
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                     
                     Text(note.formattedCreatedDate)
                         .font(.system(size: 12))
-                        .foregroundColor(ColorPalette.white.opacity(0.6))
+                        .foregroundColor(SemanticColors.tertiaryText)
                     
                     Text(note.previewContent)
                         .font(.system(size: 12))
-                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                        .foregroundColor(SemanticColors.secondaryText)
                         .lineLimit(2)
                 }
                 
@@ -284,13 +284,13 @@ struct PsychologistNoteView: View {
                 
                 Image(systemName: "chevron.right")
                     .font(.system(size: 12))
-                    .foregroundColor(ColorPalette.white.opacity(0.4))
+                    .foregroundColor(SemanticColors.tertiaryText)
             }
             .padding(12)
-            .background(Color(red: 0.21, green: 0.22, blue: 0.33))
+            .background(SemanticColors.cardBackground)
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(ColorPalette.white.opacity(0.1), lineWidth: 1)
+                    .stroke(SemanticColors.border, lineWidth: 1)
             )
             .clipShape(RoundedRectangle(cornerRadius: 8))
         }
@@ -300,15 +300,15 @@ struct PsychologistNoteView: View {
         VStack(spacing: 16) {
             Image(systemName: "doc.text.magnifyingglass")
                 .font(.system(size: 48))
-                .foregroundColor(ColorPalette.white.opacity(0.3))
+                .foregroundColor(SemanticColors.tertiaryText)
             
             Text(String(localized: "psychologistNote.empty.title"))
                 .font(.system(size: 16, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.8))
+                .foregroundColor(SemanticColors.secondaryText)
             
             Text(String(localized: "psychologistNote.empty.subtitle"))
                 .font(.system(size: 14))
-                .foregroundColor(ColorPalette.white.opacity(0.6))
+                .foregroundColor(SemanticColors.tertiaryText)
                 .multilineTextAlignment(.center)
         }
         .padding(.vertical, 40)

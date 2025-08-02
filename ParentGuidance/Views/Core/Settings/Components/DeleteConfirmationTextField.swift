@@ -19,12 +19,12 @@ struct DeleteConfirmationTextField: View {
         VStack(spacing: 12) {
             TextField(String(localized: "settings.account.delete.placeholder"), text: $confirmationText)
                 .font(.system(size: 16, design: .monospaced))
-                .foregroundColor(ColorPalette.navy)
+                .foregroundColor(SemanticColors.primaryBackground)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
-                        .stroke(isValidConfirmation ? .red : ColorPalette.navy.opacity(0.3), lineWidth: 2)
+                        .stroke(isValidConfirmation ? .red : SemanticColors.primaryBackground.opacity(0.3), lineWidth: 2)
                 )
                 .autocapitalization(.allCharacters)
                 .disableAutocorrection(true)

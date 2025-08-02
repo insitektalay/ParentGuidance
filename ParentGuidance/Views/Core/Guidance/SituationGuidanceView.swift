@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SituationGuidanceView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
     @State private var currentPage = 0
     @State private var categories: [GuidanceCategory] = []
     @State private var isLoading = true
@@ -77,33 +78,33 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
                 // Loading state
                 VStack {
                     ProgressView()
-                        .tint(ColorPalette.terracotta)
+                        .tint(SemanticColors.accent)
                     Text(String(localized: "guidance.loading"))
                         .font(.system(size: 16))
-                        .foregroundColor(ColorPalette.white.opacity(0.7))
+                        .foregroundColor(SemanticColors.secondaryText)
                         .padding(.top, 8)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(ColorPalette.navy)
+                .background(SemanticColors.primaryBackground)
             } else if let error = errorMessage {
                 // Error state
                 VStack {
                     Text(String(localized: "guidance.error.title"))
                         .font(.system(size: 18))
-                        .foregroundColor(ColorPalette.white)
+                        .foregroundColor(SemanticColors.primaryText)
                     Text(error)
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.white.opacity(0.6))
+                        .foregroundColor(SemanticColors.secondaryText)
                         .padding(.top, 4)
                     
                     Button(String(localized: "common.tryAgain")) {
                         loadGuidance()
                     }
-                    .foregroundColor(ColorPalette.terracotta)
+                    .foregroundColor(SemanticColors.accent)
                     .padding(.top, 16)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(ColorPalette.navy)
+                .background(SemanticColors.primaryBackground)
             } else {
                 // Content state
                 guidanceContent
@@ -124,7 +125,7 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
                     }) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 18, weight: .medium))
-                            .foregroundColor(ColorPalette.white.opacity(0.9))
+                            .foregroundColor(SemanticColors.primaryText)
                     }
                     
                     Spacer()
@@ -141,10 +142,10 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
                                     .font(.system(size: 14, weight: .medium))
                                     .textCase(.uppercase)
                             }
-                            .foregroundColor(ColorPalette.white.opacity(0.9))
+                            .foregroundColor(SemanticColors.primaryText)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
-                            .background(ColorPalette.white.opacity(0.1))
+                            .background(SemanticColors.cardBackground)
                             .cornerRadius(8)
                         }
                     }
@@ -157,7 +158,7 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
                 HStack {
                     Text(situation?.title ?? "Situation Guidance")
                         .font(.system(size: 24, weight: .semibold))
-                        .foregroundColor(ColorPalette.white.opacity(0.9))
+                        .foregroundColor(SemanticColors.primaryText)
                         .padding(.horizontal, 16)
                     
                     Spacer()
@@ -186,7 +187,7 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
                 HStack(spacing: 8) {
                     ForEach(0..<categories.count, id: \.self) { index in
                         Circle()
-                            .fill(index == currentPage ? ColorPalette.terracotta : ColorPalette.white.opacity(0.3))
+                            .fill(index == currentPage ? SemanticColors.accent : SemanticColors.tertiaryText)
                             .frame(width: 8, height: 8)
                             .animation(.easeInOut(duration: 0.2), value: currentPage)
                     }
@@ -232,7 +233,7 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(ColorPalette.navy)
+        .background(SemanticColors.primaryBackground)
         .navigationBarHidden(true)
     }
     
@@ -245,11 +246,11 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
             HStack(spacing: 8) {
                 Image(systemName: "lightbulb.fill")
                     .font(.system(size: 18, weight: .medium))
-                    .foregroundColor(ColorPalette.terracotta)
+                    .foregroundColor(SemanticColors.accent)
                 
                 Text(String(localized: "guidance.overallRecommendation.title"))
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(ColorPalette.white.opacity(0.9))
+                    .foregroundColor(SemanticColors.primaryText)
                 
                 Spacer()
             }
@@ -257,7 +258,7 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
             // Recommendation content
             Text(recommendation)
                 .font(.system(size: 16))
-                .foregroundColor(ColorPalette.white.opacity(0.8))
+                .foregroundColor(SemanticColors.secondaryText)
                 .lineSpacing(4)
                 .fixedSize(horizontal: false, vertical: true)
                 .multilineTextAlignment(.leading)
@@ -265,10 +266,10 @@ If he protests, "I don't want to!" you might calmly respond, "I understand you d
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(ColorPalette.terracotta.opacity(0.15))
+                .fill(SemanticColors.accent.opacity(0.15))
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
-                        .stroke(ColorPalette.terracotta.opacity(0.3), lineWidth: 1)
+                        .stroke(SemanticColors.accent.opacity(0.3), lineWidth: 1)
                 )
         )
     }

@@ -19,7 +19,7 @@ struct GuidanceCard: View {
             HStack {
                 Text(title)
                     .font(.system(size: 20, weight: .medium))
-                    .foregroundColor(ColorPalette.white.opacity(0.9))
+                    .foregroundColor(SemanticColors.primaryText)
                 
                 Spacer()
                 
@@ -60,7 +60,7 @@ struct GuidanceCard: View {
             // Content text
             Text(content)
                 .font(.system(size: 16))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
                 .lineSpacing(4)
                 .fixedSize(horizontal: false, vertical: true)
         }
@@ -70,7 +70,7 @@ struct GuidanceCard: View {
         .overlay(
             RoundedRectangle(cornerRadius: 16)
                 .stroke(
-                    isActive ? ColorPalette.terracotta.opacity(0.3) : ColorPalette.white.opacity(0.1),
+                    isActive ? SemanticColors.accent.opacity(0.3) : SemanticColors.border,
                     lineWidth: 1
                 )
         )
@@ -86,12 +86,12 @@ struct GuidanceCard: View {
     private func translationProgressIndicator(progress: Double) -> some View {
         HStack(spacing: 4) {
             ProgressView(value: progress, total: 1.0)
-                .progressViewStyle(LinearProgressViewStyle(tint: ColorPalette.brightBlue))
+                .progressViewStyle(LinearProgressViewStyle(tint: SemanticColors.accentBlue))
                 .frame(width: 30, height: 3)
             
             Text("\(Int(progress * 100))%")
                 .font(.system(size: 10, weight: .medium))
-                .foregroundColor(ColorPalette.white.opacity(0.7))
+                .foregroundColor(SemanticColors.secondaryText)
         }
     }
     
@@ -105,10 +105,10 @@ struct GuidanceCard: View {
                 Text(isShowingOriginal ? String(localized: "common.button.translate") : String(localized: "guidance.translation.original"))
                     .font(.system(size: 11, weight: .medium))
             }
-            .foregroundColor(ColorPalette.white.opacity(0.8))
+            .foregroundColor(SemanticColors.secondaryText)
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
-            .background(ColorPalette.white.opacity(0.1))
+            .background(SemanticColors.tertiaryText.opacity(0.3))
             .cornerRadius(6)
         }
         .buttonStyle(PlainButtonStyle())
@@ -118,16 +118,16 @@ struct GuidanceCard: View {
         HStack(spacing: 8) {
             Image(systemName: "translate")
                 .font(.system(size: 14, weight: .medium))
-                .foregroundColor(ColorPalette.brightBlue)
+                .foregroundColor(SemanticColors.accentBlue)
             
             VStack(alignment: .leading, spacing: 2) {
                 Text(String(localized: "guidance.translation.viewingTranslated"))
                     .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(ColorPalette.white.opacity(0.9))
+                    .foregroundColor(SemanticColors.primaryText)
                 
                 Text(String(localized: "guidance.translation.tapToViewOriginal"))
                     .font(.system(size: 10))
-                    .foregroundColor(ColorPalette.white.opacity(0.7))
+                    .foregroundColor(SemanticColors.secondaryText)
             }
             
             Spacer()
@@ -136,10 +136,10 @@ struct GuidanceCard: View {
                 onLanguageSwitch?()
             }
             .font(.system(size: 11, weight: .medium))
-            .foregroundColor(ColorPalette.brightBlue)
+            .foregroundColor(SemanticColors.accentBlue)
         }
         .padding(12)
-        .background(ColorPalette.brightBlue.opacity(0.1))
+        .background(SemanticColors.accentBlue.opacity(0.1))
         .cornerRadius(8)
     }
     
@@ -152,11 +152,11 @@ struct GuidanceCard: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(String(localized: "guidance.translation.error.title"))
                     .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(ColorPalette.white.opacity(0.9))
+                    .foregroundColor(SemanticColors.primaryText)
                 
                 Text(String(localized: "guidance.translation.error.description"))
                     .font(.system(size: 10))
-                    .foregroundColor(ColorPalette.white.opacity(0.7))
+                    .foregroundColor(SemanticColors.secondaryText)
             }
             
             Spacer()
@@ -192,16 +192,16 @@ struct GuidanceCard: View {
             if !isOriginal {
                 Image(systemName: "translate")
                     .font(.system(size: 8, weight: .medium))
-                    .foregroundColor(ColorPalette.white.opacity(0.8))
+                    .foregroundColor(SemanticColors.secondaryText)
             }
             
             Text(language.uppercased())
                 .font(.system(size: 10, weight: .semibold))
-                .foregroundColor(ColorPalette.white.opacity(0.8))
+                .foregroundColor(SemanticColors.secondaryText)
         }
         .padding(.horizontal, 4)
         .padding(.vertical, 2)
-        .background(isOriginal ? ColorPalette.terracotta.opacity(0.6) : ColorPalette.brightBlue.opacity(0.6))
+        .background(isOriginal ? SemanticColors.accent.opacity(0.6) : SemanticColors.accentBlue.opacity(0.6))
         .cornerRadius(4)
     }
     
@@ -212,7 +212,7 @@ struct GuidanceCard: View {
         case .pending:
             return ("clock.fill", .orange)
         case .inProgress:
-            return ("arrow.clockwise", ColorPalette.brightBlue)
+            return ("arrow.clockwise", SemanticColors.accentBlue)
         case .failed:
             return ("exclamationmark.triangle.fill", .red)
         case .retrying:
@@ -255,5 +255,5 @@ struct GuidanceCard: View {
         )
     }
     .padding()
-    .background(ColorPalette.navy)
+    .background(SemanticColors.primaryBackground)
 }

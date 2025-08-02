@@ -6,6 +6,7 @@ struct NotificationCard: View {
     let onNotRightNow: () -> Void
     let onMaybeLater: () -> Void
     let onLearnMore: () -> Void
+    @Environment(\.colorScheme) private var colorScheme
     
     init(
         content: String = "Based on the situations you've shared, some parents find the Zones of Regulation framework helpful for understanding intense emotional reactions and helping kids return to a calm state.",
@@ -26,7 +27,7 @@ struct NotificationCard: View {
             HStack(spacing: 0) {
                 // Left terracotta border
                 Rectangle()
-                    .fill(ColorPalette.terracotta)
+                    .fill(SemanticColors.accent)
                     .frame(width: 4)
                 
                 // Card content
@@ -34,18 +35,18 @@ struct NotificationCard: View {
                     // Title
                     Text(String(localized: "alerts.notification.title"))
                         .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(ColorPalette.navy)
+                        .foregroundColor(SemanticColors.primaryText)
                     
                     // Main content (variable)
                     Text(content)
                         .font(.system(size: 16))
-                        .foregroundColor(ColorPalette.navy.opacity(0.8))
+                        .foregroundColor(SemanticColors.secondaryText)
                         .lineSpacing(2)
                     
                     // Disclaimer
                     Text(String(localized: "disclaimer.guidance.description"))
                         .font(.system(size: 14))
-                        .foregroundColor(ColorPalette.navy.opacity(0.6))
+                        .foregroundColor(SemanticColors.tertiaryText)
                         .lineSpacing(2)
                     
                     // Action buttons
@@ -54,20 +55,20 @@ struct NotificationCard: View {
                             Button(action: onYesTryThis) {
                                 Text(String(localized: "alerts.notification.accept"))
                                     .font(.system(size: 14, weight: .medium))
-                                    .foregroundColor(ColorPalette.white)
+                                    .foregroundColor(SemanticColors.primaryText)
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 8)
-                                    .background(ColorPalette.terracotta)
+                                    .background(SemanticColors.accent)
                                     .clipShape(Capsule())
                             }
                             
                             Button(action: onNotRightNow) {
                                 Text(String(localized: "alerts.notification.dismiss"))
                                     .font(.system(size: 14, weight: .medium))
-                                    .foregroundColor(ColorPalette.terracotta)
+                                    .foregroundColor(SemanticColors.accent)
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 8)
-                                    .background(ColorPalette.terracotta.opacity(0.1))
+                                    .background(SemanticColors.accent.opacity(0.1))
                                     .clipShape(Capsule())
                             }
                         }
@@ -76,20 +77,20 @@ struct NotificationCard: View {
                             Button(action: onMaybeLater) {
                                 Text(String(localized: "alerts.notification.postpone"))
                                     .font(.system(size: 14, weight: .medium))
-                                    .foregroundColor(ColorPalette.terracotta)
+                                    .foregroundColor(SemanticColors.accent)
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 8)
-                                    .background(ColorPalette.terracotta.opacity(0.1))
+                                    .background(SemanticColors.accent.opacity(0.1))
                                     .clipShape(Capsule())
                             }
                             
                             Button(action: onLearnMore) {
                                 Text(String(localized: "common.button.learnMore"))
                                     .font(.system(size: 14, weight: .medium))
-                                    .foregroundColor(ColorPalette.terracotta)
+                                    .foregroundColor(SemanticColors.accent)
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 8)
-                                    .background(ColorPalette.terracotta.opacity(0.1))
+                                    .background(SemanticColors.accent.opacity(0.1))
                                     .clipShape(Capsule())
                             }
                         }
@@ -99,9 +100,11 @@ struct NotificationCard: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
-        .background(Color(red: 0.97, green: 0.95, blue: 0.91)) // #F7F3E9 equivalent
+        .background(SemanticColors.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 12))
-        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+        .if(colorScheme == .light) { view in
+            view.cardShadow()
+        }
         .padding(.horizontal, 16)
         .padding(.bottom, 24)
     }
@@ -116,5 +119,5 @@ struct NotificationCard: View {
         )
     }
     .padding()
-    .background(ColorPalette.navy)
+    .background(SemanticColors.primaryBackground)
 }

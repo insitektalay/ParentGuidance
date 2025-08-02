@@ -25,24 +25,14 @@ struct ContextInsightCard: View {
                 
                 // Date and category info
                 HStack {
-                    // Category or subcategory badge
-                    if let subcategory = insight.subcategory {
-                        Text(subcategory.displayName)
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(SemanticColors.accentBlue)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(SemanticColors.accentBlue.opacity(0.2))
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                    } else {
-                        Text(insight.category.displayName)
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(SemanticColors.accentBlue)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(SemanticColors.accentBlue.opacity(0.2))
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                    }
+                    // Category badge
+                    Text(insight.category.displayName)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(SemanticColors.accentBlue)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(SemanticColors.accentBlue.opacity(0.2))
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                     
                     Spacer()
                     
@@ -99,7 +89,6 @@ struct ContextInsightCard: View {
                 familyId: "preview-family",
                 childId: nil,
                 category: .familyContext,
-                subcategory: nil,
                 content: "Child responds well to calm, quiet environments during homework time",
                 sourceSituationId: "preview-situation"
             ),
@@ -112,9 +101,8 @@ struct ContextInsightCard: View {
             insight: ContextualInsight(
                 familyId: "preview-family",
                 childId: nil,
-                category: .provenRegulationTools,
-                subcategory: .physicalSensory,
-                content: "Deep pressure from weighted blanket helps with bedtime routine",
+                category: .medicalHealth,
+                content: "Child has been sleeping better with earlier bedtime routine",
                 sourceSituationId: "preview-situation"
             ),
             onDelete: {

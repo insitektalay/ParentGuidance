@@ -575,7 +575,6 @@ class EdgeFunctionService {
                 id: id,
                 content: content,
                 category: category,
-                subcategory: insightData["subcategory"] as? String,
                 similarityScore: similarityScore,
                 wasTranslated: wasTranslated,
                 createdAt: createdAt

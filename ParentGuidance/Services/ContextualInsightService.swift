@@ -33,7 +33,6 @@ struct LanguageProcessingStats {
 struct ExtractedInsight {
     let content: String
     let category: String
-    let subcategory: String?
     let wasTranslated: Bool
     let detectedLanguage: String
     let similarityScore: Float?
@@ -83,7 +82,6 @@ struct SimilarInsight: Codable {
     let id: String
     let content: String
     let category: String
-    let subcategory: String?
     let similarityScore: Float
     let wasTranslated: Bool
     let createdAt: String
@@ -833,13 +831,10 @@ class ContextualInsightService {
             return nil
         }
         
-        let subcategory = ContextSubcategory.from(apiResponseKey: sectionKey)
-        
         let insight = ContextualInsight(
             familyId: familyId,
             childId: childId,
             category: category,
-            subcategory: subcategory,
             content: text,
             sourceSituationId: situationId
         )
@@ -1390,32 +1385,19 @@ class ContextualInsightService {
     
     func getInsightsByCategory(
         familyId: String,
-        category: ContextCategory,
-        subcategory: ContextSubcategory? = nil
+        category: ContextCategory
     ) async throws -> [ContextualInsight] {
         print("📋 Getting insights for category: \(category.displayName)")
         
         do {
-            let response: [ContextualInsight] = if let subcategory = subcategory {
-                try await SupabaseManager.shared.client
-                    .from("contextual_insights")
-                    .select("*")
-                    .eq("family_id", value: familyId)
-                    .eq("category", value: category.rawValue)
-                    .eq("subcategory", value: subcategory.rawValue)
-                    .order("created_at", ascending: false)
-                    .execute()
-                    .value
-            } else {
-                try await SupabaseManager.shared.client
-                    .from("contextual_insights")
-                    .select("*")
-                    .eq("family_id", value: familyId)
-                    .eq("category", value: category.rawValue)
-                    .order("created_at", ascending: false)
-                    .execute()
-                    .value
-            }
+            let response: [ContextualInsight] = try await SupabaseManager.shared.client
+                .from("contextual_insights")
+                .select("*")
+                .eq("family_id", value: familyId)
+                .eq("category", value: category.rawValue)
+                .order("created_at", ascending: false)
+                .execute()
+                .value
             
             print("✅ Found \(response.count) insights for category: \(category.displayName)")
             return response
@@ -1952,7 +1934,6 @@ class ContextualInsightService {
         familyId: String,
         category: String,
         tableName: String,
-        subcategory: String? = nil,
         similarityThreshold: Float? = nil,
         apiKey: String
     ) async throws -> SimilarityData {
@@ -1966,7 +1947,6 @@ class ContextualInsightService {
                 familyId: familyId,
                 category: category,
                 tableName: tableName,
-                subcategory: subcategory,
                 similarityThreshold: similarityThreshold,
                 apiKey: apiKey
             )
@@ -2005,7 +1985,6 @@ class ContextualInsightService {
         familyId: String,
         category: String,
         tableName: String,
-        subcategory: String? = nil,
         similarityThreshold: Float? = nil,
         apiKey: String
     ) async throws -> SimilarityData {
@@ -2017,7 +1996,7 @@ class ContextualInsightService {
                 familyId: familyId,
                 category: category,
                 tableName: tableName,
-                subcategory: subcategory,
+                subcategory: nil,
                 similarityThreshold: similarityThreshold,
                 apiKey: apiKey
             )
@@ -2092,16 +2071,13 @@ class ContextualInsightService {
             // Extract content and category from candidate
             let content: String
             let category: String
-            let subcategory: String?
             
             if let regulationInsight = candidate as? ChildRegulationInsight {
                 content = regulationInsight.content
                 category = regulationInsight.category.rawValue
-                subcategory = nil
             } else if let contextualInsight = candidate as? ContextualInsight {
                 content = contextualInsight.content
                 category = contextualInsight.category.rawValue
-                subcategory = contextualInsight.subcategory?.rawValue
             } else {
                 continue // Skip unknown types
             }
@@ -2125,7 +2101,6 @@ class ContextualInsightService {
                 familyId: familyId,
                 category: category,
                 tableName: tableName,
-                subcategory: subcategory,
                 apiKey: apiKey
             )
             
@@ -2133,7 +2108,6 @@ class ContextualInsightService {
             let extractedInsight = ExtractedInsight(
                 content: content,
                 category: category,
-                subcategory: subcategory,
                 wasTranslated: embeddingData.wasTranslated,
                 detectedLanguage: embeddingData.detectedLanguage,
                 similarityScore: similarityData.highestSimilarity > 0 ? similarityData.highestSimilarity : nil,

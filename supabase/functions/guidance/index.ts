@@ -1523,10 +1523,6 @@ function getDeduplicationPolicy(tableName: string, category: string, subcategory
   } else if (tableName === 'contextual_insights') {
     // Contextual insights policies
     switch (category.toLowerCase()) {
-      case 'proven_regulation_tools':
-        return 'FUSE'
-      case 'behavioral_patterns':
-        return 'REWRITE'
       case 'family_context':
         return 'DROP'
       case 'medical_health':
@@ -1537,22 +1533,6 @@ function getDeduplicationPolicy(tableName: string, category: string, subcategory
       case 'educational':
       case 'academic':
         return 'DROP'
-      case 'peer_social':
-      case 'peer':
-      case 'social':
-        return 'REWRITE'
-      case 'daily_life_practical':
-      case 'daily_life':
-      case 'practical':
-        return 'FUSE'
-      case 'temporal_timing':
-      case 'temporal':
-      case 'timing':
-        return 'FUSE'
-      case 'environmental_tech_triggers':
-      case 'environmental':
-      case 'tech_triggers':
-        return 'FUSE'
       case 'parenting_approaches':
       case 'parenting':
         return 'DROP'

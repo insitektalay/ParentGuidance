@@ -25,12 +25,6 @@ struct DeletedContextualInsightCard: View {
                     Text(insight.category.displayName)
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(SemanticColors.primaryText)
-                    
-                    if let subcategory = insight.subcategory {
-                        Text(subcategory.displayName)
-                            .font(.system(size: 12))
-                            .foregroundColor(SemanticColors.primaryText.opacity(0.7))
-                    }
                 }
                 
                 Spacer()
@@ -128,18 +122,14 @@ extension DateFormatter {
 #Preview {
     DeletedContextualInsightCard(
         insight: DeletedContextualInsight(
-            id: UUID(),
-            originalInsightId: "preview-id",
-            familyId: "preview-family",
-            childId: "preview-child",
-            category: .familyContext,
-            subcategory: nil,
-            content: "This is a preview of a deleted contextual insight that shows how the content looks when displayed in the card format.",
-            sourceSituationId: "preview-situation",
-            deletedAt: Date(),
-            deletedReason: "User requested deletion",
-            createdAt: "2025-07-30T12:00:00Z",
-            updatedAt: "2025-07-30T12:00:00Z"
+            from: ContextualInsight(
+                familyId: "preview-family",
+                childId: "preview-child",
+                category: .familyContext,
+                content: "This is a preview of a deleted contextual insight that shows how the content looks when displayed in the card format.",
+                sourceSituationId: "preview-situation"
+            ),
+            deletedReason: "User requested deletion"
         ),
         onRestore: { print("Restore tapped") },
         onPermanentDelete: { print("Permanent delete tapped") }

@@ -15,7 +15,6 @@ struct DeletedContextualInsight: Codable, Identifiable {
     let familyId: String
     let childId: String?
     let category: ContextCategory
-    let subcategory: ContextSubcategory?
     let content: String
     let sourceSituationId: String?
     let deletedAt: Date
@@ -29,7 +28,6 @@ struct DeletedContextualInsight: Codable, Identifiable {
         case familyId = "family_id"
         case childId = "child_id"
         case category
-        case subcategory
         case content
         case sourceSituationId = "source_situation_id"
         case deletedAt = "deleted_at"
@@ -51,7 +49,6 @@ extension DeletedContextualInsight {
         self.familyId = insight.familyId
         self.childId = insight.childId
         self.category = insight.category
-        self.subcategory = insight.subcategory
         self.content = insight.content
         self.sourceSituationId = insight.sourceSituationId
         self.deletedAt = Date()
@@ -65,7 +62,6 @@ extension DeletedContextualInsight {
             familyId: familyId,
             childId: childId,
             category: category,
-            subcategory: subcategory,
             content: content,
             sourceSituationId: sourceSituationId
         )

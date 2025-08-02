@@ -353,11 +353,7 @@ class RelevantInsightsService {
         
         // Add contextual insights (include subcategory if present)
         for insight in contextual {
-            let categoryName = if let subcategory = insight.subcategory {
-                "\(insight.category.displayName) - \(subcategory.displayName)"
-            } else {
-                insight.category.displayName
-            }
+            let categoryName = insight.category.displayName
             let prefix = "[\(categoryName)] "
             insights.append(prefix + insight.content)
         }
@@ -466,12 +462,8 @@ class RelevantInsightsService {
             
             // Try to match with contextual insights
             for insight in contextualInsights {
-                // Handle both with and without subcategories
-                let categoryName = if let subcategory = insight.subcategory {
-                    "\(insight.category.displayName) - \(subcategory.displayName)"
-                } else {
-                    insight.category.displayName
-                }
+                // Handle category name
+                let categoryName = insight.category.displayName
                 let expectedPrefix = "[\(categoryName)] "
                 print("     Checking contextual prefix: '\(expectedPrefix)'")
                 if selectedText.hasPrefix(expectedPrefix) {

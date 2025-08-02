@@ -528,43 +528,19 @@ Output:
       Context Domain Extraction Categories:
       
       1. Family Context
-         Select any sentences that describe family structure, routines, roles, home environment, or caregiving patterns.
+         Extract only background facts about the family structure, household composition, cultural identity, citizenship, or long-term living arrangements. Include stable attributes such as parental relationship status, family nationality, languages spoken, and who lives in the home. Exclude routines, caregiving actions, or parenting decisions — those go in other categories.
       
-      2. Proven Regulation Tools
-         Extract any sentences showing regulation tools that have worked for this child. Classify under:
+      2. Medical / Health
+         Extract clearly stated facts about the child’s physical health, medical conditions, diagnoses, medication use, diet, sleep, or other health-related needs. Only include information that is explicitly mentioned. Do not infer symptoms, emotional impact, or developmental traits. Exclude general behavior unless directly linked to a named health issue.
       
-         * Physical/Sensory (e.g., movement, touch, weighted blankets)
-         * Environmental (e.g., low lighting, reduced noise)
-         * Routine/Predictable (e.g., consistent bedtime, visual schedule)
-         * Key Success Patterns (e.g., child responds well to...)
-         * Timing Notes (e.g., mornings are easier, transitions after meals are hard)
+      3. Educational / Academic
+         Extract factual details that describe the child's school context or educational arrangements. Focus on objective aspects of school placement, routines, logistics, or external academic activities. Do not include learning difficulties, behavioral traits, or cognitive profiles.
       
-      3. Medical / Health
-         Include any mention of diagnoses, health conditions, medications, sleep, diet, or relevant physical factors.
+      4. Parenting Approaches
+          Extract any observable parenting decisions, expectations, or strategies. Include choices about routine, discipline, autonomy, material limits, communication style, or family involvement. Avoid emotional descriptions, praise, or unclear behavior not directly tied to a parenting approach.
       
-      4. Educational / Academic
-         Extract information about the child’s learning style, school placement, homework struggles, or classroom adaptations.
-      
-      5. Peer / Social
-         Include sentences that describe how the child interacts with peers (e.g., friendships, conflicts, group play).
-      
-      6. Behavioral Patterns
-         Capture consistent behavioral tendencies (e.g., resistance to transitions, impulsivity, escalation patterns). Do not include one-off incidents.
-      
-      7. Daily Life / Practical
-         Select concrete details about the child’s day-to-day functioning (e.g., bedtime routines, mealtimes, dressing, screen time).
-      
-      8. Temporal / Timing
-         Extract any patterns related to time of day, week, season, or developmental timing (e.g., tends to melt down after school, worse during holidays).
-      
-      9. Environmental & Tech Triggers
-         Identify sentences showing overstimulation or dysregulation from specific environments (e.g., crowds, noise) or tech use (e.g., screens, gaming).
-      
-      10. Parenting Approaches
-          Extract only strategies or decisions that clearly shape the child’s experience or behavior. Avoid listing parent behaviors that are described without evaluation, purpose, or impact on the child.
-      
-      11. Sibling Dynamics
-          Include sentences that highlight sibling relationships—positive, conflictual, or regulatory in nature.
+      5. Sibling Dynamics
+         Extract general insights that describe how the siblings compare, contrast, or emotionally relate to one another. Focus on closeness, mutual influence, shared roles, or differences in how they interact with the world. Do not include any insights about specific items or disputes. If the relationship is only shown through an object or a single event, do not include it.
       
       Global rules (rewritten):
 
@@ -584,40 +560,10 @@ Output:
       family context: 
       <output>
       
-      proven regulation tools – physical/sensory: 
-      <output>
-      
-      proven regulation tools – environmental: 
-      <output>
-      
-      proven regulation tools – routine/predictable: 
-      <output>
-      
-      proven regulation tools – key success patterns: 
-      <output>
-      
-      proven regulation tools – timing notes: 
-      <output>
-      
       medical / health: 
       <output>
       
       educational / academic: 
-      <output>
-      
-      peer / social: 
-      <output>
-      
-      behavioral patterns: 
-      <output>
-      
-      daily life / practical: 
-      <output>
-      
-      temporal / timing: 
-      <output>
-      
-      environmental & tech triggers: 
       <output>
       
       parenting approaches: 
@@ -650,6 +596,14 @@ Output:
         Social mismatch patterns.
         Responses to structured/unstructured social settings.
 
+      
+      Phrasing Guidance (Canonicalization Examples):
+      To reduce redundancy and improve clarity, use abstract phrasing that generalizes similar behaviors.
+      "dysregulated after stopping YouTube / giving back phone" → "distress when screen-time ends"
+      "change resistance / rigidity / upset by routine shifts" → "resists changes to routine"
+      "needs constant activity / grumpy without activity" → "needs continuous activity to regulate"
+      "co-regulation after setbacks / adult helped calm" → "benefits from adult co-regulation"
+      
       Rules:
         Only include a point if clearly supported by the text.
         Skip weak, vague, or general traits.
@@ -657,9 +611,17 @@ Output:
         If no clear traits for a section: return — No strong patterns found in this data.
         Exclude isolated labels, color zones, frameworks, or terminology unless the child’s concrete behavior is described alongside them.
         Do not extract behaviors framed as part of external programs or parenting strategies unless the child’s internal regulation response is clear.
-
+      Uniqueness: “Before finalizing, remove any bullets that restate the same trigger/pattern with different words. Keep the most abstract, general phrasing.”
+      Generalize exemplars: “If multiple items are the same underlying trigger with different objects (e.g., YouTube/phone/iPad), collapse into one canonical bullet (e.g., ‘distress when screen-time ends’).”
+      One-idea-per-trigger: “List each trigger/pattern once per output. Do not repeat with different examples.”
+      Cross-category precedence: “If an item fits both Core and a condition category, prefer Core unless the text explicitly ties it to ADHD/autism traits.”
+      Cap per section: “Max 6 bullets per section; choose the most distinct and representative.”
+      Cross-Category Non-Duplication: If a pattern fits more than one section, include it in the most appropriate one only — do not repeat the same idea across multiple categories. If unclear, prefer Core unless the text clearly ties it to ADHD or Mild Autism.
+      
       Output Format:
       Return JSON with keys "Core", "ADHD", and "Mild Autism" mapping to arrays of ultra-brief bullet point strings (e.g., "meltdowns after school"). No full sentences. No extras.
+      Draft pass: “First, draft up to 12 candidates per section.”
+      Dedup pass: “Then deduplicate by meaning, merge exemplars, and output ≤6 unique bullets per section.”
 
       Input:
       {{long_prompt}}`

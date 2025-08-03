@@ -434,27 +434,19 @@ class EdgeFunctionService {
         }
         
         // Parse the response
-        print("🔍 [EdgeFunction] Parsing JSON response...")
-        print("🔍 [EdgeFunction] Raw data size: \(data.count) bytes")
         
         // First, try to convert raw data to string for debugging
         if let rawString = String(data: data, encoding: .utf8) {
-            print("🔍 [EdgeFunction] Raw response preview: \(rawString.prefix(500))...")
         } else {
             print("❌ [EdgeFunction] Raw response data is not valid UTF-8!")
         }
         
         if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-            print("✅ [EdgeFunction] JSON parsing successful")
-            print("🔍 [EdgeFunction] JSON keys: \(json.keys)")
             
             if let success = json["success"] as? Bool {
-                print("🔍 [EdgeFunction] Success field: \(success)")
                 
                 if success, let responseData = json["data"] as? String {
                     print("✅ [EdgeFunction] Response data extracted successfully")
-                    print("🔍 [EdgeFunction] Response data length: \(responseData.count) characters")
-                    print("🔍 [EdgeFunction] Response data preview: \(responseData.prefix(300))...")
                     
                     // Validate that the response data is valid UTF-8
                     if responseData.data(using: .utf8) != nil {

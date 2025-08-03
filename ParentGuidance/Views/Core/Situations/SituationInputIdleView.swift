@@ -11,6 +11,9 @@ struct SituationInputIdleView: View {
     @State private var isKeyboardVisible: Bool = false
     @State private var keyboardHeight: CGFloat = 0
     
+    // User language preference for transcription
+    @State private var userLanguage: String = "en"
+    
     let childName: String
     let apiKey: String
     let onSendMessage: (String) -> Void
@@ -118,6 +121,9 @@ struct SituationInputIdleView: View {
         }
         .onAppear {
             setupKeyboardObservers()
+            Task {
+                await loadUserLanguagePreference()
+            }
         }
         .onDisappear {
             removeKeyboardObservers()
@@ -137,7 +143,7 @@ struct SituationInputIdleView: View {
         if voiceRecorderViewModel.isRecording {
             // Stop recording and transcribe
             do {
-                let result = try await voiceRecorderViewModel.stopRecordingAndTranscribe(apiKey: apiKey)
+                let result = try await voiceRecorderViewModel.stopRecordingAndTranscribe(apiKey: apiKey, userLanguage: userLanguage)
                 await MainActor.run {
                     handleTranscriptionComplete(result.transcription)
                 }
@@ -206,6 +212,32 @@ struct SituationInputIdleView: View {
         withAnimation(.easeInOut(duration: 0.3)) {
             isKeyboardVisible = false
             keyboardHeight = 0
+        }
+    }
+    
+    // MARK: - Language Preference Loading
+    
+    private func loadUserLanguagePreference() async {
+        print("🌍 Loading user language preference for transcription")
+        
+        do {
+            // Get current user ID
+            guard let userId = SupabaseManager.shared.client.auth.currentUser?.id.uuidString else {
+                print("⚠️ No current user, using default language 'en'")
+                return
+            }
+            
+            // Get user profile to read preferred language
+            let userProfile = try await AuthService.shared.loadUserProfile(userId: userId)
+            
+            await MainActor.run {
+                userLanguage = userProfile.preferredLanguage
+                print("✅ User language preference loaded: \(userLanguage)")
+            }
+        } catch {
+            print("❌ Failed to load user language preference: \(error)")
+            print("⚠️ Using default language 'en'")
+            // userLanguage already defaults to "en"
         }
     }
 }

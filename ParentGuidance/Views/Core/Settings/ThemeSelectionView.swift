@@ -150,17 +150,7 @@ struct ThemeOption: View {
     }
 }
 
-// View extension if not already present
-extension View {
-    @ViewBuilder
-    func `if`<Transform: View>(_ condition: Bool, transform: (Self) -> Transform) -> some View {
-        if condition {
-            transform(self)
-        } else {
-            self
-        }
-    }
-}
+// View extension removed - already defined in ColorPalette.swift
 
 #Preview {
     ThemeSelectionView(isPresented: .constant(true))

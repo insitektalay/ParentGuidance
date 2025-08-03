@@ -135,6 +135,9 @@
 		949600D42E20F2B1008EC0C0 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949600D22E20F2B1008EC0C0 /* LoadingView.swift */; };
 		949600D52E20F2B1008EC0C0 /* AppCoordinatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949600D32E20F2B1008EC0C0 /* AppCoordinatorView.swift */; };
 		94A6CE4D2E3DFDFE0062DEDD /* VerticalGuidanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A6CE4C2E3DFDFC0062DEDD /* VerticalGuidanceView.swift */; };
+		94A6CE4F2E3EFAEE0062DEDD /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A6CE4E2E3EFAEE0062DEDD /* ThemeManager.swift */; };
+		94A6CE512E3EFB020062DEDD /* ThemeSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A6CE502E3EFB020062DEDD /* ThemeSelectionView.swift */; };
+		94A6CE532E3EFB280062DEDD /* AppearanceSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A6CE522E3EFB280062DEDD /* AppearanceSection.swift */; };
 		94B3D79C2E16C45B000F1D65 /* TodayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B3D79B2E16C45B000F1D65 /* TodayViewController.swift */; };
 		94BC2DBE2E39EF6000B35676 /* DeletedCopingStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DBD2E39EF5D00B35676 /* DeletedCopingStrategy.swift */; };
 		94BC2DC02E39F19800B35676 /* DeletedCopingStrategiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DBF2E39F19700B35676 /* DeletedCopingStrategiesView.swift */; };
@@ -348,6 +351,9 @@
 		949600D22E20F2B1008EC0C0 /* LoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		949600D32E20F2B1008EC0C0 /* AppCoordinatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppCoordinatorView.swift; sourceTree = "<group>"; };
 		94A6CE4C2E3DFDFC0062DEDD /* VerticalGuidanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalGuidanceView.swift; sourceTree = "<group>"; };
+		94A6CE4E2E3EFAEE0062DEDD /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
+		94A6CE502E3EFB020062DEDD /* ThemeSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSelectionView.swift; sourceTree = "<group>"; };
+		94A6CE522E3EFB280062DEDD /* AppearanceSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceSection.swift; sourceTree = "<group>"; };
 		94B3D79B2E16C45B000F1D65 /* TodayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayViewController.swift; sourceTree = "<group>"; };
 		94BC2DBD2E39EF5D00B35676 /* DeletedCopingStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedCopingStrategy.swift; sourceTree = "<group>"; };
 		94BC2DBF2E39F19700B35676 /* DeletedCopingStrategiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedCopingStrategiesView.swift; sourceTree = "<group>"; };
@@ -532,6 +538,7 @@
 		944EA1EC2E2DE90100C110AF /* Sections */ = {
 			isa = PBXGroup;
 			children = (
+				94A6CE522E3EFB280062DEDD /* AppearanceSection.swift */,
 				943BC98B2E38A1FD0056EFF9 /* AIProcessingSection.swift */,
 				944EA1ED2E2DE91400C110AF /* FoundationToolsSection.swift */,
 				944EA1EF2E2DEBAC00C110AF /* FamilyLanguageSection.swift */,
@@ -725,6 +732,7 @@
 		94FA10F02E05630A003EC1E9 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				94A6CE4E2E3EFAEE0062DEDD /* ThemeManager.swift */,
 				94BC2DDF2E3CB76E00B35676 /* RelevantInsightsService.swift */,
 				943BC98D2E38A2110056EFF9 /* AIProcessingSettings.swift */,
 				943BC9792E35D7770056EFF9 /* MultiProviderApiKeyService.swift */,
@@ -855,6 +863,7 @@
 		94FA11192E05C8DC003EC1E9 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				94A6CE502E3EFB020062DEDD /* ThemeSelectionView.swift */,
 				943BC97D2E35D84E0056EFF9 /* ApiKeyManagementView.swift */,
 				944EA1FB2E2DFECF00C110AF /* Components */,
 				944EA1EC2E2DE90100C110AF /* Sections */,
@@ -1222,11 +1231,13 @@
 				944EA2132E2E128100C110AF /* SettingsUtilityService.swift in Sources */,
 				944EA1E92E2DE4A900C110AF /* SettingsFrameworkState.swift in Sources */,
 				948156542E253D4400C28273 /* VoiceRecorderDelegate.swift in Sources */,
+				94A6CE512E3EFB020062DEDD /* ThemeSelectionView.swift in Sources */,
 				943DFD742E180D40004F8043 /* SituationDetailView.swift in Sources */,
 				94BC2DC52E3A118100B35676 /* Guidance.swift in Sources */,
 				944EA20B2E2E0FDE00C110AF /* DeleteConfirmationTextField.swift in Sources */,
 				9481565A2E2773FC00C28273 /* DynamicGuidanceParser.swift in Sources */,
 				94FA11102E05C88A003EC1E9 /* TodayView.swift in Sources */,
+				94A6CE4F2E3EFAEE0062DEDD /* ThemeManager.swift in Sources */,
 				94FA110B2E056D40003EC1E9 /* APIKeyView.swift in Sources */,
 				943DFD9B2E1A85EE004F8043 /* ConversationService.swift in Sources */,
 				943BC98C2E38A2000056EFF9 /* AIProcessingSection.swift in Sources */,
@@ -1235,6 +1246,7 @@
 				943DFD892E18269D004F8043 /* ExportSheet.swift in Sources */,
 				944EA1AE2E2B652D00C110AF /* TranslationService.swift in Sources */,
 				94FA111F2E05CBAA003EC1E9 /* SituationInputIdleView.swift in Sources */,
+				94A6CE532E3EFB280062DEDD /* AppearanceSection.swift in Sources */,
 				943792A32E1BE9850089F512 /* LibrarySelectionManager.swift in Sources */,
 				944EA1FA2E2DFD4E00C110AF /* HelpSupportSection.swift in Sources */,
 				944EA1BA2E2B822C00C110AF /* TranslationStrategySelectionView.swift in Sources */,

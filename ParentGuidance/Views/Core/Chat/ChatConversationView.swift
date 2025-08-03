@@ -27,6 +27,9 @@ struct ChatConversationView: View {
     @StateObject private var voiceRecorderViewModel = VoiceRecorderViewModel()
     @State private var keyboardCancellable: AnyCancellable?
     
+    // User language preference for transcription
+    @State private var userLanguage: String = "en"
+    
     let childName: String
     let apiKey: String
     let onSendMessage: (String) async -> Void
@@ -63,6 +66,9 @@ struct ChatConversationView: View {
                     .frame(maxWidth: .infinity)
                 }
                 .onAppear {
+                    Task {
+                        await loadUserLanguagePreference()
+                    }
                     keyboardCancellable = Publishers.keyboardWillShow
                         .sink { _ in
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -145,7 +151,7 @@ struct ChatConversationView: View {
         if voiceRecorderViewModel.isRecording {
             Task {
                 do {
-                    let result = try await voiceRecorderViewModel.stopRecordingAndTranscribe(apiKey: apiKey)
+                    let result = try await voiceRecorderViewModel.stopRecordingAndTranscribe(apiKey: apiKey, userLanguage: userLanguage)
                     await MainActor.run {
                         handleTranscriptionComplete(result.transcription)
                     }
@@ -165,6 +171,32 @@ struct ChatConversationView: View {
             inputText = transcription
         } else {
             inputText += " \(transcription)"
+        }
+    }
+    
+    // MARK: - Language Preference Loading
+    
+    private func loadUserLanguagePreference() async {
+        print("🌍 Loading user language preference for transcription")
+        
+        do {
+            // Get current user ID
+            guard let userId = SupabaseManager.shared.client.auth.currentUser?.id.uuidString else {
+                print("⚠️ No current user, using default language 'en'")
+                return
+            }
+            
+            // Get user profile to read preferred language
+            let userProfile = try await AuthService.shared.loadUserProfile(userId: userId)
+            
+            await MainActor.run {
+                userLanguage = userProfile.preferredLanguage
+                print("✅ User language preference loaded: \(userLanguage)")
+            }
+        } catch {
+            print("❌ Failed to load user language preference: \(error)")
+            print("⚠️ Using default language 'en'")
+            // userLanguage already defaults to "en"
         }
     }
 }

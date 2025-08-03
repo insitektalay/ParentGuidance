@@ -12,6 +12,7 @@ struct VerticalGuidanceView: View {
     var onRetryTranslation: (() -> Void)? = nil
     var overallRecommendation: String? = nil
     var relevantInsights: [RelevantInsight] = []
+    var isLoadingInsights: Bool = false
     
     @Environment(\.dismiss) private var dismiss
     
@@ -53,12 +54,6 @@ struct VerticalGuidanceView: View {
                     .padding(.horizontal, 16)
                     .padding(.top, 20)
                     
-                    // Relevant insights (if any)
-                    if !relevantInsights.isEmpty {
-                        RelevantInsightsSection(insights: relevantInsights)
-                            .padding(.horizontal, 16)
-                    }
-                    
                     // Overall recommendation (if available)
                     if let recommendation = overallRecommendation, !recommendation.isEmpty {
                         VStack(alignment: .leading, spacing: 12) {
@@ -93,6 +88,17 @@ struct VerticalGuidanceView: View {
                                 )
                         )
                         .padding(.horizontal, 16)
+                    }
+                    
+                    // Relevant Insights Section
+                    if isLoadingInsights {
+                        RelevantInsightsLoadingView()
+                            .padding(.horizontal, 16)
+                            .padding(.bottom, 20)
+                    } else if !relevantInsights.isEmpty {
+                        RelevantInsightsSection(insights: relevantInsights)
+                            .padding(.horizontal, 16)
+                            .padding(.bottom, 20)
                     }
                 }
                 

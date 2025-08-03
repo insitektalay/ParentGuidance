@@ -1253,12 +1253,17 @@ async function handleTranscribeOperation(
     // Use Vercel AI SDK for transcription
     console.log('[DEBUG] Calling OpenAI Whisper via Vercel AI SDK')
     
+    // Extract language preference from variables (default to English)
+    const language = variables.language || 'en'
+    console.log(`[DEBUG] Using language: ${language}`)
+    
     // Note: The Vercel AI SDK doesn't have a direct transcription method yet,
     // so we'll make a direct API call with proper error handling
     const formData = new FormData()
     formData.append('file', audioFile)
     formData.append('model', 'whisper-1')
     formData.append('response_format', 'json')
+    formData.append('language', language)
 
     const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
       method: 'POST',

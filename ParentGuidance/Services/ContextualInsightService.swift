@@ -744,19 +744,15 @@ class ContextualInsightService {
         ]
         
         for sectionKey in sections {
-            print("🔍 [PARSING] Looking for section: '\(sectionKey)'")
             if let extractedContent = extractSectionContent(from: content, sectionKey: sectionKey) {
-                print("✅ [PARSING] Found content for '\(sectionKey)': \(extractedContent.prefix(100))...")
                 
                 // Skip "none found" responses
                 if extractedContent.lowercased().contains("none found") {
-                    print("⚠️ [PARSING] Skipping '\(sectionKey)' - contains 'none found'")
                     continue
                 }
                 
                 // Split multiple insights if separated by newlines or bullets
                 let individualInsights = splitInsights(extractedContent)
-                print("📝 [PARSING] Split into \(individualInsights.count) individual insights")
                 
                 for insightText in individualInsights {
                     if let insight = createInsight(
@@ -767,13 +763,11 @@ class ContextualInsightService {
                         situationId: situationId
                     ) {
                         insights.append(insight)
-                        print("✅ [PARSING] Created insight: \(insightText.prefix(50))...")
                     } else {
                         print("❌ [PARSING] Failed to create insight from: \(insightText.prefix(50))...")
                     }
                 }
             } else {
-                print("❌ [PARSING] No content extracted for section: '\(sectionKey)'")
             }
         }
         

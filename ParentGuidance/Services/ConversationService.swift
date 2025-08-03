@@ -45,8 +45,6 @@ class ConversationService: ObservableObject {
     }
     
     func getTodaysSituations(familyId: String) async throws -> [Situation] {
-        print("📊 Getting today's situations for family: \(familyId)")
-
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
         let today = dateFormatter.string(from: Date())
@@ -62,10 +60,8 @@ class ConversationService: ObservableObject {
                 .execute()
                 .value
 
-            print("✅ Found \(response.count) situations for today")
             return response
         } catch {
-            print("❌ Error getting today's situations: \(error)")
             return []
         }
     }
@@ -89,17 +85,12 @@ class ConversationService: ObservableObject {
             isIncident: isIncident
         )
         
-        print("💾 Saving situation to database...")
-        print("   Title: \(title)")
-        print("   Description: \(description.prefix(50))...")
-        
         do {
             try await SupabaseManager.shared.client
                 .from("situations")
                 .insert(situation)
                 .execute()
             
-            print("✅ Situation saved successfully with ID: \(situation.id)")
             return situation.id
         } catch {
             print("❌ Error saving situation: \(error.localizedDescription)")
@@ -113,20 +104,8 @@ class ConversationService: ObservableObject {
         category: String? = nil,
         overallRecommendation: String? = nil
     ) async throws -> String {
-        print("🔍 [DEBUG] Starting saveGuidance method")
-        print("🔍 [DEBUG] Input parameters:")
-        print("   - situationId: \(situationId)")
-        print("   - content length: \(content.count) characters")
-        print("   - content preview: \(content.prefix(100))...")
-        print("   - category: \(category ?? "nil")")
-        print("   - overallRecommendation: \(overallRecommendation != nil ? "provided" : "nil")")
-        
         let guidanceId = UUID().uuidString
         let currentDate = ISO8601DateFormatter().string(from: Date())
-        
-        print("🔍 [DEBUG] Generated values:")
-        print("   - guidanceId: \(guidanceId)")
-        print("   - currentDate: \(currentDate)")
         
         let guidance = Guidance(
             id: guidanceId,
@@ -138,28 +117,15 @@ class ConversationService: ObservableObject {
             updatedAt: currentDate
         )
         
-        print("🔍 [DEBUG] Created Guidance object successfully")
-        print("💾 Attempting to save guidance to Supabase...")
-        
         do {
-            print("🔍 [DEBUG] Calling Supabase client insert...")
             let response = try await SupabaseManager.shared.client
                 .from("guidance")
                 .insert(guidance)
                 .execute()
             
-            print("🔍 [DEBUG] Supabase response received")
-            print("🔍 [DEBUG] Response data: \(response)")
-            print("✅ Guidance saved successfully with ID: \(guidance.id)")
             return guidance.id
         } catch {
-            print("❌ [ERROR] Failed to save guidance!")
-            print("❌ [ERROR] Error type: \(type(of: error))")
-            print("❌ [ERROR] Error description: \(error.localizedDescription)")
-            print("❌ [ERROR] Full error: \(error)")
-            if let encodingError = error as? EncodingError {
-                print("❌ [ERROR] Encoding error details: \(encodingError)")
-            }
+            print("❌ Failed to save guidance: \(error.localizedDescription)")
             throw error
         }
     }
@@ -780,11 +746,9 @@ class ConversationService: ObservableObject {
                 apiKey: apiKey
             )
             
-            print("✅ Analysis completed via Edge Function - Category: \(category), Incident: \(isIncident)")
             return (category: category, isIncident: isIncident)
             
         } catch {
-            print("❌ Edge Function analysis failed: \(error)")
             // Fallback to defaults on error
             return (category: nil, isIncident: false)
         }
@@ -796,7 +760,7 @@ class ConversationService: ObservableObject {
         apiKey: String,
         activeFramework: FrameworkRecommendation? = nil
     ) async throws -> (category: String?, isIncident: Bool) {
-        print("🔄 Using direct API for situation analysis (legacy)")
+        // Using direct API for situation analysis (legacy)
         
         let url = URL(string: "https://api.openai.com/v1/responses")!
         var request = URLRequest(url: url)
@@ -816,25 +780,16 @@ class ConversationService: ObservableObject {
         
         request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
         
-        print("📡 Making analysis API request...")
         let (data, response) = try await URLSession.shared.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse else {
-            print("❌ Invalid HTTP response for analysis")
             throw NSError(domain: "AnalysisError", code: 500, userInfo: [NSLocalizedDescriptionKey: "Invalid response"])
         }
         
         if httpResponse.statusCode != 200 {
-            print("❌ Analysis HTTP error: \(httpResponse.statusCode)")
-            if let responseString = String(data: data, encoding: .utf8) {
-                print("❌ Analysis error response: \(responseString)")
-            }
             // Return defaults on API failure instead of throwing
-            print("⚠️ Analysis failed, using defaults")
             return (category: nil, isIncident: false)
         }
-        
-        print("✅ Analysis HTTP 200 response received")
         
         do {
             // Parse using the same PromptResponse structure
@@ -842,16 +797,13 @@ class ConversationService: ObservableObject {
             
             guard let firstOutput = promptResponse.output.first,
                   let firstContent = firstOutput.content.first else {
-                print("❌ No content in analysis response")
                 return (category: nil, isIncident: false)
             }
             
             let content = firstContent.text
-            print("📝 Analysis content received: \(content)")
             
             // Parse the JSON response - wrap in braces to make valid JSON
             let wrappedJson = "{\(content)}"
-            print("📝 Wrapped JSON: \(wrappedJson)")
             
             if let jsonData = wrappedJson.data(using: .utf8),
                let analysisResult = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any] {
@@ -869,16 +821,12 @@ class ConversationService: ObservableObject {
                     isIncident = false
                 }
                 
-                print("✅ Analysis completed - Category: \(category ?? "nil"), Incident: \(isIncident)")
                 return (category: category, isIncident: isIncident)
             } else {
-                print("❌ Failed to parse analysis JSON response")
-                print("❌ Raw content was: \(content)")
                 return (category: nil, isIncident: false)
             }
             
         } catch {
-            print("❌ Error parsing analysis response: \(error)")
             return (category: nil, isIncident: false)
         }
     }

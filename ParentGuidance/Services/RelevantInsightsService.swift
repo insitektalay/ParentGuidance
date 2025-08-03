@@ -61,6 +61,9 @@ class RelevantInsightsService {
     /// Feature flag to use Edge Function instead of direct OpenAI API
     private let useEdgeFunction = UserDefaults.standard.object(forKey: "relevant_insights_use_edge_function") as? Bool ?? true
     
+    /// Ultra-minimal debug mode - only shows critical RLS issues
+    private let ultraDebugMode = true // Set to false to disable all insights debugging
+    
     private init() {}
     
     // MARK: - Configuration Methods
@@ -73,7 +76,7 @@ class RelevantInsightsService {
     
     /// Check if Edge Function is currently enabled
     static func isUsingEdgeFunction() -> Bool {
-        return UserDefaults.standard.bool(forKey: "relevant_insights_use_edge_function")
+        return UserDefaults.standard.object(forKey: "relevant_insights_use_edge_function") as? Bool ?? true
     }
     
     // MARK: - Main Selection Method
@@ -86,7 +89,7 @@ class RelevantInsightsService {
         familyId: String,
         apiKey: String
     ) async throws -> [RelevantInsight] {
-        print("🎯 Selecting relevant insights for guidance: \(guidanceId)")
+        if ultraDebugMode { print("🔍 [INSIGHTS] SAVE: \(guidanceId)") }
         
         // Step 1: Fetch all existing insights for the family (excluding current situation)
         let (contextualInsights, regulationInsights) = try await fetchAllFamilyInsights(
@@ -94,19 +97,9 @@ class RelevantInsightsService {
             excludingSituationId: situationId
         )
         
-        print("📊 Found \(contextualInsights.count) contextual and \(regulationInsights.count) regulation insights")
-        print("🔍 [DEBUG] Contextual insights details:")
-        for insight in contextualInsights {
-            print("   - [\(insight.category.displayName)] \(insight.content)")
-        }
-        print("🔍 [DEBUG] Regulation insights details:")
-        for insight in regulationInsights {
-            print("   - [\(insight.category.parentFriendlyName)] \(insight.content)")
-        }
-        
         // If no insights exist, return empty array
         guard !contextualInsights.isEmpty || !regulationInsights.isEmpty else {
-            print("ℹ️ No existing insights found for family")
+            if ultraDebugMode { print("❌ No existing insights found for family") }
             return []
         }
         
@@ -116,31 +109,12 @@ class RelevantInsightsService {
             regulation: regulationInsights
         )
         
-        print("📝 [DEBUG] Formatted insights list for LLM:")
-        print("   Length: \(insightsList.count) characters")
-        print("   Content preview: \(String(insightsList.prefix(500)))...")
-        print("   Full content:")
-        print("================== INSIGHTS LIST START ==================")
-        print(insightsList)
-        print("================== INSIGHTS LIST END ==================")
-        
-        print("📝 [DEBUG] Guidance text for LLM:")
-        print("   Length: \(guidanceText.count) characters")
-        print("   Content preview: \(String(guidanceText.prefix(500)))...")
-        
         // Step 3: Call LLM to select relevant insights
         let selectedInsightTexts = try await callLLMForSelection(
             guidanceText: guidanceText,
             insightsList: insightsList,
             apiKey: apiKey
         )
-        
-        print("🤖 [DEBUG] LLM Response Analysis:")
-        print("   Selected \(selectedInsightTexts.count) relevant insights")
-        print("   Raw selected texts:")
-        for (index, text) in selectedInsightTexts.enumerated() {
-            print("     \(index + 1). \(text)")
-        }
         
         // Step 4: Match selected texts back to original insights
         let relevantInsights = matchSelectedInsights(
@@ -154,7 +128,66 @@ class RelevantInsightsService {
         // Step 5: Save to database
         if !relevantInsights.isEmpty {
             try await saveRelevantInsights(relevantInsights)
-            print("✅ Saved \(relevantInsights.count) relevant insights to database")
+            if ultraDebugMode { print("✅ [INSIGHTS] SAVED: \(guidanceId) → \(relevantInsights.count)") }
+        } else {
+            if ultraDebugMode { print("❌ [INSIGHTS] NONE: \(guidanceId) → 0") }
+        }
+        
+        return relevantInsights
+    }
+    
+    /// Select relevant insights for a historical situation (respects historical context)
+    func selectRelevantInsightsForHistoricalSituation(
+        guidanceText: String,
+        situationId: String,
+        guidanceId: String,
+        familyId: String,
+        situationDate: String,
+        apiKey: String
+    ) async throws -> [RelevantInsight] {
+        // Historical insights selection for Library view
+        
+        // Step 1: Fetch insights that existed before or on the situation date
+        let (contextualInsights, regulationInsights) = try await fetchAllFamilyInsightsBeforeDate(
+            familyId: familyId,
+            excludingSituationId: situationId,
+            beforeDate: situationDate
+        )
+        
+        // If no insights existed at that time, return empty array
+        guard !contextualInsights.isEmpty || !regulationInsights.isEmpty else {
+            return []
+        }
+        
+        // Step 2: Format insights for LLM
+        let insightsList = formatInsightsForLLM(
+            contextual: contextualInsights,
+            regulation: regulationInsights
+        )
+        
+        
+        // Step 3: Call LLM to select relevant insights
+        let selectedInsightTexts = try await callLLMForSelection(
+            guidanceText: guidanceText,
+            insightsList: insightsList,
+            apiKey: apiKey
+        )
+        
+        print("🤖 [HISTORICAL] LLM selected \(selectedInsightTexts.count) insights from historical context")
+        
+        // Step 4: Match selected texts back to original insights
+        let relevantInsights = matchSelectedInsights(
+            selectedTexts: selectedInsightTexts,
+            contextualInsights: contextualInsights,
+            regulationInsights: regulationInsights,
+            situationId: situationId,
+            guidanceId: guidanceId
+        )
+        
+        // Step 5: Save to database
+        if !relevantInsights.isEmpty {
+            try await saveRelevantInsights(relevantInsights)
+            print("✅ Saved \(relevantInsights.count) historical relevant insights to database")
         }
         
         return relevantInsights
@@ -187,6 +220,42 @@ class RelevantInsightsService {
             .order("created_at", ascending: false)
             .execute()
             .value
+        
+        return (contextualInsights, regulationInsights)
+    }
+    
+    /// Fetch all insights for a family that existed before a specific date
+    private func fetchAllFamilyInsightsBeforeDate(
+        familyId: String,
+        excludingSituationId: String,
+        beforeDate: String
+    ) async throws -> (contextual: [ContextualInsight], regulation: [ChildRegulationInsight]) {
+        
+        // Fetch insights that existed before the situation date
+        
+        // Fetch contextual insights created before the situation date
+        let contextualInsights: [ContextualInsight] = try await SupabaseManager.shared.client
+            .from("contextual_insights")
+            .select("*")
+            .eq("family_id", value: familyId)
+            .neq("source_situation_id", value: excludingSituationId)
+            .lte("created_at", value: beforeDate)
+            .order("created_at", ascending: false)
+            .execute()
+            .value
+        
+        // Fetch regulation insights created before the situation date
+        let regulationInsights: [ChildRegulationInsight] = try await SupabaseManager.shared.client
+            .from("insight_bullet_points")
+            .select("*")
+            .eq("family_id", value: familyId)
+            .neq("situation_id", value: excludingSituationId)
+            .lte("created_at", value: beforeDate)
+            .order("created_at", ascending: false)
+            .execute()
+            .value
+        
+        // Return insights that existed before the situation date
         
         return (contextualInsights, regulationInsights)
     }
@@ -224,20 +293,14 @@ class RelevantInsightsService {
         apiKey: String
     ) async throws -> [String] {
         
-        print("🚀 [DEBUG] Starting LLM call for insight selection")
-        print("   useEdgeFunction: \(useEdgeFunction)")
-        print("   API key: \(String(apiKey.prefix(10)))...")
-        
         let result: [String]
         if useEdgeFunction {
-            print("   Using EdgeFunction path")
             result = try await callEdgeFunctionForSelection(
                 guidanceText: guidanceText,
                 insightsList: insightsList,
                 apiKey: apiKey
             )
         } else {
-            print("   Using Direct API path")
             result = try await callDirectAPIForSelection(
                 guidanceText: guidanceText,
                 insightsList: insightsList,
@@ -245,7 +308,6 @@ class RelevantInsightsService {
             )
         }
         
-        print("✅ [DEBUG] LLM call completed, returned \(result.count) insights")
         return result
     }
     
@@ -255,29 +317,14 @@ class RelevantInsightsService {
         insightsList: String,
         apiKey: String
     ) async throws -> [String] {
-        print("🚀 Using EdgeFunction for insight selection")
-        
         let response = try await EdgeFunctionService.shared.selectWhichInsightsMatter(
             guidanceText: guidanceText,
             insightsList: insightsList,
             apiKey: apiKey
         )
         
-        print("🔍 [DEBUG] EdgeFunction response received:")
-        print("   Response length: \(response.count) characters")
-        print("   Response preview: \(String(response.prefix(500)))")
-        print("   Full response:")
-        print("================== EDGE FUNCTION RESPONSE START ==================")
-        print(response)
-        print("================== EDGE FUNCTION RESPONSE END ==================")
-        
         // Parse response - expecting a list of insight texts
         let parsedInsights = parseInsightSelectionResponse(response)
-        print("📊 [DEBUG] After parsing EdgeFunction response:")
-        print("   Parsed \(parsedInsights.count) insights")
-        for (index, insight) in parsedInsights.enumerated() {
-            print("     \(index + 1). '\(insight)'")
-        }
         
         return parsedInsights
     }
@@ -288,7 +335,6 @@ class RelevantInsightsService {
         insightsList: String,
         apiKey: String
     ) async throws -> [String] {
-        print("🔗 Using Direct API for insight selection")
         
         let url = URL(string: "https://api.openai.com/v1/responses")!
         var request = URLRequest(url: url)
@@ -319,25 +365,10 @@ class RelevantInsightsService {
         
         guard let firstOutput = promptResponse.output.first,
               let firstContent = firstOutput.content.first else {
-            print("❌ [DEBUG] Direct API: No content in response")
-            print("   Response structure: \(promptResponse)")
             throw NSError(domain: "RelevantInsightsError", code: 500, userInfo: [NSLocalizedDescriptionKey: "No content in response"])
         }
         
-        print("🔍 [DEBUG] Direct API response received:")
-        print("   Response text length: \(firstContent.text.count) characters")
-        print("   Response text preview: \(String(firstContent.text.prefix(500)))")
-        print("   Full response text:")
-        print("================== DIRECT API RESPONSE START ==================")
-        print(firstContent.text)
-        print("================== DIRECT API RESPONSE END ==================")
-        
         let parsedInsights = parseInsightSelectionResponse(firstContent.text)
-        print("📊 [DEBUG] After parsing Direct API response:")
-        print("   Parsed \(parsedInsights.count) insights")
-        for (index, insight) in parsedInsights.enumerated() {
-            print("     \(index + 1). '\(insight)'")
-        }
         
         return parsedInsights
     }
@@ -364,19 +395,12 @@ class RelevantInsightsService {
             insights.append(prefix + insight.content)
         }
         
-        print("🔧 [DEBUG] Formatted \(insights.count) insights for LLM:")
-        for (index, insight) in insights.enumerated() {
-            print("     \(index + 1). \(insight)")
-        }
         
         return insights.joined(separator: "\n")
     }
     
     /// Parse LLM response to extract selected insight texts
     private func parseInsightSelectionResponse(_ response: String) -> [String] {
-        print("🔧 [DEBUG] Parsing insight selection response")
-        print("   Raw response length: \(response.count)")
-        print("   Raw response: '\(response)'")
         
         // Try multiple parsing strategies to handle various LLM response formats
         var insights: [String] = []
@@ -395,7 +419,6 @@ class RelevantInsightsService {
                     insights.append(fullInsight)
                 }
             }
-            print("   Strategy 1 (bracket pattern): Found \(insights.count) insights")
         }
         
         // Strategy 2: If no bracket format found, try numbered list parsing
@@ -413,7 +436,6 @@ class RelevantInsightsService {
                         insights.append(fullInsight)
                     }
                 }
-                print("   Strategy 2 (numbered list): Found \(insights.count) insights")
             }
         }
         
@@ -422,7 +444,6 @@ class RelevantInsightsService {
             let components = response.components(separatedBy: .newlines)
             let trimmed = components.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             insights = trimmed.filter { !$0.isEmpty && $0.contains("[") && $0.contains("]") }
-            print("   Strategy 3 (newline split): Found \(insights.count) insights")
         }
         
         // Strategy 4: Handle comma-separated responses
@@ -430,13 +451,8 @@ class RelevantInsightsService {
             let components = response.components(separatedBy: ",")
             let trimmed = components.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             insights = trimmed.filter { !$0.isEmpty && $0.contains("[") && $0.contains("]") }
-            print("   Strategy 4 (comma split): Found \(insights.count) insights")
         }
         
-        print("   Final parsing result: \(insights.count) insights")
-        for (index, insight) in insights.enumerated() {
-            print("     \(index + 1). '\(insight)'")
-        }
         
         return insights
     }
@@ -449,31 +465,21 @@ class RelevantInsightsService {
         situationId: String,
         guidanceId: String
     ) -> [RelevantInsight] {
-        print("🔍 [DEBUG] Matching selected texts to original insights")
-        print("   Selected texts count: \(selectedTexts.count)")
-        print("   Available contextual insights: \(contextualInsights.count)")
-        print("   Available regulation insights: \(regulationInsights.count)")
         
         var relevantInsights: [RelevantInsight] = []
         
-        for (index, selectedText) in selectedTexts.enumerated() {
-            print("   Processing selected text \(index + 1): '\(selectedText)'")
+        for selectedText in selectedTexts {
             var foundMatch = false
             
             // Try to match with contextual insights
             for insight in contextualInsights {
-                // Handle category name
                 let categoryName = insight.category.displayName
                 let expectedPrefix = "[\(categoryName)] "
-                print("     Checking contextual prefix: '\(expectedPrefix)'")
                 if selectedText.hasPrefix(expectedPrefix) {
                     let content = String(selectedText.dropFirst(expectedPrefix.count))
-                    print("     Extracted content: '\(content)'")
-                    print("     Original content: '\(insight.content)'")
                     
                     // Try exact match first
                     if content == insight.content {
-                        print("     ✅ EXACT MATCH FOUND for contextual insight!")
                         relevantInsights.append(RelevantInsight(
                             situationId: situationId,
                             guidanceId: guidanceId,
@@ -486,7 +492,6 @@ class RelevantInsightsService {
                     }
                     // Try fuzzy match for minor differences
                     else if isFuzzyMatch(selected: content, original: insight.content) {
-                        print("     ✅ FUZZY MATCH FOUND for contextual insight!")
                         relevantInsights.append(RelevantInsight(
                             situationId: situationId,
                             guidanceId: guidanceId,
@@ -496,11 +501,7 @@ class RelevantInsightsService {
                         ))
                         foundMatch = true
                         break
-                    } else {
-                        print("     ❌ Content mismatch (similarity: \(String(format: "%.2f", calculateSimilarity(selected: content, original: insight.content))))")
                     }
-                } else {
-                    print("     ❌ Prefix mismatch")
                 }
             }
             
@@ -508,15 +509,11 @@ class RelevantInsightsService {
                 // Try to match with regulation insights
                 for insight in regulationInsights {
                     let expectedPrefix = "[\(insight.category.parentFriendlyName)] "
-                    print("     Checking regulation prefix: '\(expectedPrefix)'")
                     if selectedText.hasPrefix(expectedPrefix) {
                         let content = String(selectedText.dropFirst(expectedPrefix.count))
-                        print("     Extracted content: '\(content)'")
-                        print("     Original content: '\(insight.content)'")
                         
                         // Try exact match first
                         if content == insight.content {
-                            print("     ✅ EXACT MATCH FOUND for regulation insight!")
                             relevantInsights.append(RelevantInsight(
                                 situationId: situationId,
                                 guidanceId: guidanceId,
@@ -529,7 +526,6 @@ class RelevantInsightsService {
                         }
                         // Try fuzzy match for minor differences
                         else if isFuzzyMatch(selected: content, original: insight.content) {
-                            print("     ✅ FUZZY MATCH FOUND for regulation insight!")
                             relevantInsights.append(RelevantInsight(
                                 situationId: situationId,
                                 guidanceId: guidanceId,
@@ -539,21 +535,11 @@ class RelevantInsightsService {
                             ))
                             foundMatch = true
                             break
-                        } else {
-                            print("     ❌ Content mismatch (similarity: \(String(format: "%.2f", calculateSimilarity(selected: content, original: insight.content))))")
                         }
-                    } else {
-                        print("     ❌ Prefix mismatch")
                     }
                 }
             }
-            
-            if !foundMatch {
-                print("     ❌ NO MATCH FOUND for selected text: '\(selectedText)'")
-            }
         }
-        
-        print("✅ [DEBUG] Matching completed: \(relevantInsights.count) insights matched")
         return relevantInsights
     }
     

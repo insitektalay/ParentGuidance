@@ -22,6 +22,12 @@ struct SituationDetailView: View {
     @State private var isUpdatingDate = false
     @ObservedObject private var guidanceStructureSettings = GuidanceStructureSettings.shared
     
+    // Relevant insights state
+    @State private var relevantInsights: [RelevantInsight] = []
+    @State private var isLoadingInsights = false
+    @State private var isGeneratingInsights = false
+    @State private var insightGenerationError: String? = nil
+    
     var body: some View {
         VStack(spacing: 0) {
             // Header with back button and breadcrumb
@@ -162,6 +168,19 @@ struct SituationDetailView: View {
                                                 .padding(.bottom, 20)
                                         }
                                         
+                                        // Relevant Insights Section
+                                        if isLoadingInsights {
+                                            RelevantInsightsLoadingView()
+                                                .padding(.bottom, 20)
+                                        } else if !relevantInsights.isEmpty {
+                                            RelevantInsightsSection(insights: relevantInsights)
+                                                .padding(.bottom, 20)
+                                        } else {
+                                            // Generate Insights Button (for missing insights)
+                                            generateInsightsButton()
+                                                .padding(.bottom, 20)
+                                        }
+                                        
                                         // Vertical stack of guidance cards
                                         LazyVStack(spacing: 16) {
                                             ForEach(0..<categories.count, id: \.self) { index in
@@ -240,6 +259,12 @@ struct SituationDetailView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(SemanticColors.primaryBackground)
         .navigationBarHidden(true)
+        .task(id: guidance.first?.id) {
+            await loadRelevantInsights()
+        }
+        .onChange(of: guidance.map(\.id)) { _ in
+            Task { await loadRelevantInsights() }
+        }
         .sheet(isPresented: $showDatePicker) {
             datePickerSheet
         }
@@ -494,6 +519,204 @@ struct SituationDetailView: View {
                         .stroke(SemanticColors.accent.opacity(0.3), lineWidth: 1)
                 )
         )
+    }
+    
+    // MARK: - Relevant Insights Loading
+    
+    private func loadRelevantInsights() async {
+        print("🔔 ENTER loadRelevantInsights() - guidance.count: \(guidance.count)")
+        
+        // Get the first guidance entry to load insights for
+        guard let firstGuidance = guidance.first else {
+            print("⛔️ No guidance yet, skipping read - isLoadingGuidance: \(isLoadingGuidance)")
+            return
+        }
+        
+        print("➡️ Fetching insights for guidanceId: \(firstGuidance.id)")
+        print("📋 [DEBUG] Guidance created at: \(firstGuidance.createdAt)")
+        print("📋 [DEBUG] Situation ID: \(situation.id)")
+        
+        await MainActor.run {
+            isLoadingInsights = true
+        }
+        
+        do {
+            let insights = try await RelevantInsightsService.shared.getRelevantInsights(guidanceId: firstGuidance.id)
+            
+            await MainActor.run {
+                self.relevantInsights = insights
+                self.isLoadingInsights = false
+            }
+            
+            print("✅ [SituationDetailView] Loaded \(insights.count) relevant insights")
+            
+        } catch {
+            print("❌ [SituationDetailView] Failed to load relevant insights: \(error)")
+            await MainActor.run {
+                self.isLoadingInsights = false
+            }
+        }
+    }
+    
+    // MARK: - Generate Insights Button
+    
+    @ViewBuilder
+    private func generateInsightsButton() -> some View {
+        VStack(alignment: .leading, spacing: 16) {
+            // Header
+            HStack(spacing: 8) {
+                Image(systemName: "lightbulb.2.fill")
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundColor(SemanticColors.accent)
+                
+                Text(String(localized: "insights.relevant.title"))
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(SemanticColors.primaryText)
+                
+                Spacer()
+            }
+            
+            if isGeneratingInsights {
+                // Loading state
+                HStack(spacing: 8) {
+                    ProgressView()
+                        .tint(SemanticColors.accent.opacity(0.7))
+                        .scaleEffect(0.8)
+                    
+                    Text("Generating relevant insights...")
+                        .font(.system(size: 14))
+                        .foregroundColor(SemanticColors.secondaryText)
+                }
+            } else if let error = insightGenerationError {
+                // Error state
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.system(size: 14))
+                            .foregroundColor(.orange)
+                        
+                        Text("Failed to generate insights")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(SemanticColors.primaryText)
+                    }
+                    
+                    Text(error)
+                        .font(.system(size: 12))
+                        .foregroundColor(SemanticColors.secondaryText)
+                        .lineLimit(3)
+                    
+                    Button("Retry") {
+                        Task {
+                            await generateRelevantInsights()
+                        }
+                    }
+                    .foregroundColor(SemanticColors.accent)
+                    .font(.system(size: 14, weight: .medium))
+                }
+            } else {
+                // Generate button state
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("No relevant insights found for this guidance. Generate insights by analyzing this guidance against your existing 'Your Child's World' knowledge base.")
+                        .font(.system(size: 14))
+                        .foregroundColor(SemanticColors.secondaryText)
+                        .lineSpacing(2)
+                    
+                    Button(action: {
+                        Task {
+                            await generateRelevantInsights()
+                        }
+                    }) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "sparkles")
+                                .font(.system(size: 14, weight: .medium))
+                            
+                            Text("Generate Relevant Insights")
+                                .font(.system(size: 14, weight: .medium))
+                        }
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                        .background(SemanticColors.accent)
+                        .cornerRadius(8)
+                    }
+                    .disabled(isGeneratingInsights)
+                }
+            }
+        }
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(SemanticColors.cardBackground)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(SemanticColors.accent.opacity(0.3), lineWidth: 1)
+                )
+        )
+    }
+    
+    // MARK: - Manual Insights Generation
+    
+    private func generateRelevantInsights() async {
+        guard let firstGuidance = guidance.first else {
+            await MainActor.run {
+                insightGenerationError = "No guidance found to generate insights for"
+            }
+            return
+        }
+        
+        await MainActor.run {
+            isGeneratingInsights = true
+            insightGenerationError = nil
+        }
+        
+        do {
+            print("🎯 [SituationDetailView] Manual generation of relevant insights")
+            print("🎯 [SituationDetailView] Guidance ID: \(firstGuidance.id)")
+            print("🎯 [SituationDetailView] Situation ID: \(situation.id)")
+            print("🎯 [SituationDetailView] Family ID: \(situation.familyId ?? "none")")
+            
+            // Get user's API key
+            guard let userId = SupabaseManager.shared.client.auth.currentUser?.id.uuidString else {
+                throw NSError(domain: "Auth", code: 401, userInfo: [NSLocalizedDescriptionKey: "User not authenticated"])
+            }
+            
+            let apiKey = try await getUserApiKey(userId: userId)
+            
+            // Generate insights using historical context (filter by situation date)
+            let insights = try await RelevantInsightsService.shared.selectRelevantInsightsForHistoricalSituation(
+                guidanceText: firstGuidance.content,
+                situationId: situation.id,
+                guidanceId: firstGuidance.id,
+                familyId: situation.familyId ?? "",
+                situationDate: situation.createdAt,
+                apiKey: apiKey
+            )
+            
+            await MainActor.run {
+                self.relevantInsights = insights
+                self.isGeneratingInsights = false
+                
+                if insights.isEmpty {
+                    self.insightGenerationError = "No relevant insights found. This could mean you don't have enough insights in your 'Your Child's World' knowledge base yet, or none match this guidance."
+                }
+            }
+            
+            print("✅ [SituationDetailView] Generated \(insights.count) relevant insights")
+            
+        } catch {
+            print("❌ [SituationDetailView] Manual insight generation failed: \(error)")
+            await MainActor.run {
+                self.isGeneratingInsights = false
+                self.insightGenerationError = "Failed to generate insights: \(error.localizedDescription)"
+            }
+        }
+    }
+    
+    private func getUserApiKey(userId: String) async throws -> String {
+        guard let apiKey = try await MultiProviderApiKeyService.shared.getLegacyApiKey(for: userId) else {
+            throw NSError(domain: "ApiKey", code: 404, userInfo: [NSLocalizedDescriptionKey: "No API key found"])
+        }
+        return apiKey
     }
 }
 

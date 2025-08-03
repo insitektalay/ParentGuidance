@@ -66,9 +66,6 @@ class GuidanceGenerationService {
         let (guidance, rawContent): (GuidanceResponseProtocol, String)
         
         // Debug logging for feature flags
-        print("🔍 [GuidanceGenerationService] Feature flags:")
-        print("   → useEdgeFunction: \(useEdgeFunction)")
-        print("   → useFunctionCalling: \(useFunctionCalling)")
         print("   → useStreaming: \(useStreaming)")
         print("   → Selected path: \(useEdgeFunction && useFunctionCalling ? "EdgeFunction + FunctionCalling" : useEdgeFunction && useStreaming ? "EdgeFunction + Streaming" : useEdgeFunction ? "EdgeFunction (non-streaming)" : "Direct API")")
         
@@ -268,8 +265,7 @@ class GuidanceGenerationService {
             let structureMode = guidanceStructureSettings.currentMode == .fixed ? "fixed" : "dynamic"
             let guidanceStyle = guidanceStructureSettings.currentStyle == .warmPractical ? "Warm Practical" : "Analytical Scientific"
             
-            print("📊 [GuidanceGenerationService] Current settings:")
-            print("   → Structure Mode: \(structureMode)")
+                print("   → Structure Mode: \(structureMode)")
             print("   → Guidance Style: \(guidanceStyle)")
             print("   → Selected Prompt Version: \(guidanceStructureSettings.getPromptVersion(hasFramework: activeFramework != nil))")
             
@@ -327,8 +323,7 @@ class GuidanceGenerationService {
             let structureMode = guidanceStructureSettings.currentMode == .fixed ? "fixed" : "dynamic"
             let guidanceStyle = guidanceStructureSettings.currentStyle == .warmPractical ? "Warm Practical" : "Analytical Scientific"
             
-            print("📊 [GuidanceGenerationService] Current settings:")
-            print("   → Structure Mode: \(structureMode)")
+                print("   → Structure Mode: \(structureMode)")
             print("   → Guidance Style: \(guidanceStyle)")
             print("   → Selected Prompt Version: \(guidanceStructureSettings.getPromptVersion(hasFramework: activeFramework != nil))")
             
@@ -398,8 +393,7 @@ class GuidanceGenerationService {
             let structureMode = guidanceStructureSettings.currentMode == .fixed ? "fixed" : "dynamic"
             let guidanceStyle = guidanceStructureSettings.currentStyle == .warmPractical ? "Warm Practical" : "Analytical Scientific"
             
-            print("📊 [GuidanceGenerationService] Current settings:")
-            print("   → Structure Mode: \(structureMode)")
+                print("   → Structure Mode: \(structureMode)")
             print("   → Guidance Style: \(guidanceStyle)")
             print("   → Function Calling: true")
             
@@ -616,8 +610,7 @@ class GuidanceGenerationService {
         apiKey: String
     ) async throws -> GuidanceResponseProtocol {
         do {
-            print("🔍 [GuidanceGenerationService] ===== RECOMMENDATION EXTRACTION STARTS =====")
-            print("🔍 [GuidanceGenerationService] useEdgeFunction: \(useEdgeFunction)")
+                print("🔍 [GuidanceGenerationService] useEdgeFunction: \(useEdgeFunction)")
             print("🔍 [GuidanceGenerationService] rawContent length: \(rawContent.count)")
             print("🔍 [GuidanceGenerationService] rawContent preview: \(String(rawContent.prefix(200)))...")
             
@@ -647,8 +640,7 @@ class GuidanceGenerationService {
             print("🔧 [GuidanceGenerationService] Creating enhanced guidance with recommendation...")
             let enhancedGuidance = createGuidanceWithRecommendation(original: guidance, recommendation: cleanedRecommendation)
             print("✅ [GuidanceGenerationService] Enhanced guidance created with recommendation")
-            print("🔍 [GuidanceGenerationService] ===== RECOMMENDATION EXTRACTION COMPLETE =====")
-            
+                
             return enhancedGuidance
             
         } catch {

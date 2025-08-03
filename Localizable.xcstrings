@@ -1128,6 +1128,9 @@
         }
       }
     },
+    "Choose Theme" : {
+
+    },
     "common.action.cancel.hint" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1624,6 +1627,9 @@
         }
       }
     },
+    "Failed to generate insights" : {
+
+    },
     "family.usage.high" : {
       "localizations" : {
         "en" : {
@@ -1915,6 +1921,12 @@
       }
     },
     "G" : {
+
+    },
+    "Generate Relevant Insights" : {
+
+    },
+    "Generating relevant insights..." : {
 
     },
     "Get %@ Key" : {
@@ -3056,6 +3068,9 @@
     "No insights collected yet" : {
 
     },
+    "No relevant insights found for this guidance. Generate insights by analyzing this guidance against your existing 'Your Child's World' knowledge base." : {
+
+    },
     "OK" : {
 
     },
@@ -4072,6 +4087,9 @@
     "Restore Insight" : {
 
     },
+    "Retry" : {
+
+    },
     "Save" : {
 
     },
@@ -4119,6 +4137,9 @@
       }
     },
     "Search situations..." : {
+
+    },
+    "Select your preferred appearance" : {
 
     },
     "Sent %@" : {

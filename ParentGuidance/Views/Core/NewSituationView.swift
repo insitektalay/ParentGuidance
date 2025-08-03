@@ -36,6 +36,12 @@ struct NewSituationView: View {
     @State private var selectedSituationType: SituationType?
     @State private var showTypePicker = true
     
+    // Relevant insights state
+    @State private var relevantInsights: [RelevantInsight] = []
+    @State private var isLoadingInsights = false
+    @State private var savedGuidanceId: String? = nil // Track guidance ID for loading insights
+    @State private var insightGenerationError: String? = nil // Track insight generation failures
+    
     var body: some View {
         NavigationStack {
             Group {
@@ -61,7 +67,9 @@ struct NewSituationView: View {
                     } else if let guidance = guidanceResponse {
                         VerticalGuidanceView(
                             guidance: guidance,
-                            overallRecommendation: guidance.overallRecommendation
+                            overallRecommendation: guidance.overallRecommendation,
+                            relevantInsights: relevantInsights,
+                            isLoadingInsights: isLoadingInsights
                         )
                     } else {
                         SituationInputIdleView(
@@ -99,8 +107,7 @@ struct NewSituationView: View {
         do {
             // Step 1: Get user's family_id first
             guard let userId = appCoordinator.currentUserId else {
-                print("❌ No current user ID available")
-                return
+                    return
             }
             let userProfile = try await AuthService.shared.loadUserProfile(userId: userId)
             
@@ -139,8 +146,7 @@ struct NewSituationView: View {
                         }
                     }
                 } catch {
-                    print("⚠️ Failed to fetch psychologist notes: \(error)")
-                    // Continue with empty notes - non-blocking
+                        // Continue with empty notes - non-blocking
                 }
             }
             
@@ -152,10 +158,8 @@ struct NewSituationView: View {
                         // Convert insights to comma-separated list
                         let strategies = copingInsights.map { $0.content }.joined(separator: ", ")
                         copingStrategies = strategies
-                        print("✅ Fetched \(copingInsights.count) coping strategies for guidance")
                     }
                 } catch {
-                    print("⚠️ Failed to fetch coping strategies: \(error)")
                     // Continue with empty strategies - non-blocking
                 }
             }
@@ -184,7 +188,6 @@ struct NewSituationView: View {
                 isIncident = result.isIncident
             } else {
                 // Use defaults when disabled
-                print("⚠️ Situation Analysis disabled - using default values")
                 (category, isIncident) = ("general", false)
             }
             
@@ -208,33 +211,12 @@ struct NewSituationView: View {
                     category: "parenting_guidance",
                     overallRecommendation: guidance.overallRecommendation
                 )
-                print("✅ Saved guidance with ID: \(guidanceId)")
             } catch {
-                print("❌ [CRITICAL] Failed to save guidance in handleChatMessage!")
-                print("❌ [CRITICAL] Error: \(error)")
-                print("❌ [CRITICAL] Error description: \(error.localizedDescription)")
                 // Re-throw to maintain error handling
                 throw error
             }
             
-            // Step 6.5: Select relevant insights for this guidance (background task)
-            Task {
-                do {
-                    print("🎯 Starting relevant insights selection for guidance: \(guidanceId)")
-                    let relevantInsights = try await RelevantInsightsService.shared.selectRelevantInsights(
-                        guidanceText: rawContent,
-                        situationId: situationId,
-                        guidanceId: guidanceId,
-                        familyId: familyId!,
-                        apiKey: apiKey
-                    )
-                    print("✅ Successfully selected \(relevantInsights.count) relevant insights")
-                    print("🔄 Relevant insights will be visible when you view this guidance again")
-                } catch {
-                    print("⚠️ Relevant insights selection failed (non-critical): \(error)")
-                    print("⚠️ This won't affect the main guidance flow")
-                }
-            }
+            // Step 6.5: Relevant insights will be generated AFTER other insights are complete (see Step 8.5)
             
             // Step 7: Extract contextual insights (background task)
             if AIProcessingSettings.shared.isContextExtractionEnabled() {
@@ -251,12 +233,9 @@ struct NewSituationView: View {
                         // Save insights to database
                         try await ContextualInsightService.shared.saveContextInsights(insights)
                     } catch {
-                        print("⚠️ Context extraction failed (non-critical): \(error)")
-                        print("⚠️ This won't affect the main guidance flow")
                     }
                 }
             } else {
-                print("⚠️ Context Extraction disabled - skipping 'Your Child's World' insights")
             }
             
             // Step 7.5: Extract child regulation insights (background task)
@@ -274,12 +253,9 @@ struct NewSituationView: View {
                         // Save regulation insights to database
                         try await ContextualInsightService.shared.saveChildRegulationInsights(regulationInsights)
                     } catch {
-                        print("⚠️ Child regulation insights extraction failed (non-critical): \(error)")
-                        print("⚠️ This won't affect the main guidance flow")
                     }
                 }
             } else {
-                print("⚠️ Regulation Insights disabled - skipping Core/ADHD/Autism pattern detection")
             }
             
             // Step 7.6: Extract coping strategies (background task)
@@ -297,12 +273,9 @@ struct NewSituationView: View {
                         // Save coping strategies to database
                         try await ContextualInsightService.shared.saveChildRegulationInsights(copingStrategies)
                     } catch {
-                        print("⚠️ Coping strategies extraction failed (non-critical): \(error)")
-                        print("⚠️ This won't affect the main guidance flow")
                     }
                 }
             } else {
-                print("⚠️ Coping Strategies disabled - skipping strategy extraction")
             }
             
             // Step 8: Update chat UI with the full guidance text
@@ -316,11 +289,32 @@ struct NewSituationView: View {
                 let aiMessage = ChatMessage(text: fullGuidanceText, sender: .ai)
                 chatMessages.append(aiMessage)
                 chatIsLoading = false
+                
+                // Store guidance ID for loading relevant insights
+                savedGuidanceId = guidanceId
+            }
+            
+            // Step 8.5: Generate relevant insights after other insights are complete (background task)
+            Task {
+                // Wait for other insight generation tasks to complete
+                try await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds delay
+                
+                do {
+                    print("🎯 Starting delayed relevant insights generation for guidance: \(guidanceId)")
+                    let relevantInsights = try await RelevantInsightsService.shared.selectRelevantInsights(
+                        guidanceText: rawContent,
+                        situationId: situationId,
+                        guidanceId: guidanceId,
+                        familyId: familyId!,
+                        apiKey: apiKey
+                    )
+                    print("✅ Delayed relevant insights generation completed: \(relevantInsights.count) insights")
+                } catch {
+                    print("❌ Delayed relevant insights generation failed: \(error)")
+                }
             }
             
         } catch {
-            print("❌ Error in chat message handling: \(error)")
-            print("❌ Error details: \(error.localizedDescription)")
             
             // Update chat with error message
             await MainActor.run {
@@ -338,8 +332,7 @@ struct NewSituationView: View {
         do {
             // Step 1: Get user's family_id first
             guard let userId = appCoordinator.currentUserId else {
-                print("❌ No current user ID available")
-                isLoading = false
+                    isLoading = false
                 return
             }
             let userProfile = try await AuthService.shared.loadUserProfile(userId: userId)
@@ -379,8 +372,7 @@ struct NewSituationView: View {
                         }
                     }
                 } catch {
-                    print("⚠️ Failed to fetch psychologist notes: \(error)")
-                    // Continue with empty notes - non-blocking
+                        // Continue with empty notes - non-blocking
                 }
             }
             
@@ -392,10 +384,8 @@ struct NewSituationView: View {
                         // Convert insights to comma-separated list
                         let strategies = copingInsights.map { $0.content }.joined(separator: ", ")
                         copingStrategies = strategies
-                        print("✅ Fetched \(copingInsights.count) coping strategies for guidance")
                     }
                 } catch {
-                    print("⚠️ Failed to fetch coping strategies: \(error)")
                     // Continue with empty strategies - non-blocking
                 }
             }
@@ -424,7 +414,6 @@ struct NewSituationView: View {
                 isIncident = result.isIncident
             } else {
                 // Use defaults when disabled
-                print("⚠️ Situation Analysis disabled - using default values")
                 (category, isIncident) = ("general", false)
             }
             
@@ -448,33 +437,12 @@ struct NewSituationView: View {
                     category: "parenting_guidance",
                     overallRecommendation: guidance.overallRecommendation
                 )
-                print("✅ Saved guidance with ID: \(guidanceId)")
             } catch {
-                print("❌ [CRITICAL] Failed to save guidance in handleSendMessage!")
-                print("❌ [CRITICAL] Error: \(error)")
-                print("❌ [CRITICAL] Error description: \(error.localizedDescription)")
                 // Re-throw to maintain error handling
                 throw error
             }
             
-            // Step 6.5: Select relevant insights for this guidance (background task)
-            Task {
-                do {
-                    print("🎯 Starting relevant insights selection for guidance: \(guidanceId)")
-                    let relevantInsights = try await RelevantInsightsService.shared.selectRelevantInsights(
-                        guidanceText: rawContent,
-                        situationId: situationId,
-                        guidanceId: guidanceId,
-                        familyId: familyId!,
-                        apiKey: apiKey
-                    )
-                    print("✅ Successfully selected \(relevantInsights.count) relevant insights")
-                    print("🔄 Relevant insights will be visible when you view this guidance again")
-                } catch {
-                    print("⚠️ Relevant insights selection failed (non-critical): \(error)")
-                    print("⚠️ This won't affect the main guidance flow")
-                }
-            }
+            // Step 6.5: Relevant insights will be generated AFTER other insights are complete (see Step 8.5)
             
             // Step 7: Extract contextual insights (background task)
             if AIProcessingSettings.shared.isContextExtractionEnabled() {
@@ -491,12 +459,9 @@ struct NewSituationView: View {
                         // Save insights to database
                         try await ContextualInsightService.shared.saveContextInsights(insights)
                     } catch {
-                        print("⚠️ Context extraction failed (non-critical): \(error)")
-                        print("⚠️ This won't affect the main guidance flow")
                     }
                 }
             } else {
-                print("⚠️ Context Extraction disabled - skipping 'Your Child's World' insights")
             }
             
             // Step 7.5: Extract child regulation insights (background task)
@@ -514,12 +479,9 @@ struct NewSituationView: View {
                         // Save regulation insights to database
                         try await ContextualInsightService.shared.saveChildRegulationInsights(regulationInsights)
                     } catch {
-                        print("⚠️ Child regulation insights extraction failed (non-critical): \(error)")
-                        print("⚠️ This won't affect the main guidance flow")
                     }
                 }
             } else {
-                print("⚠️ Regulation Insights disabled - skipping Core/ADHD/Autism pattern detection")
             }
             
             // Step 7.6: Extract coping strategies (background task)
@@ -537,23 +499,41 @@ struct NewSituationView: View {
                         // Save coping strategies to database
                         try await ContextualInsightService.shared.saveChildRegulationInsights(copingStrategies)
                     } catch {
-                        print("⚠️ Coping strategies extraction failed (non-critical): \(error)")
-                        print("⚠️ This won't affect the main guidance flow")
                     }
                 }
             } else {
-                print("⚠️ Coping Strategies disabled - skipping strategy extraction")
             }
             
             // Step 8: Update UI
             await MainActor.run {
                 guidanceResponse = guidance
                 isLoading = false
+                
+                // Store guidance ID for loading relevant insights
+                savedGuidanceId = guidanceId
+            }
+            
+            // Step 8.5: Generate relevant insights after other insights are complete (background task)
+            Task {
+                // Wait for other insight generation tasks to complete
+                try await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds delay
+                
+                do {
+                    print("🎯 Starting delayed relevant insights generation for guidance: \(guidanceId)")
+                    let relevantInsights = try await RelevantInsightsService.shared.selectRelevantInsights(
+                        guidanceText: rawContent,
+                        situationId: situationId,
+                        guidanceId: guidanceId,
+                        familyId: familyId!,
+                        apiKey: apiKey
+                    )
+                    print("✅ Delayed relevant insights generation completed: \(relevantInsights.count) insights")
+                } catch {
+                    print("❌ Delayed relevant insights generation failed: \(error)")
+                }
             }
             
         } catch {
-            print("❌ Error in message handling: \(error)")
-            print("❌ Error details: \(error.localizedDescription)")
             await MainActor.run {
                 isLoading = false
             }
@@ -563,7 +543,6 @@ struct NewSituationView: View {
     
     private func loadUserApiKey() async {
         guard let userId = appCoordinator.currentUserId else {
-            print("❌ No current user ID available for API key loading")
             return
         }
         
@@ -573,7 +552,6 @@ struct NewSituationView: View {
                 userApiKey = apiKey
             }
         } catch {
-            print("❌ Failed to load API key: \(error)")
         }
     }
     
@@ -891,6 +869,30 @@ struct NewSituationView: View {
         return nil
     }
     */
+    
+    // MARK: - Relevant Insights Loading
+    
+    private func loadRelevantInsights(for guidanceId: String) async {
+        
+        await MainActor.run {
+            isLoadingInsights = true
+        }
+        
+        do {
+            let insights = try await RelevantInsightsService.shared.getRelevantInsights(guidanceId: guidanceId)
+            
+            await MainActor.run {
+                self.relevantInsights = insights
+                self.isLoadingInsights = false
+            }
+            
+            
+        } catch {
+            await MainActor.run {
+                self.isLoadingInsights = false
+            }
+        }
+    }
 }
 
 

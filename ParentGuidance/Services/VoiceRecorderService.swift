@@ -241,8 +241,9 @@ class VoiceRecorderService: NSObject, ObservableObject {
     
     // MARK: - OpenAI Transcription
     
-    func transcribeAudio(fileURL: URL, apiKey: String) async throws -> String {
+    func transcribeAudio(fileURL: URL, apiKey: String, userLanguage: String = "en") async throws -> String {
         print("🎤 Starting transcription for file: \(fileURL.lastPathComponent)")
+        print("🌍 Using language: \(userLanguage)")
         
         // Validate API key
         guard !apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
@@ -263,10 +264,10 @@ class VoiceRecorderService: NSObject, ObservableObject {
         
         if useEdgeFunction {
             print("🚀 [VoiceRecorderService] Using EdgeFunction for transcription")
-            transcription = try await transcribeViaEdgeFunction(fileURL: fileURL, apiKey: apiKey)
+            transcription = try await transcribeViaEdgeFunction(fileURL: fileURL, apiKey: apiKey, userLanguage: userLanguage)
         } else {
             print("🚀 [VoiceRecorderService] Using Direct OpenAI API for transcription")
-            transcription = try await transcribeViaDirectAPI(fileURL: fileURL, apiKey: apiKey)
+            transcription = try await transcribeViaDirectAPI(fileURL: fileURL, apiKey: apiKey, userLanguage: userLanguage)
         }
         
         // Notify delegate of successful transcription
@@ -279,7 +280,7 @@ class VoiceRecorderService: NSObject, ObservableObject {
     
     // MARK: - Edge Function Transcription
     
-    private func transcribeViaEdgeFunction(fileURL: URL, apiKey: String) async throws -> String {
+    private func transcribeViaEdgeFunction(fileURL: URL, apiKey: String, userLanguage: String) async throws -> String {
         // Read audio file data and encode as base64
         let audioData: Data
         do {
@@ -292,10 +293,12 @@ class VoiceRecorderService: NSObject, ObservableObject {
         
         let base64AudioData = audioData.base64EncodedString()
         
-        // Call Edge Function
+        // Call Edge Function with language parameter
         let requestBody: [String: Any] = [
             "operation": "transcribe",
-            "variables": [:],
+            "variables": [
+                "language": userLanguage
+            ],
             "apiKey": apiKey,
             "audioData": base64AudioData
         ]
@@ -330,7 +333,7 @@ class VoiceRecorderService: NSObject, ObservableObject {
     
     // MARK: - Direct API Transcription
     
-    private func transcribeViaDirectAPI(fileURL: URL, apiKey: String) async throws -> String {
+    private func transcribeViaDirectAPI(fileURL: URL, apiKey: String, userLanguage: String) async throws -> String {
         
         // Read audio file data
         let audioData: Data
@@ -370,6 +373,11 @@ class VoiceRecorderService: NSObject, ObservableObject {
         body.append("--\(boundary)\r\n".data(using: .utf8)!)
         body.append("Content-Disposition: form-data; name=\"response_format\"\r\n\r\n".data(using: .utf8)!)
         body.append("json\r\n".data(using: .utf8)!)
+        
+        // Add language field to force specific language transcription
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"language\"\r\n\r\n".data(using: .utf8)!)
+        body.append("\(userLanguage)\r\n".data(using: .utf8)!)
         
         // Close boundary
         body.append("--\(boundary)--\r\n".data(using: .utf8)!)
@@ -468,7 +476,7 @@ class VoiceRecorderService: NSObject, ObservableObject {
         return recordingURL.path // Placeholder - actual transcription will happen when stopRecording is called
     }
     
-    func stopRecordingAndTranscribe(apiKey: String) async throws -> (recordingURL: URL, transcription: String) {
+    func stopRecordingAndTranscribe(apiKey: String, userLanguage: String = "en") async throws -> (recordingURL: URL, transcription: String) {
         print("🛑 Stopping recording and starting transcription...")
         
         // Immediately update state for instant UI feedback
@@ -478,7 +486,7 @@ class VoiceRecorderService: NSObject, ObservableObject {
         let recordingURL = try await stopRecording()
         
         // Transcribe the audio
-        let transcription = try await transcribeAudio(fileURL: recordingURL, apiKey: apiKey)
+        let transcription = try await transcribeAudio(fileURL: recordingURL, apiKey: apiKey, userLanguage: userLanguage)
         
         // Update state to idle after transcription completes
         await updateRecordingState(.idle)

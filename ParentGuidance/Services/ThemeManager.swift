@@ -1,6 +1,20 @@
 import SwiftUI
 import Combine
 
+enum Theme: String, CaseIterable {
+    case light = "light"
+    case dark = "dark"
+    
+    var userInterfaceStyle: UIUserInterfaceStyle {
+        switch self {
+        case .light:
+            return .light
+        case .dark:
+            return .dark
+        }
+    }
+}
+
 class ThemeManager: ObservableObject {
     static let shared = ThemeManager()
     
@@ -80,6 +94,7 @@ class ThemeManager: ObservableObject {
 
 // MARK: - Theme Environment Key
 struct ThemeEnvironmentKey: EnvironmentKey {
+    typealias Value = Theme
     static let defaultValue: Theme = .dark
 }
 

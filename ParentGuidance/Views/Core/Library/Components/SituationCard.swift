@@ -367,14 +367,20 @@ struct SituationCard: View {
         let now = Date()
         let calendar = Calendar.current
         
+        // Time formatter for 12-hour format
+        let timeFormatter = DateFormatter()
+        timeFormatter.dateFormat = "h:mm a"
+        let timeString = timeFormatter.string(from: date)
+        
         if calendar.isDateInToday(date) {
-            return "Today"
+            return "Today at \(timeString)"
         } else if calendar.isDateInYesterday(date) {
-            return "Yesterday"
+            return "Yesterday at \(timeString)"
         } else {
             let displayFormatter = DateFormatter()
             displayFormatter.dateFormat = "MMM d"
-            return displayFormatter.string(from: date)
+            let dateString = displayFormatter.string(from: date)
+            return "\(dateString) at \(timeString)"
         }
     }
 }

@@ -310,7 +310,7 @@ struct SituationDetailView: View {
                     String(localized: "situation.dateEdit.dateLabel"),
                     selection: $selectedDate,
                     in: ...Date(),
-                    displayedComponents: [.date]
+                    displayedComponents: [.date, .hourAndMinute]
                 )
                 .datePickerStyle(.wheel)
                 .labelsHidden()

@@ -65,6 +65,7 @@ struct LibraryView: View {
                 SearchSituationsView(
                     familyId: familyId,
                     selectionManager: selectionManager,
+                    controller: controller,
                     isSelectionMode: selectionManager.isInSelectionMode
                 )
             }

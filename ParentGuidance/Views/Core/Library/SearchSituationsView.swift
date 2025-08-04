@@ -13,21 +13,18 @@ struct SearchSituationsView: View {
     let isSelectionMode: Bool
     
     @Environment(\.dismiss) private var dismiss
-    @StateObject private var controller: LibraryViewController
+    @ObservedObject var controller: LibraryViewController
     @State private var shouldDismiss = false
     @State private var hasEnteredSelectionMode = false
     
-    init(familyId: String, selectionManager: LibrarySelectionManager, isSelectionMode: Bool = false) {
+    init(familyId: String, selectionManager: LibrarySelectionManager, controller: LibraryViewController, isSelectionMode: Bool = false) {
         self.familyId = familyId
         self.selectionManager = selectionManager
         self.isSelectionMode = isSelectionMode
+        self.controller = controller
         
-        // Create controller and set it up for this family
-        let controller = LibraryViewController()
+        // Ensure controller is set up for this family
         controller.currentUserId = familyId
-        self._controller = StateObject(wrappedValue: controller)
-        
-        // NOTE: Selection mode activation moved to onAppear to avoid SwiftUI state conflicts
     }
     
     var body: some View {
@@ -110,23 +107,47 @@ struct SearchSituationsView: View {
             .background(SemanticColors.primaryBackground)
             
             // Scrollable Content
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    // Selection header (when in selection mode)
-                    if selectionManager.isInSelectionMode {
-                        selectionHeader
+            ScrollViewReader { scrollProxy in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 16) {
+                        // Selection header (when in selection mode)
+                        if selectionManager.isInSelectionMode {
+                            selectionHeader
+                        }
+                        
+                        // Dynamic content based on controller state
+                        dynamicContentSection
                     }
-                    
-                    // Dynamic content based on controller state
-                    dynamicContentSection
+                    .padding(.top, 16)
+                    .padding(.bottom, 100) // Space for tab bar
                 }
-                .padding(.top, 16)
-                .padding(.bottom, 100) // Space for tab bar
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(SemanticColors.primaryBackground)
-            .refreshable {
-                controller.refreshSituations()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(SemanticColors.primaryBackground)
+                .refreshable {
+                    controller.refreshSituations()
+                }
+                .onAppear {
+                    // Check if we should restore scroll position when view appears
+                    if controller.shouldRestoreScrollPosition, let scrollPosition = controller.savedScrollPosition {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            withAnimation(.easeInOut(duration: 0.5)) {
+                                scrollProxy.scrollTo(scrollPosition, anchor: .center)
+                            }
+                            controller.shouldRestoreScrollPosition = false
+                        }
+                    }
+                }
+                .onChange(of: controller.shouldRestoreScrollPosition) { shouldRestore in
+                    if shouldRestore, let scrollPosition = controller.savedScrollPosition {
+                        // Add a delay to ensure the view is ready
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            withAnimation(.easeInOut(duration: 0.5)) {
+                                scrollProxy.scrollTo(scrollPosition, anchor: .center)
+                            }
+                            controller.shouldRestoreScrollPosition = false
+                        }
+                    }
+                }
             }
             .overlay(sortDropdownOverlay)
             .overlay(deleteConfirmationOverlay)
@@ -304,6 +325,8 @@ struct SearchSituationsView: View {
                             situation: situation,
                             selectionManager: selectionManager,
                             onTap: {
+                                // Save scroll position before navigating
+                                controller.savedScrollPosition = situation.id
                                 controller.selectSituation(situation)
                             },
                             onToggleFavorite: {
@@ -313,6 +336,7 @@ struct SearchSituationsView: View {
                                 controller.deleteSituation(id: situation.id)
                             }
                         )
+                        .id(situation.id) // Add ID for scroll position tracking
                     }
                 }
                 .padding(.horizontal, 16)
@@ -346,6 +370,8 @@ struct SearchSituationsView: View {
                             situation: situation,
                             selectionManager: selectionManager,
                             onTap: {
+                                // Save scroll position before navigating
+                                controller.savedScrollPosition = situation.id
                                 controller.selectSituation(situation)
                             },
                             onToggleFavorite: {
@@ -355,6 +381,7 @@ struct SearchSituationsView: View {
                                 controller.deleteSituation(id: situation.id)
                             }
                         )
+                        .id(situation.id) // Add ID for scroll position tracking
                     }
                 }
                 .padding(.horizontal, 16)
@@ -512,9 +539,11 @@ struct SearchSituationsView: View {
 
 #Preview {
     let selectionManager = LibrarySelectionManager()
+    let controller = LibraryViewController()
     return SearchSituationsView(
         familyId: "preview-family-id",
         selectionManager: selectionManager,
+        controller: controller,
         isSelectionMode: false
     )
 }

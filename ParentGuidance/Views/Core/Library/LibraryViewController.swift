@@ -67,6 +67,10 @@ class LibraryViewController: ObservableObject {
     @Published var isLoadingGuidance: Bool = false
     @Published var guidanceError: String?
     
+    // Scroll position tracking
+    @Published var savedScrollPosition: String? = nil
+    @Published var shouldRestoreScrollPosition: Bool = false
+    
     enum ViewState {
         case loading
         case error
@@ -292,6 +296,8 @@ class LibraryViewController: ObservableObject {
     
     // MARK: - Navigation & Guidance Loading
     func selectSituation(_ situation: Situation) {
+        // Save scroll position before navigating
+        // The position will be saved by the view
         selectedSituation = situation
         loadGuidanceForSituation(situationId: situation.id)
     }
@@ -300,6 +306,8 @@ class LibraryViewController: ObservableObject {
         selectedSituation = nil
         selectedGuidance = []
         guidanceError = nil
+        // Set flag to restore scroll position when returning
+        shouldRestoreScrollPosition = true
     }
     
     private func loadGuidanceForSituation(situationId: String) {

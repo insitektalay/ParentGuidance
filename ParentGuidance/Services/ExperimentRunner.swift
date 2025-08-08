@@ -168,7 +168,7 @@ class ExperimentRunner: ObservableObject {
                     // Choose best-of-N and persist ensemble
                     let mapped = candidates.map { (guidanceId: $0.guidance.id, composite: $0.composite) }
                     if let (chosenId, judgeSummary) = ensemble.chooseBest(of: mapped) {
-                        try? await ensemble.persistEnsemble(
+                        let ensembleId = try? await ensemble.persistEnsemble(
                             experimentRunId: experiment.id,
                             mode: .bestOfN,
                             components: mapped,
@@ -192,7 +192,7 @@ class ExperimentRunner: ObservableObject {
                         // If composed improves composite and redline not worse than max candidate penalty, persist as ensemble too
                         let baseline = candidates.map { $0.composite }.max() ?? 0
                         if compScore.compositeScore >= baseline {
-                            try? await ensemble.persistEnsemble(
+                            let ensembleId = try? await ensemble.persistEnsemble(
                                 experimentRunId: experiment.id,
                                 mode: .sectionCompose,
                                 components: mapped,
@@ -200,6 +200,24 @@ class ExperimentRunner: ObservableObject {
                                 judgeSummary: ["reason": "section-compose uplift"]
                             )
                         }
+                    }
+
+                    // LLM Synthesis attempt
+                    if let synthesized = try? await ensemble.llmSynthesis(
+                        situationId: situation.id,
+                        familyId: situation.familyId,
+                        candidates: candidates
+                    ) {
+                        var synScore = try await scoringService.scoreGuidance(
+                            guidanceText: synthesized.content,
+                            goldResponse: try await goldResponseService.getGoldResponse(for: UUID(uuidString: situation.id) ?? UUID()),
+                            redlineResponse: try await goldResponseService.getRedlineResponse(for: UUID(uuidString: situation.id) ?? UUID())
+                        )
+                        synScore.experimentRunId = experiment.id
+                        synScore.situationId = UUID(uuidString: situation.id) ?? UUID()
+                        synScore.guidanceId = UUID(uuidString: synthesized.id) ?? UUID()
+                        let explanations = scoringService.createExplanations(guidanceText: synthesized.content)
+                        try await scoringService.saveExperimentScoreWithExplanations(synScore, explanations: explanations)
                     }
                     
                     progress.processedSituations += 1

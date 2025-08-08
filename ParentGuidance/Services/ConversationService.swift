@@ -203,7 +203,8 @@ class ConversationService: ObservableObject {
             apiKey: apiKey,
             activeFramework: nil,
             situationType: .imJustWondering,
-            useStreaming: false
+            useStreaming: false,
+            policy: resolvedPolicy
         )
         
         // Extract overall recommendation

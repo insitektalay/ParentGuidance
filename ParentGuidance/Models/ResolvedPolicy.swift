@@ -7,6 +7,7 @@ struct ResolvedPolicy: Codable {
     let temperature: Double?
     let topP: Double?
     let seed: Int?
+    let guidance: GuidanceParams?
     let promptBlocks: PromptBlocks
     
     enum CodingKeys: String, CodingKey {
@@ -14,6 +15,7 @@ struct ResolvedPolicy: Codable {
         case temperature
         case topP = "top_p"
         case seed
+        case guidance
         case promptBlocks = "prompt_blocks"
     }
 }
@@ -105,6 +107,20 @@ struct TranslationParams: Codable {
         case enabled
         case targetLanguage = "target_language"
         case smartOnDemand = "smart_on_demand"
+    }
+}
+
+struct GuidanceParams: Codable {
+    let useFunctionCalling: Bool?
+    let structureMode: String?
+    let guidanceStyle: String?
+    let situationType: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case useFunctionCalling = "use_function_calling"
+        case structureMode = "structure_mode"
+        case guidanceStyle = "guidance_style"
+        case situationType = "situation_type"
     }
 }
 

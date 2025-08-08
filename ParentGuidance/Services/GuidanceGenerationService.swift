@@ -60,7 +60,8 @@ class GuidanceGenerationService {
         apiKey: String,
         activeFramework: FrameworkRecommendation? = nil,
         situationType: SituationType = .imJustWondering,
-        useStreaming: Bool = false
+        useStreaming: Bool = false,
+        policy: ResolvedPolicy? = nil
     ) async throws -> (GuidanceResponseProtocol, String) {
         
         let (guidance, rawContent): (GuidanceResponseProtocol, String)
@@ -69,7 +70,11 @@ class GuidanceGenerationService {
         print("   → useStreaming: \(useStreaming)")
         print("   → Selected path: \(useEdgeFunction && useFunctionCalling ? "EdgeFunction + FunctionCalling" : useEdgeFunction && useStreaming ? "EdgeFunction + Streaming" : useEdgeFunction ? "EdgeFunction (non-streaming)" : "Direct API")")
         
-        if useEdgeFunction && useFunctionCalling {
+        // Policy overrides
+        let policyUseFC = policy?.guidance?.useFunctionCalling ?? useFunctionCalling
+        let policyStreaming = useStreaming && !(policyUseFC ?? false)
+
+        if useEdgeFunction && (policyUseFC ?? useFunctionCalling) {
             print("🚀 [GuidanceGenerationService] Using EdgeFunction with function calling")
             (guidance, rawContent) = try await generateGuidanceViaEdgeFunctionCalling(
                 situation: situation,
@@ -80,7 +85,7 @@ class GuidanceGenerationService {
                 activeFramework: activeFramework,
                 situationType: situationType
             )
-        } else if useEdgeFunction && useStreaming {
+        } else if useEdgeFunction && policyStreaming {
             print("🚀 [GuidanceGenerationService] Using EdgeFunction with streaming")
             (guidance, rawContent) = try await generateGuidanceViaEdgeFunctionStreaming(
                 situation: situation,

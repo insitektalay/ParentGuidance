@@ -46,6 +46,14 @@ final class EnsembleService {
             .insert(payload)
             .execute()
     }
+
+    // Section-wise compose: pick best section per candidate (stubbed behavior)
+    func sectionCompose(
+        candidates: [(guidance: Guidance, composite: Double)]
+    ) -> Guidance? {
+        // TODO: Implement proper section-level merge
+        return candidates.max(by: { $0.composite < $1.composite })?.guidance
+    }
 }
 
 

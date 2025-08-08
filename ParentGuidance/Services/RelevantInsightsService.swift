@@ -672,10 +672,13 @@ class RelevantInsightsService {
         // Update the relevant insights with regen_run_id
         try await SupabaseManager.shared.client
             .from("relevant_insights")
-            .update([
-                "regen_run_id": regenRunId.uuidString,
-                "experiment_run_id": experimentRunId?.uuidString ?? NSNull()
-            ])
+            .update({ () -> [String: String] in
+                var dict: [String: String] = [
+                    "regen_run_id": regenRunId.uuidString
+                ]
+                if let er = experimentRunId?.uuidString { dict["experiment_run_id"] = er }
+                return dict
+            }())
             .eq("situation_id", value: situationId.uuidString)
             .eq("guidance_id", value: guidanceData.id)
             .execute()

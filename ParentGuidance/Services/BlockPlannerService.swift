@@ -73,22 +73,45 @@ final class BlockPlannerService {
 
     /// Persist evaluated plan results with judge summaries and win/fail flags.
     func persistPlans(_ plans: [BlockPlan]) async throws {
+        struct InsertRow: Encodable {
+            let id: String
+            let ablationRunId: String
+            let planText: String
+            let paramsJson: String
+            let judgeSummaryJson: String
+            let picked: Bool
+            let createdAt: String
+            enum CodingKeys: String, CodingKey {
+                case id
+                case ablationRunId = "ablation_run_id"
+                case planText = "plan_text"
+                case paramsJson = "params_json"
+                case judgeSummaryJson = "judge_summary_json"
+                case picked
+                case createdAt = "created_at"
+            }
+        }
         let enc = JSONEncoder()
+        var rows: [InsertRow] = []
         for plan in plans {
             let paramsData = try enc.encode(plan.paramsJson)
             let judgeData = try enc.encode(plan.judgeSummaryJson ?? [:])
-            let dict: [String: Any] = [
-                "id": plan.id.uuidString,
-                "ablation_run_id": plan.ablationRunId.uuidString,
-                "plan_text": plan.planText,
-                "params_json": String(data: paramsData, encoding: .utf8) ?? "{}",
-                "judge_summary_json": String(data: judgeData, encoding: .utf8) ?? "{}",
-                "picked": plan.picked,
-                "created_at": ISO8601DateFormatter().string(from: plan.createdAt)
-            ]
+            rows.append(
+                InsertRow(
+                    id: plan.id.uuidString,
+                    ablationRunId: plan.ablationRunId.uuidString,
+                    planText: plan.planText,
+                    paramsJson: String(data: paramsData, encoding: .utf8) ?? "{}",
+                    judgeSummaryJson: String(data: judgeData, encoding: .utf8) ?? "{}",
+                    picked: plan.picked,
+                    createdAt: ISO8601DateFormatter().string(from: plan.createdAt)
+                )
+            )
+        }
+        if !rows.isEmpty {
             try await SupabaseManager.shared.client
                 .from("block_plans")
-                .insert([dict])
+                .insert(rows)
                 .execute()
         }
     }

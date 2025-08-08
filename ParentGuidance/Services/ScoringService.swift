@@ -160,9 +160,34 @@ class ScoringService: ObservableObject {
     // MARK: - Individual Scoring Methods
     
     private func calculateSemanticSimilarity(text1: String, text2: String) async throws -> Double {
-        // This would use embeddings to calculate semantic similarity
-        // For now, return a placeholder - should integrate with EdgeFunction embedding generation
-        return 0.5
+        // Generate embeddings via EdgeFunctionService
+        guard let apiKey = UserDefaults.standard.string(forKey: "openAIApiKey") else { return 0.0 }
+        let emb1 = try await ContextualInsightService.shared.generateEmbedding(
+            text: text1,
+            apiKey: apiKey,
+            sourceLanguage: "auto"
+        )
+        let emb2 = try await ContextualInsightService.shared.generateEmbedding(
+            text: text2,
+            apiKey: apiKey,
+            sourceLanguage: "auto"
+        )
+        // Cosine similarity
+        let v1 = emb1.embedding
+        let v2 = emb2.embedding
+        guard v1.count == v2.count, v1.count > 0 else { return 0.0 }
+        var dot: Double = 0
+        var n1: Double = 0
+        var n2: Double = 0
+        for i in 0..<v1.count {
+            let a = Double(v1[i])
+            let b = Double(v2[i])
+            dot += a * b
+            n1 += a * a
+            n2 += b * b
+        }
+        let denom = (sqrt(n1) * sqrt(n2))
+        return denom > 0 ? max(0.0, min(1.0, dot / denom)) : 0.0
     }
     
     private func calculateRougeL(reference: String, candidate: String) -> Double {
@@ -183,9 +208,32 @@ class ScoringService: ObservableObject {
     }
     
     private func calculateStyleToneScore(guidance: String, goldResponse: String) async throws -> Double {
-        // This would use LLM evaluation against style/tone criteria
-        // For now, return a placeholder - should integrate with EdgeFunction
-        return 0.7
+        // Use EdgeFunction to evaluate style/tone alignment
+        // Fallback: simple lexical overlap scaled to 1..5
+        guard let apiKey = UserDefaults.standard.string(forKey: "openAIApiKey") else {
+            return heuristicStyleTone(guidance: guidance, gold: goldResponse)
+        }
+        // Using analyze endpoint to simulate style score (placeholder for dedicated op)
+        do {
+            let (cat, _) = try await EdgeFunctionService.shared.analyzeSituation(
+                situationText: "Compare style between guidance and gold. Guidance: \(guidance) Gold: \(goldResponse)",
+                apiKey: apiKey
+            )
+            // Map presence of a category to a mid-high score
+            let base = heuristicStyleTone(guidance: guidance, gold: goldResponse)
+            return min(5.0, max(1.0, base + (cat.isEmpty ? 0.0 : 0.5)))
+        } catch {
+            return heuristicStyleTone(guidance: guidance, gold: goldResponse)
+        }
+    }
+
+    private func heuristicStyleTone(guidance: String, gold: String) -> Double {
+        let gTokens = Set(tokenize(guidance))
+        let goldTokens = Set(tokenize(gold))
+        let overlap = Double(gTokens.intersection(goldTokens).count)
+        let denom = Double(max(gTokens.count, 1))
+        // Scale to 1..5
+        return max(1.0, min(5.0, 1.0 + 4.0 * (overlap / denom)))
     }
     
     // MARK: - Composite Scoring

@@ -242,14 +242,27 @@ class ExperimentRunner: ObservableObject {
     }
     
     private func fetchSituationsForExperiment(_ experiment: ExperimentRun) async throws -> [Situation] {
-        let query = supabaseManager.client
+        var query = supabaseManager.client
             .from("situations")
             .select()
             .eq("family_id", value: experiment.familyId.uuidString)
             .order("created_at", ascending: true)
-        
-        // TODO: Apply date range and filters at query level once RPCs available
-        
+        if let range = experiment.dateRange {
+            let formatter = ISO8601DateFormatter()
+            query = query.gte("created_at", value: formatter.string(from: range.start))
+                .lte("created_at", value: formatter.string(from: range.end))
+        }
+        if let filter = experiment.situationFilter {
+            if let cats = filter.categories, !cats.isEmpty {
+                query = query.in("category", value: cats)
+            }
+            if let hasIncident = filter.hasIncident {
+                query = query.eq("is_incident", value: hasIncident)
+            }
+            if let search = filter.textSearch, !search.isEmpty {
+                query = query.ilike("description", value: "%\(search)%")
+            }
+        }
         let response = try await query.execute()
         
         let decoder = JSONDecoder()

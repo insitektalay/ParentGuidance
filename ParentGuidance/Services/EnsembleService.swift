@@ -56,8 +56,51 @@ final class EnsembleService {
     func sectionCompose(
         candidates: [(guidance: Guidance, composite: Double)]
     ) -> Guidance? {
-        // TODO: Implement proper section-level merge
-        return candidates.max(by: { $0.composite < $1.composite })?.guidance
+        guard !candidates.isEmpty else { return nil }
+        // Parse sections using DynamicGuidanceParser; if parsing fails, fall back to full text
+        struct NamedSection { let name: String; let content: String }
+        var candidateSections: [[NamedSection]] = []
+        for c in candidates {
+            if let parsed = DynamicGuidanceParser.shared.parseWithFallback(c.guidance.content) as? GuidanceResponseProtocol {
+                let sections = parsed.displaySections.map { NamedSection(name: $0.title, content: $0.content) }
+                candidateSections.append(sections)
+            } else {
+                candidateSections.append([NamedSection(name: "Content", content: c.guidance.content)])
+            }
+        }
+        // Collect by section name and pick best by candidate composite
+        var merged: [NamedSection] = []
+        let sectionNames = Set(candidateSections.flatMap { $0.map { $0.name } })
+        for name in sectionNames {
+            var best: (idx: Int, content: String, composite: Double)?
+            for (i, sections) in candidateSections.enumerated() {
+                if let sec = sections.first(where: { $0.name.caseInsensitiveCompare(name) == .orderedSame }), candidates.indices.contains(i) {
+                    let comp = candidates[i].composite
+                    if best == nil || comp > (best?.composite ?? 0) {
+                        best = (i, sec.content, comp)
+                    }
+                }
+            }
+            if let b = best { merged.append(NamedSection(name: name, content: b.content)) }
+        }
+        // Compose back into text
+        var composed = ""
+        for s in merged.sorted(by: { $0.name < $1.name }) {
+            composed += "[\(s.name.uppercased())]\n\(s.content)\n\n"
+        }
+        // Save composed guidance
+        guard let first = candidates.first?.guidance else { return nil }
+        if let savedId = try? await ConversationService.shared.saveGuidance(
+            situationId: first.situationId,
+            content: composed,
+            category: nil,
+            overallRecommendation: nil,
+            regenRunId: nil,
+            experimentRunId: nil
+        ) {
+            return Guidance(id: savedId, situationId: first.situationId, content: composed, category: nil)
+        }
+        return nil
     }
 
     // LLM Synthesis stub: merge top-2 guidance texts

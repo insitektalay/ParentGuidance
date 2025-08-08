@@ -535,10 +535,23 @@ class TranslationQueueManager: ObservableObject {
     }
     
     private func getAPIKeyForFamily(familyId: String) async -> String? {
-        // This would need to be implemented to get API key from user profile
-        // For now, returning nil
-        // TODO: Implement API key retrieval logic
-        return nil
+        // Attempt to read from user profile preference
+        if let key = UserDefaults.standard.string(forKey: "openAIApiKey") {
+            return key
+        }
+        do {
+            let resp = try await SupabaseManager.shared.client
+                .from("profiles")
+                .select("user_api_key")
+                .eq("family_id", value: familyId)
+                .limit(1)
+                .execute()
+            struct Row: Decodable { let user_api_key: String? }
+            let rows = try JSONDecoder().decode([Row].self, from: resp.data)
+            return rows.first?.user_api_key
+        } catch {
+            return nil
+        }
     }
     
     /// Persist content access tracking to database

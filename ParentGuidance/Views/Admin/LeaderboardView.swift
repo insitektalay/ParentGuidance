@@ -21,6 +21,13 @@ struct LeaderboardView: View {
                 }
             }
         }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Why this won") {
+                    // Placeholder for modal explaining winners based on judge summaries
+                }
+            }
+        }
         .task { await load() }
         .overlay(Group { if isLoading { ProgressView() } })
         .navigationTitle("Leaderboard")

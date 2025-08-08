@@ -16,8 +16,8 @@ struct LeaderboardView: View {
                 }
                 Spacer()
                 VStack(alignment: .trailing) {
-                    Text(String(format: "%.3f", e.averageComposite)).bold()
-                    Text("n=\(e.situationsProcessed)").font(.caption)
+                    Text(String(format: "%.3f (95%% CI: %.3f–%.3f)", e.averageComposite, e.confidenceLow, e.confidenceHigh)).bold()
+                    Text("n=\(e.situationsProcessed) • win-rate=\(Int(e.winRate * 100))%").font(.caption)
                 }
             }
         }

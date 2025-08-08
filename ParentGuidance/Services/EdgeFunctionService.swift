@@ -31,7 +31,9 @@ class EdgeFunctionService {
         structureMode: String = "fixed",
         guidanceStyle: String = "Warm Practical",
         situationType: SituationType = .imJustWondering,
-        apiKey: String
+        apiKey: String,
+        regenRunId: UUID? = nil,
+        experimentRunId: UUID? = nil
     ) async throws -> EdgeFunctionGuidanceResponse {
         print("🔄 [EdgeFunction] Generating guidance via Edge Function (function calling)")
         print("   → Operation: guidance")
@@ -77,6 +79,7 @@ class EdgeFunctionService {
         }
         print("📤 ===============================================")
         
+        let startedAt = Date()
         let result = try await callEdgeFunction(
             operation: "guidance",
             variables: variables,
@@ -87,6 +90,13 @@ class EdgeFunctionService {
                 "apiKey": apiKey,
                 "useFunctionCalling": true
             ]
+        )
+        let duration = Date().timeIntervalSince(startedAt)
+        await RunLogService.shared.log(
+            regenRunId: regenRunId,
+            experimentRunId: experimentRunId,
+            level: .info,
+            message: "edge.guidance(function_calling) ok duration_ms=\(Int(duration*1000))"
         )
         
         // Parse the response
@@ -119,7 +129,9 @@ class EdgeFunctionService {
         structureMode: String = "fixed",
         guidanceStyle: String = "Warm Practical",
         situationType: SituationType = .imJustWondering,
-        apiKey: String
+        apiKey: String,
+        regenRunId: UUID? = nil,
+        experimentRunId: UUID? = nil
     ) async throws -> AsyncThrowingStream<String, Error> {
         print("🔄 [EdgeFunction] Streaming guidance via Edge Function")
         print("   → Operation: guidance")
@@ -167,23 +179,32 @@ class EdgeFunctionService {
         return try await streamRequest(
             operation: "guidance",
             variables: variables,
-            apiKey: apiKey
+            apiKey: apiKey,
+            regenRunId: regenRunId,
+            experimentRunId: experimentRunId
         )
     }
     
     /// Analyze a situation for category and incident type (non-streaming)
     func analyzeSituation(
         situationText: String,
-        apiKey: String
+        apiKey: String,
+        regenRunId: UUID? = nil,
+        experimentRunId: UUID? = nil
     ) async throws -> (category: String, isIncident: Bool) {
         print("🔄 [EdgeFunction] Analyzing situation via Edge Function")
         print("   → Operation: analyze")
         
+        let startedAt = Date()
         let response = try await jsonRequest(
             operation: "analyze",
             variables: ["situation_text": situationText],
-            apiKey: apiKey
+            apiKey: apiKey,
+            regenRunId: regenRunId,
+            experimentRunId: experimentRunId
         )
+        let duration = Date().timeIntervalSince(startedAt)
+        await RunLogService.shared.log(regenRunId: regenRunId, experimentRunId: experimentRunId, level: .info, message: "edge.analyze ok duration_ms=\(Int(duration*1000))")
         
         print("🔍 [DEBUG] Analyze response received: '\(response)'")
         print("🔍 [DEBUG] Response length: \(response.count)")
@@ -219,7 +240,9 @@ class EdgeFunctionService {
     /// Generate framework recommendations (non-streaming)
     func generateFramework(
         recentSituations: String,
-        apiKey: String
+        apiKey: String,
+        regenRunId: UUID? = nil,
+        experimentRunId: UUID? = nil
     ) async throws -> String {
         print("🔄 [EdgeFunction] Generating framework via Edge Function")
         print("   → Operation: framework")
@@ -227,7 +250,9 @@ class EdgeFunctionService {
         return try await jsonRequest(
             operation: "framework",
             variables: ["recent_situations": recentSituations],
-            apiKey: apiKey
+            apiKey: apiKey,
+            regenRunId: regenRunId,
+            experimentRunId: experimentRunId
         )
     }
     
@@ -235,7 +260,9 @@ class EdgeFunctionService {
     func extractContext(
         situationText: String,
         extractionType: String = "general",
-        apiKey: String
+        apiKey: String,
+        regenRunId: UUID? = nil,
+        experimentRunId: UUID? = nil
     ) async throws -> String {
         print("🔄 [EdgeFunction] Extracting context via Edge Function")
         print("   → Operation: context")
@@ -247,14 +274,18 @@ class EdgeFunctionService {
                 "situation_text": situationText,
                 "extraction_type": extractionType
             ],
-            apiKey: apiKey
+            apiKey: apiKey,
+            regenRunId: regenRunId,
+            experimentRunId: experimentRunId
         )
     }
     
     /// Extract coping strategies (non-streaming)
     func extractCopingStrategies(
         situationText: String,
-        apiKey: String
+        apiKey: String,
+        regenRunId: UUID? = nil,
+        experimentRunId: UUID? = nil
     ) async throws -> String {
         print("🔄 [EdgeFunction] Extracting coping strategies via Edge Function")
         print("   → Operation: coping_strategies")
@@ -264,7 +295,9 @@ class EdgeFunctionService {
             variables: [
                 "longtext": situationText
             ],
-            apiKey: apiKey
+            apiKey: apiKey,
+            regenRunId: regenRunId,
+            experimentRunId: experimentRunId
         )
     }
     
@@ -272,7 +305,9 @@ class EdgeFunctionService {
     func streamTranslation(
         guidanceContent: String,
         targetLanguage: String,
-        apiKey: String
+        apiKey: String,
+        regenRunId: UUID? = nil,
+        experimentRunId: UUID? = nil
     ) async throws -> AsyncThrowingStream<String, Error> {
         print("🔄 [EdgeFunction] Streaming translation via Edge Function")
         print("   → Operation: translate")
@@ -284,7 +319,9 @@ class EdgeFunctionService {
                 "guidance_content": guidanceContent,
                 "target_language": targetLanguage
             ],
-            apiKey: apiKey
+            apiKey: apiKey,
+            regenRunId: regenRunId,
+            experimentRunId: experimentRunId
         )
     }
     
@@ -312,7 +349,9 @@ class EdgeFunctionService {
     /// Extract overall recommendation from guidance content (non-streaming)
     func extractOverallRecommendation(
         guidanceContent: String,
-        apiKey: String
+        apiKey: String,
+        regenRunId: UUID? = nil,
+        experimentRunId: UUID? = nil
     ) async throws -> String {
         print("🔄 [EdgeFunction] ===== OVERALL RECOMMENDATION EXTRACTION =====")
         print("   → Operation: extract_overall_recommendation")
@@ -322,11 +361,16 @@ class EdgeFunctionService {
         print("   → Using API key: \(apiKey.prefix(10))...")
         
         do {
+            let startedAt = Date()
             let result = try await jsonRequest(
                 operation: "extract_overall_recommendation",
                 variables: ["source_text": guidanceContent],
-                apiKey: apiKey
+                apiKey: apiKey,
+                regenRunId: regenRunId,
+                experimentRunId: experimentRunId
             )
+            let duration = Date().timeIntervalSince(startedAt)
+            await RunLogService.shared.log(regenRunId: regenRunId, experimentRunId: experimentRunId, level: .info, message: "edge.extract_overall_recommendation ok duration_ms=\(Int(duration*1000))")
             print("✅ [EdgeFunction] Recommendation extraction successful")
             print("   → Raw response: \(result)")
             print("🔄 [EdgeFunction] ========================================")
@@ -345,7 +389,9 @@ class EdgeFunctionService {
     private func streamRequest(
         operation: String,
         variables: [String: Any],
-        apiKey: String
+        apiKey: String,
+        regenRunId: UUID? = nil,
+        experimentRunId: UUID? = nil
     ) async throws -> AsyncThrowingStream<String, Error> {
         let url = URL(string: baseURL)!
         var request = URLRequest(url: url)
@@ -369,6 +415,7 @@ class EdgeFunctionService {
             throw EdgeFunctionError.httpError(statusCode: (response as? HTTPURLResponse)?.statusCode ?? 0)
         }
         
+        let startedAt = Date()
         return AsyncThrowingStream { continuation in
             Task {
                 do {
@@ -398,8 +445,11 @@ class EdgeFunctionService {
                     }
                     
                     continuation.finish()
+                    let duration = Date().timeIntervalSince(startedAt)
+                    await RunLogService.shared.log(regenRunId: regenRunId, experimentRunId: experimentRunId, level: .info, message: "edge.\(operation) stream completed duration_ms=\(Int(duration*1000))")
                 } catch {
                     continuation.finish(throwing: EdgeFunctionError.streamingError(error.localizedDescription))
+                    await RunLogService.shared.log(regenRunId: regenRunId, experimentRunId: experimentRunId, level: .error, message: "edge.\(operation) stream error: \(error.localizedDescription)")
                 }
             }
         }
@@ -409,7 +459,9 @@ class EdgeFunctionService {
     private func jsonRequest(
         operation: String,
         variables: [String: Any],
-        apiKey: String
+        apiKey: String,
+        regenRunId: UUID? = nil,
+        experimentRunId: UUID? = nil
     ) async throws -> String {
         let url = URL(string: baseURL)!
         var request = URLRequest(url: url)
@@ -426,11 +478,14 @@ class EdgeFunctionService {
         
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
         
+        let startedAt = Date()
         let (data, response) = try await URLSession.shared.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse,
               httpResponse.statusCode == 200 else {
-            throw EdgeFunctionError.httpError(statusCode: (response as? HTTPURLResponse)?.statusCode ?? 0)
+            let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+            await RunLogService.shared.log(regenRunId: regenRunId, experimentRunId: experimentRunId, level: .error, message: "edge.\(operation) httpError status=\(status)")
+            throw EdgeFunctionError.httpError(statusCode: status)
         }
         
         // Parse the response
@@ -451,22 +506,28 @@ class EdgeFunctionService {
                     // Validate that the response data is valid UTF-8
                     if responseData.data(using: .utf8) != nil {
                         print("✅ [EdgeFunction] Response data is valid UTF-8")
+                        let duration = Date().timeIntervalSince(startedAt)
+                        await RunLogService.shared.log(regenRunId: regenRunId, experimentRunId: experimentRunId, level: .info, message: "edge.\(operation) ok duration_ms=\(Int(duration*1000)) size=\(responseData.count)")
                         return responseData
                     } else {
                         print("❌ [EdgeFunction] Response data contains invalid UTF-8 characters!")
+                        await RunLogService.shared.log(regenRunId: regenRunId, experimentRunId: experimentRunId, level: .error, message: "edge.\(operation) invalidResponse utf8")
                         throw EdgeFunctionError.invalidResponse
                     }
                 } else {
                     print("❌ [EdgeFunction] Success=false or missing data field")
                     if let errorMessage = json["error"] as? String {
                         print("❌ [EdgeFunction] Error message: \(errorMessage)")
+                        await RunLogService.shared.log(regenRunId: regenRunId, experimentRunId: experimentRunId, level: .error, message: "edge.\(operation) error: \(errorMessage)")
                     }
                 }
             } else {
                 print("❌ [EdgeFunction] Missing or invalid success field")
+                await RunLogService.shared.log(regenRunId: regenRunId, experimentRunId: experimentRunId, level: .error, message: "edge.\(operation) invalidResponse missing success")
             }
         } else {
             print("❌ [EdgeFunction] JSON parsing failed")
+            await RunLogService.shared.log(regenRunId: regenRunId, experimentRunId: experimentRunId, level: .error, message: "edge.\(operation) invalidResponse json parse failed")
         }
         
         throw EdgeFunctionError.invalidResponse

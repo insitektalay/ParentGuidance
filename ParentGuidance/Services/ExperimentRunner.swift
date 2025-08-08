@@ -142,6 +142,7 @@ class ExperimentRunner: ObservableObject {
                 do {
                     // Optional planner step (scaffold): generate candidate plans for target block
                     let plans = planner.generatePlans(targetBlock: "context_extraction", count: 3)
+                    _ = try? await planner.persistPlans(plans)
                     var candidates: [(guidance: Guidance, composite: Double)] = []
                     let variants = max(1, plans.count)
                     for _ in 0..<variants {

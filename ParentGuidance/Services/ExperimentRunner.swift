@@ -185,7 +185,7 @@ class ExperimentRunner: ObservableObject {
                     }
 
                     // Attempt section-wise compose of candidates and re-judge (safety gate naive)
-                    if let composed = ensemble.sectionCompose(candidates: candidates) {
+                    if let composed = await ensemble.sectionCompose(candidates: candidates) {
                         var compScore = try await scoringService.scoreGuidance(
                             guidanceText: composed.content,
                             goldResponse: try await goldResponseService.getGoldResponse(for: UUID(uuidString: situation.id) ?? UUID()),

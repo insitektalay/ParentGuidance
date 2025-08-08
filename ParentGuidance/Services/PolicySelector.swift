@@ -44,6 +44,7 @@ final class PolicySelector {
                 language: cohortOverrides?.language ?? "auto"
             ),
             relevantInsights: ToggleBlock(enabled: relevantEnabled),
+            regulationInsights: ToggleBlock(enabled: UserDefaults.standard.bool(forKey: "aiProcessingRegulationInsights")),
             analysis: AnalysisParams(enabled: true, provider: "edge", promptVersion: "v1"),
             translation: TranslationParams(enabled: false, targetLanguage: nil, smartOnDemand: true)
         )

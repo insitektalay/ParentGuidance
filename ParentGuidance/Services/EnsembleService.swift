@@ -24,8 +24,8 @@ final class EnsembleService {
             let id: String
             let experimentRunId: String
             let mode: String
-            let componentsJson: [String: Any]
-            let judgeSummaryJson: [String: Any]
+            let componentsJson: String
+            let judgeSummaryJson: String
             let chosen: Bool
             enum CodingKeys: String, CodingKey {
                 case id
@@ -37,12 +37,19 @@ final class EnsembleService {
             }
         }
         let ensembleId = UUID()
+        // Build JSON strings
+        let componentsObj: [String: Any] = [
+            "candidates": components.map { ["guidance_id": $0.guidanceId, "composite": $0.composite] },
+            "chosen_guidance_id": chosenGuidanceId
+        ]
+        let compsData = try JSONSerialization.data(withJSONObject: componentsObj, options: [])
+        let judgeData = try JSONSerialization.data(withJSONObject: judgeSummary, options: [])
         let payload = Insert(
             id: ensembleId.uuidString,
             experimentRunId: experimentRunId.uuidString,
             mode: (mode == .bestOfN ? "best_of_n" : "section_compose"),
-            componentsJson: ["candidates": components.map { ["guidance_id": $0.guidanceId, "composite": $0.composite] }, "chosen_guidance_id": chosenGuidanceId],
-            judgeSummaryJson: judgeSummary,
+            componentsJson: String(data: compsData, encoding: .utf8) ?? "{}",
+            judgeSummaryJson: String(data: judgeData, encoding: .utf8) ?? "{}",
             chosen: true
         )
         try await SupabaseManager.shared.client
@@ -55,13 +62,13 @@ final class EnsembleService {
     // Section-wise compose: pick best section per candidate (stubbed behavior)
     func sectionCompose(
         candidates: [(guidance: Guidance, composite: Double)]
-    ) -> Guidance? {
+    ) async -> Guidance? {
         guard !candidates.isEmpty else { return nil }
         // Parse sections using DynamicGuidanceParser; if parsing fails, fall back to full text
         struct NamedSection { let name: String; let content: String }
         var candidateSections: [[NamedSection]] = []
         for c in candidates {
-            if let parsed = DynamicGuidanceParser.shared.parseWithFallback(c.guidance.content) as? GuidanceResponseProtocol {
+            if let parsed = DynamicGuidanceParser.shared.parseWithFallback(c.guidance.content) {
                 let sections = parsed.displaySections.map { NamedSection(name: $0.title, content: $0.content) }
                 candidateSections.append(sections)
             } else {

@@ -62,7 +62,7 @@ final class PlannerExecutorService {
             let picked = (r.plan.id == best?.plan.id)
             let enc = JSONEncoder()
             let summaryJson = r.judgeSummary
-            var dict: [String: Any] = [
+            let dict: [String: Any] = [
                 "id": r.plan.id.uuidString,
                 "ablation_run_id": r.plan.ablationRunId.uuidString,
                 "plan_text": r.plan.planText,
@@ -72,7 +72,7 @@ final class PlannerExecutorService {
             ]
             try await SupabaseManager.shared.client
                 .from("block_plans")
-                .upsert(dict)
+                .upsert([dict])
                 .execute()
         }
 

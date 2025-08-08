@@ -25,6 +25,7 @@ struct PromptBlocks: Codable {
     let actionTemplate: ActionTemplateParams?
     let contextExtraction: ContextExtractionParams?
     let relevantInsights: ToggleBlock?
+    let regulationInsights: ToggleBlock?
     let analysis: AnalysisParams?
     let translation: TranslationParams?
     
@@ -35,6 +36,7 @@ struct PromptBlocks: Codable {
         case relevantInsights = "relevant_insights"
         case analysis
         case translation
+        case regulationInsights = "regulation_insights"
     }
 }
 

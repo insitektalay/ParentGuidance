@@ -150,7 +150,7 @@ class ManualRegenerationService: ObservableObject {
             }
             
             // Step 3: Extract regulation insights (if enabled)
-            let regulationEnabled = UserDefaults.standard.bool(forKey: "aiProcessingRegulationInsights")
+            let regulationEnabled = resolvedPolicy?.promptBlocks.regulationInsights?.enabled ?? UserDefaults.standard.bool(forKey: "aiProcessingRegulationInsights")
             if regulationEnabled {
                 print("Extracting regulation insights...")
                 try await contextualInsightService.extractRegulationInsights(

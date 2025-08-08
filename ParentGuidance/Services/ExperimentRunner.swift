@@ -150,11 +150,14 @@ class ExperimentRunner: ObservableObject {
                     )
                     
                     // Score the guidance if benchmarks exist
-                     try await scoreGuidance(
+                    try await scoreGuidance(
                         situation: situation,
                         guidance: guidanceResponse,
                         experimentId: experiment.id
                     )
+
+                    // Best-of-N ensemble (scaffold): currently only has single candidate; ready for multi
+                    // Future: generate multiple guidance variants, score them, then choose best
                     
                     progress.processedSituations += 1
                     try await updateExperimentProgress(experimentId: experiment.id, progress: progress)

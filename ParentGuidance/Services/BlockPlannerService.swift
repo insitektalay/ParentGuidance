@@ -75,18 +75,20 @@ final class BlockPlannerService {
     func persistPlans(_ plans: [BlockPlan]) async throws {
         let enc = JSONEncoder()
         for plan in plans {
-            var dict: [String: Any] = [
+            let paramsData = try enc.encode(plan.paramsJson)
+            let judgeData = try enc.encode(plan.judgeSummaryJson ?? [:])
+            let dict: [String: Any] = [
                 "id": plan.id.uuidString,
                 "ablation_run_id": plan.ablationRunId.uuidString,
                 "plan_text": plan.planText,
-                "params_json": try? JSONSerialization.jsonObject(with: try enc.encode(plan.paramsJson)),
-                "judge_summary_json": try? JSONSerialization.jsonObject(with: try enc.encode(plan.judgeSummaryJson ?? [:])),
+                "params_json": String(data: paramsData, encoding: .utf8) ?? "{}",
+                "judge_summary_json": String(data: judgeData, encoding: .utf8) ?? "{}",
                 "picked": plan.picked,
                 "created_at": ISO8601DateFormatter().string(from: plan.createdAt)
             ]
             try await SupabaseManager.shared.client
                 .from("block_plans")
-                .insert(dict)
+                .insert([dict])
                 .execute()
         }
     }

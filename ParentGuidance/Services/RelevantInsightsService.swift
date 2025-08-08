@@ -674,7 +674,7 @@ class RelevantInsightsService {
             .from("relevant_insights")
             .update([
                 "regen_run_id": regenRunId.uuidString,
-                "experiment_run_id": experimentRunId?.uuidString as Any
+                "experiment_run_id": experimentRunId?.uuidString ?? NSNull()
             ])
             .eq("situation_id", value: situationId.uuidString)
             .eq("guidance_id", value: guidanceData.id)

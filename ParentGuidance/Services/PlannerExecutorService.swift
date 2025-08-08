@@ -58,21 +58,38 @@ final class PlannerExecutorService {
 
         // Persist plans with summaries and pick best if uplift > 0 and no safety regression (naive gating)
         let best = results.max(by: { $0.avgComposite < $1.avgComposite })
+        struct UpsertRow: Encodable {
+            let id: String
+            let ablationRunId: String
+            let planText: String
+            let paramsJson: String
+            let judgeSummaryJson: String
+            let picked: Bool
+            enum CodingKeys: String, CodingKey {
+                case id
+                case ablationRunId = "ablation_run_id"
+                case planText = "plan_text"
+                case paramsJson = "params_json"
+                case judgeSummaryJson = "judge_summary_json"
+                case picked
+            }
+        }
         for r in results {
             let picked = (r.plan.id == best?.plan.id)
             let enc = JSONEncoder()
-            let summaryJson = r.judgeSummary
-            let dict: [String: Any] = [
-                "id": r.plan.id.uuidString,
-                "ablation_run_id": r.plan.ablationRunId.uuidString,
-                "plan_text": r.plan.planText,
-                "params_json": try? JSONSerialization.jsonObject(with: try enc.encode(r.plan.paramsJson)),
-                "judge_summary_json": summaryJson,
-                "picked": picked
-            ]
+            let paramsData = try enc.encode(r.plan.paramsJson)
+            let judgeData = try JSONSerialization.data(withJSONObject: r.judgeSummary)
+            let row = UpsertRow(
+                id: r.plan.id.uuidString,
+                ablationRunId: r.plan.ablationRunId.uuidString,
+                planText: r.plan.planText,
+                paramsJson: String(data: paramsData, encoding: .utf8) ?? "{}",
+                judgeSummaryJson: String(data: judgeData, encoding: .utf8) ?? "{}",
+                picked: picked
+            )
             try await SupabaseManager.shared.client
                 .from("block_plans")
-                .upsert([dict])
+                .upsert(row)
                 .execute()
         }
 

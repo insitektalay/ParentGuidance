@@ -53,7 +53,7 @@ final class PolicySelector {
             modelProvider: provider,
             temperature: 0.3,
             topP: 0.9,
-            seed: config?.determinismSeed?.doubleValue,
+            seed: config?.determinismSeed,
             guidance: GuidanceParams(
                 useFunctionCalling: true,
                 structureMode: "fixed",

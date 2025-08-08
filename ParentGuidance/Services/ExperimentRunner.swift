@@ -266,7 +266,7 @@ class ExperimentRunner: ObservableObject {
                 fb = fb.eq("is_incident", value: hasIncident)
             }
             if let search = filter.textSearch, !search.isEmpty {
-                fb = fb.ilike("description", value: "%\(search)%")
+                fb = fb.ilike("description", pattern: "%\(search)%")
             }
         }
         let response = try await fb.order("created_at", ascending: true).execute()
@@ -298,7 +298,7 @@ class ExperimentRunner: ObservableObject {
             activeFramework: nil,
             situationType: .imJustWondering,
             useStreaming: false,
-            resolvedPolicy: resolvedPolicy
+            policy: resolvedPolicy
         )
         
         // Save the guidance with experiment ID

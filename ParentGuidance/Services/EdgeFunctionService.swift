@@ -399,7 +399,7 @@ class EdgeFunctionService {
                     
                     continuation.finish()
                 } catch {
-                    continuation.finish(throwing: error)
+                    continuation.finish(throwing: EdgeFunctionError.streamingError(error.localizedDescription))
                 }
             }
         }

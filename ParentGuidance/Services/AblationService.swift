@@ -57,7 +57,7 @@ final class AblationService: ObservableObject {
 
         // Derive two policies (control/test). For v1, we rely on PolicySelector and override similarity threshold if targeted.
         let policySelector = PolicySelector.shared
-        let basePolicy = policySelector.resolvePolicy(familyId: familyId, config: regenConfig)
+        let basePolicy = await policySelector.resolvePolicy(familyId: familyId, config: regenConfig)
 
         func overridePolicy(_ base: ResolvedPolicy, value: String) -> ResolvedPolicy {
             var policy = base
@@ -83,6 +83,7 @@ final class AblationService: ObservableObject {
                         actionTemplate: policy.promptBlocks.actionTemplate,
                         contextExtraction: overridden,
                         relevantInsights: policy.promptBlocks.relevantInsights,
+                        regulationInsights: policy.promptBlocks.regulationInsights,
                         analysis: policy.promptBlocks.analysis,
                         translation: policy.promptBlocks.translation
                     )

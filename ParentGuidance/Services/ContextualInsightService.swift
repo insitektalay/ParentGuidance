@@ -1828,6 +1828,28 @@ class ContextualInsightService {
         let copingCount = deduplicatedCopingInsights.count
         
         print("✅ Batched regulation regeneration completed: \(emotionalCount) emotional, \(attentionCount) attention, \(flexibilityCount) flexibility, \(copingCount) coping")
+
+        // 7. Record dedup metrics
+        let metrics = DeduplicationMetricsInsert(
+            operationType: "regenerate_all_regulation",
+            tableName: "insight_bullet_points",
+            candidatesGenerated: allInsights.count,
+            duplicatesFound: allInsights.count - deduplicatedInsights.count,
+            insightsInserted: deduplicatedInsights.count,
+            insightsFused: 0,
+            insightsRewritten: 0,
+            raceConditionDuplicates: 0,
+            languagesDetected: [:],
+            translationsPerformed: 0,
+            processingTimeMs: 0,
+            embeddingGenerationTimeMs: 0,
+            similaritySearchTimeMs: 0,
+            embeddingModel: "text-embedding-3-small",
+            similarityThresholdUsed: 0.0,
+            batchSize: 10,
+            apiProvider: "edge"
+        )
+        try? await saveDeduplicationMetrics(familyId: familyId, metrics: metrics)
         return (emotionalCount, attentionCount, flexibilityCount, copingCount)
     }
     
@@ -1915,6 +1937,28 @@ class ContextualInsightService {
         }
         
         print("✅ Batched regeneration completed: \(allInsights.count) contextual insights across \(counts.count) categories")
+
+        // 7. Record dedup metrics
+        let metrics = DeduplicationMetricsInsert(
+            operationType: "regenerate_all_context",
+            tableName: "contextual_insights",
+            candidatesGenerated: allInsights.count,
+            duplicatesFound: 0,
+            insightsInserted: allInsights.count,
+            insightsFused: 0,
+            insightsRewritten: 0,
+            raceConditionDuplicates: 0,
+            languagesDetected: [:],
+            translationsPerformed: 0,
+            processingTimeMs: 0,
+            embeddingGenerationTimeMs: 0,
+            similaritySearchTimeMs: 0,
+            embeddingModel: "text-embedding-3-small",
+            similarityThresholdUsed: 0.0,
+            batchSize: 10,
+            apiProvider: "edge"
+        )
+        try? await saveDeduplicationMetrics(familyId: familyId, metrics: metrics)
         return counts
     }
     
@@ -2194,12 +2238,84 @@ class ContextualInsightService {
         let processingTime = Date().timeIntervalSince(startTime)
         print("✅ Deduplication processing completed in \(Int(processingTime * 1000))ms")
         print("📊 Stats: \(deduplicationStats.duplicatesFound) duplicates found, \(deduplicationStats.insightsInserted) insights will be inserted")
+
+        // Record metrics
+        let metrics = DeduplicationMetricsInsert(
+            operationType: extractionType == "regulation" ? "extract_regulation" : "extract_context",
+            tableName: tableName,
+            candidatesGenerated: processedInsights.count,
+            duplicatesFound: deduplicationStats.duplicatesFound,
+            insightsInserted: deduplicationStats.insightsInserted,
+            insightsFused: deduplicationStats.insightsFused,
+            insightsRewritten: deduplicationStats.insightsRewritten,
+            raceConditionDuplicates: deduplicationStats.raceConditionDuplicates,
+            languagesDetected: languageStats.detectedLanguages,
+            translationsPerformed: languageStats.translatedCount,
+            processingTimeMs: Int(processingTime * 1000),
+            embeddingGenerationTimeMs: 0,
+            similaritySearchTimeMs: 0,
+            embeddingModel: "text-embedding-3-small",
+            similarityThresholdUsed: 0.0,
+            batchSize: 0,
+            apiProvider: "edge"
+        )
+        try? await saveDeduplicationMetrics(familyId: familyId, metrics: metrics)
         
         return InsightExtractionResponse(
             insights: processedInsights,
             deduplicationStats: deduplicationStats,
             languageStats: languageStats
         )
+    }
+
+    // MARK: - Deduplication Metrics Persistence
+
+    private struct DeduplicationMetricsInsert: Encodable {
+        let operationType: String
+        let tableName: String
+        let candidatesGenerated: Int
+        let duplicatesFound: Int
+        let insightsInserted: Int
+        let insightsFused: Int
+        let insightsRewritten: Int
+        let raceConditionDuplicates: Int
+        let languagesDetected: [String: Int]
+        let translationsPerformed: Int
+        let processingTimeMs: Int
+        let embeddingGenerationTimeMs: Int
+        let similaritySearchTimeMs: Int
+        let embeddingModel: String
+        let similarityThresholdUsed: Double
+        let batchSize: Int
+        let apiProvider: String
+
+        enum CodingKeys: String, CodingKey {
+            case operationType = "operation_type"
+            case tableName = "table_name"
+            case candidatesGenerated = "candidates_generated"
+            case duplicatesFound = "duplicates_found"
+            case insightsInserted = "insights_inserted"
+            case insightsFused = "insights_fused"
+            case insightsRewritten = "insights_rewritten"
+            case raceConditionDuplicates = "race_condition_duplicates"
+            case languagesDetected = "languages_detected"
+            case translationsPerformed = "translations_performed"
+            case processingTimeMs = "processing_time_ms"
+            case embeddingGenerationTimeMs = "embedding_generation_time_ms"
+            case similaritySearchTimeMs = "similarity_search_time_ms"
+            case embeddingModel = "embedding_model"
+            case similarityThresholdUsed = "similarity_threshold_used"
+            case batchSize = "batch_size"
+            case apiProvider = "api_provider"
+        }
+    }
+
+    private func saveDeduplicationMetrics(familyId: String, metrics: DeduplicationMetricsInsert) async throws {
+        var payload = metrics
+        try await SupabaseManager.shared.client
+            .from("deduplication_metrics")
+            .insert(payload)
+            .execute()
     }
     
     // MARK: - Utility Methods

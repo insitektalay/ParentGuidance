@@ -26,7 +26,7 @@ class ConversationService: ObservableObject {
     static let shared = ConversationService()
     
     /// Feature flag to use Edge Function instead of direct OpenAI API
-    /// Default to true to support multi-provider API keys
+    /// Default to true to support multi-provider API keys (will be overridden by ResolvedPolicy when provided)
     private let useEdgeFunction = UserDefaults.standard.object(forKey: "conversation_use_edge_function") as? Bool ?? true
     
     private init() {}
@@ -102,7 +102,9 @@ class ConversationService: ObservableObject {
         situationId: String,
         content: String,
         category: String? = nil,
-        overallRecommendation: String? = nil
+        overallRecommendation: String? = nil,
+        regenRunId: UUID? = nil,
+        experimentRunId: UUID? = nil
     ) async throws -> String {
         let guidanceId = UUID().uuidString
         let currentDate = ISO8601DateFormatter().string(from: Date())
@@ -118,9 +120,55 @@ class ConversationService: ObservableObject {
         )
         
         do {
+            // Create a temporary struct that includes all fields
+            struct GuidanceInsert: Encodable {
+                let id: String
+                let situationId: String
+                let content: String
+                let category: String?
+                let originalLanguage: String
+                let secondaryContent: String?
+                let secondaryLanguage: String?
+                let overallRecommendation: String?
+                let createdAt: String
+                let updatedAt: String
+                let regenRunId: String?
+                let experimentRunId: String?
+                
+                enum CodingKeys: String, CodingKey {
+                    case id
+                    case situationId = "situation_id"
+                    case content
+                    case category
+                    case originalLanguage = "original_language"
+                    case secondaryContent = "secondary_content"
+                    case secondaryLanguage = "secondary_language"
+                    case overallRecommendation = "overall_recommendation"
+                    case createdAt = "created_at"
+                    case updatedAt = "updated_at"
+                    case regenRunId = "regen_run_id"
+                    case experimentRunId = "experiment_run_id"
+                }
+            }
+            
+            let insertData = GuidanceInsert(
+                id: guidance.id,
+                situationId: guidance.situationId,
+                content: guidance.content,
+                category: guidance.category,
+                originalLanguage: guidance.originalLanguage,
+                secondaryContent: guidance.secondaryContent,
+                secondaryLanguage: guidance.secondaryLanguage,
+                overallRecommendation: guidance.overallRecommendation,
+                createdAt: guidance.createdAt,
+                updatedAt: guidance.updatedAt,
+                regenRunId: regenRunId?.uuidString,
+                experimentRunId: experimentRunId?.uuidString
+            )
+            
             let response = try await SupabaseManager.shared.client
                 .from("guidance")
-                .insert(guidance)
+                .insert(insertData)
                 .execute()
             
             return guidance.id
@@ -128,6 +176,57 @@ class ConversationService: ObservableObject {
             print("❌ Failed to save guidance: \(error.localizedDescription)")
             throw error
         }
+    }
+    
+    // MARK: - Guidance Generation
+    
+    /// Generate guidance for a situation
+    func generateGuidance(
+        situationId: UUID,
+        situationText: String,
+        childName: String,
+        regenRunId: UUID? = nil,
+        experimentRunId: UUID? = nil,
+        resolvedPolicy: ResolvedPolicy? = nil
+    ) async throws -> Guidance {
+        // Get API key
+        guard let apiKey = UserDefaults.standard.string(forKey: "openAIApiKey") else {
+            throw ConversationError.deletionFailed("No API key found")
+        }
+        
+        // Generate guidance using GuidanceGenerationService
+        let (guidanceResponse, rawContent) = try await GuidanceGenerationService.shared.generateGuidance(
+            situation: situationText,
+            childContext: nil,
+            keyInsights: nil,
+            copingStrategies: nil,
+            apiKey: apiKey,
+            activeFramework: nil,
+            situationType: .imJustWondering,
+            useStreaming: false
+        )
+        
+        // Extract overall recommendation
+        let overallRecommendation = guidanceResponse.title
+        
+        // Save the guidance with regen/experiment IDs
+        let guidanceId = try await saveGuidance(
+            situationId: situationId.uuidString,
+            content: rawContent,
+            category: nil,
+            overallRecommendation: overallRecommendation,
+            regenRunId: regenRunId,
+            experimentRunId: experimentRunId
+        )
+        
+        // Return the created guidance
+        return Guidance(
+            id: guidanceId,
+            situationId: situationId.uuidString,
+            content: rawContent,
+            category: nil,
+            overallRecommendation: overallRecommendation
+        )
     }
     
     // MARK: - Dual-Language Content Generation (Phase 2)

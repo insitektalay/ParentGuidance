@@ -606,4 +606,63 @@ class RelevantInsightsService {
         
         return matrix[s1Count][s2Count]
     }
+    
+    // MARK: - Time Machine Support
+    
+    /// Select relevant insights for a historical situation during regeneration
+    func selectRelevantInsightsForHistoricalSituation(
+        situationId: UUID,
+        priorToDate: Date,
+        regenRunId: UUID,
+        experimentRunId: UUID? = nil
+    ) async throws {
+        // Get situation details
+        let response = try await SupabaseManager.shared.client
+            .from("situations")
+            .select("*, guidance!inner(*)")
+            .eq("id", value: situationId.uuidString)
+            .single()
+            .execute()
+        
+        struct SituationWithGuidance: Decodable {
+            let id: String
+            let family_id: String
+            let created_at: String
+            let guidance: [GuidanceData]
+            
+            struct GuidanceData: Decodable {
+                let id: String
+                let content: String
+            }
+        }
+        
+        let decoder = JSONDecoder()
+        let situationData = try decoder.decode(SituationWithGuidance.self, from: response.data)
+        
+        guard let guidanceData = situationData.guidance.first else {
+            print("⚠️ No guidance found for situation during regeneration")
+            return
+        }
+        
+        // Select relevant insights using the existing method
+        _ = try await selectRelevantInsightsForHistoricalSituation(
+            guidanceText: guidanceData.content,
+            situationId: situationId.uuidString,
+            guidanceId: guidanceData.id,
+            familyId: situationData.family_id,
+            situationDate: situationData.created_at,
+            apiKey: UserDefaults.standard.string(forKey: "openAIApiKey") ?? ""
+        )
+        
+        // Update the relevant insights with regen_run_id
+        try await SupabaseManager.shared.client
+            .from("relevant_insights")
+            .update([
+                "regen_run_id": regenRunId.uuidString,
+                "experiment_run_id": experimentRunId?.uuidString as Any
+            ])
+            .eq("situation_id", value: situationId.uuidString)
+            .eq("guidance_id", value: guidanceData.id)
+            .execute()
+    }
 }

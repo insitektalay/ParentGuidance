@@ -13,6 +13,8 @@ class RegenOrchestrator: ObservableObject {
     private let contextualInsightService = ContextualInsightService.shared
     private let relevantInsightsService = RelevantInsightsService.shared
     private let frameworkGenerationService = FrameworkGenerationService.shared
+    private let scoringService = ScoringService.shared
+    private let goldResponseService = GoldResponseService.shared
     
     private var processingTask: Task<Void, Never>?
     
@@ -218,6 +220,28 @@ class RegenOrchestrator: ObservableObject {
                     log("  ✓ Guidance generated (ID: \(guidance.id))")
                     progress.guidanceGenerated += 1
                     progress.apiCallsMade += 1
+
+                    // Judge & persist score when experiment_run_id is available
+                    if let experimentRunId = run.config.experimentRunId {
+                        do {
+                            let gold = try await goldResponseService.getGoldResponse(for: UUID(uuidString: situation.id) ?? UUID())
+                            let redline = try await goldResponseService.getRedlineResponse(for: UUID(uuidString: situation.id) ?? UUID())
+                            var score = try await scoringService.scoreGuidance(
+                                guidanceText: guidance.content,
+                                goldResponse: gold,
+                                redlineResponse: redline
+                            )
+                            // Update with correct IDs
+                            score.experimentRunId = experimentRunId
+                            score.situationId = UUID(uuidString: situation.id) ?? UUID()
+                            score.guidanceId = UUID(uuidString: guidance.id) ?? UUID()
+                            // Persist (will include regen_run_id if column exists)
+                            try await scoringService.saveExperimentScore(score, regenRunId: run.id)
+                            log("  ✓ Scored guidance (composite=\(String(format: "%.3f", score.compositeScore)))")
+                        } catch {
+                            log("  ❌ Scoring failed: \(error.localizedDescription)")
+                        }
+                    }
                     
                     // Extract insights
                     let contextEnabled = resolvedPolicy?.promptBlocks.contextExtraction?.enabled ?? UserDefaults.standard.bool(forKey: "aiProcessingContextExtraction")
@@ -392,7 +416,8 @@ class RegenOrchestrator: ObservableObject {
         try await relevantInsightsService.selectRelevantInsightsForHistoricalSituation(
             situationId: UUID(uuidString: situation.id) ?? UUID(),
             priorToDate: priorToDate,
-            regenRunId: runId
+            regenRunId: runId,
+            experimentRunId: currentRun?.config.experimentRunId
         )
     }
     

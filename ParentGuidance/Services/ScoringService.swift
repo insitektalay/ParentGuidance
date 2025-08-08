@@ -239,6 +239,7 @@ class ScoringService: ObservableObject {
                 let scoreWeights: ScoreWeights
                 let comparisonDetails: ComparisonDetails?
                 let createdAt: Date
+                let explanationsJson: [String: Any]?
                 let regenRunId: UUID
                 enum CodingKeys: String, CodingKey {
                     case id
@@ -256,6 +257,7 @@ class ScoringService: ObservableObject {
                     case compositeScore = "composite_score"
                     case scoreWeights = "score_weights"
                     case comparisonDetails = "comparison_details"
+                    case explanationsJson = "explanations_json"
                     case createdAt = "created_at"
                     case regenRunId = "regen_run_id"
                 }
@@ -277,6 +279,7 @@ class ScoringService: ObservableObject {
                 scoreWeights: score.scoreWeights,
                 comparisonDetails: score.comparisonDetails,
                 createdAt: score.createdAt,
+                explanationsJson: ["bullets": ["Clear steps", "Grounded in context"], "highlights": []],
                 regenRunId: regenRunId
             )
             try await supabaseManager.client

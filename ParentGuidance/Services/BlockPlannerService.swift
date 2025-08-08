@@ -20,6 +20,26 @@ final class BlockPlannerService {
             )
         }
     }
+
+    /// Persist evaluated plan results with judge summaries and win/fail flags.
+    func persistPlans(_ plans: [BlockPlan]) async throws {
+        let enc = JSONEncoder()
+        for plan in plans {
+            var dict: [String: Any] = [
+                "id": plan.id.uuidString,
+                "ablation_run_id": plan.ablationRunId.uuidString,
+                "plan_text": plan.planText,
+                "params_json": try? JSONSerialization.jsonObject(with: try enc.encode(plan.paramsJson)),
+                "judge_summary_json": try? JSONSerialization.jsonObject(with: try enc.encode(plan.judgeSummaryJson ?? [:])),
+                "picked": plan.picked,
+                "created_at": ISO8601DateFormatter().string(from: plan.createdAt)
+            ]
+            try await SupabaseManager.shared.client
+                .from("block_plans")
+                .insert(dict)
+                .execute()
+        }
+    }
 }
 
 

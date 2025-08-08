@@ -23,9 +23,7 @@ struct LeaderboardView: View {
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button("Why this won") {
-                    // Placeholder for modal explaining winners based on judge summaries
-                }
+                NavigationLink("Why this won", destination: WhyThisWonView())
             }
         }
         .task { await load() }

@@ -36,6 +36,14 @@ class SupabaseManager {
         print("✅ [SupabaseManager] Valid auth context: user=\(currentUser.id)")
     }
     
+    /// Get the current user ID
+    func getCurrentUserId() -> UUID? {
+        guard let currentUser = client.auth.currentUser else {
+            return nil
+        }
+        return UUID(uuidString: currentUser.id.uuidString)
+    }
+    
     /// Test auth context using diagnostic RPC
     func testAuthContext() async throws -> [String: Any] {
         try await ensureValidSession()

@@ -15,6 +15,14 @@ interface RequestBody {
   provider?: 'openai' | 'anthropic' | 'xai' | 'google' // Provider override
   audioData?: string // Base64 encoded audio data for transcribe operation
   useFunctionCalling?: boolean // Feature flag for function calling format
+  // Regen/Experiment configuration parameters
+  config?: {
+    temperature?: number
+    topP?: number
+    seed?: number
+    model?: string // Override default model
+    promptTemplate?: string // Custom prompt template
+  }
 }
 
 // Helper function to interpolate variables in prompt templates
@@ -37,12 +45,12 @@ function detectProvider(apiKey: string): 'openai' | 'anthropic' | 'xai' | 'googl
 }
 
 // Helper function to get API endpoint and model for each provider
-function getProviderConfig(provider: string) {
+function getProviderConfig(provider: string, customModel?: string) {
   switch (provider) {
     case 'openai':
       return {
         endpoint: 'https://api.openai.com/v1/chat/completions',
-        model: 'gpt-4-turbo-preview',
+        model: customModel || 'gpt-4-turbo-preview',
         headers: (apiKey: string) => ({
           'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json'
@@ -51,7 +59,7 @@ function getProviderConfig(provider: string) {
     case 'anthropic':
       return {
         endpoint: 'https://api.anthropic.com/v1/messages',
-        model: 'claude-3-sonnet-20240229',
+        model: customModel || 'claude-3-sonnet-20240229',
         headers: (apiKey: string) => ({
           'x-api-key': apiKey,
           'Content-Type': 'application/json',
@@ -61,7 +69,7 @@ function getProviderConfig(provider: string) {
     case 'xai':
       return {
         endpoint: 'https://api.x.ai/v1/chat/completions',
-        model: 'grok-beta',
+        model: customModel || 'grok-beta',
         headers: (apiKey: string) => ({
           'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json'
@@ -70,7 +78,7 @@ function getProviderConfig(provider: string) {
     case 'google':
       return {
         endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
-        model: 'gemini-pro',
+        model: customModel || 'gemini-pro',
         headers: (apiKey: string) => ({
           'Content-Type': 'application/json'
         }),
@@ -82,6 +90,56 @@ function getProviderConfig(provider: string) {
   }
 }
 
+// Helper function to build request body with config overrides
+function buildRequestBody(
+  provider: string,
+  config: any,
+  systemPrompt: string,
+  defaultTemperature: number,
+  maxTokens: number,
+  userConfig?: {
+    temperature?: number
+    topP?: number
+    seed?: number
+    model?: string
+    promptTemplate?: string
+  }
+): any {
+  // Use custom prompt template if provided
+  const prompt = userConfig?.promptTemplate || systemPrompt
+  
+  // Apply config overrides
+  const temperature = userConfig?.temperature ?? defaultTemperature
+  const model = userConfig?.model || config.model
+  const topP = userConfig?.topP
+  const seed = userConfig?.seed
+
+  if (provider === 'google') {
+    const body: any = {
+      contents: [{
+        parts: [{ text: prompt }]
+      }],
+      generationConfig: {
+        maxOutputTokens: maxTokens,
+        temperature: temperature
+      }
+    }
+    if (topP !== undefined) body.generationConfig.topP = topP
+    return body
+  } else {
+    const body: any = {
+      model: model,
+      messages: [
+        { role: provider === 'anthropic' ? 'user' : 'system', content: prompt }
+      ],
+      temperature: temperature,
+      max_tokens: maxTokens
+    }
+    if (topP !== undefined) body.top_p = topP
+    if (seed !== undefined) body.seed = seed
+    return body
+  }
+}
 
 serve(async (req) => {
   console.log(`[DEBUG] Request received: ${req.method} ${req.url}`)
@@ -123,7 +181,7 @@ serve(async (req) => {
 
     // Parse request body
     const body: RequestBody = await req.json()
-    const { operation, variables, apiKey, provider, useFunctionCalling } = body
+    const { operation, variables, apiKey, provider, useFunctionCalling, config } = body
     
     // Determine the AI provider to use
     const detectedProvider = provider || detectProvider(apiKey)
@@ -140,7 +198,7 @@ serve(async (req) => {
     console.log(`[DEBUG] Routing to operation: "${operation}"`)
     switch (operation) {
       case 'guidance':
-        return await handleGuidanceOperation(apiKey, variables, detectedProvider, useFunctionCalling || false)
+        return await handleGuidanceOperation(apiKey, variables, detectedProvider, useFunctionCalling || false, config)
       
       case 'analyze':
         return await handleAnalyzeOperation(apiKey, variables, detectedProvider)
@@ -364,7 +422,7 @@ async function handleCopingStrategiesOperation(apiKey: string, variables: any, p
 }
 
 // Handle guidance generation (supports both bracketed format and function calling)
-  async function handleGuidanceOperation(apiKey: string, variables: any, provider: string, useFunctionCalling: boolean = false) {
+  async function handleGuidanceOperation(apiKey: string, variables: any, provider: string, useFunctionCalling: boolean = false, userConfig?: any) {
     const { current_situation, child_context, key_insights, active_foundation_tools, structure_mode, guidance_style, situation_type } = variables
 
     // Determine which prompt template to use
@@ -441,7 +499,7 @@ async function handleCopingStrategiesOperation(apiKey: string, variables: any, p
       console.log(`🚨🚨🚨 COMPLETE FINAL PROMPT ENDS HERE 🚨🚨🚨`)
 
       // Use direct API calls for multi-provider support
-      const config = getProviderConfig(provider)
+      const config = getProviderConfig(provider, userConfig?.model)
       
       console.log(`[DEBUG] Using ${provider} with model: ${config.model}`)
       
@@ -486,52 +544,15 @@ async function handleCopingStrategiesOperation(apiKey: string, variables: any, p
 
       // Prepare request body based on provider and function calling preference
       let requestBody
-      if (provider === 'anthropic') {
-        // Anthropic doesn't support function calling yet, use text format
-        requestBody = {
-          model: config.model,
-          max_tokens: 2000,
-          temperature: 0.7,
-          messages: [
-            { role: 'user', content: systemPrompt }
-          ]
-        }
-      } else if (provider === 'google') {
-        // Google doesn't support function calling yet, use text format
-        requestBody = {
-          contents: [{
-            parts: [{ text: systemPrompt }]
-          }],
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 2000
-          }
-        }
+      if (useFunctionCalling && (provider === 'openai' || provider === 'xai')) {
+        console.log(`[DEBUG] Using function calling for ${provider}`)
+        requestBody = buildRequestBody(provider, config, systemPrompt, 0.7, 2000, userConfig)
+        // Add function calling parameters
+        requestBody.tools = [guidanceFunctionSchema]
+        requestBody.tool_choice = { type: "function", function: { name: "formatGuidance" } }
       } else {
-        // OpenAI and xAI support function calling
-        if (useFunctionCalling && (provider === 'openai' || provider === 'xai')) {
-          console.log(`[DEBUG] Using function calling for ${provider}`)
-          requestBody = {
-            model: config.model,
-            messages: [
-              { role: 'system', content: systemPrompt }
-            ],
-            tools: [guidanceFunctionSchema],
-            tool_choice: { type: "function", function: { name: "formatGuidance" } },
-            temperature: 0.7,
-            max_tokens: 2000
-          }
-        } else {
-          console.log(`[DEBUG] Using text format for ${provider}`)
-          requestBody = {
-            model: config.model,
-            messages: [
-              { role: 'system', content: systemPrompt }
-            ],
-            temperature: 0.7,
-            max_tokens: 2000
-          }
-        }
+        console.log(`[DEBUG] Using text format for ${provider}`)
+        requestBody = buildRequestBody(provider, config, systemPrompt, 0.7, 2000, userConfig)
       }
       
       // Make API request

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct DeveloperSection: View {
     @Environment(\.colorScheme) private var colorScheme
+    @EnvironmentObject var appCoordinator: AppCoordinator
     @ObservedObject var viewState: SettingsViewState
     
     var body: some View {
@@ -28,6 +29,11 @@ struct DeveloperSection: View {
                 
                 // Status indicators
                 featureFlagStatus
+                
+                // Time Machine Admin Access
+                #if DEBUG
+                timeMachineAdminSection
+                #endif
             }
             .padding(16)
             .background(SemanticColors.cardBackground)
@@ -115,6 +121,44 @@ struct DeveloperSection: View {
                 .font(.system(size: 12))
                 .foregroundColor(SemanticColors.secondaryText)
                 .lineLimit(nil)
+        }
+    }
+    
+    private var timeMachineAdminSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Divider()
+                .padding(.vertical, 8)
+            
+            Text("Time Machine Admin")
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(SemanticColors.primaryText)
+            
+            NavigationLink(destination: RegenAdminView().environmentObject(appCoordinator)) {
+                HStack {
+                    Image(systemName: "clock.arrow.circlepath")
+                        .font(.system(size: 16))
+                        .foregroundColor(.blue)
+                        .frame(width: 24)
+                    
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Regeneration Admin")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(SemanticColors.primaryText)
+                        
+                        Text("Time machine data regeneration tools")
+                            .font(.system(size: 11))
+                            .foregroundColor(SemanticColors.secondaryText)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 12))
+                        .foregroundColor(SemanticColors.tertiaryText)
+                }
+                .padding(.vertical, 4)
+            }
+            .buttonStyle(PlainButtonStyle())
         }
     }
 }

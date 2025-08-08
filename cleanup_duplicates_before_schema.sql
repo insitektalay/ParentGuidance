@@ -238,7 +238,7 @@ ORDER BY family_id, category, dup_count DESC;
 -- After reviewing the DRY RUN results above, if you're satisfied:
 -- 
 -- Step 4: Execute the cleanup (UNCOMMENT THE LINE BELOW)
--- SELECT * FROM cleanup_insight_duplicates();
+SELECT * FROM cleanup_insight_duplicates();
 
 -- Step 5: Verify cleanup was successful
 -- Run the duplicate identification queries again to confirm no duplicates remain:

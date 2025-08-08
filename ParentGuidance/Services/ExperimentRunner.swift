@@ -1,0 +1,436 @@
+import Foundation
+import Supabase
+
+@MainActor
+class ExperimentRunner: ObservableObject {
+    @Published var activeExperiments: [ExperimentRun] = []
+    @Published var isRunning = false
+    @Published var currentExperiment: ExperimentRun?
+    @Published var logs: [String] = []
+    
+    private let supabaseManager = SupabaseManager.shared
+    private let guidanceService = GuidanceGenerationService.shared
+    private let scoringService = ScoringService.shared
+    private let goldResponseService = GoldResponseService.shared
+    
+    private var processingTask: Task<Void, Never>?
+    
+    // MARK: - Experiment Management
+    
+    func createExperiment(
+        familyId: UUID,
+        name: String,
+        description: String? = nil,
+        config: ExperimentConfig,
+        runType: ExperimentRunType = .manual,
+        dateRange: DateRange? = nil,
+        situationFilter: SituationFilter? = nil
+    ) async throws -> ExperimentRun {
+        
+        let experiment = ExperimentRun(
+            id: UUID(),
+            familyId: familyId,
+            name: name,
+            description: description,
+            config: config,
+            status: .queued,
+            runType: runType,
+            dateRange: dateRange,
+            situationFilter: situationFilter,
+            progress: ExperimentProgress(
+                totalSituations: 0,
+                processedSituations: 0,
+                currentSituationId: nil,
+                situationsWithGold: 0,
+                situationsWithRedline: 0,
+                averageCompositeScore: nil
+            ),
+            startedAt: nil,
+            completedAt: nil,
+            errorMessage: nil,
+            createdBy: supabaseManager.getCurrentUserId(),
+            createdAt: Date(),
+            updatedAt: Date()
+        )
+        
+        try await supabaseManager.client
+            .from("experiment_runs")
+            .insert(experiment)
+            .execute()
+        
+        return experiment
+    }
+    
+    func startExperiment(_ experimentId: UUID) async throws {
+        // Update status to running
+        try await supabaseManager.client
+            .from("experiment_runs")
+            .update([
+                "status": ExperimentStatus.running.rawValue,
+                "started_at": Date().ISO8601Format()
+            ])
+            .eq("id", value: experimentId.uuidString)
+            .execute()
+        
+        // Load experiment details
+        let response = try await supabaseManager.client
+            .from("experiment_runs")
+            .select()
+            .eq("id", value: experimentId.uuidString)
+            .single()
+            .execute()
+        
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        currentExperiment = try decoder.decode(ExperimentRun.self, from: response.data)
+        
+        isRunning = true
+        
+        // Start processing
+        processingTask = Task {
+            await processExperiment()
+        }
+    }
+    
+    func pauseExperiment(_ experimentId: UUID) async throws {
+        processingTask?.cancel()
+        
+        try await supabaseManager.client
+            .from("experiment_runs")
+            .update(["status": ExperimentStatus.paused.rawValue])
+            .eq("id", value: experimentId.uuidString)
+            .execute()
+        
+        isRunning = false
+        log("Experiment paused")
+    }
+    
+    func resumeExperiment(_ experimentId: UUID) async throws {
+        try await startExperiment(experimentId)
+    }
+    
+    // MARK: - Experiment Processing
+    
+    private func processExperiment() async {
+        guard let experiment = currentExperiment else { return }
+        
+        do {
+            log("Starting experiment: \(experiment.name)")
+            
+            // Fetch situations for the experiment
+            let situations = try await fetchSituationsForExperiment(experiment)
+            
+            log("Found \(situations.count) situations to process")
+            
+            // Update progress
+            var progress = experiment.progress
+            progress.totalSituations = situations.count
+            try await updateExperimentProgress(experimentId: experiment.id, progress: progress)
+            
+            // Process each situation
+            for (index, situation) in situations.enumerated() {
+                if Task.isCancelled { break }
+                
+                progress.currentSituationId = UUID(uuidString: situation.id)
+                try await updateExperimentProgress(experimentId: experiment.id, progress: progress)
+                
+                log("Processing situation \(index + 1)/\(situations.count)")
+                
+                do {
+                    // Generate guidance with experiment configuration
+                    let guidanceResponse = try await generateExperimentalGuidance(
+                        situation: situation,
+                        config: experiment.config,
+                        experimentId: experiment.id
+                    )
+                    
+                    // Score the guidance if benchmarks exist
+                     try await scoreGuidance(
+                        situation: situation,
+                        guidance: guidanceResponse,
+                        experimentId: experiment.id
+                    )
+                    
+                    progress.processedSituations += 1
+                    try await updateExperimentProgress(experimentId: experiment.id, progress: progress)
+                    
+                    // Rate limiting
+                    try await Task.sleep(nanoseconds: 2_000_000_000) // 2 second delay
+                    
+                } catch {
+                    log("Error processing situation \(situation.id): \(error.localizedDescription)")
+                    // Continue with next situation
+                }
+            }
+            
+            // Mark as completed
+            try await completeExperiment(experiment.id)
+            
+        } catch {
+            log("Fatal error in experiment: \(error.localizedDescription)")
+            try? await failExperiment(experiment.id, error: error.localizedDescription)
+        }
+    }
+    
+    private func fetchSituationsForExperiment(_ experiment: ExperimentRun) async throws -> [Situation] {
+        let query = supabaseManager.client
+            .from("situations")
+            .select()
+            .eq("family_id", value: experiment.familyId.uuidString)
+            .order("created_at", ascending: true)
+        
+        // TODO: Apply date range and filters at query level once RPCs available
+        
+        let response = try await query.execute()
+        
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return try decoder.decode([Situation].self, from: response.data)
+    }
+    
+    private func generateExperimentalGuidance(
+        situation: Situation,
+        config: ExperimentConfig,
+        experimentId: UUID
+    ) async throws -> Guidance {
+        
+        // Get API key
+        guard let apiKey = UserDefaults.standard.string(forKey: "openAIApiKey") else {
+            throw ExperimentError.noApiKey
+        }
+        
+        // Temporarily set experiment configuration
+        let originalProvider = UserDefaults.standard.string(forKey: "selectedModelProvider")
+        let originalStyle = UserDefaults.standard.string(forKey: "guidanceStyle")
+        let originalMode = UserDefaults.standard.string(forKey: "guidanceMode")
+        let originalUseEdgeFunction = UserDefaults.standard.bool(forKey: "guidance_use_edge_function")
+        
+        UserDefaults.standard.set(config.modelProvider, forKey: "selectedModelProvider")
+        UserDefaults.standard.set(config.guidanceStyle, forKey: "guidanceStyle")
+        UserDefaults.standard.set(config.guidanceMode, forKey: "guidanceMode")
+        UserDefaults.standard.set(config.useEdgeFunction, forKey: "guidance_use_edge_function")
+        
+        defer {
+            // Restore original settings
+            if let originalProvider = originalProvider {
+                UserDefaults.standard.set(originalProvider, forKey: "selectedModelProvider")
+            }
+            if let originalStyle = originalStyle {
+                UserDefaults.standard.set(originalStyle, forKey: "guidanceStyle")
+            }
+            if let originalMode = originalMode {
+                UserDefaults.standard.set(originalMode, forKey: "guidanceMode")
+            }
+            UserDefaults.standard.set(originalUseEdgeFunction, forKey: "guidance_use_edge_function")
+        }
+        
+        // Generate guidance
+        let (guidanceResponse, rawContent) = try await guidanceService.generateGuidance(
+            situation: situation.description,
+            childContext: nil,
+            keyInsights: nil,
+            copingStrategies: nil,
+            apiKey: apiKey,
+            activeFramework: nil,
+            situationType: .imJustWondering,
+            useStreaming: false
+        )
+        
+        // Save the guidance with experiment ID
+        let guidanceId = UUID().uuidString
+        let guidance = Guidance(
+            id: guidanceId,
+            situationId: situation.id,
+            content: rawContent,
+            category: nil,
+            overallRecommendation: guidanceResponse.title
+        )
+        
+        struct GuidanceInsert: Encodable {
+            let id: String
+            let situationId: String
+            let content: String
+            let category: String?
+            let overallRecommendation: String?
+            let experimentRunId: String
+            
+            enum CodingKeys: String, CodingKey {
+                case id
+                case situationId = "situation_id"
+                case content
+                case category
+                case overallRecommendation = "overall_recommendation"
+                case experimentRunId = "experiment_run_id"
+            }
+        }
+        
+        let guidanceInsert = GuidanceInsert(
+            id: guidance.id,
+            situationId: guidance.situationId,
+            content: guidance.content,
+            category: guidance.category,
+            overallRecommendation: guidance.overallRecommendation,
+            experimentRunId: experimentId.uuidString
+        )
+        
+        try await supabaseManager.client
+            .from("guidance")
+            .insert(guidanceInsert)
+            .execute()
+        
+        return guidance
+    }
+    
+    private func scoreGuidance(
+        situation: Situation,
+        guidance: Guidance,
+        experimentId: UUID
+    ) async throws {
+        
+        // Get gold and redline responses
+        let goldResponse = try await goldResponseService.getGoldResponse(for: UUID(uuidString: situation.id) ?? UUID())
+        let redlineResponse = try await goldResponseService.getRedlineResponse(for: UUID(uuidString: situation.id) ?? UUID())
+        
+        // Skip scoring if no benchmarks exist
+        guard goldResponse != nil || redlineResponse != nil else {
+            log("No benchmarks found for situation \(situation.id), skipping scoring")
+            return
+        }
+        
+        // Score the guidance
+        var score = try await scoringService.scoreGuidance(
+            guidanceText: guidance.content,
+            goldResponse: goldResponse,
+            redlineResponse: redlineResponse
+        )
+        
+        // Update with correct IDs
+        score.experimentRunId = experimentId
+        score.situationId = UUID(uuidString: situation.id) ?? UUID()
+        score.guidanceId = UUID(uuidString: guidance.id) ?? UUID()
+        
+        // Save the score
+        try await supabaseManager.client
+            .from("experiment_scores")
+            .insert(score)
+            .execute()
+        
+        log("Scored guidance: composite score = \(String(format: "%.3f", score.compositeScore))")
+    }
+    
+    // MARK: - Progress Management
+    
+    private func updateExperimentProgress(experimentId: UUID, progress: ExperimentProgress) async throws {
+        let encoder = JSONEncoder()
+        let progressData = try encoder.encode(progress)
+        let progressJSON = try JSONSerialization.jsonObject(with: progressData) as? [String: Any] ?? [:]
+        
+        struct ProgressUpdate: Encodable {
+            let progress: [String: Any]
+            
+            enum CodingKeys: String, CodingKey {
+                case progress
+            }
+            
+            func encode(to encoder: Encoder) throws {
+                var container = encoder.container(keyedBy: CodingKeys.self)
+                // This is a simplified approach - in production you'd want to properly encode the progress
+                let progressData = try JSONSerialization.data(withJSONObject: progress)
+                let progressString = String(data: progressData, encoding: .utf8) ?? "{}"
+                try container.encode(progressString, forKey: .progress)
+            }
+        }
+        
+        let updateData = ProgressUpdate(progress: progressJSON)
+        try await supabaseManager.client
+            .from("experiment_runs")
+            .update(updateData)
+            .eq("id", value: experimentId.uuidString)
+            .execute()
+    }
+    
+    private func completeExperiment(_ experimentId: UUID) async throws {
+        try await supabaseManager.client
+            .from("experiment_runs")
+            .update([
+                "status": ExperimentStatus.completed.rawValue,
+                "completed_at": Date().ISO8601Format()
+            ])
+            .eq("id", value: experimentId.uuidString)
+            .execute()
+        
+        isRunning = false
+        log("Experiment completed successfully!")
+    }
+    
+    private func failExperiment(_ experimentId: UUID, error: String) async throws {
+        try await supabaseManager.client
+            .from("experiment_runs")
+            .update([
+                "status": ExperimentStatus.failed.rawValue,
+                "error_message": error,
+                "completed_at": Date().ISO8601Format()
+            ])
+            .eq("id", value: experimentId.uuidString)
+            .execute()
+        
+        isRunning = false
+    }
+    
+    // MARK: - Leaderboard Data
+    
+    func getExperimentLeaderboard(familyId: UUID) async throws -> [ExperimentLeaderboardEntry] {
+        let response = try await supabaseManager.client
+            .from("experiment_runs")
+            .select("*, experiment_scores(composite_score)")
+            .eq("family_id", value: familyId.uuidString)
+            .eq("status", value: ExperimentStatus.completed.rawValue)
+            .order("created_at", ascending: false)
+            .execute()
+        
+        // Transform the data into leaderboard entries
+        // This would need proper JSON parsing based on the actual response structure
+        return []
+    }
+    
+    private func log(_ message: String) {
+        let timestamp = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .medium)
+        let logMessage = "[\(timestamp)] \(message)"
+        logs.append(logMessage)
+        
+        // Keep only last 100 logs
+        if logs.count > 100 {
+            logs.removeFirst()
+        }
+    }
+}
+
+// MARK: - Supporting Types
+
+struct ExperimentLeaderboardEntry {
+    let experimentId: UUID
+    let name: String
+    let config: ExperimentConfig
+    let averageScore: Double
+    let situationsProcessed: Int
+    let completedAt: Date
+}
+
+// MARK: - Error Types
+
+enum ExperimentError: LocalizedError {
+    case noApiKey
+    case invalidConfiguration
+    case processingFailed(String)
+    
+    var errorDescription: String? {
+        switch self {
+        case .noApiKey:
+            return "No API key found"
+        case .invalidConfiguration:
+            return "Invalid experiment configuration"
+        case .processingFailed(let message):
+            return "Processing failed: \(message)"
+        }
+    }
+}

@@ -59,7 +59,7 @@ CREATE POLICY insert_family_insights_simple ON public.relevant_insights
     EXISTS (
       SELECT 1 FROM public.profiles p
       WHERE p.id = auth.uid()
-        AND p.family_id = NEW.family_id
+        AND p.family_id = relevant_insights.family_id
     )
   );
 

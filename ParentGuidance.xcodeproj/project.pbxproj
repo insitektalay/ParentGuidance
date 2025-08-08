@@ -138,6 +138,22 @@
 		94A6CE4F2E3EFAEE0062DEDD /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A6CE4E2E3EFAEE0062DEDD /* ThemeManager.swift */; };
 		94A6CE512E3EFB020062DEDD /* ThemeSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A6CE502E3EFB020062DEDD /* ThemeSelectionView.swift */; };
 		94A6CE532E3EFB280062DEDD /* AppearanceSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A6CE522E3EFB280062DEDD /* AppearanceSection.swift */; };
+		94A6CE582E40EF670062DEDD /* RegenOrchestrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A6CE562E40EF670062DEDD /* RegenOrchestrator.swift */; };
+		94A6CE592E40EF670062DEDD /* ExperimentRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A6CE542E40EF670062DEDD /* ExperimentRunner.swift */; };
+		94A6CE5A2E40EF670062DEDD /* GoldResponseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A6CE552E40EF670062DEDD /* GoldResponseService.swift */; };
+		94A6CE5B2E40EF670062DEDD /* ScoringService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A6CE572E40EF670062DEDD /* ScoringService.swift */; };
+		94A6CE5E2E40EF7D0062DEDD /* GoldResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A6CE5C2E40EF7D0062DEDD /* GoldResponse.swift */; };
+		94A6CE5F2E40EF7D0062DEDD /* RegenRun.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A6CE5D2E40EF7D0062DEDD /* RegenRun.swift */; };
+		94A6CE622E40EFC80062DEDD /* RegenAdminView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A6CE602E40EFC80062DEDD /* RegenAdminView.swift */; };
+		94A6CE652E40EFD30062DEDD /* ThemeDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A6CE632E40EFD30062DEDD /* ThemeDemoView.swift */; };
+		94A6CE6C2E4236DC0062DEDD /* ManualRegenerationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A6CE692E4236DC0062DEDD /* ManualRegenerationService.swift */; };
+		94A6CE6D2E4236DC0062DEDD /* DictationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A6CE662E4236DC0062DEDD /* DictationService.swift */; };
+		94A6CE6E2E4236DC0062DEDD /* RedlineResponseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A6CE6B2E4236DC0062DEDD /* RedlineResponseService.swift */; };
+		94A6CE6F2E4236DC0062DEDD /* InsightCleanupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A6CE682E4236DC0062DEDD /* InsightCleanupService.swift */; };
+		94A6CE702E4236DC0062DEDD /* ExperimentExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A6CE672E4236DC0062DEDD /* ExperimentExportService.swift */; };
+		94A6CE712E4236DC0062DEDD /* RedlinePenaltyCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A6CE6A2E4236DC0062DEDD /* RedlinePenaltyCalculator.swift */; };
+		94A6CE732E4236ED0062DEDD /* ExperimentLeaderboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A6CE722E4236ED0062DEDD /* ExperimentLeaderboardView.swift */; };
+		94A6CE752E4237040062DEDD /* RegeneratableSituationCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A6CE742E4237040062DEDD /* RegeneratableSituationCard.swift */; };
 		94B3D79C2E16C45B000F1D65 /* TodayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B3D79B2E16C45B000F1D65 /* TodayViewController.swift */; };
 		94BC2DBE2E39EF6000B35676 /* DeletedCopingStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DBD2E39EF5D00B35676 /* DeletedCopingStrategy.swift */; };
 		94BC2DC02E39F19800B35676 /* DeletedCopingStrategiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BC2DBF2E39F19700B35676 /* DeletedCopingStrategiesView.swift */; };
@@ -354,6 +370,22 @@
 		94A6CE4E2E3EFAEE0062DEDD /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		94A6CE502E3EFB020062DEDD /* ThemeSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSelectionView.swift; sourceTree = "<group>"; };
 		94A6CE522E3EFB280062DEDD /* AppearanceSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceSection.swift; sourceTree = "<group>"; };
+		94A6CE542E40EF670062DEDD /* ExperimentRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentRunner.swift; sourceTree = "<group>"; };
+		94A6CE552E40EF670062DEDD /* GoldResponseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoldResponseService.swift; sourceTree = "<group>"; };
+		94A6CE562E40EF670062DEDD /* RegenOrchestrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegenOrchestrator.swift; sourceTree = "<group>"; };
+		94A6CE572E40EF670062DEDD /* ScoringService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoringService.swift; sourceTree = "<group>"; };
+		94A6CE5C2E40EF7D0062DEDD /* GoldResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoldResponse.swift; sourceTree = "<group>"; };
+		94A6CE5D2E40EF7D0062DEDD /* RegenRun.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegenRun.swift; sourceTree = "<group>"; };
+		94A6CE602E40EFC80062DEDD /* RegenAdminView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegenAdminView.swift; sourceTree = "<group>"; };
+		94A6CE632E40EFD30062DEDD /* ThemeDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeDemoView.swift; sourceTree = "<group>"; };
+		94A6CE662E4236DC0062DEDD /* DictationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictationService.swift; sourceTree = "<group>"; };
+		94A6CE672E4236DC0062DEDD /* ExperimentExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentExportService.swift; sourceTree = "<group>"; };
+		94A6CE682E4236DC0062DEDD /* InsightCleanupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightCleanupService.swift; sourceTree = "<group>"; };
+		94A6CE692E4236DC0062DEDD /* ManualRegenerationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManualRegenerationService.swift; sourceTree = "<group>"; };
+		94A6CE6A2E4236DC0062DEDD /* RedlinePenaltyCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedlinePenaltyCalculator.swift; sourceTree = "<group>"; };
+		94A6CE6B2E4236DC0062DEDD /* RedlineResponseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedlineResponseService.swift; sourceTree = "<group>"; };
+		94A6CE722E4236ED0062DEDD /* ExperimentLeaderboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentLeaderboardView.swift; sourceTree = "<group>"; };
+		94A6CE742E4237040062DEDD /* RegeneratableSituationCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegeneratableSituationCard.swift; sourceTree = "<group>"; };
 		94B3D79B2E16C45B000F1D65 /* TodayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayViewController.swift; sourceTree = "<group>"; };
 		94BC2DBD2E39EF5D00B35676 /* DeletedCopingStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedCopingStrategy.swift; sourceTree = "<group>"; };
 		94BC2DBF2E39F19700B35676 /* DeletedCopingStrategiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedCopingStrategiesView.swift; sourceTree = "<group>"; };
@@ -611,6 +643,23 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		94A6CE612E40EFC80062DEDD /* Admin */ = {
+			isa = PBXGroup;
+			children = (
+				94A6CE722E4236ED0062DEDD /* ExperimentLeaderboardView.swift */,
+				94A6CE602E40EFC80062DEDD /* RegenAdminView.swift */,
+			);
+			path = Admin;
+			sourceTree = "<group>";
+		};
+		94A6CE642E40EFD30062DEDD /* Demo */ = {
+			isa = PBXGroup;
+			children = (
+				94A6CE632E40EFD30062DEDD /* ThemeDemoView.swift */,
+			);
+			path = Demo;
+			sourceTree = "<group>";
+		};
 		94FA10B72E056247003EC1E9 = {
 			isa = PBXGroup;
 			children = (
@@ -684,6 +733,8 @@
 		94FA10ED2E0562F0003EC1E9 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				94A6CE642E40EFD30062DEDD /* Demo */,
+				94A6CE612E40EFC80062DEDD /* Admin */,
 				94FA10F62E0564D1003EC1E9 /* Components */,
 				94FA10F52E056475003EC1E9 /* Onboarding */,
 				94FA10F42E056465003EC1E9 /* Core */,
@@ -703,6 +754,8 @@
 		94FA10EF2E056303003EC1E9 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				94A6CE5C2E40EF7D0062DEDD /* GoldResponse.swift */,
+				94A6CE5D2E40EF7D0062DEDD /* RegenRun.swift */,
 				94BC2DD82E3A195F00B35676 /* DeletedContextualInsight.swift */,
 				94BC2DCA2E3A11AC00B35676 /* DeletedFlexibilitySocialInsight.swift */,
 				94BC2DC82E3A11A000B35676 /* DeletedAttentionFocusInsight.swift */,
@@ -732,6 +785,16 @@
 		94FA10F02E05630A003EC1E9 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				94A6CE662E4236DC0062DEDD /* DictationService.swift */,
+				94A6CE672E4236DC0062DEDD /* ExperimentExportService.swift */,
+				94A6CE682E4236DC0062DEDD /* InsightCleanupService.swift */,
+				94A6CE692E4236DC0062DEDD /* ManualRegenerationService.swift */,
+				94A6CE6A2E4236DC0062DEDD /* RedlinePenaltyCalculator.swift */,
+				94A6CE6B2E4236DC0062DEDD /* RedlineResponseService.swift */,
+				94A6CE542E40EF670062DEDD /* ExperimentRunner.swift */,
+				94A6CE552E40EF670062DEDD /* GoldResponseService.swift */,
+				94A6CE562E40EF670062DEDD /* RegenOrchestrator.swift */,
+				94A6CE572E40EF670062DEDD /* ScoringService.swift */,
 				94A6CE4E2E3EFAEE0062DEDD /* ThemeManager.swift */,
 				94BC2DDF2E3CB76E00B35676 /* RelevantInsightsService.swift */,
 				943BC98D2E38A2110056EFF9 /* AIProcessingSettings.swift */,
@@ -967,6 +1030,7 @@
 		94FA11422E05CCC0003EC1E9 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				94A6CE742E4237040062DEDD /* RegeneratableSituationCard.swift */,
 				94BC2DDC2E3A197A00B35676 /* DeletedContextualInsightCard.swift */,
 				94BC2DD62E3A11F400B35676 /* DeletedFlexibilitySocialCard.swift */,
 				94BC2DD42E3A11EA00B35676 /* DeletedAttentionFocusCard.swift */,
@@ -1196,6 +1260,7 @@
 				943DFD772E1823A5004F8043 /* LibraryFilters.swift in Sources */,
 				944EA1F62E2DF87900C110AF /* ChildProfileSection.swift in Sources */,
 				94FA11072E056CFD003EC1E9 /* OnboardingCoordinator.swift in Sources */,
+				94A6CE622E40EFC80062DEDD /* RegenAdminView.swift in Sources */,
 				94FA11012E056C93003EC1E9 /* ChildBasicsView.swift in Sources */,
 				94FA11162E05C8B6003EC1E9 /* AlertsView.swift in Sources */,
 				94FA112A2E05CBFD003EC1E9 /* ChildBadge.swift in Sources */,
@@ -1231,6 +1296,7 @@
 				944EA2132E2E128100C110AF /* SettingsUtilityService.swift in Sources */,
 				944EA1E92E2DE4A900C110AF /* SettingsFrameworkState.swift in Sources */,
 				948156542E253D4400C28273 /* VoiceRecorderDelegate.swift in Sources */,
+				94A6CE752E4237040062DEDD /* RegeneratableSituationCard.swift in Sources */,
 				94A6CE512E3EFB020062DEDD /* ThemeSelectionView.swift in Sources */,
 				943DFD742E180D40004F8043 /* SituationDetailView.swift in Sources */,
 				94BC2DC52E3A118100B35676 /* Guidance.swift in Sources */,
@@ -1248,6 +1314,10 @@
 				94FA111F2E05CBAA003EC1E9 /* SituationInputIdleView.swift in Sources */,
 				94A6CE532E3EFB280062DEDD /* AppearanceSection.swift in Sources */,
 				943792A32E1BE9850089F512 /* LibrarySelectionManager.swift in Sources */,
+				94A6CE582E40EF670062DEDD /* RegenOrchestrator.swift in Sources */,
+				94A6CE592E40EF670062DEDD /* ExperimentRunner.swift in Sources */,
+				94A6CE5A2E40EF670062DEDD /* GoldResponseService.swift in Sources */,
+				94A6CE5B2E40EF670062DEDD /* ScoringService.swift in Sources */,
 				944EA1FA2E2DFD4E00C110AF /* HelpSupportSection.swift in Sources */,
 				944EA1BA2E2B822C00C110AF /* TranslationStrategySelectionView.swift in Sources */,
 				94FA11322E05CC30003EC1E9 /* ChildHeader.swift in Sources */,
@@ -1278,8 +1348,10 @@
 				944EA2112E2E127600C110AF /* SettingsFormatterService.swift in Sources */,
 				943DFD7B2E182640004F8043 /* SortDropdown.swift in Sources */,
 				944EA2242E30ACFA00C110AF /* ChatMessageBubble.swift in Sources */,
+				94A6CE732E4236ED0062DEDD /* ExperimentLeaderboardView.swift in Sources */,
 				943DFD932E1A85A2004F8043 /* Guidance.swift in Sources */,
 				94FA11362E05CC60003EC1E9 /* SituationGuidanceView.swift in Sources */,
+				94A6CE652E40EFD30062DEDD /* ThemeDemoView.swift in Sources */,
 				94FA113A2E05CC80003EC1E9 /* NotificationCard.swift in Sources */,
 				944EA22D2E320C3E00C110AF /* SituationTypePickerView.swift in Sources */,
 				94FA113C2E05CC90003EC1E9 /* SearchBar.swift in Sources */,
@@ -1293,6 +1365,8 @@
 				943BC9822E35D85A0056EFF9 /* ApiKeyProviderCard.swift in Sources */,
 				94BC2DCF2E3A11CB00B35676 /* DeletedAttentionFocusView.swift in Sources */,
 				943BC9832E35D85A0056EFF9 /* AddApiKeySheet.swift in Sources */,
+				94A6CE5E2E40EF7D0062DEDD /* GoldResponse.swift in Sources */,
+				94A6CE5F2E40EF7D0062DEDD /* RegenRun.swift in Sources */,
 				94FA113E2E05CCA0003EC1E9 /* FoundationToolCard.swift in Sources */,
 				943BC98E2E38A2150056EFF9 /* AIProcessingSettings.swift in Sources */,
 				944EA21B2E2E325800C110AF /* PsychologistNoteView.swift in Sources */,
@@ -1311,6 +1385,12 @@
 				948156582E2762C700C28273 /* GuidanceStructureSettings.swift in Sources */,
 				94444CA32E345BC90093AE82 /* TranscribingOverlay.swift in Sources */,
 				9437929E2E1BE9340089F512 /* FrameworkGenerationService.swift in Sources */,
+				94A6CE6C2E4236DC0062DEDD /* ManualRegenerationService.swift in Sources */,
+				94A6CE6D2E4236DC0062DEDD /* DictationService.swift in Sources */,
+				94A6CE6E2E4236DC0062DEDD /* RedlineResponseService.swift in Sources */,
+				94A6CE6F2E4236DC0062DEDD /* InsightCleanupService.swift in Sources */,
+				94A6CE702E4236DC0062DEDD /* ExperimentExportService.swift in Sources */,
+				94A6CE712E4236DC0062DEDD /* RedlinePenaltyCalculator.swift in Sources */,
 				94FA11402E05CCB0003EC1E9 /* SituationCard.swift in Sources */,
 				949600D42E20F2B1008EC0C0 /* LoadingView.swift in Sources */,
 			);

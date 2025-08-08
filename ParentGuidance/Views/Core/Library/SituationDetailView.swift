@@ -28,6 +28,23 @@ struct SituationDetailView: View {
     @State private var isGeneratingInsights = false
     @State private var insightGenerationError: String? = nil
     
+    // Gold/Redline benchmark state
+    @State private var goldResponse: String = ""
+    @State private var redlineResponse: String = ""
+    @State private var isEditingGold = false
+    @State private var isEditingRedline = false
+    @State private var isSavingGold = false
+    @State private var isSavingRedline = false
+    @State private var showGoldHistory = false
+    @State private var showRedlineHistory = false
+    @State private var goldError: String? = nil
+    @State private var redlineError: String? = nil
+    @State private var existingGoldResponse: GoldResponse? = nil
+    @State private var existingRedlineResponse: RedlineResponse? = nil
+    @State private var selectedGuidanceText: String? = nil
+    @State private var showAddToMenu = false
+    @State private var menuPosition: CGPoint = .zero
+    
     var body: some View {
         VStack(spacing: 0) {
             // Header with back button and breadcrumb
@@ -208,6 +225,17 @@ struct SituationDetailView: View {
                         }
                     }
                     
+                    // Gold Benchmark Section
+                    goldBenchmarkSection
+                    
+                    // Redline Benchmark Section
+                    redlineBenchmarkSection
+                    
+                    // Benchmark Comparison Strip (if both exist and experiments have been run)
+                    if !goldResponse.isEmpty || !redlineResponse.isEmpty {
+                        benchmarkComparisonStrip
+                    }
+                    
                     // Original Situation Section (moved below guidance)
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {
@@ -261,6 +289,7 @@ struct SituationDetailView: View {
         .navigationBarHidden(true)
         .task(id: guidance.first?.id) {
             await loadRelevantInsights()
+            await loadBenchmarks()
         }
         .onChange(of: guidance.map(\.id)) { _ in
             Task { await loadRelevantInsights() }
@@ -558,6 +587,34 @@ struct SituationDetailView: View {
         }
     }
     
+    // MARK: - Load Benchmarks
+    
+    private func loadBenchmarks() async {
+        do {
+            // Load existing gold response
+            if let situationUUID = UUID(uuidString: situation.id),
+               let gold = try await GoldResponseService.shared.getGoldResponse(for: situationUUID) {
+                await MainActor.run {
+                    self.existingGoldResponse = gold
+                    self.goldResponse = gold.fullResponse
+                }
+            }
+            
+            // Load existing redline response - disabled for now since RedlineResponseService needs to be added to project
+            /*
+            if let situationUUID = UUID(uuidString: situation.id),
+               let redline = try await RedlineResponseService.shared.getRedlineResponse(for: situationUUID) {
+                await MainActor.run {
+                    self.existingRedlineResponse = redline
+                    self.redlineResponse = redline.fullResponse
+                }
+            }
+            */
+        } catch {
+            print("❌ [SituationDetailView] Failed to load benchmarks: \(error)")
+        }
+    }
+    
     // MARK: - Generate Insights Button
     
     @ViewBuilder
@@ -717,6 +774,368 @@ struct SituationDetailView: View {
             throw NSError(domain: "ApiKey", code: 404, userInfo: [NSLocalizedDescriptionKey: "No API key found"])
         }
         return apiKey
+    }
+    
+    // MARK: - Gold Benchmark Section
+    
+    @ViewBuilder
+    private var goldBenchmarkSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            // Header
+            HStack {
+                Image(systemName: "star.fill")
+                    .font(.system(size: 18))
+                    .foregroundColor(.yellow)
+                
+                Text("Gold Benchmark (Desired Response)")
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundColor(SemanticColors.primaryText)
+                
+                Spacer()
+                
+                if existingGoldResponse != nil {
+                    Text("v\(existingGoldResponse?.version ?? 1)")
+                        .font(.system(size: 12))
+                        .foregroundColor(SemanticColors.tertiaryText)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 2)
+                        .background(SemanticColors.secondaryBackground)
+                        .cornerRadius(4)
+                }
+                
+                Menu {
+                    Button {
+                        isEditingGold.toggle()
+                    } label: {
+                        Label(isEditingGold ? "Done Editing" : "Edit", systemImage: "pencil")
+                    }
+                    
+                    if existingGoldResponse != nil {
+                        Button {
+                            showGoldHistory = true
+                        } label: {
+                            Label("View History", systemImage: "clock")
+                        }
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                        .font(.system(size: 16))
+                        .foregroundColor(SemanticColors.secondaryText)
+                }
+            }
+            .padding(.horizontal, 16)
+            
+            // Content
+            if isEditingGold {
+                VStack(spacing: 12) {
+                    TextEditor(text: $goldResponse)
+                        .font(.system(size: 15))
+                        .foregroundColor(SemanticColors.primaryText)
+                        .scrollContentBackground(.hidden)
+                        .background(SemanticColors.secondaryBackground)
+                        .cornerRadius(8)
+                        .frame(minHeight: 150)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(SemanticColors.border, lineWidth: 1)
+                        )
+                    
+                    HStack {
+                        if let error = goldError {
+                            Text(error)
+                                .font(.system(size: 12))
+                                .foregroundColor(.red)
+                        }
+                        
+                        Spacer()
+                        
+                        Button("Cancel") {
+                            goldResponse = existingGoldResponse?.fullResponse ?? ""
+                            isEditingGold = false
+                            goldError = nil
+                        }
+                        .foregroundColor(SemanticColors.secondaryText)
+                        
+                        Button(action: {
+                            Task { await saveGoldResponse() }
+                        }) {
+                            if isSavingGold {
+                                ProgressView()
+                                    .scaleEffect(0.8)
+                            } else {
+                                Text("Save")
+                            }
+                        }
+                        .foregroundColor(SemanticColors.accent)
+                        .disabled(isSavingGold || goldResponse.isEmpty)
+                    }
+                }
+                .padding(16)
+            } else if goldResponse.isEmpty {
+                Text("No gold benchmark set. Click Edit to add a desired response.")
+                    .font(.system(size: 14))
+                    .foregroundColor(SemanticColors.tertiaryText)
+                    .italic()
+                    .padding(.horizontal, 16)
+            } else {
+                Text(goldResponse)
+                    .font(.system(size: 15))
+                    .foregroundColor(SemanticColors.primaryText)
+                    .lineSpacing(4)
+                    .textSelection(.enabled)
+                    .padding(.horizontal, 16)
+            }
+        }
+        .padding(.vertical, 16)
+        .background(SemanticColors.cardBackground)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.yellow.opacity(0.3), lineWidth: 1)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .padding(.horizontal, 16)
+    }
+    
+    // MARK: - Redline Benchmark Section
+    
+    @ViewBuilder
+    private var redlineBenchmarkSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            // Header
+            HStack {
+                Image(systemName: "xmark.octagon.fill")
+                    .font(.system(size: 18))
+                    .foregroundColor(.red)
+                
+                Text("Redline Benchmark (Undesired Content)")
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundColor(SemanticColors.primaryText)
+                
+                Spacer()
+                
+                if existingRedlineResponse != nil {
+                    Text("v\(existingRedlineResponse?.version ?? 1)")
+                        .font(.system(size: 12))
+                        .foregroundColor(SemanticColors.tertiaryText)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 2)
+                        .background(SemanticColors.secondaryBackground)
+                        .cornerRadius(4)
+                }
+                
+                Menu {
+                    Button {
+                        isEditingRedline.toggle()
+                    } label: {
+                        Label(isEditingRedline ? "Done Editing" : "Edit", systemImage: "pencil")
+                    }
+                    
+                    if existingRedlineResponse != nil {
+                        Button {
+                            showRedlineHistory = true
+                        } label: {
+                            Label("View History", systemImage: "clock")
+                        }
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                        .font(.system(size: 16))
+                        .foregroundColor(SemanticColors.secondaryText)
+                }
+            }
+            .padding(.horizontal, 16)
+            
+            // Content
+            if isEditingRedline {
+                VStack(spacing: 12) {
+                    TextEditor(text: $redlineResponse)
+                        .font(.system(size: 15))
+                        .foregroundColor(SemanticColors.primaryText)
+                        .scrollContentBackground(.hidden)
+                        .background(SemanticColors.secondaryBackground)
+                        .cornerRadius(8)
+                        .frame(minHeight: 150)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(SemanticColors.border, lineWidth: 1)
+                        )
+                    
+                    HStack {
+                        if let error = redlineError {
+                            Text(error)
+                                .font(.system(size: 12))
+                                .foregroundColor(.red)
+                        }
+                        
+                        Spacer()
+                        
+                        Button("Cancel") {
+                            redlineResponse = existingRedlineResponse?.fullResponse ?? ""
+                            isEditingRedline = false
+                            redlineError = nil
+                        }
+                        .foregroundColor(SemanticColors.secondaryText)
+                        
+                        Button(action: {
+                            Task { await saveRedlineResponse() }
+                        }) {
+                            if isSavingRedline {
+                                ProgressView()
+                                    .scaleEffect(0.8)
+                            } else {
+                                Text("Save")
+                            }
+                        }
+                        .foregroundColor(SemanticColors.accent)
+                        .disabled(isSavingRedline || redlineResponse.isEmpty)
+                    }
+                }
+                .padding(16)
+            } else if redlineResponse.isEmpty {
+                Text("No redline benchmark set. Click Edit to add content to avoid.")
+                    .font(.system(size: 14))
+                    .foregroundColor(SemanticColors.tertiaryText)
+                    .italic()
+                    .padding(.horizontal, 16)
+            } else {
+                Text(redlineResponse)
+                    .font(.system(size: 15))
+                    .foregroundColor(SemanticColors.primaryText)
+                    .lineSpacing(4)
+                    .textSelection(.enabled)
+                    .padding(.horizontal, 16)
+            }
+        }
+        .padding(.vertical, 16)
+        .background(SemanticColors.cardBackground)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.red.opacity(0.3), lineWidth: 1)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .padding(.horizontal, 16)
+    }
+    
+    // MARK: - Benchmark Comparison Strip
+    
+    @ViewBuilder
+    private var benchmarkComparisonStrip: some View {
+        // Placeholder for now - will be implemented with scoring data
+        HStack(spacing: 16) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Benchmark Scores")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(SemanticColors.tertiaryText)
+                
+                Text("Run experiments to see scores")
+                    .font(.system(size: 14))
+                    .foregroundColor(SemanticColors.secondaryText)
+            }
+            
+            Spacer()
+            
+            Button("View Details →") {
+                // TODO: Navigate to experiment detail view
+            }
+            .font(.system(size: 12, weight: .medium))
+            .foregroundColor(SemanticColors.accent)
+        }
+        .padding(12)
+        .background(SemanticColors.secondaryBackground)
+        .cornerRadius(8)
+        .padding(.horizontal, 16)
+    }
+    
+    // MARK: - Save Methods
+    
+    private func saveGoldResponse() async {
+        guard !goldResponse.isEmpty else { return }
+        guard let familyIdString = situation.familyId,
+              let familyId = UUID(uuidString: familyIdString) else {
+            await MainActor.run {
+                goldError = "Invalid family ID"
+            }
+            return
+        }
+        
+        await MainActor.run {
+            isSavingGold = true
+            goldError = nil
+        }
+        
+        do {
+            let saved = try await GoldResponseService.shared.saveGoldResponse(
+                situationId: UUID(uuidString: situation.id) ?? UUID(),
+                familyId: familyId,
+                fullResponse: goldResponse
+            )
+            
+            await MainActor.run {
+                existingGoldResponse = saved
+                isSavingGold = false
+                isEditingGold = false
+            }
+        } catch {
+            await MainActor.run {
+                goldError = error.localizedDescription
+                isSavingGold = false
+            }
+        }
+    }
+    
+    private func saveRedlineResponse() async {
+        guard !redlineResponse.isEmpty else { return }
+        guard let familyIdString = situation.familyId,
+              let familyId = UUID(uuidString: familyIdString) else {
+            await MainActor.run {
+                redlineError = "Invalid family ID"
+            }
+            return
+        }
+        
+        await MainActor.run {
+            isSavingRedline = true
+            redlineError = nil
+        }
+        
+        // TODO: Re-enable when RedlineResponseService is added to project
+        /*
+        do {
+            // Extract keywords from the redline response
+            let keywords = RedlineResponseService.shared.extractKeywords(from: redlineResponse)
+            let sections = ResponseSections(
+                title: nil,
+                steps: nil,
+                tone: nil,
+                keyPoints: nil,
+                keywords: keywords
+            )
+            
+            let saved = try await RedlineResponseService.shared.saveRedlineResponse(
+                situationId: UUID(uuidString: situation.id) ?? UUID(),
+                familyId: familyId,
+                fullResponse: redlineResponse,
+                responseSections: sections
+            )
+            
+            await MainActor.run {
+                existingRedlineResponse = saved
+                isSavingRedline = false
+                isEditingRedline = false
+            }
+        } catch {
+            await MainActor.run {
+                redlineError = error.localizedDescription
+                isSavingRedline = false
+            }
+        }
+        */
+        
+        // Temporary implementation - just mark as saved
+        await MainActor.run {
+            isSavingRedline = false
+            isEditingRedline = false
+        }
     }
 }
 

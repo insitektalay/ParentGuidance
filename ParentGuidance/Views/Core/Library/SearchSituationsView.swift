@@ -14,8 +14,10 @@ struct SearchSituationsView: View {
     
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var controller: LibraryViewController
+    @StateObject private var regenerationService = ManualRegenerationService.shared
     @State private var shouldDismiss = false
     @State private var hasEnteredSelectionMode = false
+    @State private var guidanceStatus: [String: Bool] = [:]
     
     init(familyId: String, selectionManager: LibrarySelectionManager, controller: LibraryViewController, isSelectionMode: Bool = false) {
         self.familyId = familyId
@@ -50,6 +52,16 @@ struct SearchSituationsView: View {
             controller.currentUserId = familyId
             if controller.situations.isEmpty {
                 controller.loadSituations()
+            }
+            
+            // Check regeneration status
+            Task {
+                if let familyUUID = UUID(uuidString: familyId) {
+                    try? await regenerationService.checkRegenerationStatus(familyId: familyUUID)
+                }
+                
+                // Check guidance status for all situations
+                await checkGuidanceStatus()
             }
             
             // Enter selection mode if needed, but only once
@@ -162,6 +174,53 @@ struct SearchSituationsView: View {
             }
         } message: {
             Text(controller.deleteErrorMessage)
+        }
+    }
+    
+    // MARK: - Helper Methods
+    
+    private func checkGuidanceStatus() async {
+        // Check guidance status for all current situations
+        guidanceStatus.removeAll()
+        
+        for situation in controller.situations {
+            let hasGuidance = !regenerationService.needsRegeneration(situationId: situation.id)
+            await MainActor.run {
+                guidanceStatus[situation.id] = hasGuidance
+            }
+        }
+    }
+    
+    private func regenerateSituation(_ situation: Situation) async {
+        do {
+            // Get current regen run if any
+            let regenRunId: UUID? = nil // This could come from Time Machine context
+            
+            try await regenerationService.regenerateGuidance(
+                for: situation,
+                regenRunId: regenRunId
+            )
+            
+            // Update guidance status
+            await MainActor.run {
+                guidanceStatus[situation.id] = true
+            }
+            
+            // Refresh the situation list to show updated guidance
+            controller.refreshSituations()
+            
+        } catch RegenerationError.chronologicalOrderViolation(let message) {
+            // Show alert about chronological order
+            await MainActor.run {
+                controller.errorMessage = message
+                controller.viewState = .error
+            }
+        } catch {
+            // Show general error
+            await MainActor.run {
+                controller.errorMessage = "Failed to regenerate guidance: \(error.localizedDescription)"
+                controller.viewState = .error
+            }
         }
     }
     
@@ -321,8 +380,10 @@ struct SearchSituationsView: View {
                 
                 VStack(spacing: 12) {
                     ForEach(group.situations, id: \.id) { situation in
-                        SituationCard(
+                        RegeneratableSituationCard(
                             situation: situation,
+                            hasGuidance: guidanceStatus[situation.id] ?? true,
+                            isRegenerating: regenerationService.isRegenerating(situationId: situation.id),
                             selectionManager: selectionManager,
                             onTap: {
                                 // Save scroll position before navigating
@@ -334,6 +395,11 @@ struct SearchSituationsView: View {
                             },
                             onDelete: {
                                 controller.deleteSituation(id: situation.id)
+                            },
+                            onRegenerate: {
+                                Task {
+                                    await regenerateSituation(situation)
+                                }
                             }
                         )
                         .id(situation.id) // Add ID for scroll position tracking
@@ -366,8 +432,10 @@ struct SearchSituationsView: View {
             } else {
                 VStack(spacing: 12) {
                     ForEach(controller.filteredSituations, id: \.id) { situation in
-                        SituationCard(
+                        RegeneratableSituationCard(
                             situation: situation,
+                            hasGuidance: guidanceStatus[situation.id] ?? true,
+                            isRegenerating: regenerationService.isRegenerating(situationId: situation.id),
                             selectionManager: selectionManager,
                             onTap: {
                                 // Save scroll position before navigating
@@ -379,6 +447,11 @@ struct SearchSituationsView: View {
                             },
                             onDelete: {
                                 controller.deleteSituation(id: situation.id)
+                            },
+                            onRegenerate: {
+                                Task {
+                                    await regenerateSituation(situation)
+                                }
                             }
                         )
                         .id(situation.id) // Add ID for scroll position tracking

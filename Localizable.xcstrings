@@ -4,6 +4,19 @@
     "" : {
 
     },
+    "#%lld" : {
+
+    },
+    "%@ + %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ + %2$@"
+          }
+        }
+      }
+    },
     "%@ API Key" : {
 
     },
@@ -32,6 +45,16 @@
     },
     "%lld members" : {
 
+    },
+    "%lld/%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld/%2$lld"
+          }
+        }
+      }
     },
     "%lld%%" : {
 
@@ -417,6 +440,12 @@
     "All AI operations will use this provider" : {
 
     },
+    "Analytical Scientific" : {
+
+    },
+    "Anthropic" : {
+
+    },
     "API key is valid and working" : {
 
     },
@@ -766,6 +795,9 @@
       }
     },
     "Available Providers" : {
+
+    },
+    "Benchmark Scores" : {
 
     },
     "button.addDetails" : {
@@ -1131,6 +1163,15 @@
     "Choose Theme" : {
 
     },
+    "Clear" : {
+
+    },
+    "Clear Selection" : {
+
+    },
+    "Color Palette" : {
+
+    },
     "common.action.cancel.hint" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1379,6 +1420,12 @@
         }
       }
     },
+    "Comparison export with summary statistics" : {
+
+    },
+    "Configuration" : {
+
+    },
     "Configured" : {
 
     },
@@ -1427,10 +1474,28 @@
         }
       }
     },
+    "Controls" : {
+
+    },
     "Copy and paste it below" : {
 
     },
     "Create a new API key" : {
+
+    },
+    "CSV" : {
+
+    },
+    "Current Family" : {
+
+    },
+    "Current Theme:" : {
+
+    },
+    "Current:" : {
+
+    },
+    "Dark" : {
 
     },
     "Deactivate" : {
@@ -1461,6 +1526,9 @@
 
     },
     "Describe what's happening with %@..." : {
+
+    },
+    "Detailed export with all scores and responses" : {
 
     },
     "developer.settings.directApi" : {
@@ -1566,6 +1634,9 @@
     "Done" : {
 
     },
+    "Done Editing" : {
+
+    },
     "Double tap to change how situations are sorted" : {
 
     },
@@ -1588,6 +1659,15 @@
 
     },
     "Double tap to view deleted insights in %@" : {
+
+    },
+    "Dynamic" : {
+
+    },
+    "Edit" : {
+
+    },
+    "End Date" : {
 
     },
     "Error" : {
@@ -1627,7 +1707,35 @@
         }
       }
     },
+    "Experiment Leaderboard" : {
+
+    },
+    "Export" : {
+
+    },
+    "Export (%lld)" : {
+
+    },
+    "Export %lld experiment%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Export %1$lld experiment%2$@"
+          }
+        }
+      }
+    },
+    "Export Format" : {
+
+    },
     "Failed to generate insights" : {
+
+    },
+    "Failed to load experiments" : {
+
+    },
+    "Family ID: %@..." : {
 
     },
     "family.usage.high" : {
@@ -1669,6 +1777,18 @@
           }
         }
       }
+    },
+    "Filter by Date Range" : {
+
+    },
+    "Fixed" : {
+
+    },
+    "Follow System Theme" : {
+
+    },
+    "Format" : {
+
     },
     "format.insightCount" : {
       "extractionState" : "stale",
@@ -1935,6 +2055,18 @@
     "Get Key" : {
 
     },
+    "Gold Benchmark (Desired Response)" : {
+
+    },
+    "Google" : {
+
+    },
+    "Guidance needs regeneration" : {
+
+    },
+    "Guidance Style" : {
+
+    },
     "guidance.error.title" : {
       "localizations" : {
         "en" : {
@@ -2061,6 +2193,9 @@
         }
       }
     },
+    "In manual mode, Time Machine will only delete guidance for the date range. You'll need to regenerate each situation manually from the Library in chronological order." : {
+
+    },
     "insights.action.delete" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -2156,6 +2291,9 @@
       }
     },
     "Instructions" : {
+
+    },
+    "JSON" : {
 
     },
     "label.dateFilters" : {
@@ -3056,16 +3194,40 @@
         }
       }
     },
+    "Light" : {
+
+    },
+    "Loading experiments..." : {
+
+    },
     "Loading insights..." : {
+
+    },
+    "Logs" : {
 
     },
     "Manage your AI provider API keys and switch between different services" : {
 
     },
+    "Manual Regeneration Mode" : {
+
+    },
+    "Model Provider" : {
+
+    },
     "More details mean better guidance." : {
 
     },
+    "No experiments yet" : {
+
+    },
+    "No gold benchmark set. Click Edit to add a desired response." : {
+
+    },
     "No insights collected yet" : {
+
+    },
+    "No redline benchmark set. Click Edit to add content to avoid." : {
 
     },
     "No relevant insights found for this guidance. Generate insights by analyzing this guidance against your existing 'Your Child's World' knowledge base." : {
@@ -3209,10 +3371,22 @@
         }
       }
     },
+    "Only wipe guidance, then regenerate manually from Library" : {
+
+    },
     "Open" : {
 
     },
+    "OpenAI" : {
+
+    },
+    "Overview" : {
+
+    },
     "Paste your API key here" : {
+
+    },
+    "Pause" : {
 
     },
     "payment.cancelAnytime" : {
@@ -3499,6 +3673,9 @@
         }
       }
     },
+    "Progress" : {
+
+    },
     "psychologistNote.delete.confirm.action" : {
       "localizations" : {
         "en" : {
@@ -3710,6 +3887,21 @@
       }
     },
     "Reason: %@" : {
+
+    },
+    "Recording..." : {
+
+    },
+    "Redline Benchmark (Undesired Content)" : {
+
+    },
+    "Regenerate" : {
+
+    },
+    "Regenerating..." : {
+
+    },
+    "Regeneration Admin" : {
 
     },
     "regulation.archive.button.deleteAll" : {
@@ -4078,6 +4270,18 @@
     "Relevant Insights (Debug)" : {
 
     },
+    "Replay historical situations with new AI parameters" : {
+
+    },
+    "Reset & Start" : {
+
+    },
+    "Reset Family Data" : {
+
+    },
+    "Reset Only" : {
+
+    },
     "Restore" : {
 
     },
@@ -4087,7 +4291,19 @@
     "Restore Insight" : {
 
     },
+    "Resume" : {
+
+    },
     "Retry" : {
+
+    },
+    "Run experiments to see scores" : {
+
+    },
+    "Run some experiments to see the leaderboard" : {
+
+    },
+    "Sample Components" : {
 
     },
     "Save" : {
@@ -4137,6 +4353,9 @@
       }
     },
     "Search situations..." : {
+
+    },
+    "Select All" : {
 
     },
     "Select your preferred appearance" : {
@@ -5618,6 +5837,12 @@
         }
       }
     },
+    "Similarity Threshold: %.2f" : {
+
+    },
+    "Situation \\(run.progress.currentSituationIndex + 1)" : {
+
+    },
     "situation.dateEdit.accessibilityHint" : {
       "localizations" : {
         "en" : {
@@ -6009,7 +6234,22 @@
         }
       }
     },
+    "Skip" : {
+
+    },
+    "Sort" : {
+
+    },
+    "Sort by:" : {
+
+    },
     "Sort options: %@" : {
+
+    },
+    "Start Date" : {
+
+    },
+    "Start Regeneration" : {
 
     },
     "status.active" : {
@@ -6055,6 +6295,12 @@
           }
         }
       }
+    },
+    "Structure Mode" : {
+
+    },
+    "Switch to %@ Theme" : {
+
     },
     "tab.alerts" : {
       "localizations" : {
@@ -6112,6 +6358,18 @@
     "Theme" : {
 
     },
+    "Theme Demo" : {
+
+    },
+    "Theme Settings" : {
+
+    },
+    "This will delete AI-generated content (guidance, insights) for the selected date range. You'll need to manually regenerate each situation from the Library." : {
+
+    },
+    "This will permanently delete all AI-generated content (guidance, insights, recommendations) for this family and regenerate them sequentially. User situations will be preserved." : {
+
+    },
     "This will permanently delete this coping strategy. This action cannot be undone." : {
 
     },
@@ -6119,6 +6377,18 @@
 
     },
     "This will restore the coping strategy back to your active strategies." : {
+
+    },
+    "Time Machine" : {
+
+    },
+    "Time Machine Admin" : {
+
+    },
+    "Time machine data regeneration tools" : {
+
+    },
+    "Time Machine Regeneration" : {
 
     },
     "today.empty.createButton" : {
@@ -6218,13 +6488,25 @@
         }
       }
     },
+    "v%lld" : {
+
+    },
     "Validating..." : {
 
     },
     "Validation failed" : {
 
     },
+    "View Details →" : {
+
+    },
+    "View History" : {
+
+    },
     "Visit %@'s API key page" : {
+
+    },
+    "Warm Practical" : {
 
     },
     "welcome.getStarted" : {
@@ -6256,6 +6538,9 @@
           }
         }
       }
+    },
+    "xAI" : {
+
     }
   },
   "version" : "1.0"

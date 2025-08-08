@@ -116,13 +116,4 @@ extension View {
         self.shadow(color: Color.black.opacity(0.15), radius: 12, x: 0, y: 4)
     }
     
-    // MARK: - Conditional Modifiers
-    @ViewBuilder
-    func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
-        if condition {
-            transform(self)
-        } else {
-            self
-        }
-    }
 }

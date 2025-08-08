@@ -105,6 +105,23 @@
 		944EA2292E320C1B00C110AF /* SituationType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA2282E320C1B00C110AF /* SituationType.swift */; };
 		944EA22B2E320C3000C110AF /* SituationTypeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA22A2E320C3000C110AF /* SituationTypeCard.swift */; };
 		944EA22D2E320C3E00C110AF /* SituationTypePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944EA22C2E320C3E00C110AF /* SituationTypePickerView.swift */; };
+		948072F02E45F26F00C5D92D /* AblationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948072E72E45F26F00C5D92D /* AblationService.swift */; };
+		948072F12E45F26F00C5D92D /* ExperimentLeaderboardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948072EA2E45F26F00C5D92D /* ExperimentLeaderboardService.swift */; };
+		948072F22E45F26F00C5D92D /* ExperimentScoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948072EB2E45F26F00C5D92D /* ExperimentScoreService.swift */; };
+		948072F32E45F26F00C5D92D /* EnsembleService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948072E92E45F26F00C5D92D /* EnsembleService.swift */; };
+		948072F42E45F26F00C5D92D /* PolicySelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948072ED2E45F26F00C5D92D /* PolicySelector.swift */; };
+		948072F52E45F26F00C5D92D /* RunLogService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948072EF2E45F26F00C5D92D /* RunLogService.swift */; };
+		948072F62E45F26F00C5D92D /* PlannerExecutorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948072EC2E45F26F00C5D92D /* PlannerExecutorService.swift */; };
+		948072F72E45F26F00C5D92D /* PromptBlockRegistryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948072EE2E45F26F00C5D92D /* PromptBlockRegistryService.swift */; };
+		948072F82E45F26F00C5D92D /* BlockPlannerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948072E82E45F26F00C5D92D /* BlockPlannerService.swift */; };
+		948072FC2E45F27C00C5D92D /* ResolvedPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948072FB2E45F27C00C5D92D /* ResolvedPolicy.swift */; };
+		948072FD2E45F27C00C5D92D /* PromptBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948072FA2E45F27C00C5D92D /* PromptBlock.swift */; };
+		948072FE2E45F27C00C5D92D /* AblationModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948072F92E45F27C00C5D92D /* AblationModels.swift */; };
+		948073042E45F28700C5D92D /* WhyThisWonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948073032E45F28700C5D92D /* WhyThisWonView.swift */; };
+		948073052E45F28700C5D92D /* DataHygieneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948072FF2E45F28700C5D92D /* DataHygieneView.swift */; };
+		948073062E45F28700C5D92D /* ExperimentBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948073002E45F28700C5D92D /* ExperimentBuilderView.swift */; };
+		948073072E45F28700C5D92D /* RunLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948073022E45F28700C5D92D /* RunLogView.swift */; };
+		948073082E45F28700C5D92D /* LeaderboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948073012E45F28700C5D92D /* LeaderboardView.swift */; };
 		9481564C2E23CDC000C28273 /* ChildProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */; };
 		9481564E2E25334C00C28273 /* AudioPermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564D2E25334C00C28273 /* AudioPermissionManager.swift */; };
 		948156502E2533EE00C28273 /* VoiceRecorderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */; };
@@ -338,6 +355,23 @@
 		944EA2282E320C1B00C110AF /* SituationType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SituationType.swift; sourceTree = "<group>"; };
 		944EA22A2E320C3000C110AF /* SituationTypeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SituationTypeCard.swift; sourceTree = "<group>"; };
 		944EA22C2E320C3E00C110AF /* SituationTypePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SituationTypePickerView.swift; sourceTree = "<group>"; };
+		948072E72E45F26F00C5D92D /* AblationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AblationService.swift; sourceTree = "<group>"; };
+		948072E82E45F26F00C5D92D /* BlockPlannerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockPlannerService.swift; sourceTree = "<group>"; };
+		948072E92E45F26F00C5D92D /* EnsembleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnsembleService.swift; sourceTree = "<group>"; };
+		948072EA2E45F26F00C5D92D /* ExperimentLeaderboardService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentLeaderboardService.swift; sourceTree = "<group>"; };
+		948072EB2E45F26F00C5D92D /* ExperimentScoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentScoreService.swift; sourceTree = "<group>"; };
+		948072EC2E45F26F00C5D92D /* PlannerExecutorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlannerExecutorService.swift; sourceTree = "<group>"; };
+		948072ED2E45F26F00C5D92D /* PolicySelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolicySelector.swift; sourceTree = "<group>"; };
+		948072EE2E45F26F00C5D92D /* PromptBlockRegistryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptBlockRegistryService.swift; sourceTree = "<group>"; };
+		948072EF2E45F26F00C5D92D /* RunLogService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunLogService.swift; sourceTree = "<group>"; };
+		948072F92E45F27C00C5D92D /* AblationModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AblationModels.swift; sourceTree = "<group>"; };
+		948072FA2E45F27C00C5D92D /* PromptBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptBlock.swift; sourceTree = "<group>"; };
+		948072FB2E45F27C00C5D92D /* ResolvedPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResolvedPolicy.swift; sourceTree = "<group>"; };
+		948072FF2E45F28700C5D92D /* DataHygieneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataHygieneView.swift; sourceTree = "<group>"; };
+		948073002E45F28700C5D92D /* ExperimentBuilderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentBuilderView.swift; sourceTree = "<group>"; };
+		948073012E45F28700C5D92D /* LeaderboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardView.swift; sourceTree = "<group>"; };
+		948073022E45F28700C5D92D /* RunLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunLogView.swift; sourceTree = "<group>"; };
+		948073032E45F28700C5D92D /* WhyThisWonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhyThisWonView.swift; sourceTree = "<group>"; };
 		9481564B2E23CDC000C28273 /* ChildProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildProfileEditView.swift; sourceTree = "<group>"; };
 		9481564D2E25334C00C28273 /* AudioPermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPermissionManager.swift; sourceTree = "<group>"; };
 		9481564F2E2533EE00C28273 /* VoiceRecorderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorderError.swift; sourceTree = "<group>"; };
@@ -646,6 +680,11 @@
 		94A6CE612E40EFC80062DEDD /* Admin */ = {
 			isa = PBXGroup;
 			children = (
+				948072FF2E45F28700C5D92D /* DataHygieneView.swift */,
+				948073002E45F28700C5D92D /* ExperimentBuilderView.swift */,
+				948073012E45F28700C5D92D /* LeaderboardView.swift */,
+				948073022E45F28700C5D92D /* RunLogView.swift */,
+				948073032E45F28700C5D92D /* WhyThisWonView.swift */,
 				94A6CE722E4236ED0062DEDD /* ExperimentLeaderboardView.swift */,
 				94A6CE602E40EFC80062DEDD /* RegenAdminView.swift */,
 			);
@@ -754,6 +793,9 @@
 		94FA10EF2E056303003EC1E9 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				948072F92E45F27C00C5D92D /* AblationModels.swift */,
+				948072FA2E45F27C00C5D92D /* PromptBlock.swift */,
+				948072FB2E45F27C00C5D92D /* ResolvedPolicy.swift */,
 				94A6CE5C2E40EF7D0062DEDD /* GoldResponse.swift */,
 				94A6CE5D2E40EF7D0062DEDD /* RegenRun.swift */,
 				94BC2DD82E3A195F00B35676 /* DeletedContextualInsight.swift */,
@@ -785,6 +827,15 @@
 		94FA10F02E05630A003EC1E9 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				948072E72E45F26F00C5D92D /* AblationService.swift */,
+				948072E82E45F26F00C5D92D /* BlockPlannerService.swift */,
+				948072E92E45F26F00C5D92D /* EnsembleService.swift */,
+				948072EA2E45F26F00C5D92D /* ExperimentLeaderboardService.swift */,
+				948072EB2E45F26F00C5D92D /* ExperimentScoreService.swift */,
+				948072EC2E45F26F00C5D92D /* PlannerExecutorService.swift */,
+				948072ED2E45F26F00C5D92D /* PolicySelector.swift */,
+				948072EE2E45F26F00C5D92D /* PromptBlockRegistryService.swift */,
+				948072EF2E45F26F00C5D92D /* RunLogService.swift */,
 				94A6CE662E4236DC0062DEDD /* DictationService.swift */,
 				94A6CE672E4236DC0062DEDD /* ExperimentExportService.swift */,
 				94A6CE682E4236DC0062DEDD /* InsightCleanupService.swift */,
@@ -1243,6 +1294,15 @@
 				94A6CE4D2E3DFDFE0062DEDD /* VerticalGuidanceView.swift in Sources */,
 				944EA1FD2E2DFEDB00C110AF /* GuidanceModeCard.swift in Sources */,
 				943DFD982E1A85B9004F8043 /* OpenAIService.swift in Sources */,
+				948072F02E45F26F00C5D92D /* AblationService.swift in Sources */,
+				948072F12E45F26F00C5D92D /* ExperimentLeaderboardService.swift in Sources */,
+				948072F22E45F26F00C5D92D /* ExperimentScoreService.swift in Sources */,
+				948072F32E45F26F00C5D92D /* EnsembleService.swift in Sources */,
+				948072F42E45F26F00C5D92D /* PolicySelector.swift in Sources */,
+				948072F52E45F26F00C5D92D /* RunLogService.swift in Sources */,
+				948072F62E45F26F00C5D92D /* PlannerExecutorService.swift in Sources */,
+				948072F72E45F26F00C5D92D /* PromptBlockRegistryService.swift in Sources */,
+				948072F82E45F26F00C5D92D /* BlockPlannerService.swift in Sources */,
 				943DFD8E2E1A856E004F8043 /* UserProfile.swift in Sources */,
 				943DFD912E1A858D004F8043 /* Situation.swift in Sources */,
 				943BC97B2E35D7770056EFF9 /* VoiceRecorderViewModel.swift in Sources */,
@@ -1261,6 +1321,9 @@
 				944EA1F62E2DF87900C110AF /* ChildProfileSection.swift in Sources */,
 				94FA11072E056CFD003EC1E9 /* OnboardingCoordinator.swift in Sources */,
 				94A6CE622E40EFC80062DEDD /* RegenAdminView.swift in Sources */,
+				948072FC2E45F27C00C5D92D /* ResolvedPolicy.swift in Sources */,
+				948072FD2E45F27C00C5D92D /* PromptBlock.swift in Sources */,
+				948072FE2E45F27C00C5D92D /* AblationModels.swift in Sources */,
 				94FA11012E056C93003EC1E9 /* ChildBasicsView.swift in Sources */,
 				94FA11162E05C8B6003EC1E9 /* AlertsView.swift in Sources */,
 				94FA112A2E05CBFD003EC1E9 /* ChildBadge.swift in Sources */,
@@ -1300,6 +1363,11 @@
 				94A6CE512E3EFB020062DEDD /* ThemeSelectionView.swift in Sources */,
 				943DFD742E180D40004F8043 /* SituationDetailView.swift in Sources */,
 				94BC2DC52E3A118100B35676 /* Guidance.swift in Sources */,
+				948073042E45F28700C5D92D /* WhyThisWonView.swift in Sources */,
+				948073052E45F28700C5D92D /* DataHygieneView.swift in Sources */,
+				948073062E45F28700C5D92D /* ExperimentBuilderView.swift in Sources */,
+				948073072E45F28700C5D92D /* RunLogView.swift in Sources */,
+				948073082E45F28700C5D92D /* LeaderboardView.swift in Sources */,
 				944EA20B2E2E0FDE00C110AF /* DeleteConfirmationTextField.swift in Sources */,
 				9481565A2E2773FC00C28273 /* DynamicGuidanceParser.swift in Sources */,
 				94FA11102E05C88A003EC1E9 /* TodayView.swift in Sources */,

@@ -146,10 +146,17 @@ class ExperimentRunner: ObservableObject {
                     var candidates: [(guidance: Guidance, composite: Double)] = []
                     let variants = max(1, plans.count)
                     for v in 0..<variants {
+                        let resolvedPolicy = await PolicySelector.shared.resolvePolicy(
+                            familyId: UUID(uuidString: situation.familyId),
+                            config: nil,
+                            issueType: nil,
+                            ageBand: nil
+                        )
                         let guidanceResponse = try await generateExperimentalGuidance(
                             situation: situation,
                             config: experiment.config,
-                            experimentId: experiment.id
+                            experimentId: experiment.id,
+                            resolvedPolicy: resolvedPolicy
                         )
                         // Score
                         var score = try await scoringService.scoreGuidance(
@@ -273,37 +280,13 @@ class ExperimentRunner: ObservableObject {
     private func generateExperimentalGuidance(
         situation: Situation,
         config: ExperimentConfig,
-        experimentId: UUID
+        experimentId: UUID,
+        resolvedPolicy: ResolvedPolicy
     ) async throws -> Guidance {
         
         // Get API key
         guard let apiKey = UserDefaults.standard.string(forKey: "openAIApiKey") else {
             throw ExperimentError.noApiKey
-        }
-        
-        // Temporarily set experiment configuration
-        let originalProvider = UserDefaults.standard.string(forKey: "selectedModelProvider")
-        let originalStyle = UserDefaults.standard.string(forKey: "guidanceStyle")
-        let originalMode = UserDefaults.standard.string(forKey: "guidanceMode")
-        let originalUseEdgeFunction = UserDefaults.standard.bool(forKey: "guidance_use_edge_function")
-        
-        UserDefaults.standard.set(config.modelProvider, forKey: "selectedModelProvider")
-        UserDefaults.standard.set(config.guidanceStyle, forKey: "guidanceStyle")
-        UserDefaults.standard.set(config.guidanceMode, forKey: "guidanceMode")
-        UserDefaults.standard.set(config.useEdgeFunction, forKey: "guidance_use_edge_function")
-        
-        defer {
-            // Restore original settings
-            if let originalProvider = originalProvider {
-                UserDefaults.standard.set(originalProvider, forKey: "selectedModelProvider")
-            }
-            if let originalStyle = originalStyle {
-                UserDefaults.standard.set(originalStyle, forKey: "guidanceStyle")
-            }
-            if let originalMode = originalMode {
-                UserDefaults.standard.set(originalMode, forKey: "guidanceMode")
-            }
-            UserDefaults.standard.set(originalUseEdgeFunction, forKey: "guidance_use_edge_function")
         }
         
         // Generate guidance
@@ -315,7 +298,8 @@ class ExperimentRunner: ObservableObject {
             apiKey: apiKey,
             activeFramework: nil,
             situationType: .imJustWondering,
-            useStreaming: false
+            useStreaming: false,
+            resolvedPolicy: resolvedPolicy
         )
         
         // Save the guidance with experiment ID
@@ -470,9 +454,30 @@ class ExperimentRunner: ObservableObject {
             .order("created_at", ascending: false)
             .execute()
         
-        // Transform the data into leaderboard entries
-        // This would need proper JSON parsing based on the actual response structure
-        return []
+        struct Row: Decodable {
+            let id: String
+            let name: String
+            let config: ExperimentConfig
+            let completed_at: String?
+            let experiment_scores: [ScoreRow]?
+        }
+        struct ScoreRow: Decodable { let composite_score: Double }
+        let decoder = JSONDecoder()
+        let rows = try decoder.decode([Row].self, from: response.data)
+        var entries: [ExperimentLeaderboardEntry] = rows.map { row in
+            let avg = (row.experiment_scores?.map { $0.composite_score } ?? []).average()
+            let completedAt: Date = ISO8601DateFormatter().date(from: row.completed_at ?? "") ?? Date()
+            return ExperimentLeaderboardEntry(
+                experimentId: UUID(uuidString: row.id) ?? UUID(),
+                name: row.name,
+                config: row.config,
+                averageScore: avg,
+                situationsProcessed: row.experiment_scores?.count ?? 0,
+                completedAt: completedAt
+            )
+        }
+        entries.sort { $0.averageScore > $1.averageScore }
+        return entries
     }
     
     private func log(_ message: String) {

@@ -30,6 +30,9 @@ struct DeveloperSection: View {
                 // Status indicators
                 featureFlagStatus
                 
+                // Developer Tools Section
+                developerToolsSection
+                
                 // Time Machine Admin Access
                 #if DEBUG
                 timeMachineAdminSection
@@ -160,5 +163,84 @@ struct DeveloperSection: View {
             }
             .buttonStyle(PlainButtonStyle())
         }
+    }
+    
+    private var developerToolsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Divider()
+                .padding(.vertical, 8)
+            
+            Text("Developer Tools")
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(SemanticColors.primaryText)
+            
+            VStack(spacing: 12) {
+                // Experiment Builder
+                NavigationLink(destination: ExperimentBuilderView().environmentObject(appCoordinator)) {
+                    developerToolRow(
+                        icon: "hammer",
+                        title: "Experiment Builder",
+                        description: "Configure and run AI experiments"
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
+                
+                // Experiment Leaderboard
+                NavigationLink(destination: LeaderboardView().environmentObject(appCoordinator)) {
+                    developerToolRow(
+                        icon: "list.star",
+                        title: "Experiment Leaderboard",
+                        description: "View experiment results and rankings"
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
+                
+                // Data Hygiene
+                NavigationLink(destination: DataHygieneView().environmentObject(appCoordinator)) {
+                    developerToolRow(
+                        icon: "wand.and.stars",
+                        title: "Data Hygiene",
+                        description: "Clean up and maintain data quality"
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
+                
+                // Run Logs
+                NavigationLink(destination: RunLogView(regenRunId: UUID()).environmentObject(appCoordinator)) {
+                    developerToolRow(
+                        icon: "doc.text.magnifyingglass",
+                        title: "Run Logs",
+                        description: "View detailed experiment execution logs"
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+        }
+    }
+    
+    private func developerToolRow(icon: String, title: String, description: String) -> some View {
+        HStack {
+            Image(systemName: icon)
+                .font(.system(size: 16))
+                .foregroundColor(.blue)
+                .frame(width: 24)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(SemanticColors.primaryText)
+                
+                Text(description)
+                    .font(.system(size: 11))
+                    .foregroundColor(SemanticColors.secondaryText)
+            }
+            
+            Spacer()
+            
+            Image(systemName: "chevron.right")
+                .font(.system(size: 12))
+                .foregroundColor(SemanticColors.tertiaryText)
+        }
+        .padding(.vertical, 4)
     }
 }

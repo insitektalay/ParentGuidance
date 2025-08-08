@@ -135,28 +135,6 @@ struct MainTabView: View {
                             case .settings:
                                 NavigationStack {
                                     SettingsView()
-                                        .toolbar {
-                                            ToolbarItem(placement: .topBarTrailing) {
-                                                NavigationLink(destination: ExperimentBuilderView()) {
-                                                    Image(systemName: "hammer")
-                                                }
-                                            }
-                                            ToolbarItem(placement: .topBarLeading) {
-                                                NavigationLink(destination: LeaderboardView()) {
-                                                    Image(systemName: "list.star")
-                                                }
-                                            }
-                                            ToolbarItem(placement: .principal) {
-                                                NavigationLink(destination: DataHygieneView()) {
-                                                    Image(systemName: "wand.and.stars")
-                                                }
-                                            }
-                                            ToolbarItem(placement: .bottomBar) {
-                                                NavigationLink(destination: RunLogView(regenRunId: UUID())) {
-                                                    Image(systemName: "doc.text.magnifyingglass")
-                                                }
-                                            }
-                                        }
                                 }
                             }
                         }

@@ -204,7 +204,9 @@ class ConversationService: ObservableObject {
             activeFramework: nil,
             situationType: .imJustWondering,
             useStreaming: false,
-            policy: resolvedPolicy
+            policy: resolvedPolicy,
+            regenRunId: regenRunId,
+            experimentRunId: experimentRunId
         )
         
         // Extract overall recommendation

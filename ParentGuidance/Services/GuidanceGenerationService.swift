@@ -61,7 +61,9 @@ class GuidanceGenerationService {
         activeFramework: FrameworkRecommendation? = nil,
         situationType: SituationType = .imJustWondering,
         useStreaming: Bool = false,
-        policy: ResolvedPolicy? = nil
+        policy: ResolvedPolicy? = nil,
+        regenRunId: UUID? = nil,
+        experimentRunId: UUID? = nil
     ) async throws -> (GuidanceResponseProtocol, String) {
         
         let (guidance, rawContent): (GuidanceResponseProtocol, String)
@@ -83,7 +85,9 @@ class GuidanceGenerationService {
                 copingStrategies: copingStrategies,
                 apiKey: apiKey,
                 activeFramework: activeFramework,
-                situationType: situationType
+                situationType: situationType,
+                regenRunId: regenRunId,
+                experimentRunId: experimentRunId
             )
         } else if useEdgeFunction && policyStreaming {
             print("🚀 [GuidanceGenerationService] Using EdgeFunction with streaming")
@@ -94,7 +98,9 @@ class GuidanceGenerationService {
                 copingStrategies: copingStrategies,
                 apiKey: apiKey,
                 activeFramework: activeFramework,
-                situationType: situationType
+                situationType: situationType,
+                regenRunId: regenRunId,
+                experimentRunId: experimentRunId
             )
         } else if useEdgeFunction {
             print("🚀 [GuidanceGenerationService] Using EdgeFunction (non-streaming)")
@@ -105,7 +111,9 @@ class GuidanceGenerationService {
                 copingStrategies: copingStrategies,
                 apiKey: apiKey,
                 activeFramework: activeFramework,
-                situationType: situationType
+                situationType: situationType,
+                regenRunId: regenRunId,
+                experimentRunId: experimentRunId
             )
         } else {
             print("🔗 [GuidanceGenerationService] Using Direct API (legacy)")
@@ -317,7 +325,9 @@ class GuidanceGenerationService {
         copingStrategies: String?,
         apiKey: String,
         activeFramework: FrameworkRecommendation?,
-        situationType: SituationType
+        situationType: SituationType,
+        regenRunId: UUID? = nil,
+        experimentRunId: UUID? = nil
     ) async throws -> (GuidanceResponseProtocol, String) {
         print("🔄 Using Edge Function for guidance generation (collecting streaming)")
         
@@ -341,7 +351,9 @@ class GuidanceGenerationService {
                 structureMode: structureMode,
                 guidanceStyle: guidanceStyle,
                 situationType: situationType,
-                apiKey: apiKey
+                apiKey: apiKey,
+                regenRunId: regenRunId,
+                experimentRunId: experimentRunId
             )
             
             for try await chunk in stream {
@@ -367,7 +379,9 @@ class GuidanceGenerationService {
         copingStrategies: String?,
         apiKey: String,
         activeFramework: FrameworkRecommendation?,
-        situationType: SituationType
+        situationType: SituationType,
+        regenRunId: UUID? = nil,
+        experimentRunId: UUID? = nil
     ) async throws -> (GuidanceResponseProtocol, String) {
         // For now, use the streaming approach and collect all content
         return try await generateGuidanceViaEdgeFunctionStreaming(
@@ -377,7 +391,9 @@ class GuidanceGenerationService {
             copingStrategies: copingStrategies,
             apiKey: apiKey,
             activeFramework: activeFramework,
-            situationType: situationType
+            situationType: situationType,
+            regenRunId: regenRunId,
+            experimentRunId: experimentRunId
         )
     }
     
@@ -389,7 +405,9 @@ class GuidanceGenerationService {
         copingStrategies: String?,
         apiKey: String,
         activeFramework: FrameworkRecommendation?,
-        situationType: SituationType
+        situationType: SituationType,
+        regenRunId: UUID? = nil,
+        experimentRunId: UUID? = nil
     ) async throws -> (GuidanceResponseProtocol, String) {
         print("🔄 Using Edge Function for guidance generation with function calling")
         
@@ -411,7 +429,9 @@ class GuidanceGenerationService {
                 structureMode: structureMode,
                 guidanceStyle: guidanceStyle,
                 situationType: situationType,
-                apiKey: apiKey
+                apiKey: apiKey,
+                regenRunId: regenRunId,
+                experimentRunId: experimentRunId
             )
             
             // Convert the structured response to our internal format

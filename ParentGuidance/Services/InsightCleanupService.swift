@@ -41,7 +41,7 @@ class InsightCleanupService: ObservableObject {
     // MARK: - Public Methods
     
     /// Find orphaned insights without deleting them
-    func findOrphanedInsights(familyId: UUID? = nil) async throws -> [(tableName: String, count: Int)] {
+    func findOrphanedInsights(familyId: UUID? = nil, regenRunId: UUID? = nil) async throws -> [(tableName: String, count: Int)] {
         let response: PostgrestResponse<Data>
         
         struct FindParams: Encodable {
@@ -65,11 +65,13 @@ class InsightCleanupService: ObservableObject {
         }
         
         let records = try JSONDecoder().decode([OrphanedRecord].self, from: response.data)
-        return records.map { ($0.tableName, $0.orphanedCount) }
+        let results = records.map { ($0.tableName, $0.orphanedCount) }
+        await RunLogService.shared.log(regenRunId: regenRunId, level: .info, message: "hygiene_dry_run stats: \(results)")
+        return results
     }
     
     /// Clean up orphaned insights
-    func cleanupOrphanedInsights(familyId: UUID? = nil, dryRun: Bool = true) async throws -> CleanupResult {
+    func cleanupOrphanedInsights(familyId: UUID? = nil, dryRun: Bool = true, regenRunId: UUID? = nil) async throws -> CleanupResult {
         isRunning = true
         defer { isRunning = false }
         
@@ -92,6 +94,11 @@ class InsightCleanupService: ObservableObject {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         let result = try decoder.decode(CleanupResult.self, from: response.data)
+        await RunLogService.shared.log(
+            regenRunId: regenRunId,
+            level: dryRun ? .info : .warn,
+            message: dryRun ? "hygiene_dry_run completed: total=\(result.totalDeleted)" : "hygiene_commit completed: total=\(result.totalDeleted)"
+        )
         
         if !dryRun {
             lastRunDate = Date()

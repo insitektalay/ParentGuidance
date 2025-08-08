@@ -219,6 +219,71 @@ class ScoringService: ObservableObject {
             .execute()
     }
 
+    // Save with explanations (bullets/highlights) without regenRunId linkage
+    func saveExperimentScoreWithExplanations(_ score: ExperimentScore, explanations: [String: Any]) async throws {
+        struct InsertWithExplanations: Encodable {
+            let id: UUID
+            let experimentRunId: UUID
+            let situationId: UUID
+            let guidanceId: UUID
+            let goldResponseId: UUID?
+            let redlineResponseId: UUID?
+            let semanticSimilarity: Double?
+            let stringOverlap: Double?
+            let styleToneScore: Double?
+            let redlineSimilarity: Double?
+            let redlineKeywordHits: Int?
+            let redlinePenalty: Double?
+            let compositeScore: Double
+            let scoreWeights: ScoreWeights
+            let comparisonDetails: ComparisonDetails?
+            let createdAt: Date
+            let explanationsJson: [String: Any]
+            enum CodingKeys: String, CodingKey {
+                case id
+                case experimentRunId = "experiment_run_id"
+                case situationId = "situation_id"
+                case guidanceId = "guidance_id"
+                case goldResponseId = "gold_response_id"
+                case redlineResponseId = "redline_response_id"
+                case semanticSimilarity = "semantic_similarity"
+                case stringOverlap = "string_overlap"
+                case styleToneScore = "style_tone_score"
+                case redlineSimilarity = "redline_similarity"
+                case redlineKeywordHits = "redline_keyword_hits"
+                case redlinePenalty = "redline_penalty"
+                case compositeScore = "composite_score"
+                case scoreWeights = "score_weights"
+                case comparisonDetails = "comparison_details"
+                case createdAt = "created_at"
+                case explanationsJson = "explanations_json"
+            }
+        }
+        let payload = InsertWithExplanations(
+            id: score.id,
+            experimentRunId: score.experimentRunId,
+            situationId: score.situationId,
+            guidanceId: score.guidanceId,
+            goldResponseId: score.goldResponseId,
+            redlineResponseId: score.redlineResponseId,
+            semanticSimilarity: score.semanticSimilarity,
+            stringOverlap: score.stringOverlap,
+            styleToneScore: score.styleToneScore,
+            redlineSimilarity: score.redlineSimilarity,
+            redlineKeywordHits: score.redlineKeywordHits,
+            redlinePenalty: score.redlinePenalty,
+            compositeScore: score.compositeScore,
+            scoreWeights: score.scoreWeights,
+            comparisonDetails: score.comparisonDetails,
+            createdAt: score.createdAt,
+            explanationsJson: explanations
+        )
+        try await supabaseManager.client
+            .from("experiment_scores")
+            .insert(payload)
+            .execute()
+    }
+
     // Overload to save with regen_run_id linkage when available
     func saveExperimentScore(_ score: ExperimentScore, regenRunId: UUID?) async throws {
         if let regenRunId = regenRunId {
@@ -289,6 +354,23 @@ class ScoringService: ObservableObject {
         } else {
             try await saveExperimentScore(score)
         }
+    }
+
+    // MARK: - Why-this-won explanations (heuristic)
+    func createExplanations(guidanceText: String, contextSpans: [String] = []) -> [String: Any] {
+        var bullets: [String] = []
+        if guidanceText.lowercased().contains("step") || guidanceText.lowercased().contains("1.") {
+            bullets.append("Actionable: clear step-by-step guidance")
+        }
+        if guidanceText.lowercased().contains("because") || guidanceText.lowercased().contains("context") {
+            bullets.append("Grounded in context and reasoning")
+        }
+        if guidanceText.lowercased().contains("feel") || guidanceText.lowercased().contains("empath") {
+            bullets.append("Empathetic tone and supportive framing")
+        }
+        if bullets.isEmpty { bullets = ["Clear, helpful, and safe"] }
+        let highlights = Array(contextSpans.prefix(3))
+        return ["bullets": bullets.prefix(3), "highlights": highlights]
     }
     
     func getExperimentScores(experimentRunId: UUID) async throws -> [ExperimentScore] {

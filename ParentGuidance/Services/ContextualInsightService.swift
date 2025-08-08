@@ -2243,6 +2243,120 @@ class ContextualInsightService {
             throw ContextualInsightError.databaseError(error)
         }
     }
+    
+    // MARK: - Time Machine Support Methods
+    
+    /// Extract contextual insights for time machine regeneration
+    func extractContextualInsights(
+        situationId: UUID,
+        situationText: String,
+        regenRunId: UUID? = nil,
+        experimentRunId: UUID? = nil
+    ) async throws {
+        guard let apiKey = UserDefaults.standard.string(forKey: "openAIApiKey") else {
+            throw ContextualInsightError.apiError(401)
+        }
+        
+        let familyId = try await getFamilyIdForSituation(situationId: situationId)
+        
+        let insights = try await extractContextFromSituation(
+            situationText: situationText,
+            apiKey: apiKey,
+            familyId: familyId.uuidString,
+            situationId: situationId.uuidString
+        )
+        
+        // Save insights with regen/experiment IDs
+        for insight in insights {
+            var insertData: [String: AnyJSON] = [
+                "family_id": try AnyJSON(familyId.uuidString.lowercased()),
+                "situation_id": try AnyJSON(situationId.uuidString),
+                "content": try AnyJSON(insight.content),
+                "category": try AnyJSON(insight.category),
+                "created_at": try AnyJSON(Date().ISO8601Format())
+            ]
+            
+            if let regenRunId = regenRunId {
+                insertData["regen_run_id"] = try AnyJSON(regenRunId.uuidString)
+            }
+            if let experimentRunId = experimentRunId {
+                insertData["experiment_run_id"] = try AnyJSON(experimentRunId.uuidString)
+            }
+            
+            try await SupabaseManager.shared.client
+                .from("contextual_insights")
+                .insert(insertData)
+                .execute()
+        }
+    }
+    
+    /// Extract regulation insights for time machine regeneration
+    func extractRegulationInsights(
+        situationId: UUID,
+        situationText: String,
+        childName: String,
+        regenRunId: UUID? = nil,
+        experimentRunId: UUID? = nil
+    ) async throws {
+        guard let apiKey = UserDefaults.standard.string(forKey: "openAIApiKey") else {
+            throw ContextualInsightError.apiError(401)
+        }
+        
+        let familyId = try await getFamilyIdForSituation(situationId: situationId)
+        
+        let insights = try await extractChildRegulationInsights(
+            situationText: situationText,
+            apiKey: apiKey,
+            familyId: familyId.uuidString,
+            childId: nil,
+            situationId: situationId.uuidString
+        )
+        
+        // Save regulation insights with regen/experiment IDs
+        for insight in insights {
+            var insertData: [String: AnyJSON] = [
+                "family_id": try AnyJSON(familyId.uuidString.lowercased()),
+                "situation_id": try AnyJSON(situationId.uuidString),
+                "content": try AnyJSON(insight.content),
+                "category": try AnyJSON(insight.category),
+                "created_at": try AnyJSON(Date().ISO8601Format())
+            ]
+            
+            if let regenRunId = regenRunId {
+                insertData["regen_run_id"] = try AnyJSON(regenRunId.uuidString)
+            }
+            if let experimentRunId = experimentRunId {
+                insertData["experiment_run_id"] = try AnyJSON(experimentRunId.uuidString)
+            }
+            
+            try await SupabaseManager.shared.client
+                .from("insight_bullet_points")
+                .insert(insertData)
+                .execute()
+        }
+    }
+    
+    private func getFamilyIdForSituation(situationId: UUID) async throws -> UUID {
+        let response = try await SupabaseManager.shared.client
+            .from("situations")
+            .select("family_id")
+            .eq("id", value: situationId.uuidString)
+            .single()
+            .execute()
+        
+        struct FamilyIdResponse: Decodable {
+            let family_id: String
+        }
+        
+        let decoder = JSONDecoder()
+        let familyResponse = try decoder.decode(FamilyIdResponse.self, from: response.data)
+        
+        guard let familyId = UUID(uuidString: familyResponse.family_id) else {
+            throw ContextualInsightError.apiError(400)
+        }
+        
+        return familyId
+    }
 }
 
 // MARK: - Error Handling

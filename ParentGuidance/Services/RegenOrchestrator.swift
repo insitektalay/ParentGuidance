@@ -94,7 +94,11 @@ class RegenOrchestrator: ObservableObject {
         // Start processing
         isProcessing = true
         processingTask = Task {
-            await processRegeneration(resolvedPolicy: resolvedPolicy)
+            let policy = resolvedPolicy ?? await PolicySelector.shared.resolvePolicy(
+                familyId: currentRun?.familyId,
+                config: config
+            )
+            await processRegeneration(resolvedPolicy: policy)
         }
     }
     
@@ -127,7 +131,11 @@ class RegenOrchestrator: ObservableObject {
         
         isProcessing = true
         processingTask = Task {
-            await processRegeneration()
+            let policy = await PolicySelector.shared.resolvePolicy(
+                familyId: currentRun?.familyId,
+                config: currentRun?.config
+            )
+            await processRegeneration(resolvedPolicy: policy)
         }
     }
     

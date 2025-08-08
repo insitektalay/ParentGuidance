@@ -3,6 +3,7 @@ import Supabase
 
 @MainActor
 class ExperimentRunner: ObservableObject {
+    static let shared = ExperimentRunner()
     @Published var activeExperiments: [ExperimentRun] = []
     @Published var isRunning = false
     @Published var currentExperiment: ExperimentRun?
@@ -141,23 +142,38 @@ class ExperimentRunner: ObservableObject {
                 do {
                     // Optional planner step (scaffold): generate candidate plans for target block
                     let plans = planner.generatePlans(targetBlock: "context_extraction", count: 3)
-                    _ = plans // In v1, we still run base config. Future: run per plan and pick best.
-                    // Generate guidance with experiment configuration
-                    let guidanceResponse = try await generateExperimentalGuidance(
-                        situation: situation,
-                        config: experiment.config,
-                        experimentId: experiment.id
-                    )
-                    
-                    // Score the guidance if benchmarks exist
-                    try await scoreGuidance(
-                        situation: situation,
-                        guidance: guidanceResponse,
-                        experimentId: experiment.id
-                    )
-
-                    // Best-of-N ensemble (scaffold): currently only has single candidate; ready for multi
-                    // Future: generate multiple guidance variants, score them, then choose best
+                    var candidates: [(guidance: Guidance, composite: Double)] = []
+                    let variants = max(1, plans.count)
+                    for _ in 0..<variants {
+                        let guidanceResponse = try await generateExperimentalGuidance(
+                            situation: situation,
+                            config: experiment.config,
+                            experimentId: experiment.id
+                        )
+                        // Score
+                        var score = try await scoringService.scoreGuidance(
+                            guidanceText: guidanceResponse.content,
+                            goldResponse: try await goldResponseService.getGoldResponse(for: UUID(uuidString: situation.id) ?? UUID()),
+                            redlineResponse: try await goldResponseService.getRedlineResponse(for: UUID(uuidString: situation.id) ?? UUID())
+                        )
+                        // Update IDs and persist
+                        score.experimentRunId = experiment.id
+                        score.situationId = UUID(uuidString: situation.id) ?? UUID()
+                        score.guidanceId = UUID(uuidString: guidanceResponse.id) ?? UUID()
+                        try await scoringService.saveExperimentScore(score)
+                        candidates.append((guidanceResponse, score.compositeScore))
+                    }
+                    // Choose best-of-N and persist ensemble
+                    let mapped = candidates.map { (guidanceId: $0.guidance.id, composite: $0.composite) }
+                    if let (chosenId, judgeSummary) = ensemble.chooseBest(of: mapped) {
+                        try? await ensemble.persistEnsemble(
+                            experimentRunId: experiment.id,
+                            mode: .bestOfN,
+                            components: mapped,
+                            chosenGuidanceId: chosenId,
+                            judgeSummary: judgeSummary
+                        )
+                    }
                     
                     progress.processedSituations += 1
                     try await updateExperimentProgress(experimentId: experiment.id, progress: progress)

@@ -146,6 +146,11 @@ struct MainTabView: View {
                                                     Image(systemName: "list.star")
                                                 }
                                             }
+                                            ToolbarItem(placement: .principal) {
+                                                NavigationLink(destination: DataHygieneView()) {
+                                                    Image(systemName: "wand.and.stars")
+                                                }
+                                            }
                                         }
                                 }
                             }

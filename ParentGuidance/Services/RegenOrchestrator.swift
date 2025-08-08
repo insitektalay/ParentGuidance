@@ -374,7 +374,7 @@ class RegenOrchestrator: ObservableObject {
         }
         
         // Generate guidance using conversation service
-        let policy = PolicySelector.shared.resolvePolicy(familyId: run.familyId, config: config)
+        let policy = await PolicySelector.shared.resolvePolicy(familyId: run.familyId, config: config)
         return try await conversationService.generateGuidance(
             situationId: UUID(uuidString: situation.id) ?? UUID(),
             situationText: situation.description,

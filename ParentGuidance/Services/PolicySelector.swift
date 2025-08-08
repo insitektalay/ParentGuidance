@@ -13,7 +13,7 @@ final class PolicySelector {
         config: RegenConfig?,
         issueType: String? = nil,
         ageBand: String? = nil
-    ) -> ResolvedPolicy {
+    ) async -> ResolvedPolicy {
         // Model provider from config or fallback to stored selection
         let provider = config?.modelProvider
             ?? UserDefaults.standard.string(forKey: "selectedModelProvider")
@@ -30,7 +30,7 @@ final class PolicySelector {
 
         // Assemble policy
         // Try cohort-pinned overrides from registry
-        let cohortOverrides = try? awaitCohortOverrides(issueType: issueType, ageBand: ageBand)
+        let cohortOverrides = try? await awaitCohortOverrides(issueType: issueType, ageBand: ageBand)
 
         let blocks = PromptBlocks(
             similarCase: nil,

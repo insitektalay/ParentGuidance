@@ -12,6 +12,8 @@ class ExperimentRunner: ObservableObject {
     private let guidanceService = GuidanceGenerationService.shared
     private let scoringService = ScoringService.shared
     private let goldResponseService = GoldResponseService.shared
+    private let planner = BlockPlannerService.shared
+    private let ensemble = EnsembleService.shared
     
     private var processingTask: Task<Void, Never>?
     
@@ -137,6 +139,9 @@ class ExperimentRunner: ObservableObject {
                 log("Processing situation \(index + 1)/\(situations.count)")
                 
                 do {
+                    // Optional planner step (scaffold): generate candidate plans for target block
+                    let plans = planner.generatePlans(targetBlock: "context_extraction", count: 3)
+                    _ = plans // In v1, we still run base config. Future: run per plan and pick best.
                     // Generate guidance with experiment configuration
                     let guidanceResponse = try await generateExperimentalGuidance(
                         situation: situation,

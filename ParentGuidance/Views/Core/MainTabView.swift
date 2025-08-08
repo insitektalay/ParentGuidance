@@ -133,7 +133,21 @@ struct MainTabView: View {
                             case .alerts:
                                 AlertView()
                             case .settings:
-                                SettingsView()
+                                NavigationStack {
+                                    SettingsView()
+                                        .toolbar {
+                                            ToolbarItem(placement: .topBarTrailing) {
+                                                NavigationLink(destination: ExperimentBuilderView()) {
+                                                    Image(systemName: "hammer")
+                                                }
+                                            }
+                                            ToolbarItem(placement: .topBarLeading) {
+                                                NavigationLink(destination: LeaderboardView()) {
+                                                    Image(systemName: "list.star")
+                                                }
+                                            }
+                                        }
+                                }
                             }
                         }
                         .frame(minHeight: geometry.size.height - 140) // Account for header and tab bar

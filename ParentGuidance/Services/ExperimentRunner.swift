@@ -145,7 +145,7 @@ class ExperimentRunner: ObservableObject {
                     _ = try? await planner.persistPlans(plans)
                     var candidates: [(guidance: Guidance, composite: Double)] = []
                     let variants = max(1, plans.count)
-                    for _ in 0..<variants {
+                    for v in 0..<variants {
                         let guidanceResponse = try await generateExperimentalGuidance(
                             situation: situation,
                             config: experiment.config,
@@ -161,7 +161,8 @@ class ExperimentRunner: ObservableObject {
                         score.experimentRunId = experiment.id
                         score.situationId = UUID(uuidString: situation.id) ?? UUID()
                         score.guidanceId = UUID(uuidString: guidanceResponse.id) ?? UUID()
-                        try await scoringService.saveExperimentScore(score)
+                        let explanations = scoringService.createExplanations(guidanceText: guidanceResponse.content)
+                        try await scoringService.saveExperimentScoreWithExplanations(score, explanations: explanations)
                         candidates.append((guidanceResponse, score.compositeScore))
                     }
                     // Choose best-of-N and persist ensemble
@@ -174,6 +175,31 @@ class ExperimentRunner: ObservableObject {
                             chosenGuidanceId: chosenId,
                             judgeSummary: judgeSummary
                         )
+                    }
+
+                    // Attempt section-wise compose of candidates and re-judge (safety gate naive)
+                    if let composed = ensemble.sectionCompose(candidates: candidates) {
+                        var compScore = try await scoringService.scoreGuidance(
+                            guidanceText: composed.content,
+                            goldResponse: try await goldResponseService.getGoldResponse(for: UUID(uuidString: situation.id) ?? UUID()),
+                            redlineResponse: try await goldResponseService.getRedlineResponse(for: UUID(uuidString: situation.id) ?? UUID())
+                        )
+                        compScore.experimentRunId = experiment.id
+                        compScore.situationId = UUID(uuidString: situation.id) ?? UUID()
+                        compScore.guidanceId = UUID(uuidString: composed.id) ?? UUID()
+                        let explanations = scoringService.createExplanations(guidanceText: composed.content)
+                        try await scoringService.saveExperimentScoreWithExplanations(compScore, explanations: explanations)
+                        // If composed improves composite and redline not worse than max candidate penalty, persist as ensemble too
+                        let baseline = candidates.map { $0.composite }.max() ?? 0
+                        if compScore.compositeScore >= baseline {
+                            try? await ensemble.persistEnsemble(
+                                experimentRunId: experiment.id,
+                                mode: .sectionCompose,
+                                components: mapped,
+                                chosenGuidanceId: composed.id,
+                                judgeSummary: ["reason": "section-compose uplift"]
+                            )
+                        }
                     }
                     
                     progress.processedSituations += 1

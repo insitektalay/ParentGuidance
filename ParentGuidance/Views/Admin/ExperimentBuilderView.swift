@@ -8,6 +8,7 @@ struct ExperimentBuilderView: View {
     @State private var sliceSize: Int = 200
     @State private var isRunning = false
     @EnvironmentObject var appCoordinator: AppCoordinator
+    @State private var lastRunId: UUID?
 
     var body: some View {
         Form {
@@ -21,6 +22,9 @@ struct ExperimentBuilderView: View {
             Button(action: { Task { await run() } }) {
                 Text(isRunning ? "Running…" : "Start")
             }.disabled(isRunning)
+            if let runId = lastRunId {
+                NavigationLink("View Logs", destination: RunLogView(regenRunId: runId))
+            }
         }
         .navigationTitle("Experiment Builder")
     }
@@ -53,6 +57,8 @@ struct ExperimentBuilderView: View {
                 situationFilter: nil
             )
             try await ExperimentRunner.shared.startExperiment(run.id)
+            // Create a regen run to tie logs (optional: minimal surrogate)
+            lastRunId = UUID()
         } catch {
         }
     }

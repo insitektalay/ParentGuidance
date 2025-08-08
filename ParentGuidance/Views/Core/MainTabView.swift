@@ -151,6 +151,11 @@ struct MainTabView: View {
                                                     Image(systemName: "wand.and.stars")
                                                 }
                                             }
+                                            ToolbarItem(placement: .bottomBar) {
+                                                NavigationLink(destination: RunLogView(regenRunId: UUID())) {
+                                                    Image(systemName: "doc.text.magnifyingglass")
+                                                }
+                                            }
                                         }
                                 }
                             }

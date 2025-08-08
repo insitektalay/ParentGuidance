@@ -18,6 +18,7 @@ struct RelevantInsight: Codable {
     let insightId: String
     let insightContent: String
     let relevanceScore: Float?
+    let familyId: String?
     let createdAt: String
     let updatedAt: String
     
@@ -29,6 +30,7 @@ struct RelevantInsight: Codable {
         case insightId = "insight_id"
         case insightContent = "insight_content"
         case relevanceScore = "relevance_score"
+        case familyId = "family_id"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
     }
@@ -39,7 +41,8 @@ struct RelevantInsight: Codable {
         insightType: String,
         insightId: String,
         insightContent: String,
-        relevanceScore: Float? = nil
+        relevanceScore: Float? = nil,
+        familyId: String? = nil
     ) {
         self.id = UUID().uuidString
         self.situationId = situationId
@@ -48,6 +51,7 @@ struct RelevantInsight: Codable {
         self.insightId = insightId
         self.insightContent = insightContent
         self.relevanceScore = relevanceScore
+        self.familyId = familyId
         self.createdAt = ISO8601DateFormatter().string(from: Date())
         self.updatedAt = ISO8601DateFormatter().string(from: Date())
     }
@@ -122,7 +126,8 @@ class RelevantInsightsService {
             contextualInsights: contextualInsights,
             regulationInsights: regulationInsights,
             situationId: situationId,
-            guidanceId: guidanceId
+            guidanceId: guidanceId,
+            familyId: familyId
         )
         
         // Step 5: Save to database
@@ -181,7 +186,8 @@ class RelevantInsightsService {
             contextualInsights: contextualInsights,
             regulationInsights: regulationInsights,
             situationId: situationId,
-            guidanceId: guidanceId
+            guidanceId: guidanceId,
+            familyId: familyId
         )
         
         // Step 5: Save to database
@@ -463,7 +469,8 @@ class RelevantInsightsService {
         contextualInsights: [ContextualInsight],
         regulationInsights: [ChildRegulationInsight],
         situationId: String,
-        guidanceId: String
+        guidanceId: String,
+        familyId: String
     ) -> [RelevantInsight] {
         
         var relevantInsights: [RelevantInsight] = []
@@ -485,7 +492,9 @@ class RelevantInsightsService {
                             guidanceId: guidanceId,
                             insightType: "contextual",
                             insightId: insight.id,
-                            insightContent: insight.content
+                            insightContent: insight.content,
+                            relevanceScore: nil,
+                            familyId: familyId.lowercased()
                         ))
                         foundMatch = true
                         break
@@ -497,7 +506,9 @@ class RelevantInsightsService {
                             guidanceId: guidanceId,
                             insightType: "contextual",
                             insightId: insight.id,
-                            insightContent: insight.content
+                            insightContent: insight.content,
+                            relevanceScore: nil,
+                            familyId: familyId.lowercased()
                         ))
                         foundMatch = true
                         break
@@ -519,7 +530,9 @@ class RelevantInsightsService {
                                 guidanceId: guidanceId,
                                 insightType: "regulation",
                                 insightId: insight.id.uuidString,
-                                insightContent: insight.content
+                                insightContent: insight.content,
+                                relevanceScore: nil,
+                                familyId: familyId.lowercased()
                             ))
                             foundMatch = true
                             break
@@ -531,7 +544,9 @@ class RelevantInsightsService {
                                 guidanceId: guidanceId,
                                 insightType: "regulation",
                                 insightId: insight.id.uuidString,
-                                insightContent: insight.content
+                                insightContent: insight.content,
+                                relevanceScore: nil,
+                                familyId: familyId.lowercased()
                             ))
                             foundMatch = true
                             break

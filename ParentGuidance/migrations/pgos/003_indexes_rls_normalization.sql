@@ -17,25 +17,29 @@ alter table if exists public.ablation_runs enable row level security;
 
 -- Roles assumed: service_role, operator_role, user_role
 -- Prompt blocks: operator/service only
-create policy if not exists prompt_blocks_operator_access on public.prompt_blocks
+drop policy if exists prompt_blocks_operator_access on public.prompt_blocks;
+create policy prompt_blocks_operator_access on public.prompt_blocks
     for all
     using (current_setting('request.jwt.claims', true)::jsonb ? 'role' and
            ( (current_setting('request.jwt.claims', true)::jsonb ->> 'role') in ('operator','service_role') ));
 
 -- Experiment scores: family-scoped read, operator/service write
-create policy if not exists experiment_scores_read_family on public.experiment_scores
+drop policy if exists experiment_scores_read_family on public.experiment_scores;
+create policy experiment_scores_read_family on public.experiment_scores
     for select
     using (exists (
         select 1 from public.experiment_runs r
         where r.id = experiment_scores.experiment_run_id
     ));
 
-create policy if not exists experiment_scores_write_operator on public.experiment_scores
+drop policy if exists experiment_scores_write_operator on public.experiment_scores;
+create policy experiment_scores_write_operator on public.experiment_scores
     for all
     using ((current_setting('request.jwt.claims', true)::jsonb ->> 'role') in ('operator','service_role'));
 
 -- Ablation runs: operator only
-create policy if not exists ablation_runs_operator on public.ablation_runs
+drop policy if exists ablation_runs_operator on public.ablation_runs;
+create policy ablation_runs_operator on public.ablation_runs
     for all
     using ((current_setting('request.jwt.claims', true)::jsonb ->> 'role') in ('operator','service_role'));
 

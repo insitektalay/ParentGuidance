@@ -141,13 +141,13 @@ class ExperimentRunner: ObservableObject {
                 
                 do {
                     // Optional planner step (scaffold): generate candidate plans for target block
-                    let plans = planner.generatePlans(targetBlock: "context_extraction", count: 3)
+                    let plans = await planner.generatePlans(targetBlock: "context_extraction", count: 3)
                     _ = try? await planner.persistPlans(plans)
                     var candidates: [(guidance: Guidance, composite: Double)] = []
                     let variants = max(1, plans.count)
                     for v in 0..<variants {
                         let resolvedPolicy = await PolicySelector.shared.resolvePolicy(
-                            familyId: UUID(uuidString: situation.familyId),
+                            familyId: situation.familyId.flatMap { UUID(uuidString: $0) },
                             config: nil,
                             issueType: nil,
                             ageBand: nil
@@ -249,28 +249,27 @@ class ExperimentRunner: ObservableObject {
     }
     
     private func fetchSituationsForExperiment(_ experiment: ExperimentRun) async throws -> [Situation] {
-        var query = supabaseManager.client
+        var fb = supabaseManager.client
             .from("situations")
             .select()
             .eq("family_id", value: experiment.familyId.uuidString)
-            .order("created_at", ascending: true)
         if let range = experiment.dateRange {
             let formatter = ISO8601DateFormatter()
-            query = query.gte("created_at", value: formatter.string(from: range.start))
+            fb = fb.gte("created_at", value: formatter.string(from: range.start))
                 .lte("created_at", value: formatter.string(from: range.end))
         }
         if let filter = experiment.situationFilter {
             if let cats = filter.categories, !cats.isEmpty {
-                query = query.in("category", value: cats)
+                fb = fb.in("category", values: cats)
             }
             if let hasIncident = filter.hasIncident {
-                query = query.eq("is_incident", value: hasIncident)
+                fb = fb.eq("is_incident", value: hasIncident)
             }
             if let search = filter.textSearch, !search.isEmpty {
-                query = query.ilike("description", value: "%\(search)%")
+                fb = fb.ilike("description", value: "%\(search)%")
             }
         }
-        let response = try await query.execute()
+        let response = try await fb.order("created_at", ascending: true).execute()
         
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601

@@ -286,7 +286,7 @@ class ScoringService: ObservableObject {
             let scoreWeights: ScoreWeights
             let comparisonDetails: ComparisonDetails?
             let createdAt: Date
-            let explanationsJson: [String: Any]
+            let explanationsJson: String
             enum CodingKeys: String, CodingKey {
                 case id
                 case experimentRunId = "experiment_run_id"
@@ -307,6 +307,7 @@ class ScoringService: ObservableObject {
                 case explanationsJson = "explanations_json"
             }
         }
+        let explanationsData = try JSONSerialization.data(withJSONObject: explanations)
         let payload = InsertWithExplanations(
             id: score.id,
             experimentRunId: score.experimentRunId,
@@ -324,7 +325,7 @@ class ScoringService: ObservableObject {
             scoreWeights: score.scoreWeights,
             comparisonDetails: score.comparisonDetails,
             createdAt: score.createdAt,
-            explanationsJson: explanations
+            explanationsJson: String(data: explanationsData, encoding: .utf8) ?? "{}"
         )
         try await supabaseManager.client
             .from("experiment_scores")
@@ -352,7 +353,7 @@ class ScoringService: ObservableObject {
                 let scoreWeights: ScoreWeights
                 let comparisonDetails: ComparisonDetails?
                 let createdAt: Date
-                let explanationsJson: [String: Any]?
+                let explanationsJson: String?
                 let regenRunId: UUID
                 enum CodingKeys: String, CodingKey {
                     case id
@@ -375,6 +376,8 @@ class ScoringService: ObservableObject {
                     case regenRunId = "regen_run_id"
                 }
             }
+            let explanationsObj: [String: Any] = ["bullets": ["Clear steps", "Grounded in context"], "highlights": []]
+            let explanationsData = try JSONSerialization.data(withJSONObject: explanationsObj)
             let payload = InsertWithRun(
                 id: score.id,
                 experimentRunId: score.experimentRunId,
@@ -392,7 +395,7 @@ class ScoringService: ObservableObject {
                 scoreWeights: score.scoreWeights,
                 comparisonDetails: score.comparisonDetails,
                 createdAt: score.createdAt,
-                explanationsJson: ["bullets": ["Clear steps", "Grounded in context"], "highlights": []],
+                explanationsJson: String(data: explanationsData, encoding: .utf8),
                 regenRunId: regenRunId
             )
             try await supabaseManager.client
